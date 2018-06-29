@@ -1,0 +1,626 @@
+<style lang="less">
+
+//$BG_GRAY: #666
+
+.row{
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+}
+
+.container{
+    font: 32rpx PingFang-SC-Medium;
+    color: #000;
+}
+  
+
+.tab_wrap{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    line-height: 90rpx;
+    color: #666;
+    background: #fff;
+    .checked{
+        color: #e6002d;
+        border-bottom: 1rpx solid #e6002d;
+    }
+}
+    
+
+// .title
+//   line-height: 68rpx
+//   padding-left: 30rpx
+//   color: #202020
+//   border-bottom: 1rpx solid $BD_GRAY
+//   background: $BG_WHITE
+
+.order_title{
+    padding: 30rpx;
+    font-size: 28rpx;
+    color: #333;
+    background: #fff;
+}
+
+.package{
+    display: flex;
+    justify-content: space-between;
+    padding: 20rpx 30rpx;
+    background: #ffecea;
+    .left{
+        padding-left: 20rpx;
+        font-size: 26rpx;
+        color: #333;
+        border-left: 6rpx solid #e6002d;
+    }
+    .right{
+        font-size: 26rpx;
+        color: #e6002d;
+    }
+}
+.product_info{
+    display: flex;
+    height: 210rpx;
+    padding: 30rpx;
+    background: #fafafa;
+    image{
+        width: 190rpx;
+        height: 190rpx;
+        margin-right: 30rpx;
+    }
+    .product{
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 10rpx 0 30rpx 0;
+        .product_title{
+            font-size: 26rpx;
+            color: #333;
+        }
+        .product_standard{
+            margin: 20rpx 0 0;
+            font-size: 24rpx;
+            color: #999;
+        }
+        .product_price{
+            color: #e6002d;
+            text-align: center;
+            .product_address{
+                color: #666;
+            }
+        }   
+    }       
+}
+
+.price_info{
+    text-align: right;
+    padding: 30rpx;
+    background: #fff;
+}
+  
+
+.operate_info{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 88rpx;
+    margin-bottom: 19rpx;
+    border-top: 1rpx solid #d8d8d8;
+    background: #fff;
+    view{
+        width: 140rpx;
+        line-height: 60rpx;
+        margin-right: 24rpx;
+        border: 1rpx solid #999;
+        border-radius: 30rpx;
+        font-size: 25rpx;
+        color: #333;
+        text-align: center;
+    }
+    .red{
+        color: #e6002d;
+        border: 1rpx solid #e6002d;
+    }
+}
+
+.no_wrap
+  .no{
+    position: absolute;
+    top: calc(50% - 150rpx);
+    left: calc(50% - 190rpx);
+    text-align: center;
+    image{
+        width: 380rpx;
+        height: 280rpx;
+        margin-bottom: 24rpx;
+    }
+    .no_title{
+        font-size: 36rpx;
+        color: #333;
+    }
+    .no_desc{
+        font-size: 24rpx;
+        color: #888;
+    }
+      
+  }
+    
+.view_hide{
+    display: none;
+}
+    
+
+.view_show{
+    display: block;
+}
+     
+</style>
+
+<template>
+  <view class="container">
+      <topBar :topBar="topBar"></topBar>
+
+      <view class='tab_wrap'>
+          <view class="{{checkedList[0] ? 'checked' : '' }}" @tap='click(0)'>全部</view>
+          <view class="{{checkedList[1] ? 'checked' : '' }}" @tap='click(1)'>待付款</view>
+          <view class="{{checkedList[2] ? 'checked' : '' }}" @tap='click(2)'>待发货</view>
+          <view class="{{checkedList[3] ? 'checked' : '' }}" @tap='click(3)'>待收货</view>
+          <view class="{{checkedList[4] ? 'checked' : '' }}" @tap='click(4)'>待评价</view>
+      </view>
+
+      <view class='no_wrap' wx:if='{{isNullList[0]}}'>
+          <view class='no'>
+              <!-- <image src='../../images/Mall/icon_kongbaiye@2x.png' /> -->
+              <view class='no_title'>您还没有相关的订单</view>
+              <view class='no_desc'>可以去看看有哪些想买的</view>
+          </view>
+      </view>
+      <view wx:else>
+          <view wx:if='{{checkedList[0] || checkedList[1]}}'>
+
+                <view class='no_wrap' wx:if='{{checkedList[1] && isNullList[1]}}'>
+                    <view class='no'>
+                        <!-- <image src='../../images/Mall/icon_kongbaiye@2x.png' /> -->
+                        <view class='no_title'>您还没有相关的订单</view>
+                        <view class='no_desc'>可以去看看有哪些想买的</view>
+                    </view>
+                </view>
+
+                <view wx:else>
+                    <view class='title' class="{{submittedList.length==0 ?'view_hide':'view_show'}}" ></view> <!-- 待付款 -->
+
+                    <repeat for='{{submittedList}}' index='index' item='items'>
+
+                        <view> <!-- @tap='goOrderDetail({{index}}, submitted)' -->
+                            <view class='row order_title'>
+                                <view>订单编号：{{items.orderNo}}</view>
+                                <view>{{items.statusStr}}</view>
+                            </view>
+
+                            <repeat for='{{items.orderItems}}' index='i' item='item'>
+                                <view class='package' wx:if='{{isPackage}}'>
+                                    <view class='left'>包裹{{i+1}}    来自顺丰优选</view>
+                                    <view class='right'>查看物流</view>
+                                </view>
+                                <navigator class='product_info' url="/pages/order_detail?id={{items.id}}">
+                                    <image src='{{item.productImgUrl}}' />
+                                    <view class='product'>
+                                        <view>
+                                            <view class='product_title'>{{item.title}}</view>
+                                            <view class='product_standard'>规格：{{item.skuStr}}</view>
+                                        </view>
+                                        <view class='row'>
+                                            <view class='product_price'>¥{{item.price}}</view>
+                                            <view class='product_number'>×{{item.amount}}</view>
+                                            <!-- <view class='product_address'>福建福州</view> -->
+                                        </view>
+                                        <!-- <view class='row'>
+                                            <view class='product_standard'>规格：{{item.skuStr}}</view>
+                                            <view class='product_number'>×{{item.amount}}</view>
+                                        </view> -->
+                                    </view>
+                                </navigator>
+                            </repeat>
+
+                            <view class='price_info'>
+                                共{{submittedSize[index]}}件商品  合计：￥<text>{{items.totalFee}}</text>
+                                <!-- <view>实付款</view>
+                                <view>
+                                    <text class='price'>¥{{items.totalFee}}</text>
+                                    <text class='freight'>运费{{items.logisticsFee}}</text>
+                                </view> -->
+                            </view>
+
+                            <view class='operate_info'>
+                                <!-- <view>联系客服</view> -->
+                                <view class='btn' @tap='cancelOrder({{items.id}})'>取消订单</view>
+                                <view class='btn red' @tap="payMoney({{items.id}})">去付款</view>
+                            </view>
+                        </view>
+                        
+                    </repeat>
+                </view>
+                
+          </view>
+          
+          <view wx:if='{{checkedList[0] || checkedList[2]}}'>
+              <view class='no_wrap' wx:if='{{checkedList[2] && isNullList[2]}}'>
+                  <view class='no'>
+                      <!-- <image src='../../images/Mall/icon_kongbaiye@2x.png' /> -->
+                      <view class='no_title'>您还没有相关的订单</view>
+                      <view class='no_desc'>可以去看看有哪些想买的</view>
+                  </view>
+              </view>
+              <view wx:else>
+                  <view class="title {{paidList.length==0 ?'view_hide':'view_show'}}"></view> <!-- 待发货 -->
+
+                  <repeat for='{{paidList}}' index='index' item='items'>
+                      <view class='row order_title'>
+                          <view>订单编号：{{items.orderNo}}</view>
+                          <view>{{items.statusStr}}</view>
+                      </view>
+
+                      <repeat for='{{items.orderItems}}' item='item'>
+                          <view class='product_info'>
+                              <image src='{{item.productImgUrl}}' />
+                              <view class='product'>
+                                    <view>
+                                        <view class='product_title'>{{item.title}}</view>
+                                        <view class='product_standard'>规格：{{item.skuStr}}</view>
+                                    </view>
+                                    <view class='row'>
+                                        <view class='product_price'>¥{{item.price}}</view>
+                                        <view class='product_number'>×{{item.amount}}</view>
+                                        <!-- <view class='product_address'>福建福州</view> -->
+                                    </view>
+                                    <!-- <view class='row'>
+                                        <view class='product_standard'>规格：{{item.skuStr}}</view>
+                                        <view class='product_number'>×{{item.amount}}</view>
+                                    </view> -->
+                              </view>
+                          </view>
+                      </repeat>
+
+                      <view class='price_info'>
+                          共{{paidSize[index]}}件商品  合计：￥<text>{{items.totalFee}}</text>
+                          <!-- <view>实付款</view>
+                          <view>
+                              <text class='price'>¥{{items.totalFee}}</text>
+                              <text class='freight'>运费{{items.logisticsFee}}</text>
+                          </view> -->
+                      </view>
+
+                      <view class='operate_info'>
+                          <view class='btn' @tap='goLookBill({{index}})'>查看发票</view>
+                          <view class='btn' @tap='goRefund({{index}})'>申请退款</view>
+                          <!-- <view>退货/换货</view>
+                          <view>联系客服</view>
+                          <view>提醒发货</view> -->
+                      </view>
+                  </repeat>
+              </view>
+                
+          </view>
+
+          <view wx:if='{{checkedList[0] || checkedList[3]}}'>
+
+                <view class='no_wrap' wx:if='{{checkedList[3] && isNullList[3]}}'>
+                    <view class='no'>
+                        <!-- <image src='../../images/Mall/icon_kongbaiye@2x.png' /> -->
+                        <view class='no_title'>您还没有相关的订单</view>
+                        <view class='no_desc'>可以去看看有哪些想买的</view>
+                    </view>
+                </view>
+
+                <view wx:else>
+                    <view class='title' class="{{shippedList.length==0 ?'view_hide':'view_show'}}"></view> <!-- 待收货 -->
+
+                    <repeat for='{{shippedList}}' item='items'>
+                        <view class='row order_title'>
+                            <view>订单编号：{{items.orderNo}}</view>
+                            <view>{{items.statusStr}}</view>
+                        </view>
+
+                        <repeat for='{{items.orderItems}}' item='item'>
+                            <!-- <view></view> -->
+                            <view class='product_info'>
+                                <image src='{{item.productImgUrl}}' />
+                                <view class='product'>
+                                    <view>
+                                        <view class='product_title'>{{item.title}}</view>
+                                        <view class='product_standard'>规格：{{item.skuStr}}</view>
+                                    </view>
+                                    <view class='row'>
+                                        <view class='product_price'>¥{{item.price}}</view>
+                                        <view class='product_number'>×{{item.amount}}</view>
+                                        <!-- <view class='product_address'>福建福州</view> -->
+                                    </view>
+                                    <!-- <view class='row'>
+                                        <view class='product_standard'>规格：{{item.skuStr}}</view>
+                                        <view class='product_number'>×{{item.amount}}</view>
+                                    </view> -->
+                                </view>
+                            </view>
+                        </repeat>
+
+                        <view class='price_info'>
+                            <!-- <view>实付款</view>
+                            <view>
+                                <text class='price'>¥{{items.totalFee}}</text>
+                                <text class='freight'>运费{{items.logisticsFee}}</text>
+                            </view> -->
+                        </view>
+
+                        <!-- <view class='operate_info'>
+                            <view>退货/换货</view>
+                            <view>联系客服</view>
+                            <view>确认收货</view>
+                            <view>查看物流</view>
+                        </view> -->
+                    </repeat>
+                </view>
+                
+          </view>
+
+          <view wx:if='{{checkedList[0] || checkedList[4]}}'>
+                
+                <view class='no_wrap' wx:if='{{checkedList[4] && isNullList[4]}}'>
+                    <view class='no'>
+                        <!-- <image src='../../images/Mall/icon_kongbaiye@2x.png' /> -->
+                        <view class='no_title'>您还没有相关的订单</view>
+                        <view class='no_desc'>可以去看看有哪些想买的</view>
+                    </view>
+                </view>
+
+                <view wx:else>
+                    <view class='title' class="{{commentList.length==0 ?'view_hide':'view_show'}}"></view> <!-- 待评价 -->
+
+                    <repeat for='{{commentList}}' item='items'>
+                        <view class='row order_title'>
+                            <view>订单编号：{{items.orderNo}}</view>
+                            <view>{{items.statusStr}}</view>
+                        </view>
+
+                        <repeat for='{{items.orderItems}}' item='item'>
+                            <view class='product_info'>
+                                <image src='{{item.productImgUrl}}' />
+                                <view class='product'>
+                                    <view>
+                                        <view class='product_title'>{{item.title}}</view>
+                                        <view class='product_standard'>规格：{{item.skuStr}}</view>
+                                    </view>
+                                    <view class='row'>
+                                        <view class='product_price'>¥{{item.price}}</view>
+                                        <view class='product_number'>×{{item.amount}}</view>
+                                        <!-- <view class='product_address'>福建福州</view> -->
+                                    </view>
+                                    <!-- <view class='row'>
+                                        <view class='product_standard'>规格：{{item.skuStr}}</view>
+                                        <view class='product_number'>×{{item.amount}}</view>
+                                    </view> -->
+                                </view>
+                            </view>
+                        </repeat>
+
+                        <view class='price_info'>
+                            <!-- <view>实付款</view>
+                            <view>
+                                <text class='price'>¥{{items.totalFee}}</text>
+                                <text class='freight'>运费{{items.logisticsFee}}</text>
+                            </view> -->
+                        </view>
+
+                        <!-- <view class='operate_info'>
+                            <view>退货/换货</view>
+                            <view>联系客服</view>
+                            <view>删除订单</view>
+                            <view>评价</view>
+                        </view> -->
+                    </repeat>
+                </view>
+                
+          </view>
+          
+      </view>
+
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import topBar from '../../components/navigation';
+import orderApi from '../../api/orderApi.js';
+
+export default class OrderList extends wepy.page {
+  
+  data = {
+    topBar: {
+      name: "我的订单",
+      tabPage: false
+    },
+    // 订单是否为空
+    isNullList: [ true, true, true, true, true ],
+    //
+    checkedList: [ true, false, false, false, false ],
+    // 订单状态
+    status: 'all',
+    // 待付款订单列表
+    submittedList: [],
+    submittedSize: [], // 对应待付款订单列表各订单的商品数量
+    // 待收货订单列表
+    paidList: [],
+    paidSize: [],
+    // 待收货订单列表
+    shippedList: [],
+    // 待评价订单列表
+    commentList: [],
+    isPackage: false, // 是否显示包裹
+  };
+
+  components = {
+    topBar,
+  };
+
+  computed = {
+    // getIsNull(){ return this.data.isNull; },
+  };
+
+  methods = {
+    async cancelOrder(id){
+        let result = await orderApi.cancelOrder({
+                params: { orderId: id, }
+            });
+        
+        if(!result){
+            return wx.showToast({ title: '操作失败，请稍后重试!', icon: 'none', duration: 2000, });
+        }
+
+        wx.showToast({ title: '订单已取消', icon: 'success', duration: 2000, });
+
+        wx.redirectTo({
+            url: '/pages/my/orderList',
+        });
+    },
+    payMoney(idx){
+        this.pay(idx);
+    },
+    click(index){
+        let checkedList = this.data.checkedList;
+
+        checkedList.forEach((v, i) => checkedList[i] = false);
+        checkedList[Number(index)] = true;
+
+    },
+    goRefund(index){
+        wx.navigateTo({
+            url: '/pages/refund?order='+encodeURIComponent(JSON.stringify(this.paidList[index])),
+        });
+    },
+    goLookBill(index){
+        wx.navigateTo({
+            // url: '/pages/lookBill?id='+,
+            url: '/pages/lookBill?order='+encodeURIComponent(JSON.stringify(this.paidList[index])),
+        });
+    }
+  };
+
+  async pay(orderId, orderDetailId){
+    
+        wx.showToast({
+            title: '支付申请中...',
+            icon: 'none',
+            duration: 2000,
+        });
+    
+        let res = await orderApi.getPayInfo({
+        params: {
+            orderId: orderId,
+            payType: "WEIXIN",
+            currentUrl:
+            "https%3A%2F%2Fwoxifan.51shop.mobi%2Fshop%3Fcode%3D001nLu8P1MW8Z21JDn9P1TVq8P1nLu89%26state%3Dwxloginmhaawxloginaj6wd1mm"
+        }
+        }),
+        goodsList = this.data.goodsList,
+        goods = this.data.goods,
+        order = this.data.order;
+        
+        if(res){
+        //console.log(`getPayinfo--${res}`);
+        wx.requestPayment({
+            timeStamp: res.timeStamp,
+            nonceStr: res.nonceStr,
+            package: res.package,
+            signType: "MD5",
+            paySign: res.paySign,
+            success: function(res) {
+            console.log('支付成功返回的结果')
+            console.log(res)
+            order.payAt = Date.now();
+            
+            if(goodsList[0]){
+                return wx.reLaunch({
+                url: './bought?goodsList='+encodeURIComponent(JSON.stringify(goodsList))+'&order='+encodeURIComponent(JSON.stringify(order)),
+                });
+            }
+
+            wx.reLaunch({
+                url: './bought?goods='+encodeURIComponent(JSON.stringify(goods))+'&order='+encodeURIComponent(JSON.stringify(order)),
+            });
+            },
+            fail: function(res) {
+
+            wx.showToast({
+                title: '支付失败',
+                icon: 'none',
+                duration: 2000,
+            });
+
+            }
+        });
+        }
+        //console.log(`pay: ==${res}`);
+    }
+    
+  async onLoad(params){
+     
+    this.getOrderList(params.status);
+   
+  }
+
+  async getOrderList(status){
+    wx.showLoading({ title: 'Loading...', });
+
+    let res = await orderApi.getOrderList({
+        orderStatus: this.data.status,
+        params: { page: 0,
+                size: 100,
+        }
+    });
+
+    this.data.isNullList[0] = res[0] ? false : true;
+
+    res.forEach((v) => {
+        if(v.statusStr === '待付款'){
+            this.data.submittedList.push(v);
+            this.data.submittedSize.push(v.orderItems.reduce((pre, val) => pre + val.amount, 0));
+            this.data.paidList.push(v);
+            this.data.isNullList[2] = false;
+            
+            this.data.isNullList[1] = false;
+        }else if(v.statusStr === '待发货'){
+            this.data.paidList.push(v);
+            this.data.isNullList[2] = false;
+        }else if(v.statusStr === '待收货'){
+            this.data.shippedList.push(v);
+            this.data.isNullList[3] = false;
+        }else if(v.statusStr === '待评价'){
+            this.data.commentList.push(v);
+            this.data.isNullList[4] = false;
+        }
+        
+    });
+    
+    // 跳转至指定状态
+    // let status = status;
+    if(status){
+        //console.log(`status: =-=${status}`);
+        this.data.checkedList[0] = false;
+        if(status === 'submitted'){
+            this.data.checkedList[1] = true;
+        }else if(status === 'paid'){
+            this.data.checkedList[2] = true;
+        }else if(status === 'shipped'){
+            this.data.checkedList[3] = true;
+        }else if(status === 'comment'){
+            this.data.checkedList[4] = true;
+        }
+    }
+    //console.log(this.data.submittedList);
+    wx.hideLoading();
+    this.$apply();
+  }
+
+}
+</script>
+
