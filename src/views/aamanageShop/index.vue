@@ -27,7 +27,7 @@
       <el-input v-model="formForNotive.phone" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item label="店主账号" :label-width="formLabelWidth">
-      <el-input v-model="formForNotive.account" auto-complete="off"></el-input>
+      <el-input :disabled="!isAddItem" v-model="formForNotive.account" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item  label="所属行业"  :label-width="formLabelWidth">
       <el-select v-model="formForNotive.industry" placeholder="请选择行业">
@@ -117,56 +117,6 @@
      :loading="waitAddNotice">确认修改</el-button>
   </span>
 </el-dialog>
-<el-dialog
-  title="店铺明细"
-  :visible.sync="detailShow"
-  width="80%"
-  >
-    <el-container>
-      <el-main>
-      <el-table
-        :data="detailTableData"
-        stripe 
-        v-loading="detailListLoading" element-loading-text="给我一点时间"
-        style="width: 100%" >
-        <el-table-column
-          label="时间" 
-          prop="time"
-          >
-        </el-table-column>
-          
-          <el-table-column
-          label="姓名" 
-          prop="username"
-          >
-          </el-table-column>
-        <el-table-column
-          label="联系方式"
-          prop="phone"
-          >
-        </el-table-column>
-        <el-table-column
-          label="消费详情"
-          prop='detail'
-          >
-        </el-table-column>
-        <el-table-column
-          label="类型" 
-          prop="type"
-          >
-        </el-table-column>
-      </el-table>
-      </el-main>
-      <el-footer>
-        <el-pagination background @size-change="handleSizeChange_detail" 
-          @current-change="handleCurrentChange_detail" :current-page="listQuery_detail.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery_detail.limit" layout="total, sizes, prev, pager, next" :total="total_detail">
-        </el-pagination>
-      </el-footer>
-    </el-container>
-  <span slot="footer" class="dialog-footer">
-    <el-button @click="detailShow = false">返 回</el-button>
-  </span>
-</el-dialog>
 <el-container class="notice">
 <el-header class="header">
   <el-form :inline="true" :model="formInline" class="form">
@@ -251,7 +201,7 @@
 <script>
 // getList 接口 获取
 // addNotice 接口 添加
-import {getPostionList_api,getIndustryList_api,addShop_api,getShop_api,upDownShop} from '@/api/admin'
+import {getPostionList_api,getIndustryList_api,addShop_api,editShop_api,getShop_api,upDownShop} from '@/api/admin'
 import uploadFn from '@/utils/aahbs'
 
 const formForNotive = { //此页面 静态数据
@@ -271,21 +221,19 @@ const formForNotive = { //此页面 静态数据
 export default {
   created(){
     this.getList()
-    console.log(JSON.parse(localStorage.positonList))
+    // console.log(JSON.parse(localStorage.positonList))
     this.getPostionList()
     this.getIndustryList()
   },
   data() {
     return {
-      //test
-      fileList1:[{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
-      fileList2:[{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}],
       //out
         //状态层
       // editLoading:false,
       waitAddNotice:false,
       addNewShow:false,
-
+      isAddItem:true,
+  
       positonList:[],
       optionsProvince:[{label:'湖北',value:17}],
       optionsCity:[{label:'武汉市',value:258}],
@@ -303,44 +251,12 @@ export default {
           label: '其他'
         }],
       formForNotive:Object.assign({},formForNotive),
-      // ------------------------
-      //out
-
-      isAddItem:true,
-      listQuery_detail: {
-        page: 1,
-        limit: 20,
-        search:"",
-        time:""
-      },
-      total_detail:1,
-      detailListLoading:false,
-      detailShow:false,
-      detailTableData:[
-        {
-          time:'2014.1.2',
-          username: '张三',
-          phone: '123456',
-          detail: '一个汉堡',
-          type: '餐饮',
-        }
-      ],
-      
-      //header
-      industry:'',
-      industryList: [{
-          value: 'edu',
-          label: '教育'
-        }, {
-          value: 'others',
-          label: '其他'
-        }],
+      //head
       formInline: {},
-      // body
+      //body
       listLoading: false,
       tableData: [
         {
-        
         }
       ],
       // footer
@@ -351,12 +267,12 @@ export default {
         time:""
       },
       total:1,
+      // ------------------------
+      
     }
   },
   methods: {
-    test(){
-      console.log(this.fileList1)
-    },
+
     //out
     getIndustryList(){ //获取 行业列表 
       return new Promise((res,rej)=>{
@@ -493,31 +409,81 @@ export default {
         console.error('manageShop:getPostionList_api 接口错误')
       })
     },
-    editShop(){ 
+    async editShop(){ 
       this.waitAddNotice = true
-      let sendData = new FormData() 
-      sendData.append('store_member_name',this.formForNotive.account)
-        //store_telephone contacts_phone
-      // sendData.append('store_telephone',this.formForNotive.phone)
-      sendData.append('store_name',this.formForNotive.title)
-      sendData.append('storeclass_id',this.formForNotive.industry)
-      sendData.append('contacts_name',this.formForNotive.username)
-        //store_telephone contacts_phone
-      sendData.append('contacts_phone',this.formForNotive.phone)
-      sendData.append('company_province_id',this.formForNotive.province)
-      sendData.append('company_city_id',this.formForNotive.city)
-      try{
-        let temp1 = this.formForNotive.fileList1
-        let temp2 = this.formForNotive.fileList2
-        sendData.append('business_licence',temp1[0].raw?temp1[0].raw:temp1[0].url)
-        sendData.append('id_card_front',temp1[0].raw?temp1[0].raw:temp1[0].url)
-        sendData.append('id_card_behind',temp1[0].raw?temp1[0].raw:temp1[0].url)
-      }catch(err){
-        this.waitAddNotice = false
-        console.log(err,'图片不能为空')
-        return
+      let sendData = {} 
+      // let sendData = new FormData() 
+      //图片处理
+      let allUrl1,allUrl2,allUrl3
+      if(this.formForNotive.fileList1[0].raw){
+         allUrl1 = await uploadFn(this.formForNotive.fileList1[0].raw)
+      }else{
+         allUrl1 = this.formForNotive.fileList1[0].url
       }
-      addShop_api(sendData).then(data=>{
+      sendData['business_licence'] = allUrl1
+
+      if(this.formForNotive.fileList2[0].raw){
+         allUrl2 = await uploadFn(this.formForNotive.fileList2[0].raw)
+      }else{
+         allUrl2 = this.formForNotive.fileList2[0].url
+      }
+      sendData['id_card_front'] = allUrl2
+
+      if(this.formForNotive.fileList2[1].raw){
+         allUrl3 = await uploadFn(this.formForNotive.fileList2[1].raw)
+      }else{
+         allUrl3 = this.formForNotive.fileList2[1].url
+      }
+      sendData['id_card_behind'] = allUrl3
+
+      sendData['store_id'] = this.formForNotive.id
+      // sendData['seller_name'] = this.formForNotive.account
+      sendData['store_name'] = this.formForNotive.title
+      sendData['storeclass_id'] = this.formForNotive.industry
+      sendData['contacts_name'] = this.formForNotive.username
+      sendData['contacts_phone'] = this.formForNotive.phone
+      sendData['company_province_id'] = this.formForNotive.province
+      sendData['company_city_id'] = this.formForNotive.city
+      
+      // //后台生成 id
+      // sendData.append('store_id',this.formForNotive.id)
+      // // sendData.append('seller_name',this.formForNotive.account)
+      //   //store_telephone contacts_phone
+      // // sendData.append('store_telephone',this.formForNotive.phone)
+      // sendData.append('store_name',this.formForNotive.title)
+      // sendData.append('storeclass_id',this.formForNotive.industry)
+      // sendData.append('contacts_name',this.formForNotive.username)
+      //   //store_telephone contacts_phone
+      // sendData.append('contacts_phone',this.formForNotive.phone)
+      // sendData.append('company_province_id',this.formForNotive.province)
+      // sendData.append('company_city_id',this.formForNotive.city)
+      
+      // //图片处理
+      // if(this.formForNotive.fileList1[0].raw){
+      //   let allUrl1 = await uploadFn(this.formForNotive.fileList1[0].raw)
+      //   sendData.append('business_licence',allUrl1[0])
+      // }else{
+      //   let allUrl1 = this.formForNotive.fileList1[0].url
+      //   sendData.append('business_licence',allUrl1)
+      // }
+
+      // if(this.formForNotive.fileList2[0].raw){
+      //   let allUrl2 = await uploadFn(this.formForNotive.fileList2[0].raw)
+      //   sendData.append('id_card_front',allUrl2[0])
+      // }else{
+      //   let allUrl2 = this.formForNotive.fileList2[0].url
+      //   sendData.append('id_card_front',allUrl2)
+      // }
+
+      // if(this.formForNotive.fileList2[1].raw){
+      //   let allUrl3 = await uploadFn(this.formForNotive.fileList2[1].raw)
+      //   sendData.append('id_card_behind',allUrl3[0])
+      // }else{
+      //   let allUrl3 = this.formForNotive.fileList2[1].url
+      //   sendData.append('id_card_behind',allUrl3)
+      // }
+      
+      editShop_api(sendData).then(data=>{
         this.waitAddNotice = false
         this.addNewShow = false
         if(data.status===0){
@@ -537,7 +503,7 @@ export default {
       }).catch(e=>{
         this.waitAddNotice = false
         this.addNewShow = false
-        console.error('manageShop:getPostionList_api 接口错误')
+        console.error('manageShop:editShop_api 接口错误')
       })
     },
     //head
@@ -578,7 +544,7 @@ export default {
               title:aData.store_name,
               username:aData.contacts_name,
               phone:aData.contacts_phone,
-              account:aData.store_member_name,
+              account:aData.seller_name,
               province:aData.company_province_id,
               city:aData.company_city_id,
               industry:aData.storeclass_id,
@@ -606,7 +572,6 @@ export default {
 
       this.isAddItem = false
       this.addNewShow = true
-      let id = this.tableData[index].id
     },
     async downShop(id,wantUp){
       let sendData = {
@@ -615,14 +580,14 @@ export default {
       }
       upDownShop(sendData).then(res=>{
         if(res&&res.status===0){
-            this.$notify.info({
+            this.$notify({
             title: '成功',
             message: '操作成功',
             type:'success'
           });
           this.getList()
         }else{
-          this.$notify.info({
+          this.$notify({
             title: '错误',
             message: '操作失败',
             type:'error'
@@ -649,13 +614,19 @@ export default {
         });
       })
     },
-    upItem(){
-
+    //footer
+    handleSizeChange(val) {
+      this.listQuery.limit = val
+      this.getList()
+    },
+    handleCurrentChange(val) {
+      this.listQuery.page = val
+      this.getList()
     },
     // -----------------
     //out
       //file upload
-    onsuccess(){
+      onsuccess(){
         console.log('sucess----',arguments)
       },
       beforere(){
@@ -670,48 +641,6 @@ export default {
       change() {
         console.log('change----',arguments)
       },
-      
-    
-    getList_detail(){
-      console.log('getList_detail 暂时留白')
-    },
-    handleSizeChange_detail(val) {
-      this.listQuery_detail.limit = val
-      this.getList_detail()
-    },
-    handleCurrentChange_detail(val) {
-      this.listQuery_detail.page = val
-      this.getList_detail()
-    },
-    
-    
-    //body
-    
-    lookItem() {
-      console.log(arguments)
-      this.detailShow = true
-    },
-    searchByDate(){
-      if(!this.dataRange||!this.dataRange.length||this.dataRange.length!==2){
-        return console.log("日期错误")
-      }
-      let dateS = this.dataRange[0]
-      let dateE = this.dataRange[1]
-      let Sstr = dateS.getFullYear()+'-'+(dateS.getMonth()+1>9?(dateS.getMonth()+1):('0'+dateS.getMonth()))+'-'+(dateS.getDate()+1>9?(dateS.getDate()+1):('0'+dateS.getDate()))
-      let Estr = dateE.getFullYear()+'-'+(dateE.getMonth()+1>9?(dateE.getMonth()+1):('0'+dateE.getMonth()))+'-'+(dateE.getDate()+1>9?(dateE.getDate()+1):('0'+dateE.getDate()))
-      this.listQuery.time = Sstr+','+Estr
-      this.listQuery.page = 1
-      this.getList()
-    },
-    handleSizeChange(val) {
-      this.listQuery.limit = val
-      this.getList()
-    },
-    handleCurrentChange(val) {
-      this.listQuery.page = val
-      this.getList()
-    },
-    
   }
 }
 </script>

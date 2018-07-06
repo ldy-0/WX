@@ -13,35 +13,38 @@
 <template>
 <div>
 <el-dialog
-  title="新增管理员"
+  :title="isAddItem?'新增管理员':'编辑管理员'"
   :visible.sync="addNewShow"
   width="30%"
   >
   <el-form :model="formForNotive">
     <el-form-item label="姓名" :label-width="formLabelWidth">
-      <el-input v-model="formForNotive.name" auto-complete="off"></el-input>
+      <el-input v-model="formForNotive.username" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item label="账号" :label-width="formLabelWidth">
-      <el-input v-model="formForNotive.account" auto-complete="off"></el-input>
+      <el-input v-model="formForNotive.account" 
+      :disabled="!isAddItem" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item label="密码" :label-width="formLabelWidth">
       <el-input v-model="formForNotive.password" auto-complete="off"></el-input>
     </el-form-item>
   </el-form>
   <span slot="footer" class="dialog-footer">
-    <el-button @click="addNewShow = false">取 消</el-button>
-    <el-button type="primary" @click="addNewNotice"
+    <el-button v-if="isAddItem" type="primary" @click="addAuth"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确 定</el-button>
+    <el-button v-else type="primary" @click="editAuth"
+    :disabled="waitAddNotice" 
+    :loading="waitAddNotice">确认修改</el-button>
   </span>
 </el-dialog>
 <el-container class="notice">
 <el-header class="header">
-  <el-form :inline="true" :model="formInline" class="form">
-    <el-form-item>
-      <el-button type="primary" icon="el-icon-edit-outline" @click="addNewShow = true">新增管理员</el-button>
-    </el-form-item>
-  </el-form>       
+<el-form :inline="true" :model="formInline" class="form">
+  <el-form-item>
+    <el-button type="primary" icon="el-icon-edit-outline" @click="addNewShow = true">新增管理员</el-button>
+  </el-form-item>
+</el-form>       
 </el-header>
 <el-main>
     <el-table
@@ -50,19 +53,16 @@
       v-loading="listLoading" element-loading-text="给我一点时间"
       style="width: 100%" >
       <el-table-column
-        label="姓名"
+        label="姓名" 
+        prop="username"
         >
-        <template slot-scope="scope">
-          <i class="el-icon-edit-outline"></i>
-          <span style="margin-left: 10px">{{ scope.row.username }}</span>
-        </template>
       </el-table-column>
       <!-- icon测试 -->
       <el-table-column 
         label="商品"
         >
         <template slot-scope="scope">
-          <i v-if="scope.row.goods" class="el-icon-check big-icon"></i>
+          <i v-if="1" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
           <!-- <span style="margin-left: 10px">{{ scope.row.goods }}</span> -->
         </template>
@@ -71,7 +71,7 @@
         label="公告"
         >
         <template slot-scope="scope">
-          <i v-if="scope.row.notice" class="el-icon-check big-icon"></i>
+          <i v-if="1" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
@@ -79,7 +79,7 @@
         label="店铺管理"
         >
         <template slot-scope="scope">
-          <i v-if="scope.row.manageShop" class="el-icon-check big-icon"></i>
+          <i v-if="1" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
@@ -87,26 +87,20 @@
         label="运营管理"
         >
         <template slot-scope="scope">
-          <i v-if="scope.row.manageSevice" class="el-icon-check big-icon"></i>
+          <i v-if="1" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
       
       <el-table-column 
-        label="账号"
+        label="账号" 
+        prop="account"
         >
-        <template slot-scope="scope">
-          <i class="el-icon-edit-outline"></i>
-          <span style="margin-left: 10px">{{ scope.row.account }}</span>
-        </template>
       </el-table-column>
       <el-table-column 
-        label="密码"
+        label="密码" 
+        prop="password"
         >
-        <template slot-scope="scope">
-          <i class="el-icon-edit-outline"></i>
-          <span style="margin-left: 10px">{{ scope.row.password }}</span>
-        </template>
       </el-table-column>
       <el-table-column
         label="操作"
@@ -115,28 +109,60 @@
         <el-button
           size="mini" 
           type="primary" 
-          @click="lookDetail(scope.$index, scope.row)">编辑</el-button>
+          @click="editItem(scope.$index, scope.row)">编辑</el-button>
         <el-button
           size="mini" 
           type="danger" 
-          @click="lookDetail(scope.$index, scope.row)">删除</el-button>
+          @click="deleteItem(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 </el-main>
-    <el-footer>
-      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
-      </el-pagination>
-    </el-footer>
-    </el-container>
+<el-footer>
+  <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
+  </el-pagination>
+</el-footer>
+</el-container>
 </div>
 </template>
 <script>
 // getList 接口 获取
 // addNotice 接口 添加
+
+import {getAuthList_api,deleteAuth_api,addAuth_api,editAuth_api} from '@/api/admin' 
+const formForNotive = { //此页面 静态数据
+  username:"",
+  account:"",
+  password:"",
+}
 export default {
+  created(){
+    this.getList()
+  },
   data() {
     return {
+      //out
+        //状态层
+        waitAddNotice:false,
+        addNewShow:false,
+        isAddItem:true,
+
+        formLabelWidth:'140px',//弹框1 左侧文字默认宽度
+        formForNotive:Object.assign({},formForNotive),
+      //body
+        
+        tableData: [{
+            // username: '黄邦胜',
+            // account:'huang',
+            // password:'123456',
+              // goods: '1',
+              // notice: '1',
+              // manageShop: '1',
+              // manageSevice: '1',
+        }],
+      // -------------------------
+      
+      // ----------------------
       //out
       waitAddNotice:false,
       formForNotive:{
@@ -158,15 +184,7 @@ export default {
       formInline: {},
       // body
       listLoading: false,
-      tableData: [{
-          username: '黄邦胜',
-          goods: '1',
-          notice: '1',
-          manageShop: '1',
-          manageSevice: '1',
-          account:'huang',
-          password:'123456',
-      }],
+      
       // footer
       listQuery: {
         page: 1,
@@ -178,6 +196,160 @@ export default {
     }
   },
   methods: {
+    // out
+      addAuth(){
+        this.waitAddNotice = true
+        let sendData = {
+          admin_nick:this.formForNotive.username,
+          admin_name:this.formForNotive.account,
+          admin_password:this.formForNotive.password,
+          admin_gid:0,
+        }
+        addAuth_api(sendData).then(data=>{
+          this.waitAddNotice = false
+          this.addNewShow = false
+          if(data.status===0){
+            this.$notify({
+              title: '成功',
+              message: '操作成功',
+              type: 'success'
+            })
+            this.getList()
+          }else{
+            this.$notify({
+              title: '失败',
+              message: '操作失败',
+              type: 'error'
+            })
+          }
+        }).catch(e=>{
+          this.waitAddNotice = false
+          this.addNewShow = false
+          console.error('manageShop:addIndustry_api 接口错误')
+        })
+      },
+      addItem(){ //显示 弹框
+        // this.editLoading = false
+        this.isAddItem = true
+        this.addNewShow = true
+        this.formForNotive = Object.assign({},formForNotive)
+      },
+      editAuth(){
+        this.waitAddNotice = true
+        let sendData = {
+          // 后端生成
+          admin_id:this.formForNotive.id,
+          // 前段统一
+          admin_nick:this.formForNotive.username,
+          // admin_name:this.formForNotive.account,
+          admin_password:this.formForNotive.password,
+          admin_gid:0,
+        }
+        editAuth_api(sendData).then(data=>{
+          this.waitAddNotice = false
+          this.addNewShow = false
+          if(data.status===0){
+            this.$notify({
+              title: '成功',
+              message: '操作成功',
+              type: 'success'
+            })
+            this.getList()
+          }else{
+            this.$notify({
+              title: '失败',
+              message: '操作失败',
+              type: 'error'
+            })
+          }
+        }).catch(e=>{
+          this.waitAddNotice = false
+          this.addNewShow = false
+          console.error('editAuth_api 接口错误')
+        })
+      },
+      editItem(index,rowData){
+        // this.editLoading = true
+        this.formForNotive = Object.assign({},rowData)
+
+        this.isAddItem = false
+        this.addNewShow = true
+      },
+    // body
+      getList() { //获取列表
+        this.listLoading = true
+        let sendData = Object.assign({},this.listQuery)
+        getAuthList_api(sendData).then(response => {
+          if(response&&response.status==0){
+            let result = response.data
+            let tempTableData = []
+            result.forEach((aData)=>{
+              tempTableData.push({
+                //后端生成
+                id:aData.admin_id,
+                //前后统一
+                username:aData.admin_nick,
+                password:aData.admin_password,
+                account:aData.admin_name,
+              })
+            })
+            this.tableData = tempTableData
+            this.total = response.pagination.total?response.pagination.total:1
+          }else{
+          }
+          console.log("getList",response)
+          // this.list = response
+          this.listLoading = false
+        })
+      },
+      deleteItem(index,row){
+        let id = row.id
+        this.$confirm(`此操作将删除该条目, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.deleteNewNotice(id)
+        }).catch(()=>{
+          this.$notify.info({
+            title: '消息',
+            message: '已取消'
+          });
+        })
+      },
+      deleteNewNotice(id){
+        let sendData = {
+          admin_id:[id],
+        }
+        deleteAuth_api(sendData).then(res=>{
+          if(res&&res.status===0){
+              this.$notify({
+              title: '成功',
+              message: '操作成功',
+              type:'success'
+            });
+            this.getList()
+          }else{
+            this.$notify({
+              title: '错误',
+              message: '操作失败',
+              type:'error'
+            });
+          }
+        }).catch(err=>{
+          console.error('deleteAdmin_api')
+        })
+          
+        
+      },
+    // ----------------------
+    //body
+      
+    //bdoy
+      
+      
+      
+    // 0-----------------------
     //out
     addNewNotice(){
       this.waitAddNotice = true
@@ -218,33 +390,7 @@ export default {
       this.listQuery.page = val
       this.getList()
     },
-    getList() {
-      this.listLoading = true
-      let sendData = Object.assign({},this.listQuery)
-      if(!sendData.time){
-        delete sendData.time
-      }
-      fetchNoticeList(sendData).then(response => {
-        if(response.data&&response.data.status==="success"){
-          let result = response.data.result
-          let tempTableData = []
-          result.forEach((aData)=>{
-            tempTableData.push({
-              name:aData.name,
-              phone:aData.phone,
-              deviceCode:aData.deviceCode,
-              swingCard:aData.swingCard,
-              cashBack:aData.cashBack
-            })
-          })
-          this.tableData = tempTableData
-        }
-        console.log("getList",response)
-        // this.list = response.data
-        this.total = response.data.paging.total
-        this.listLoading = false
-      })
-    },
+    
   }
 }
 </script>
