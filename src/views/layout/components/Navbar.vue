@@ -1,17 +1,19 @@
 <template>
   <el-menu class="navbar" mode="horizontal">
+    <!-- 收缩侧边栏 单纯 -->
     <hamburger class="hamburger-container" :toggleClick="toggleSideBar" :isActive="sidebar.opened"></hamburger>
 
     <breadcrumb class="breadcrumb-container"></breadcrumb>
 
     <div class="right-menu">
+      <!-- 待观察 -->
       <error-log class="errLog-container right-menu-item"></error-log>
 
       <el-tooltip effect="dark" :content="$t('navbar.screenfull')" placement="bottom">
         <screenfull class="screenfull right-menu-item"></screenfull>
       </el-tooltip>
 
-      <lang-select class="international right-menu-item"></lang-select>
+      <!-- <lang-select class="international right-menu-item"></lang-select> -->
 
       <el-tooltip effect="dark" :content="$t('navbar.theme')" placement="bottom">
         <theme-picker class="theme-switch right-menu-item"></theme-picker>
@@ -19,20 +21,24 @@
 
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
         <div class="avatar-wrapper">
-          <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'">
+          <svg-icon icon-class="people" class="user-avatar"/>
+          <!-- <img class="user-avatar" :src="avatar+'?imageView2/1/w/80/h/80'"> -->
           <i class="el-icon-caret-bottom"></i>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/">
+          <!-- <router-link to="/">
             <el-dropdown-item>
               {{$t('navbar.dashboard')}}
             </el-dropdown-item>
-          </router-link>
-          <a target='_blank' href="https://github.com/PanJiaChen/vue-element-admin/">
+          </router-link> -->
+          <!-- <a target='_blank' href="https://github.com/PanJiaChen/vue-element-admin/">
             <el-dropdown-item>
               {{$t('navbar.github')}}
             </el-dropdown-item>
-          </a>
+          </a> -->
+          <el-dropdown-item>
+            <span  style="display:block;">{{$t('navbar.HSBopera')}}</span>
+          </el-dropdown-item>
           <el-dropdown-item divided>
             <span @click="logout" style="display:block;">{{$t('navbar.logOut')}}</span>
           </el-dropdown-item>
@@ -48,7 +54,7 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import ErrorLog from '@/components/ErrorLog'
 import Screenfull from '@/components/Screenfull'
-import LangSelect from '@/components/LangSelect'
+// import LangSelect from '@/components/LangSelect'
 import ThemePicker from '@/components/ThemePicker'
 
 export default {
@@ -57,7 +63,7 @@ export default {
     Hamburger,
     ErrorLog,
     Screenfull,
-    LangSelect,
+    // LangSelect,
     ThemePicker
   },
   computed: {

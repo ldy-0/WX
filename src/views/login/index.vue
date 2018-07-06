@@ -1,10 +1,28 @@
+<style lang="stylus">
+.login-container
+  .hbs-login-switch
+    text-align right
+    box-sizing border-box
+    height 40px
+    padding-right 20px
+    .el-switch__label
+      color #aaaaaa 
+      & *
+        font-size 16px
+    .el-switch__label.is-active
+      color #ffffff
+      & *
+        font-size 18px
+</style>
+
 <template>
   <div class="login-container">
     <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
       <div class="title-container">
-        <h3 class="title">{{$t('login.title')}}</h3>
-        <lang-select class="set-language"></lang-select>
+        <h3 class="title" :style="isAdmin?'color:#E6A23C':''">{{isAdmin?$t('login.title'):$t('login.title2')}}</h3>
+        <!-- <lang-select class="set-language"></lang-select> -->
       </div>
+      
       <el-form-item prop="username">
         <span class="svg-container svg-container_login">
           <svg-icon icon-class="user" />
@@ -21,20 +39,29 @@
           <svg-icon icon-class="eye" />
         </span>
       </el-form-item>
-
+      <el-switch
+        class="hbs-login-switch"
+        style="display: block;"
+        v-model="isAdmin" 
+        active-color="#E6A23C"
+        inactive-color="#13ce66"
+        active-text="我是平台"
+        inactive-text="我是商家">
+      </el-switch>
       <el-button type="primary" style="width:100%;margin-bottom:30px;" :loading="loading" @click.native.prevent="handleLogin">{{$t('login.logIn')}}</el-button>
 
-      <div class="tips">
+      <!-- <div class="tips">
         <span>{{$t('login.username')}} : admin</span>
         <span>{{$t('login.password')}} : {{$t('login.any')}}</span>
       </div>
       <div class="tips">
         <span style="margin-right:18px;">{{$t('login.username')}} : editor</span>
         <span>{{$t('login.password')}} : {{$t('login.any')}}</span>
-      </div>
-
-      <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{$t('login.thirdparty')}}</el-button>
+      </div> -->
     </el-form>
+
+  <!-- 
+        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{$t('login.thirdparty')}}</el-button>
 
     <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog" append-to-body>
       {{$t('login.thirdpartyTips')}}
@@ -42,7 +69,8 @@
       <br/>
       <br/>
       <social-sign />
-    </el-dialog>
+    </el-dialog> 
+   -->
 
   </div>
 </template>
@@ -50,10 +78,11 @@
 <script>
 import { isvalidUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
-import SocialSign from './socialsignin'
+// import SocialSign from './socialsignin'
 
 export default {
-  components: { LangSelect, SocialSign },
+  components: { LangSelect },
+  // components: { LangSelect, SocialSign },
   name: 'login',
   data() {
     const validateUsername = (rule, value, callback) => {
@@ -71,6 +100,10 @@ export default {
       }
     }
     return {
+      // -------------
+      isAdmin: true,
+      tabRole: '',
+      // -------------
       loginForm: {
         username: 'admin',
         password: '1111111'
@@ -80,11 +113,13 @@ export default {
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       passwordType: 'password',
-      loading: false,
-      showDialog: false
+      loading: false
+      // showDialog: false
     }
   },
   methods: {
+    // --------------
+    // --------------
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -96,10 +131,27 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
+          //对 平台 和 卖家 做区分
+          let loginPromise
+          if(this.isAdmin){
+            loginPromise = this.$store.dispatch('LoginByAdminname', {
+              admin_name:this.loginForm.username,
+              admin_password:this.loginForm.password,
+              captcha:1234
+            })
+          }else{
+            loginPromise= this.$store.dispatch('LoginByUsername',{
+              seller_name:this.loginForm.username,
+              member_password:this.loginForm.password,
+              captcha:1234
+            })
+          }
+
+          loginPromise.then(() => {
             this.loading = false
             this.$router.push({ path: '/' })
-          }).catch(() => {
+          }).catch((e) => {
+            console.log('no', e)
             this.loading = false
           })
         } else {
@@ -128,6 +180,7 @@ export default {
     }
   },
   created() {
+    window.hbs = this
     // window.addEventListener('hashchange', this.afterQRScan)
   },
   destroyed() {
@@ -170,6 +223,7 @@ $light_gray:#eee;
 </style>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
+
 $bg:#2d3a4b;
 $dark_gray:#889aa4;
 $light_gray:#eee;

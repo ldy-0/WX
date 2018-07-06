@@ -1,8 +1,12 @@
-import { loginByUsername, logout, getUserInfo } from '@/api/login'
+import { loginByUsername,loginByAdminname, logout, getUserInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import store from '@/store'
 
 const user = {
   state: {
+    // 用户身份 
+    hasGetRole:'',
+    hasAddRoute:false,
     user: '',
     status: '',
     code: '',
@@ -17,6 +21,14 @@ const user = {
   },
 
   mutations: {
+    //hbs
+    SET_hasAddRoute: (state, hasAddRoute) => {
+      state.hasAddRoute = hasAddRoute
+    },
+    SET_HASGETROLE: (state, hasGetRole) => {
+      state.hasGetRole = hasGetRole
+    },
+
     SET_CODE: (state, code) => {
       state.code = code
     },
@@ -44,16 +56,86 @@ const user = {
   },
 
   actions: {
-    // 用户名登录
-    LoginByUsername({ commit }, userInfo) {
+    addRoute({commit}){
+      commit('SET_hasAddRoute', true)
+    },
+    // 平台登录
+    /*LoginByUsername({ commit }, userInfo) {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         loginByUsername(username, userInfo.password).then(response => {
+          console.log('store ok', response)
           const data = response.data
           commit('SET_TOKEN', data.token)
           setToken(response.data.token)
           resolve()
         }).catch(error => {
+          console.log('store no', error)
+          reject(error)
+        })
+      })
+    },
+    */
+    LoginByAdminname({ commit }, userInfo) {
+      // const username = userInfo.username.trim()
+      return new Promise((resolve, reject) => {
+        loginByAdminname(userInfo).then(response => {
+        console.log('store-user-loginbyAdminname',response)
+          
+          const data = response
+          if(data&&data.status===0){
+            //把getuserinfo的事情做完
+            const sessionID = data.data['token']
+            commit('SET_TOKEN', sessionID)
+            setToken(sessionID)
+            let roles = data.data.permission
+            if(data.data.is_admin===1){
+              roles.push('admin')
+            }else{
+              roles.push('admin2')
+            }
+            commit('SET_ROLES', roles)
+
+            commit('SET_HASGETROLE', 'admin')
+            resolve()
+          }else{
+            //接口ok，权限问题，提示登出
+            return Promise.reject('error')
+          }
+        }).catch(error => {
+          console.log('store no', error)
+          reject(error)
+        })
+      })
+    },
+    // 用户名(卖家)登录
+    LoginByUsername({ commit }, userInfo) {
+      // const username = userInfo.username.trim()
+      return new Promise((resolve, reject) => {
+        loginByUsername(userInfo).then(response => {
+          console.log('store-user-loginbyusername',response)
+          const data = response
+          if(data&&data.status===0){
+            //把getuserinfo的事情做完
+            const sessionID = data.data['X-token']
+            commit('SET_TOKEN', sessionID)
+            setToken(sessionID)
+            let roles = data.data.permission
+            if(data.data.is_admin===1){
+              roles.push('seller')
+            }else{
+              roles.push('seller2')
+            }
+            commit('SET_ROLES', roles)
+
+            commit('SET_HASGETROLE', 'seller')
+            resolve()
+          }else{
+            //接口ok，权限问题，提示登出
+            return Promise.reject('error')
+          }
+        }).catch(error => {
+          console.log('store no', error)
           reject(error)
         })
       })

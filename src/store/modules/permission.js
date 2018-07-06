@@ -1,4 +1,4 @@
-import { asyncRouterMap, constantRouterMap } from '@/router'
+import { asyncRouterMapAdmin,asyncRouterMapSeller, constantRouterMap } from '@/router'
 
 /**
  * 通过meta.role判断是否与当前用户权限匹配
@@ -44,14 +44,41 @@ const permission = {
   },
   actions: {
     GenerateRoutes({ commit }, data) {
+      console.log('stroe-permission-GenerateRoutes',data)
       return new Promise(resolve => {
         const { roles } = data
-        let accessedRouters
+        let accessedRouters = []
+        //平台管理员
         if (roles.indexOf('admin') >= 0) {
-          accessedRouters = asyncRouterMap
-        } else {
-          accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
+          accessedRouters = asyncRouterMapAdmin
+        } 
+        else if(roles.indexOf('admin2') >= 0){
+          let authIndex = -1
+          for(let i=0,len=asyncRouterMapAdmin.length;i<len;i++){
+            if(asyncRouterMapAdmin.path='/auth'){
+              authIndex = i
+              asyncRouterMapAdmin.splice(authIndex,1)
+              accessedRouters = asyncRouterMapAdmin
+            }
+          }
         }
+        //商家
+        else if (roles.indexOf('seller') >= 0) {
+          accessedRouters = asyncRouterMapSeller
+        } 
+        else if(roles.indexOf('seller2') >= 0){
+          let authIndex = -1
+          for(let i=0,len=asyncRouterMapSeller.length;i<len;i++){
+            // hbs:make some diff
+            if(asyncRouterMapAdmin.path='/sellerAuth'){
+              authIndex = i
+              asyncRouterMapAdmin.splice(authIndex,1)
+              accessedRouters = asyncRouterMapAdmin
+            }
+          }
+        }
+        // accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
+        console.log(accessedRouters)
         commit('SET_ROUTERS', accessedRouters)
         resolve()
       })

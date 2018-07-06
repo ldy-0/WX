@@ -29,10 +29,11 @@ export default {
   methods: {
     generateTitle,
     getBreadcrumb() {
+      console.log(this.$route)
       let matched = this.$route.matched.filter(item => item.name)
       const first = matched[0]
-      if (first && first.name !== 'dashboard') {
-        matched = [{ path: '/dashboard', meta: { title: 'dashboard' }}].concat(matched)
+      if (first && first.name !== 'home') {
+        matched = [{ path: '/home', meta: { title: 'home' }}].concat(matched)
       }
       this.levelList = matched
     }

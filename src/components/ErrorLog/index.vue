@@ -15,7 +15,7 @@
         <el-table-column label="Message">
           <template slot-scope="scope">
             <div>
-              <span class="message-title">Msg:</span>
+              <span class="message-title">navbar->right: Msg:</span>
               <el-tag type="danger">{{ scope.row.err.message }}</el-tag>
             </div>
             <br/>
