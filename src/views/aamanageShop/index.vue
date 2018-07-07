@@ -221,7 +221,7 @@ const formForNotive = { //此页面 静态数据
 export default {
   created(){
     this.getList()
-    // console.log(JSON.parse(localStorage.positonList))
+    console.log('created',window.JSON.parse(localStorage.positonList))
     this.getPostionList()
     this.getIndustryList()
   },
@@ -298,9 +298,9 @@ export default {
       })
     },
     getPostionList(){ //获取 位置列表
-      if(localStorage.positonList){
+      if(localStorage.positonList&&typeof localStorage.positonList === 'string'&&localStorage.positonList.length>100){
         console.log('localStorage.positonList')
-        this.positonList = JSON.parse(localStorage.positonList)
+        this.positonList = window.JSON.parse(localStorage.positonList)
         this.optionsProvince = this.positonList[0]
         this.optionsCity = this.positonList[17]
         return
@@ -325,7 +325,7 @@ export default {
           }
           //对data处理完毕
           console.log(tempData)
-          localStorage.positonList = JSON.stringify(tempData)
+          localStorage.positonList = window.JSON.stringify(tempData)
           this.positonList = tempData
           this.optionsProvince = this.positonList[0]
           this.optionsCity = this.positonList[17]

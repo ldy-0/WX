@@ -17,6 +17,7 @@ import request from '@/utils/request'
   }
 //manageShop
   export function getPostionList_api(data) {
+    console.log('inner getPostionList_api')
     return request({
       url: '/api/v1/admin/area',
       method: 'get',
