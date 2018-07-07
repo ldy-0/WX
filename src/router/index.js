@@ -51,7 +51,7 @@ export default new Router({
   routes: constantRouterMap
 })
 
-export const asyncRouterMapAdmin = [
+export let asyncRouterMapAdmin = [
   // {
   //   path: '/goods',
   //   component: Layout,
@@ -116,6 +116,119 @@ export const asyncRouterMapAdmin = [
       meta: { title: 'auth', icon: 'notice' }
     }]
   },
+  // { path: '*', redirect: '/404', hidden: true }
+]
+
+export let asyncRouterMapSeller = [
+  {
+    path: '/sellerGoods',
+    component: Layout,
+    redirect: '/sellerGoods/index',
+    children: [{
+      path: 'index',
+      component: () => import('@/views/absellerGoods/index'),
+      name: 'sellerGoods',
+      meta: { title: 'sellerGoods', icon: 'goods', noCache: true }
+    }]
+  },
+  {
+    path: '/order',
+    component: Layout,
+    redirect: '/order/rOrder',
+    meta: { title: 'order', icon: 'goods'},
+    children: [{
+      path: 'rOrder',
+      component: () => import('@/views/aborder/rOrder'),
+      name: 'rOrder',
+      meta: { title: 'rOrder', noCache: true }
+    },{
+      path: 'vOrder',
+      component: () => import('@/views/aborder/vOrder'),
+      name: 'vOrder',
+      meta: { title: 'vOrder', noCache: true }
+    }]
+  },
+  {
+    path: '/appointment',
+    component: Layout,
+    redirect: '/appointment/index',
+    children: [{
+      path: 'index',
+      component: () => import('@/views/abappointment/index'),
+      name: 'appointment',
+      meta: { title: 'appointment', icon: 'goods', noCache: true }
+    }]
+  },
+  {
+    path: '/coupon',
+    component: Layout,
+    redirect: '/coupon/index',
+    children: [{
+      path: 'index',
+      component: () => import('@/views/abcoupon/index'),
+      name: 'coupon',
+      meta: { title: 'coupon', icon: 'goods', noCache: true }
+    }]
+  },
+  {
+    path: '/server',
+    component: Layout,
+    redirect: '/server/serverBanner',
+    meta: { title: 'server', icon: 'goods'},
+    children: [{
+      path: 'serverBanner',
+      component: () => import('@/views/abserver/serverBanner'),
+      name: 'serverBanner',
+      meta: { title: 'serverBanner',  noCache: true }
+    },{
+      path: 'serverEnrty',
+      component: () => import('@/views/abserver/serverEnrty'),
+      name: 'serverEnrty',
+      meta: { title: 'serverEnrty',  noCache: true }
+    },{
+      path: 'serverRec',
+      component: () => import('@/views/abserver/serverRec'),
+      name: 'serverRec',
+      meta: { title: 'serverRec',  noCache: true }
+    },{
+      path: 'serverAct',
+      component: () => import('@/views/abserver/serverAct'),
+      name: 'serverAct',
+      meta: { title: 'serverAct',  noCache: true }
+    },{
+      path: 'serverShop',
+      component: () => import('@/views/abserver/serverShop'),
+      name: 'serverShop',
+      meta: { title: 'serverShop',  noCache: true }
+    },{
+      path: 'serverAllbuy',
+      component: () => import('@/views/abserver/serverAllbuy'),
+      name: 'serverAllbuy',
+      meta: { title: 'serverAllbuy',  noCache: true }
+    },{
+      path: 'serverKill',
+      component: () => import('@/views/abserver/serverKill'),
+      name: 'serverKill',
+      meta: { title: 'serverKill',  noCache: true }
+    },{
+      path: 'serverSchool',
+      component: () => import('@/views/abserver/serverSchool'),
+      name: 'serverSchool',
+      meta: { title: 'serverSchool',  noCache: true }
+    }]
+  },
+  {
+    path: '/sellerAuth',
+    component: Layout,
+    redirect: '/sellerAuth/index',
+    children: [{
+      path: 'index',
+      component: () => import('@/views/absellerAuth/index'),
+      name: 'sellerAuth',
+      meta: { title: 'sellerAuth', icon: 'goods', noCache: true }
+    }]
+  }
+]
   // {
   //   path: '/dashboard',
   //   component: Layout,
@@ -378,116 +491,3 @@ export const asyncRouterMapAdmin = [
   //   children: [{ path: 'index', component: () => import('@/views/i18n-demo/index'), name: 'i18n', meta: { title: 'i18n', icon: 'international' }}]
   // },
 
-  { path: '*', redirect: '/404', hidden: true }
-]
-
-export const asyncRouterMapSeller = [
-  {
-    path: '/sellerGoods',
-    component: Layout,
-    redirect: '/sellerGoods/index',
-    children: [{
-      path: 'index',
-      component: () => import('@/views/absellerGoods/index'),
-      name: 'sellerGoods',
-      meta: { title: 'sellerGoods', icon: 'goods', noCache: true }
-    }]
-  },
-  {
-    path: '/order',
-    component: Layout,
-    redirect: '/order/rOrder',
-    meta: { title: 'order', icon: 'goods'},
-    children: [{
-      path: 'rOrder',
-      component: () => import('@/views/aborder/rOrder'),
-      name: 'rOrder',
-      meta: { title: 'rOrder', noCache: true }
-    },{
-      path: 'vOrder',
-      component: () => import('@/views/aborder/vOrder'),
-      name: 'vOrder',
-      meta: { title: 'vOrder', noCache: true }
-    }]
-  },
-  {
-    path: '/appointment',
-    component: Layout,
-    redirect: '/appointment/index',
-    children: [{
-      path: 'index',
-      component: () => import('@/views/abappointment/index'),
-      name: 'appointment',
-      meta: { title: 'appointment', icon: 'goods', noCache: true }
-    }]
-  },
-  {
-    path: '/coupon',
-    component: Layout,
-    redirect: '/coupon/index',
-    children: [{
-      path: 'index',
-      component: () => import('@/views/abcoupon/index'),
-      name: 'coupon',
-      meta: { title: 'coupon', icon: 'goods', noCache: true }
-    }]
-  },
-  {
-    path: '/server',
-    component: Layout,
-    redirect: '/server/serverBanner',
-    meta: { title: 'server', icon: 'goods'},
-    children: [{
-      path: 'serverBanner',
-      component: () => import('@/views/abserver/serverBanner'),
-      name: 'serverBanner',
-      meta: { title: 'serverBanner',  noCache: true }
-    },{
-      path: 'serverEnrty',
-      component: () => import('@/views/abserver/serverEnrty'),
-      name: 'serverEnrty',
-      meta: { title: 'serverEnrty',  noCache: true }
-    },{
-      path: 'serverRec',
-      component: () => import('@/views/abserver/serverRec'),
-      name: 'serverRec',
-      meta: { title: 'serverRec',  noCache: true }
-    },{
-      path: 'serverAct',
-      component: () => import('@/views/abserver/serverAct'),
-      name: 'serverAct',
-      meta: { title: 'serverAct',  noCache: true }
-    },{
-      path: 'serverShop',
-      component: () => import('@/views/abserver/serverShop'),
-      name: 'serverShop',
-      meta: { title: 'serverShop',  noCache: true }
-    },{
-      path: 'serverAllbuy',
-      component: () => import('@/views/abserver/serverAllbuy'),
-      name: 'serverAllbuy',
-      meta: { title: 'serverAllbuy',  noCache: true }
-    },{
-      path: 'serverKill',
-      component: () => import('@/views/abserver/serverKill'),
-      name: 'serverKill',
-      meta: { title: 'serverKill',  noCache: true }
-    },{
-      path: 'serverSchool',
-      component: () => import('@/views/abserver/serverSchool'),
-      name: 'serverSchool',
-      meta: { title: 'serverSchool',  noCache: true }
-    }]
-  },
-  {
-    path: '/sellerAuth',
-    component: Layout,
-    redirect: '/sellerAuth/index',
-    children: [{
-      path: 'index',
-      component: () => import('@/views/absellerAuth/index'),
-      name: 'sellerAuth',
-      meta: { title: 'sellerAuth', icon: 'goods', noCache: true }
-    }]
-  }
-]

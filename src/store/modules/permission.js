@@ -44,7 +44,6 @@ const permission = {
   },
   actions: {
     GenerateRoutes({ commit }, data) {
-      console.log('stroe-permission-GenerateRoutes',data)
       return new Promise(resolve => {
         const { roles } = data
         let accessedRouters = []
@@ -55,10 +54,14 @@ const permission = {
         else if(roles.indexOf('admin2') >= 0){
           let authIndex = -1
           for(let i=0,len=asyncRouterMapAdmin.length;i<len;i++){
-            if(asyncRouterMapAdmin.path='/auth'){
-              authIndex = i
-              asyncRouterMapAdmin.splice(authIndex,1)
-              accessedRouters = asyncRouterMapAdmin
+            try{
+              if(asyncRouterMapAdmin[i].path=='/auth'){
+                authIndex = i
+                asyncRouterMapAdmin.splice(authIndex,1)
+                accessedRouters = asyncRouterMapAdmin
+              }
+            }catch(e){
+              console.error(i,e,'GenerateRoutes')
             }
           }
         }
@@ -70,11 +73,16 @@ const permission = {
           let authIndex = -1
           for(let i=0,len=asyncRouterMapSeller.length;i<len;i++){
             // hbs:make some diff
-            if(asyncRouterMapAdmin.path='/sellerAuth'){
-              authIndex = i
-              asyncRouterMapAdmin.splice(authIndex,1)
-              accessedRouters = asyncRouterMapAdmin
+            try{
+              if(asyncRouterMapAdmin[i].path=='/sellerAuth'){
+                authIndex = i
+                asyncRouterMapAdmin.splice(authIndex,1)
+                accessedRouters = asyncRouterMapAdmin
+              }
+            }catch(e){
+              console.error(i,e,'GenerateRoutes')
             }
+            
           }
         }
         // accessedRouters = filterAsyncRouter(asyncRouterMap, roles)

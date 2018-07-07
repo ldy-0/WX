@@ -426,6 +426,7 @@ export default {
       let allUrl1,allUrl2,allUrl3
       if(this.formForNotive.fileList1[0].raw){
          allUrl1 = await uploadFn(this.formForNotive.fileList1[0].raw)
+         allUrl1 = allUrl1[0]
       }else{
          allUrl1 = this.formForNotive.fileList1[0].url
       }
@@ -433,6 +434,7 @@ export default {
 
       if(this.formForNotive.fileList2[0].raw){
          allUrl2 = await uploadFn(this.formForNotive.fileList2[0].raw)
+         allUrl2 = allUrl2[0]
       }else{
          allUrl2 = this.formForNotive.fileList2[0].url
       }
@@ -440,6 +442,7 @@ export default {
 
       if(this.formForNotive.fileList2[1].raw){
          allUrl3 = await uploadFn(this.formForNotive.fileList2[1].raw)
+         allUrl3 = allUrl3[0]
       }else{
          allUrl3 = this.formForNotive.fileList2[1].url
       }

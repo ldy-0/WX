@@ -26,10 +26,12 @@
       :disabled="!isAddItem" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item label="密码" :label-width="formLabelWidth">
-      <el-input v-model="formForNotive.password" auto-complete="off"></el-input>
+      <el-input v-model="formForNotive.password" auto-complete="off" 
+      :placeholder="(!isAddItem)&&'此处可修改密码'"></el-input>
     </el-form-item>
   </el-form>
   <span slot="footer" class="dialog-footer">
+    <el-button @click="addNewShow=false" >取消</el-button>
     <el-button v-if="isAddItem" type="primary" @click="addAuth"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确 定</el-button>
@@ -42,7 +44,7 @@
 <el-header class="header">
 <el-form :inline="true" :model="formInline" class="form">
   <el-form-item>
-    <el-button type="primary" icon="el-icon-edit-outline" @click="addNewShow = true">新增管理员</el-button>
+    <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增管理员</el-button>
   </el-form-item>
 </el-form>       
 </el-header>
@@ -97,11 +99,11 @@
         prop="account"
         >
       </el-table-column>
-      <el-table-column 
+      <!-- <el-table-column 
         label="密码" 
         prop="password"
         >
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         label="操作"
         >
@@ -319,7 +321,7 @@ export default {
       },
       deleteNewNotice(id){
         let sendData = {
-          admin_id:[id],
+          admin_id:id,
         }
         deleteAuth_api(sendData).then(res=>{
           if(res&&res.status===0){

@@ -10,6 +10,18 @@
 
 <template>
   <div class="dashboard-container">
+    <el-form :model="formForNotive" >
+      <el-form-item  label="所属行业" >
+        <el-select v-model="formForNotive.industry" placeholder="请选择行业">
+          <el-option
+            v-for="item in industryList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
+    </el-form>
     <!-- <input type="file" ref="i1" multiple >
     <button ref="b1" @click="upload">upload</button>
     <button  @click="getfile">getfile</button> -->
@@ -20,7 +32,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import admin from './admin'
-// import seller from './seller'
+import seller from './seller'
 
 import uploadFn from '@/utils/aahbs'
 
@@ -28,10 +40,20 @@ export default {
   name: 'home',
   components: { 
     admin, 
-    // seller 
+    seller 
   },
   data() {
     return {
+      formForNotive:{
+        industry:'edu',
+      },
+      industryList: [{  //通过接口获取 created时
+          value: 'edu',
+          label: '教育'
+        }, {
+          value: 'others',
+          label: '其他'
+        }],
       currentRole: 'admin',
       down:''
     }

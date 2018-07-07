@@ -8,14 +8,13 @@
 <div>
   <!-- 编辑和添加共用 -->
 <el-dialog
-  :title="isAddItem?'编辑商品':'新增商品'"
+  :title="isAddItem?'新增商品':'编辑商品'"
   :visible.sync="addNewShow"
   width="70%"
   >
   <el-dialog :visible.sync="dialogVisible" append-to-body>
     <img width="100%" :src="dialogImageUrl" alt="">
   </el-dialog>
-  
   <el-form :model="formForNotive">
     <el-form-item  label="商品图片"  :label-width="formLabelWidth">
           <el-upload 
@@ -29,10 +28,21 @@
           :on-change="change" 
           :before-upload="beforeup" 
           :before-remove="beforere" 
-          :file-list="fileList1"
+          :file-list="formForNotive.fileList1"
           >
           <i class="el-icon-plus"></i>
         </el-upload>
+    </el-form-item>
+    <!-- 普通、预售 -->
+    <el-form-item label="商品类型" :label-width="formLabelWidth">
+      <el-select v-model="formForNotive.goodsType" placeholder="请选择">
+        <el-option
+          v-for="item in goodsTypehbsList" 
+          :key="item.value" 
+          :label="item.label" 
+          :value="item.value">
+        </el-option>
+      </el-select>
     </el-form-item>
     <el-form-item label="商品名称" :label-width="formLabelWidth">
       <el-input v-model="formForNotive.goodsName" auto-complete="off"></el-input>
@@ -43,51 +53,94 @@
     <el-form-item label="商品编号" :label-width="formLabelWidth">
       <el-input v-model="formForNotive.goodsNum" auto-complete="off"></el-input>
     </el-form-item>
+    <el-form-item label="校区" :label-width="formLabelWidth">
+      <el-input v-model="formForNotive.school" auto-complete="off"></el-input>
+    </el-form-item>
     <el-form-item label="商品库存" :label-width="formLabelWidth">
       <el-input v-model="formForNotive.goodsTotal" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="商品类型" :label-width="formLabelWidth">
-      <el-input v-model="formForNotive.goodsType" auto-complete="off"></el-input>
+    <el-form-item label="商品分类" :label-width="formLabelWidth">
+      <!-- <el-input v-model="formForNotive.industry" auto-complete="off"></el-input> -->
+      <el-select v-model="formForNotive.industry" placeholder="请选择行业">
+        <el-option
+          v-for="item in industryList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
     </el-form-item>
+    
+    <!-- <el-form-item label="商品属性" :label-width="formLabelWidth">
+      <el-select v-model="formForNotive.goodsElement"
+       placeholder="请选择行业">
+          <el-option
+            v-for="item in goodsElementList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+      </el-select>
+    </el-form-item> -->
     <el-form-item label="商品描述" :label-width="formLabelWidth">
       <el-input v-model="formForNotive.goodsDescribe" type="textarea" auto-complete="off"></el-input>
     </el-form-item>
-    {{formForNotive.activeName}}
+
+    {{formForNotive.size}}
     <el-form-item label="规格" :label-width="formLabelWidth">
-        <el-tabs v-model="formForNotive.activeName">
-            <el-tab-pane label="用户管理" name="first">用户管理</el-tab-pane>
-            <el-tab-pane label="配置管理" name="second">配置管理</el-tab-pane>
+      <!-- size 和 size2xxx 都是单独的属性 -->
+        <el-tabs v-model="formForNotive.size" style="margin-top:-3px;margin-left:10px">
+            <el-tab-pane label="统一规格" name="one" >
+              <el-form v-if="formForNotive.size1" :inline="true">
+                <el-form-item label="价格" >
+                  <el-input v-model="formForNotive.size1.price" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="库存" >
+                  <el-input v-model="formForNotive.size1.count" auto-complete="off"></el-input>
+                </el-form-item>
+              </el-form>
+            </el-tab-pane>
+            <el-tab-pane label="多规格" name="mutil">
+              <div v-if="formForNotive.size2">
+                <el-form :inline="true" v-for="(item,index) of formForNotive.size2" :key="index">
+                  {{index}}
+                  <el-form-item label="名称" >
+                    <el-input v-model="item.name" auto-complete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="价格" >
+                    <el-input v-model="item.price" auto-complete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="名称" >
+                    <el-input v-model="item.count" auto-complete="off"></el-input>
+                  </el-form-item>
+                  <el-button @click="deleteSize_out(index)">删除</el-button>
+                </el-form>
+                <div style="margin-top:10px;margin-left:10px">
+                  <el-button @click="addSize_out">添加规格</el-button>
+                </div>
+              </div>
+            </el-tab-pane>
         </el-tabs>
     </el-form-item>
     <el-form-item label="运费" :label-width="formLabelWidth">
       <el-input v-model="formForNotive.goodsTrans" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item label="商品详情设置" :label-width="formLabelWidth">
-      <div>
-        <el-button type="primary" icon="el-icon-edit-outline" @click="addDetailItem">添加段落
-          {{formForNotive.goodsDetail}}
-        </el-button>
-        <div v-for="item of formForNotive.goodsDetail" >
-            <el-upload 
-              :auto-upload="false"
-                action=""
-                :limit="imgLimit1"
-              list-type="picture-card" 
-              :on-success="onsuccess" 
-              :on-preview="preview" 
-              :on-remove="remove" 
-              :on-change="change" 
-              :before-upload="beforeup" 
-              :before-remove="beforere" 
-              :file-list="item.fileList" 
-              >
-              <i class="el-icon-plus"></i>
-            </el-upload>
-            <hr>
-            <el-input v-model="item.title" auto-complete="off"></el-input>
-            <el-input v-model="item.content" auto-complete="off"></el-input>
-        </div>
-      </div>
+      <el-upload 
+        :auto-upload="false"
+          action=""
+          :limit="9"
+        list-type="picture-card" 
+        :on-success="onsuccess" 
+        :on-preview="preview" 
+        :on-remove="remove" 
+        :on-change="change" 
+        :before-upload="beforeup" 
+        :before-remove="beforere" 
+        :file-list="formForNotive.fileList2" 
+        >
+        <i class="el-icon-plus"></i>
+      </el-upload>
     </el-form-item>
   </el-form>
   <span slot="footer" class="dialog-footer">
@@ -239,11 +292,73 @@
 </div>
 </template>
 <script>
-// getList 接口 获取
-// addNotice 接口 添加
+import {getIndustryList_api} from '@/api/admin'
+import uploadFn from '@/utils/aahbs'
+
+const formForNotive = {
+
+        goodsType:2,
+
+        goodsName:'奥术大师',
+        goodsPrice:'100',
+        goodsNum:'100',
+        school:'100',
+        goodsTotal:'100',
+
+        industry:'others',
+
+        goodsElement:'123',
+        goodsDescribe:'好东西',
+
+        size:'one',
+        size1:{
+          price:'哈哈',
+          count:123
+        },
+        size2:[
+          {
+          name:'m',
+          price:'哈哈',
+          count:123
+          },{
+            name:'s',
+            price:'哈哈s',
+            count:1232
+          }
+        ],
+        fileList1:[],
+        fileList2:[],
+      }
 export default {
+  created(){
+    // this.getList()
+    // this.getIndustryList()
+  },
   data() {
     return {
+      // out
+        
+        goodsTypehbsList:[
+          {
+            value:1,
+            label:'普通商品'
+          },{
+            value:2,
+            label:'预约商品'
+          }
+        ],
+        industryList: [{
+            value: 'edu',
+            label: '教育'
+          }, {
+            value: 'others',
+            label: '其他'
+          }
+        ],
+        formForNotive:Object.assign({},formForNotive),
+      //head
+        
+      // --------------------
       //out
       imgLimit1:1,
       imgLimit2:2,
@@ -270,13 +385,6 @@ export default {
           type: '餐饮',
         }
       ],
-      industryList: [{
-          value: 'edu',
-          label: '教育'
-        }, {
-          value: 'others',
-          label: '其他'
-        }],
       cityOptions:[
         {
           value: 'bj',
@@ -300,34 +408,12 @@ export default {
         }
       ],
       waitAddNotice:false,
-      formForNotive:{
-        goodsName:'奥术大师',
-        goodsPrice:'100',
-        goodsNum:'100',
-        goodsTotal:'100',
-        goodsType:'100',
-        goodsDescribe:'好东西',
-        activeName:'second',
-        goodsTrans:'10',
-        goodsDetail:[
-          {
-            fileList:[],
-            title:'xxx',
-            content:'cccxxx',
-          }
-        ]
-      },
+      
       addNewShow:false,
       formLabelWidth:'140px',
       //header
       industry:'',
-      industryList: [{
-          value: 'edu',
-          label: '教育'
-        }, {
-          value: 'others',
-          label: '其他'
-        }],
+      
       formInline: {},
       // body
       listLoading: false,
@@ -366,6 +452,105 @@ export default {
     }
   },
   methods: {
+    // out
+      //规格2
+      addSize_out(){
+        this.formForNotive.size2.push([])
+      },
+      deleteSize_out(index){
+        this.formForNotive.size2.splice(index,1)
+      },
+      //图片相关
+      remove1() { //每次改变图片获取最新的filelist
+          console.log('remove----',arguments)
+          this.formForNotive.fileList1 = arguments[1]
+      },
+      change1() {
+        console.log('change----',arguments)
+        this.formForNotive.fileList1 = arguments[1]
+      },
+      remove2() { //每次改变图片获取最新的filelist
+          console.log('remove----',arguments)
+          this.formForNotive.fileList2 = arguments[1]
+      },
+      change2() {
+        console.log('change----',arguments)
+        this.formForNotive.fileList2 = arguments[1]
+      },
+      getFiles(arr){ //得到文件数组
+        let files = []
+        let urls = []
+        arr.forEach(item=>{
+          if(item.url){
+            urls.push(item.url)
+          }else{
+            files.push(item.raw)
+          }
+        })
+        return arr2
+      },
+      //添加新商品条目
+      async addNewNotice(){
+        this.waitAddNotice = true
+        let sendData = {}
+        sendData = {
+
+        }
+        let urls1 = await uploadFn(this.formForNotive.fileList1[0].raw)
+        sendData.img1 = urls1[0]
+        
+        let files2 = this.getFiles(this.formForNotive.fileList2).files  
+        let urls2 = await uploadFn(files2)
+        sendData.img2s= urls2
+
+
+        setTimeout(()=>{
+          //发送成功该做的事情
+          this.waitAddNotice = false
+          this.addNewShow = false
+          this.form = {}
+          this.$notify({
+            title: '发送成功',
+            message: '这是一条成功的提示消息',
+            type: 'success'
+          })
+          //如果失败
+          // this.waitAddNotice = false
+        },2000)
+      },
+    //head
+    addItem(){ //显示 弹框
+      // this.editLoading = false
+      this.isAddItem = true
+      this.addNewShow = true
+      this.formForNotive = Object.assign({},formForNotive)
+    },
+    // ------------------------
+    //out
+      getIndustryList(){ //获取 行业列表 
+        return new Promise((res,rej)=>{
+          getIndustryList_api().then(data=>{
+            if(data.status===0){
+              let tempData = []
+              for(let i = 0 ,len = data.data.length;i<len;i++){
+                tempData.push({
+                  label:data.data[i].storeclass_name,
+                  value:data.data[i].storeclass_id,
+                })
+              }
+              this.industryList = tempData
+              res()
+            }else{
+              console.error('manageShop:getIndustryList_api 状态码为1')
+              rej(data)
+            }
+          }).catch(e=>{
+            console.error('manageShop:getIndustryList_api 接口错误')
+            rej()
+          })
+        })
+      },
+    // ------------------------------------
     //out
     addDetailItem(){
       this.formForNotive.goodsDetail.push({
@@ -407,27 +592,12 @@ export default {
       this.listQuery_detail.page = val
       this.getList_detail()
     },
-    addNewNotice(){
-      this.waitAddNotice = true
-      setTimeout(()=>{
-        //发送成功该做的事情
-        this.waitAddNotice = false
-        this.addNewShow = false
-        this.form = {}
-        this.$notify({
-          title: '发送成功',
-          message: '这是一条成功的提示消息',
-          type: 'success'
-        })
-        //如果失败
-        // this.waitAddNotice = false
-      },2000)
-    },
-    addItem(){
-      this.isAddItem = true
-      this.addNewShow = true
-      // this.formForNotive = {}
-    },
+    
+    // addItem(){
+    //   this.isAddItem = true
+    //   this.addNewShow = true
+    //   // this.formForNotive = {}
+    // },
     //body
     editItem(){
       this.isAddItem = false
