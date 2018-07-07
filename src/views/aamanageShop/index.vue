@@ -221,7 +221,7 @@ const formForNotive = { //此页面 静态数据
 export default {
   created(){
     this.getList()
-    console.log('created',window.JSON.parse(localStorage.positonList))
+    // console.log('created',window.JSON.parse(localStorage.positonList))
     this.getPostionList()
     this.getIndustryList()
   },
@@ -298,12 +298,16 @@ export default {
       })
     },
     getPostionList(){ //获取 位置列表
-      if(localStorage.positonList&&typeof localStorage.positonList === 'string'&&localStorage.positonList.length>100){
-        console.log('localStorage.positonList')
-        this.positonList = window.JSON.parse(localStorage.positonList)
-        this.optionsProvince = this.positonList[0]
-        this.optionsCity = this.positonList[17]
-        return
+      try{
+        if(localStorage.positonList&&typeof localStorage.positonList === 'string'&&localStorage.positonList.length>100){
+          console.log('localStorage.positonList')
+          this.positonList = window.JSON.parse(localStorage.positonList)
+          this.optionsProvince = this.positonList[0]
+          this.optionsCity = this.positonList[17]
+          return
+        }
+      }catch(err){
+        console.error(err,'getPostionList localstoryge')
       }
       //第一次获取
       getPostionList_api().then(data=>{
@@ -325,10 +329,14 @@ export default {
           }
           //对data处理完毕
           console.log(tempData)
-          localStorage.positonList = window.JSON.stringify(tempData)
+          try{
+            localStorage.positonList = window.JSON.stringify(tempData)
           this.positonList = tempData
           this.optionsProvince = this.positonList[0]
           this.optionsCity = this.positonList[17]
+          }catch(err){
+            console.log(err,'------------api then-------------')
+          }
         }
       }).catch(e=>{
         console.error('manageShop:getPostionList_api 接口错误')
