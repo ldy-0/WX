@@ -299,6 +299,7 @@ export default {
     },
     getPostionList(){ //获取 位置列表
       if(localStorage.positonList){
+        console.log('localStorage.positonList')
         this.positonList = JSON.parse(localStorage.positonList)
         this.optionsProvince = this.positonList[0]
         this.optionsCity = this.positonList[17]
@@ -325,7 +326,7 @@ export default {
           //对data处理完毕
           console.log(tempData)
           localStorage.positonList = JSON.stringify(tempData)
-          this.positonList = JSON.parse(localStorage.positonList)
+          this.positonList = tempData
           this.optionsProvince = this.positonList[0]
           this.optionsCity = this.positonList[17]
         }

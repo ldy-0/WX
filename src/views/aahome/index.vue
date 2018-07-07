@@ -10,9 +10,9 @@
 
 <template>
   <div class="dashboard-container">
-    <input type="file" ref="i1" multiple >
+    <!-- <input type="file" ref="i1" multiple >
     <button ref="b1" @click="upload">upload</button>
-    <button  @click="getfile">getfile</button>
+    <button  @click="getfile">getfile</button> -->
     <component :is="currentRole" class="dashboard-hbs " :class="down"></component>
   </div>
 </template>
@@ -20,13 +20,16 @@
 <script>
 import { mapGetters } from 'vuex'
 import admin from './admin'
-import seller from './seller'
+// import seller from './seller'
 
 import uploadFn from '@/utils/aahbs'
 
 export default {
   name: 'home',
-  components: { admin, seller },
+  components: { 
+    admin, 
+    // seller 
+  },
   data() {
     return {
       currentRole: 'admin',
@@ -34,9 +37,9 @@ export default {
     }
   },
   methods:{
-    getfile(){
-      console.log(this.$refs['i1'].files)
-    },
+    // getfile(){
+    //   console.log(this.$refs['i1'].files)
+    // },
     async upload(){
       let files = Array.prototype.slice.call(this.$refs['i1'].files) 
       let allUrl = await uploadFn(files)
