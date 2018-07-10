@@ -262,7 +262,7 @@
       </el-table-column>
       <el-table-column
         label="类型" 
-        prop="goodsType"
+        prop="goodsTypeTXT"
         >
       </el-table-column>
       <el-table-column
@@ -337,7 +337,7 @@ const formForNotiveChild2List = [{
       }]
 export default {
   created(){
-    // this.getList()
+    this.getList()
     // this.getIndustryList()
   },
   data() {
@@ -735,6 +735,9 @@ export default {
               stock:this.formForNotiveChild2List[i].count
             })
           }
+          sendData.spec_value = ''
+          sendData.goods_storage = ''
+          sendData.spec = tempMutil
         }
 
         // sendData.is_appoint= this.formForNotive.
@@ -797,10 +800,11 @@ export default {
             let result = response.data
             let tempTableData = []
             result.forEach((aData)=>{
+              
               let temp_fileList1 =[]
               let temp_fileList2 =[]
-              if(aData.business_licence){
-                temp_fileList1.push({url:aData.business_licence})
+              if(aData.goods_image){
+                temp_fileList1.push({url:aData.goods_image})
               }
               if(aData.id_card_front){
                 temp_fileList2.push({url:aData.id_card_front})
@@ -808,22 +812,50 @@ export default {
               if(aData.id_card_behind){
                 temp_fileList2.push({url:aData.id_card_behind})
               }
+              // goodstotal 库存 前后端不一致 需要特殊处理
+              let goodsTotal = 0
+              if(aData.spec_name==='one'){
+                goodsTotal = aData.goods_storage
+              }else{
+                goodsTotal = aData.goods_storage
+              }
+              //对  mutil类型的表单 处理
+
+              // ！！！！！这里暂停工作 因为暂时没有接口
+              
               tempTableData.push({
                 //后端生成
-                id:aData.store_id,
-                industryName:aData.storeclass_name,
+                id:aData.goods_id,
                 //前后统一
-                title:aData.store_name,
-                username:aData.contacts_name,
-                phone:aData.contacts_phone,
-                account:aData.seller_name,
-                province:aData.company_province_id,
-                city:aData.company_city_id,
-                industry:aData.storeclass_id,
+                
+                goodsImage:aData.goods_image,//显示
+                goodsType:aData.is_appoint?1:0,
+                goodsTypeTXT:aData.is_appoint?'虚拟':'实体',//显示补充，实际无用
+
+                goodsName:aData.goods_name,//显示
+                goodsPrice:aData.goods_price,//显示
+                goodsNum:aData.goods_serial,//显示
+                goodsState:'在售',//显示 ！！！ 掩耳盗铃
+                goodsSell:Math.floor(Math.random()*1000),//显示 ！！！ 掩耳盗铃
+                school:aData.school_id,
+                //库存没有接受的字段
+                goodsTotal:goodsTotal,//显示
+
+                industry:aData.storegc_id,
+                // goodsElement:aData.store_id,
+                goodsDescribe:aData.goods_advword,
+                goodsTrans:aData.goods_freight,
+                size:aData.spec_name,
+
+                //child1 one 类型的表单
+                childForm1:{
+                  price:aData.spec_value,
+                  count:aData.goods_storage
+                },
+                //child2 mutil类型的表单
+                childForm2:[],
                 fileList1:temp_fileList1,
                 fileList2:temp_fileList2,
-                lastvisit:aData.total_view,
-                isUp:aData.store_state
               })
             })
             this.tableData = tempTableData
