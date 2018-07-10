@@ -117,7 +117,7 @@ const user = {
           const data = response
           if(data&&data.status===0){
             //把getuserinfo的事情做完
-            const sessionID = data.data['X-token']
+            const sessionID = data.data['token']
             commit('SET_TOKEN', sessionID)
             setToken(sessionID)
             let roles = data.data.permission

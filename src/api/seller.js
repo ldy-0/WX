@@ -9,14 +9,23 @@ export function test(data) {
     params: data
   })
 }
-//notice
-  export function getNotice_api(data) {
+// sellerGoods
+  export function addGoods_api(data) {
     return request({
-      url: '/api/v1/admin/affiche',
+      url: '/api/v1/seller/goods',
+      method: 'post',
+      data
+    })
+  }
+  export function getGoodsList_api(data) {
+    console.log('inner getPostionList_api')
+    return request({
+      url: '/api/v1/seller/goods',
       method: 'get',
       params: data
     })
   }
+// ----------------------------------------------
   export function addNotice_api(data) {
     return request({
       url: '/api/v1/admin/affiche',

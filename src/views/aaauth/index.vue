@@ -17,25 +17,25 @@
   :visible.sync="addNewShow"
   width="30%"
   >
-  <el-form :model="formForNotive">
-    <el-form-item label="姓名" :label-width="formLabelWidth">
+  <el-form :model="formForNotive"  ref="ruleForm" :rules="rules" >
+    <el-form-item label="姓名" :label-width="formLabelWidth"  prop="username">
       <el-input v-model="formForNotive.username" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="账号" :label-width="formLabelWidth">
+    <el-form-item label="账号" :label-width="formLabelWidth" prop="account">
       <el-input v-model="formForNotive.account" 
       :disabled="!isAddItem" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="密码" :label-width="formLabelWidth">
+    <el-form-item label="密码" :label-width="formLabelWidth" prop="password">
       <el-input v-model="formForNotive.password" auto-complete="off" 
       :placeholder="(!isAddItem)&&'此处可修改密码'"></el-input>
     </el-form-item>
   </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="addNewShow=false" >取消</el-button>
-    <el-button v-if="isAddItem" type="primary" @click="addAuth"
+    <el-button v-if="isAddItem" type="primary" @click="addAuth('ruleForm')"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确 定</el-button>
-    <el-button v-else type="primary" @click="editAuth"
+    <el-button v-else type="primary" @click="editAuth('ruleForm')"
     :disabled="waitAddNotice" 
     :loading="waitAddNotice">确认修改</el-button>
   </span>
@@ -151,6 +151,17 @@ export default {
 
         formLabelWidth:'140px',//弹框1 左侧文字默认宽度
         formForNotive:Object.assign({},formForNotive),
+        rules: {
+          username: [
+              { required: true, message: '请输入昵称', trigger: 'blur',min: 1 }
+          ],
+          account: [
+              { required: true, message: '请输入账号，长度至少5位', trigger: 'blur',min: 5 }
+          ],
+          password: [
+              { required: true, message: '请输入密码，长度至少6位', trigger: 'blur',min: 6 }
+          ]
+      },
       //body
         
         tableData: [{
@@ -199,7 +210,22 @@ export default {
   },
   methods: {
     // out
-      addAuth(){
+      async addAuth(formName){
+        let res = await new Promise((res,rej)=>{
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            // alert('submit!');
+            res(true)
+          } else {
+            res(false)
+            // console.log('error submit!!');
+            // return false;
+          }
+          })
+        })
+        if(!res){
+          return 
+        }
         this.waitAddNotice = true
         let sendData = {
           admin_nick:this.formForNotive.username,
@@ -236,7 +262,22 @@ export default {
         this.addNewShow = true
         this.formForNotive = Object.assign({},formForNotive)
       },
-      editAuth(){
+      async editAuth(formName){
+        let res = await new Promise((res,rej)=>{
+        this.$refs[formName].validate((valid) => {
+            if (valid) {
+              // alert('submit!');
+              res(true)
+            } else {
+              res(false)
+              // console.log('error submit!!');
+              // return false;
+            }
+          })
+        })
+        if(!res){
+          return 
+        }
         this.waitAddNotice = true
         let sendData = {
           // 后端生成

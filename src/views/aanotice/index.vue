@@ -13,11 +13,11 @@
   :visible.sync="addNewShow"
   width="30%"
   >
-  <el-form :model="formForNotive">
-    <el-form-item label="公告标题" :label-width="formLabelWidth">
+  <el-form :model="formForNotive"  ref="ruleForm" :rules="rules" >
+    <el-form-item label="公告标题" :label-width="formLabelWidth"  prop="title">
       <el-input v-model="formForNotive.title" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="公告内容" :label-width="formLabelWidth">
+    <el-form-item label="公告内容" :label-width="formLabelWidth"  prop="content">
       <el-input
         type="textarea"
         :rows="2"
@@ -28,7 +28,7 @@
   </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="addNewShow = false">取 消</el-button>
-    <el-button type="primary" @click="addNewNotice"
+    <el-button type="primary" @click="addNewNotice('ruleForm')"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确 定</el-button>
   </span>
@@ -130,6 +130,14 @@ export default {
         title:'',
         content:''
       },
+      rules: {
+        title: [
+            { required: true, message: '请输入标题', trigger: 'blur',min: 1},
+        ],
+        content: [
+            { required: true, message: '请输入内容', trigger: 'blur',min: 1, },
+        ]
+      },
       addNewShow:false,
       formLabelWidth:'80px',
 
@@ -169,7 +177,22 @@ export default {
   },
   methods: {
     //out
-    addNewNotice(){ //添加新公告
+    async addNewNotice(formName){ //添加新公告
+      let res = await new Promise((res,rej)=>{
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            // alert('submit!');
+            res(true)
+          } else {
+            res(false)
+            // console.log('error submit!!');
+            // return false;
+          }
+        })
+      })
+      if(!res){
+        return 
+      }
       this.waitAddNotice = true
       let sendData = {
         affiche_title:this.formForNotive.title,

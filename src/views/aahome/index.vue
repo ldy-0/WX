@@ -34,9 +34,21 @@ import { mapGetters } from 'vuex'
 import admin from './admin'
 import seller from './seller'
 
+import {test} from '@/api/admin'
+
 import uploadFn from '@/utils/aahbs'
 
 export default {
+  created() {
+    test().then(data=>{
+      console.log(data)
+    })
+    if (this.roles.includes('admin')||this.roles.includes('admin2')) {
+      this.currentRole = 'admin'
+    }else{
+      this.currentRole = 'seller'
+    }
+  },
   name: 'home',
   components: { 
     admin, 
@@ -73,13 +85,7 @@ export default {
       'roles'
     ])
   },
-  created() {
-    if (this.roles.includes('admin')||this.roles.includes('admin2')) {
-      this.currentRole = 'admin'
-    }else{
-      this.currentRole = 'seller'
-    }
-  },
+  
   mounted(){
     setTimeout(()=>{
       this.down = 'hbs-down'

@@ -11,8 +11,8 @@
   :visible.sync="addNewShow"
   width="30%"
   >
-  <el-form :model="formForNotive">
-    <el-form-item label="分类标题" :label-width="formLabelWidth">
+  <el-form :model="formForNotive"  ref="ruleForm" :rules="rules" >
+    <el-form-item label="分类标题" :label-width="formLabelWidth" prop="title">
       <el-input v-model="formForNotive.title" auto-complete="off"></el-input>
     </el-form-item>
     <!-- <el-form-item label="序号" :label-width="formLabelWidth">
@@ -22,10 +22,10 @@
   <span slot="footer" class="dialog-footer">
     <el-button @click="addNewShow = false">取 消</el-button>
     
-    <el-button v-if="isAddItem" type="primary" @click="addNewNotice"
+    <el-button v-if="isAddItem" type="primary" @click="addNewNotice('ruleForm')"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确 定</el-button>
-     <el-button v-else type="primary" @click="editNewNotice"
+     <el-button v-else type="primary" @click="editNewNotice('ruleForm')"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确认修改</el-button>
   </span>
@@ -100,6 +100,11 @@ export default {
       addNewShow:false,
 
       formForNotive:Object.assign({},formForNotive),
+      rules: {
+        title: [
+            { required: true, message: '请输入行业名称', trigger: 'blur',min: 1 }
+        ]
+      },
       formLabelWidth:'80px',
       //header
       formInline: {},
@@ -125,7 +130,23 @@ export default {
       this.addNewShow = true
       this.formForNotive = Object.assign({},formForNotive)
     },
-    addNewNotice(){
+    async addNewNotice(formName){
+      let res = await new Promise((res,rej)=>{
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            // alert('submit!');
+            res(true)
+          } else {
+            res(false)
+            // console.log('error submit!!');
+            // return false;
+          }
+        })
+      })
+      if(!res){
+        return 
+      }
+
       this.waitAddNotice = true
       let sendData = {
         storeclass_name:this.formForNotive.title
@@ -159,13 +180,28 @@ export default {
       this.isAddItem = false
       this.addNewShow = true
     },
-    editNewNotice(){
+    async editNewNotice(formName){
+      let res = await new Promise((res,rej)=>{
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            // alert('submit!');
+            res(true)
+          } else {
+            res(false)
+            // console.log('error submit!!');
+            // return false;
+          }
+        })
+      })
+      if(!res){
+        return 
+      }
       this.waitAddNotice = true
       let sendData = {
         storeclass_name:this.formForNotive.title,
         storeclass_id:this.formForNotive.id
       }
-      addIndustry_api(sendData).then(data=>{
+      editIndustry_api(sendData).then(data=>{
         this.waitAddNotice = false
         this.addNewShow = false
         if(data.status===0){

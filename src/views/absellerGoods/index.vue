@@ -2,6 +2,12 @@
   .notice
     .header
       margin-top 20px
+  .margin-btm20
+    margin-bottom 20px
+#app    
+  .out-dialog
+    .el-dialog
+      padding-right 10%
 </style>
 
 <template>
@@ -10,13 +16,14 @@
 <el-dialog
   :title="isAddItem?'新增商品':'编辑商品'"
   :visible.sync="addNewShow"
-  width="70%"
+  width="70%" 
+  class="out-dialog"
   >
   <el-dialog :visible.sync="dialogVisible" append-to-body>
     <img width="100%" :src="dialogImageUrl" alt="">
   </el-dialog>
-  <el-form :model="formForNotive">
-    <el-form-item  label="商品图片"  :label-width="formLabelWidth">
+  <el-form :model="formForNotive"  ref="ruleForm" :rules="rules" size="medium" >
+    <el-form-item  label="商品图片"  :label-width="formLabelWidth"  prop="fileList1">
           <el-upload 
           :auto-upload="false"
             action=""
@@ -24,8 +31,8 @@
           list-type="picture-card" 
           :on-success="onsuccess"
           :on-preview="preview"
-          :on-remove="remove" 
-          :on-change="change" 
+          :on-remove="remove1" 
+          :on-change="change1" 
           :before-upload="beforeup" 
           :before-remove="beforere" 
           :file-list="formForNotive.fileList1"
@@ -34,7 +41,7 @@
         </el-upload>
     </el-form-item>
     <!-- 普通、预售 -->
-    <el-form-item label="商品类型" :label-width="formLabelWidth">
+    <el-form-item label="商品类型" :label-width="formLabelWidth" prop="goodsType">
       <el-select v-model="formForNotive.goodsType" placeholder="请选择">
         <el-option
           v-for="item in goodsTypehbsList" 
@@ -44,22 +51,29 @@
         </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="商品名称" :label-width="formLabelWidth">
+    <el-form-item label="商品名称" :label-width="formLabelWidth" prop="goodsName">
       <el-input v-model="formForNotive.goodsName" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="商品价格" :label-width="formLabelWidth">
+    <el-form-item label="商品价格" :label-width="formLabelWidth" prop="goodsPrice">
       <el-input v-model="formForNotive.goodsPrice" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="商品编号" :label-width="formLabelWidth">
+    <el-form-item label="商品编号" :label-width="formLabelWidth" prop="goodsNum">
       <el-input v-model="formForNotive.goodsNum" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="校区" :label-width="formLabelWidth">
-      <el-input v-model="formForNotive.school" auto-complete="off"></el-input>
+    <el-form-item label="校区" :label-width="formLabelWidth" prop="school">
+      <el-select v-model="formForNotive.school" placeholder="请选择校区">
+        <el-option
+          v-for="item in schoolList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
     </el-form-item>
-    <el-form-item label="商品库存" :label-width="formLabelWidth">
+    <el-form-item label="商品库存" :label-width="formLabelWidth" prop="goodsTotal">
       <el-input v-model="formForNotive.goodsTotal" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="商品分类" :label-width="formLabelWidth">
+    <el-form-item label="商品分类" :label-width="formLabelWidth" prop="industry">
       <!-- <el-input v-model="formForNotive.industry" auto-complete="off"></el-input> -->
       <el-select v-model="formForNotive.industry" placeholder="请选择行业">
         <el-option
@@ -82,50 +96,51 @@
           </el-option>
       </el-select>
     </el-form-item> -->
-    <el-form-item label="商品描述" :label-width="formLabelWidth">
+    <el-form-item label="商品描述" :label-width="formLabelWidth" prop="goodsDescribe">
       <el-input v-model="formForNotive.goodsDescribe" type="textarea" auto-complete="off"></el-input>
     </el-form-item>
 
     {{formForNotive.size}}
-    <el-form-item label="规格" :label-width="formLabelWidth">
+    <el-form-item label="规格" :label-width="formLabelWidth" >
       <!-- size 和 size2xxx 都是单独的属性 -->
         <el-tabs v-model="formForNotive.size" style="margin-top:-3px;margin-left:10px">
             <el-tab-pane label="统一规格" name="one" >
-              <el-form v-if="formForNotive.size1" :inline="true">
-                <el-form-item label="价格" >
-                  <el-input v-model="formForNotive.size1.price" auto-complete="off"></el-input>
+              <el-form :model="formForNotiveChild1" :inline="true"   ref="ruleFormChild1" :rules="rulesChild1" class="margin-btm20">
+                <el-form-item label="价格" prop="price">
+                  <el-input v-model="formForNotiveChild1.price" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="库存" >
-                  <el-input v-model="formForNotive.size1.count" auto-complete="off"></el-input>
+                <el-form-item label="库存" prop="count">
+                  <el-input v-model="formForNotiveChild1.count" auto-complete="off"></el-input>
                 </el-form-item>
               </el-form>
             </el-tab-pane>
-            <el-tab-pane label="多规格" name="mutil">
-              <div v-if="formForNotive.size2">
-                <el-form :inline="true" v-for="(item,index) of formForNotive.size2" :key="index">
-                  {{index}}
-                  <el-form-item label="名称" >
-                    <el-input v-model="item.name" auto-complete="off"></el-input>
+            <el-tab-pane label="多规格" name="mutil" >
+              <div  v-for="(formItem,index) of formForNotiveChild2List"  :key="index" class="margin-btm20">
+                <el-form :inline="true"  :model="formItem"  ref="ruleFormChild2" :rules="rulesChild2">
+                <!-- <el-form :inline="true"  :model="formItem" > -->
+                  <el-form-item label="名称"  prop="name">
+                    <el-input v-model="formItem.name" auto-complete="off" ></el-input>
                   </el-form-item>
-                  <el-form-item label="价格" >
-                    <el-input v-model="item.price" auto-complete="off"></el-input>
+                  <el-form-item label="价格"  prop="price">
+                    <el-input v-model="formItem.price" auto-complete="off"></el-input>
                   </el-form-item>
-                  <el-form-item label="名称" >
-                    <el-input v-model="item.count" auto-complete="off"></el-input>
+                  <el-form-item label="库存"  prop="count">
+                    <el-input v-model="formItem.count" auto-complete="off"></el-input>
                   </el-form-item>
                   <el-button @click="deleteSize_out(index)">删除</el-button>
                 </el-form>
-                <div style="margin-top:10px;margin-left:10px">
+                
+              </div>
+              <div style="margin-top:10px;margin-left:10px">
                   <el-button @click="addSize_out">添加规格</el-button>
-                </div>
               </div>
             </el-tab-pane>
         </el-tabs>
     </el-form-item>
-    <el-form-item label="运费" :label-width="formLabelWidth">
+    <el-form-item label="运费" :label-width="formLabelWidth" prop="goodsTrans">
       <el-input v-model="formForNotive.goodsTrans" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="商品详情设置" :label-width="formLabelWidth">
+    <el-form-item label="商品详情设置" :label-width="formLabelWidth" prop="fileList2" >
       <el-upload 
         :auto-upload="false"
           action=""
@@ -133,8 +148,8 @@
         list-type="picture-card" 
         :on-success="onsuccess" 
         :on-preview="preview" 
-        :on-remove="remove" 
-        :on-change="change" 
+        :on-remove="remove2" 
+        :on-change="change2" 
         :before-upload="beforeup" 
         :before-remove="beforere" 
         :file-list="formForNotive.fileList2" 
@@ -145,7 +160,7 @@
   </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="addNewShow = false">取 消</el-button>
-    <el-button type="primary" @click="addNewNotice"
+    <el-button type="primary" @click="addNewNotice('ruleForm')"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确 定</el-button>
   </span>
@@ -292,43 +307,34 @@
 </div>
 </template>
 <script>
-import {getIndustryList_api} from '@/api/admin'
+import {addGoods_api,getGoodsList_api} from '@/api/seller'
 import uploadFn from '@/utils/aahbs'
 
 const formForNotive = {
 
-        goodsType:2,
+        goodsType:0,
 
         goodsName:'奥术大师',
         goodsPrice:'100',
         goodsNum:'100',
-        school:'100',
+        school:2,
         goodsTotal:'100',
 
-        industry:'others',
+        industry:0,
 
         goodsElement:'123',
         goodsDescribe:'好东西',
-
+        goodsTrans:'1',
         size:'one',
-        size1:{
-          price:'哈哈',
-          count:123
-        },
-        size2:[
-          {
-          name:'m',
-          price:'哈哈',
-          count:123
-          },{
-            name:'s',
-            price:'哈哈s',
-            count:1232
-          }
-        ],
         fileList1:[],
         fileList2:[],
       }
+const formForNotiveChild1 = {
+  price:'1',
+  count:'1'
+}
+const formForNotiveChild2List = [{
+      }]
 export default {
   created(){
     // this.getList()
@@ -337,43 +343,119 @@ export default {
   data() {
     return {
       // out
-        
+        imgLimit1:1,
+        imgLimit2:2,
+        dialogImageUrl: '',
+        dialogVisible: false,
+
+        schoolList:[{label:'校区1',value:1},{label:'校区2',value:2},],
         goodsTypehbsList:[
           {
-            value:1,
+            value:0,
             label:'普通商品'
           },{
-            value:2,
+            value:1,
             label:'预约商品'
           }
         ],
         industryList: [{
-            value: 'edu',
+            value: 0,
             label: '教育'
           }, {
-            value: 'others',
+            value: 1,
             label: '其他'
           }
         ],
+
         formForNotive:Object.assign({},formForNotive),
+        rules: {
+          goodsType: [
+              { required: true, message: '请输入商品类型', trigger: 'blur' ,type:'number'},
+          ],
+          goodsName: [
+              { required: true, message: '请输入商品名', trigger: 'blur' },
+              { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+          ],
+          goodsPrice: [
+              { type:"string",required: true, message: '请输入商品价格', trigger: 'blur',min: 1},
+          ],
+          goodsNum: [
+              { type:"string",required: true, message: '请输入商品编号', trigger: 'blur',min: 1},
+          ],
+          school: [
+              { type:"number",required: true, message: '请输入校区', trigger: 'blur'},
+          ],
+          goodsTotal: [
+              { type:"string",required: true, message: '请输入库存', trigger: 'blur',min: 1},
+          ],
+          industry: [
+              { type:"number",required: true, message: '请输入行业', trigger: 'blur'},
+          ],
+          goodsElement: [
+              { type:"number",required: true, message: '请输入商品属性', trigger: 'blur',min: 1},
+          ],
+          goodsDescribe: [
+              { type:"string",required: true, message: '请输入描述', trigger: 'blur',min: 1},
+          ],
+          goodsTrans: [
+              { type:"string",required: true, message: '请输入运费', trigger: 'blur',min: 1},
+          ],
+          fileList1:[
+            {
+              type: "array", required: true, len: 1,
+              message: '请选择一张图片',
+              // fields: {
+              //   0: {required: true}
+              // }
+            }
+          ],
+          fileList2:[
+            {
+              type: "array", required: true, min: 1,
+              message: '至少选择一张图片',
+            }
+          ],
+          
+        },
+        formForNotiveChild1:Object.assign({},formForNotiveChild1),
+        rulesChild1:{
+          price: [
+              { required: true, message: '请输入商品价格', trigger: 'blur' , min: 1,type:'string'},
+          ],
+          count: [
+              { required: true, message: '请输入商品库存', trigger: 'blur' , min: 1,type:'string'},
+          ]
+        },
+        formForNotiveChild2List:Object.assign([],formForNotiveChild2List),
+        rulesChild2:{
+          name: [
+              { required: true, message: '请输入名称', trigger: 'blur' , min: 1,type:'string'},
+          ],
+          price: [
+              { required: true, message: '请输入商品价格', trigger: 'blur' , min: 1,type:'string'},
+          ],
+          count: [
+              { required: true, message: '请输入商品库存', trigger: 'blur' , min: 1,type:'string'},
+          ]
+        },
+        waitAddNotice:false,
+        addNewShow:false,
+        isAddItem:true,
       //head
-        
+        formInline: {},
+      //FOOT
+        listQuery_detail: {
+          page: 1,
+          limit: 20,
+          search:"",
+          time:""
+        },
+        total_detail:1,
       // --------------------
       //out
-      imgLimit1:1,
-      imgLimit2:2,
-      dialogImageUrl: '',
-        dialogVisible: false,
-        fileList1: [{url: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3994633895,563142661&fm=27&gp=0.jpg'}],
-        fileList2: [{url: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3994633895,563142661&fm=27&gp=0.jpg'}],
-      isAddItem:true,
-      listQuery_detail: {
-        page: 1,
-        limit: 20,
-        search:"",
-        time:""
-      },
-      total_detail:1,
+      
+        
+      
       detailListLoading:false,
       detailShow:false,
       detailTableData:[
@@ -407,14 +489,11 @@ export default {
           ]
         }
       ],
-      waitAddNotice:false,
       
-      addNewShow:false,
       formLabelWidth:'140px',
       //header
       industry:'',
       
-      formInline: {},
       // body
       listLoading: false,
       tableData: [
@@ -453,80 +532,7 @@ export default {
   },
   methods: {
     // out
-      //规格2
-      addSize_out(){
-        this.formForNotive.size2.push([])
-      },
-      deleteSize_out(index){
-        this.formForNotive.size2.splice(index,1)
-      },
-      //图片相关
-      remove1() { //每次改变图片获取最新的filelist
-          console.log('remove----',arguments)
-          this.formForNotive.fileList1 = arguments[1]
-      },
-      change1() {
-        console.log('change----',arguments)
-        this.formForNotive.fileList1 = arguments[1]
-      },
-      remove2() { //每次改变图片获取最新的filelist
-          console.log('remove----',arguments)
-          this.formForNotive.fileList2 = arguments[1]
-      },
-      change2() {
-        console.log('change----',arguments)
-        this.formForNotive.fileList2 = arguments[1]
-      },
-      getFiles(arr){ //得到文件数组
-        let files = []
-        let urls = []
-        arr.forEach(item=>{
-          if(item.url){
-            urls.push(item.url)
-          }else{
-            files.push(item.raw)
-          }
-        })
-        return arr2
-      },
-      //添加新商品条目
-      async addNewNotice(){
-        this.waitAddNotice = true
-        let sendData = {}
-        sendData = {
-
-        }
-        let urls1 = await uploadFn(this.formForNotive.fileList1[0].raw)
-        sendData.img1 = urls1[0]
-        
-        let files2 = this.getFiles(this.formForNotive.fileList2).files  
-        let urls2 = await uploadFn(files2)
-        sendData.img2s= urls2
-
-
-        setTimeout(()=>{
-          //发送成功该做的事情
-          this.waitAddNotice = false
-          this.addNewShow = false
-          this.form = {}
-          this.$notify({
-            title: '发送成功',
-            message: '这是一条成功的提示消息',
-            type: 'success'
-          })
-          //如果失败
-          // this.waitAddNotice = false
-        },2000)
-      },
-    //head
-    addItem(){ //显示 弹框
-      // this.editLoading = false
-      this.isAddItem = true
-      this.addNewShow = true
-      this.formForNotive = Object.assign({},formForNotive)
-    },
-    // ------------------------
-    //out
+      //初始化数据
       getIndustryList(){ //获取 行业列表 
         return new Promise((res,rej)=>{
           getIndustryList_api().then(data=>{
@@ -550,6 +556,287 @@ export default {
           })
         })
       },
+      //规格2
+      addSize_out(){
+        this.formForNotiveChild2List.push({})
+      },
+      deleteSize_out(index){
+        this.formForNotiveChild2List.splice(index,1)
+      },
+      //图片相关
+      remove1() { //每次改变图片获取最新的filelist
+          console.log('remove----',arguments)
+          this.formForNotive.fileList1 = arguments[1]
+      },
+      change1() {
+        console.log('change----',arguments)
+        this.formForNotive.fileList1 = arguments[1]
+      },
+      remove2() { //每次改变图片获取最新的filelist
+          console.log('remove----',arguments)
+          this.formForNotive.fileList2 = arguments[1]
+      },
+      change2() {
+        console.log('change----',arguments)
+        this.formForNotive.fileList2 = arguments[1]
+      },
+      onsuccess(){
+        console.log('sucess----',arguments)
+      },
+      beforere(){
+        console.log('beforere----',arguments)
+      },
+      beforeup(){
+        console.log('beforeup----',arguments)
+      },
+      preview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+        console.log('preview----',arguments)
+      },
+      getFiles(arr){ //得到文件数组
+        let files = []
+        let urls = []
+        arr.forEach(item=>{
+          if(item.raw){
+            files.push(item.raw)
+          }else{
+            urls.push(item.url)
+          }
+        })
+        console.log('-----------------',arr,'-----------------')
+        return {
+          files,urls
+        }
+      },
+      //添加新商品条目
+      async addNewNotice(formName){
+        
+          console.log(this.$refs)
+          if(this.formForNotive.size === 'one'){
+            //如果 size是统一 仅对统一表单进行验证
+            let resChild1 = await new Promise((res,rej)=>{
+              this.$refs['ruleFormChild1'].validate((valid) => {
+                  if (valid) {
+                    // alert('submit!');
+                    res(true)
+                  } else {
+                    res(false)
+                    // console.log('error submit!!');
+                    // return false;
+                  }
+                })
+              })
+              if(!resChild1){
+                return 
+              }
+          }else{
+            //如果 size是 多个 仅对 多个表单进行验证
+            let formChild2PromiseList = []
+            for(let i=0;i<this.formForNotiveChild2List.length;i++){
+              console.log(this.formForNotiveChild2List.length)
+              let one = new Promise((res,rej)=>{
+                this.$refs['ruleFormChild2'][i].validate((valid) => {
+                    res(valid)
+                  })
+                })
+              formChild2PromiseList.push(one)
+            }
+            let resChild2 = await Promise.all(formChild2PromiseList)
+              if(!resChild2){
+                return 
+              }
+          }
+        //基础验证
+        let res = await new Promise((res,rej)=>{
+          this.$refs[formName].validate((valid) => {
+              if (valid) {
+                // alert('submit!');
+                res(true)
+              } else {
+                res(false)
+                // console.log('error submit!!');
+                // return false;
+              }
+            })
+          })
+          if(!res){
+            return 
+          }
+        // 通过验证
+
+        this.waitAddNotice = true
+        let sendData = {}
+        
+        //废物值
+        sendData.cate_id = 764
+        sendData.cate_name = '自定义分类'
+        sendData.type_id = 0
+        sendData.mobile_body = 764
+        sendData.goods_marketprice = this.formForNotive.goodsPrice
+        sendData.goods_costprice = this.formForNotive.goodsPrice
+        sendData.goods_discount = 1
+        // 近似 废物值
+        sendData.is_virtual = false
+        sendData.virtual_limit = 10
+        sendData.virtual_indate = ''
+        sendData.is_platform_store = false
+        sendData.is_virtual = false
+        
+        let urls1 = await uploadFn(this.formForNotive.fileList1[0].raw)
+        sendData.goods_image = urls1[0]
+        console.log('urls1',urls1,'-------------------------')
+        //万金油
+        let fileAndUrl = this.getFiles(this.formForNotive.fileList2)
+        let files2 = fileAndUrl.files
+        console.log('files2',files2,'-------------------------')
+        let urls2Piece1 = await uploadFn(files2)
+        console.log('urls2Piece1',urls2Piece1,'-------------------------')
+        let urls2 = urls2Piece1.concat(fileAndUrl.urls)
+        sendData.goods_body= urls2?JSON.stringify(urls2):''
+
+        // return alert('图片上传完毕')
+        sendData.is_appoint= this.formForNotive.goodsType===1
+        sendData.goods_name= this.formForNotive.goodsName
+        sendData.goods_price= this.formForNotive.goodsPrice
+        sendData.goods_serial= this.formForNotive.goodsNum
+        // 校区
+        sendData.school_id= this.formForNotive.school
+        for(let i=0,len=this.schoolList.length;i<len;i++){
+          //获取校区名
+          if(this.schoolList[i].value===this.formForNotive.school){
+            sendData.school_name = this.schoolList[i].label
+            break
+          }
+        }
+        //库存
+        sendData.goodsTotal= this.formForNotive.goodsTotal
+        //自定义分类
+        sendData.storegc_id= this.formForNotive.industry
+        sendData.goods_advword= this.formForNotive.goodsDescribe
+        sendData.goods_freight= this.formForNotive.goodsTrans
+
+        // sendData.is_appoint= this.formForNotive.goodsElement
+        //规格
+        sendData.spec_name= this.formForNotive.size
+        if(this.formForNotive.size=='one'){
+          //如果是 统一规格 formForNotiveChild2List 
+          sendData.spec_value = this.formForNotiveChild1.price
+          sendData.goods_storage = this.formForNotive.goodsTotal
+          sendData.spec = []
+        }else{
+          //多规格
+          let tempMutil = []
+          for(let i=0,len=this.formForNotiveChild2List.length;i<len;i++){
+            tempMutil.push({
+              price:this.formForNotiveChild2List[i].price,
+              marketpriceprice:this.formForNotiveChild2List[i].price,
+              sp_value:this.formForNotiveChild2List[i].name,
+              stock:this.formForNotiveChild2List[i].count
+            })
+          }
+        }
+
+        // sendData.is_appoint= this.formForNotive.
+        // sendData.is_appoint= this.formForNotive.
+        // sendData.is_appoint= this.formForNotive.
+        // sendData.is_appoint= this.formForNotive.
+        // sendData.is_appoint= this.formForNotive.
+        // sendData.is_appoint= this.formForNotive.
+        addGoods_api(sendData).then(data=>{
+          this.waitAddNotice = false
+          this.addNewShow = false
+          if(data.status===0){
+            this.$notify({
+              title: '上传成功',
+              message: '已新增商品',
+              type: 'success'
+            })
+            this.getList()
+          }else{
+            this.$notify({
+              title: '上传失败',
+              message: '新增商品失败',
+              type: 'error'
+            })
+          }
+        }).catch(e=>{
+          this.waitAddNotice = false
+          this.addNewShow = false
+          console.error('manageShop:addGoods_api 接口错误')
+        })
+      },
+    //head
+      addItem(){ //显示 弹框
+        // this.editLoading = false
+        this.isAddItem = true
+        this.addNewShow = true
+        this.formForNotive = Object.assign({},formForNotive)
+        this.formForNotiveChild1 = Object.assign({},formForNotiveChild1)
+        this.formForNotiveChild2List = Object.assign([],formForNotiveChild2List)
+      },
+    //body
+      editItem(){
+        this.isAddItem = false
+        this.addNewShow = true
+        //获取数据 填充form
+        this.formForNotive =  Object.assign({},this.tableData) 
+
+        // this.formForNotiveChild1 = Object.assign({},formForNotiveChild1)
+        // this.formForNotiveChild2List = Object.assign([],formForNotiveChild2List)
+      },
+      getList() {
+        this.listLoading = true
+        let sendData = Object.assign({},this.listQuery)
+        // if(!sendData.time){
+        //   delete sendData.time
+        // }
+        getGoodsList_api(sendData).then(response => {
+          
+          if(response&&response.status==0){
+            let result = response.data
+            let tempTableData = []
+            result.forEach((aData)=>{
+              let temp_fileList1 =[]
+              let temp_fileList2 =[]
+              if(aData.business_licence){
+                temp_fileList1.push({url:aData.business_licence})
+              }
+              if(aData.id_card_front){
+                temp_fileList2.push({url:aData.id_card_front})
+              }
+              if(aData.id_card_behind){
+                temp_fileList2.push({url:aData.id_card_behind})
+              }
+              tempTableData.push({
+                //后端生成
+                id:aData.store_id,
+                industryName:aData.storeclass_name,
+                //前后统一
+                title:aData.store_name,
+                username:aData.contacts_name,
+                phone:aData.contacts_phone,
+                account:aData.seller_name,
+                province:aData.company_province_id,
+                city:aData.company_city_id,
+                industry:aData.storeclass_id,
+                fileList1:temp_fileList1,
+                fileList2:temp_fileList2,
+                lastvisit:aData.total_view,
+                isUp:aData.store_state
+              })
+            })
+            this.tableData = tempTableData
+            this.total = response.pagination&&response.pagination.total?response.pagination.total:1
+          }else{
+
+          }
+          console.log("getList",response)
+          // this.list = response
+          this.listLoading = false
+        })
+      },
+    // -------------------------------------------------------------
     // ------------------------------------
     //out
     addDetailItem(){
@@ -560,26 +847,7 @@ export default {
           })
     },
       //file upload
-    onsuccess(){
-        console.log('sucess----',arguments)
-      },
-      beforere(){
-        console.log('beforere----',arguments)
-      },
-      beforeup(){
-        console.log('beforeup----',arguments)
-      },
-      remove() {
-        console.log('remove----',arguments)
-      },
-      change() {
-        console.log('change----',arguments)
-      },
-      preview(file) {
-        this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
-        console.log('preview----',arguments)
-      },
+      
     
     getList_detail(){
       console.log('getList_detail 暂时留白')
@@ -599,20 +867,7 @@ export default {
     //   // this.formForNotive = {}
     // },
     //body
-    editItem(){
-      this.isAddItem = false
-      this.addNewShow = true
-      //获取数据 填充form
-      this.formForNotive = {
-        title:'当前商品名称',
-        username:'当前商品名称',
-        phone:'当前商品名称',
-        account:'当前商品名称',
-        name:'当前商品名称',
-        industry:'餐饮',
-        city:['杭州','西湖']
-      }
-    },
+    
     lookItem() {
       console.log(arguments)
       this.detailShow = true
@@ -637,33 +892,7 @@ export default {
       this.listQuery.page = val
       this.getList()
     },
-    getList() {
-      this.listLoading = true
-      let sendData = Object.assign({},this.listQuery)
-      if(!sendData.time){
-        delete sendData.time
-      }
-      fetchNoticeList(sendData).then(response => {
-        if(response.data&&response.data.status==="success"){
-          let result = response.data.result
-          let tempTableData = []
-          result.forEach((aData)=>{
-            tempTableData.push({
-              name:aData.name,
-              phone:aData.phone,
-              deviceCode:aData.deviceCode,
-              swingCard:aData.swingCard,
-              cashBack:aData.cashBack
-            })
-          })
-          this.tableData = tempTableData
-        }
-        console.log("getList",response)
-        // this.list = response.data
-        this.total = response.data.paging.total
-        this.listLoading = false
-      })
-    },
+    
   }
 }
 </script>

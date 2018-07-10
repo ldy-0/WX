@@ -10,26 +10,27 @@
   <!-- 编辑和添加共用 -->
 <el-dialog
   :title="isAddItem?'新增店铺':'编辑店铺'"
-  :visible.sync="addNewShow"
+  :visible.sync="addNewShow" 
+  
   width="70%" 
   >
   <el-dialog :visible.sync="dialogVisible" append-to-body>
     <img width="100%" :src="dialogImageUrl" alt="">
   </el-dialog>
-  <el-form :model="formForNotive" >
-    <el-form-item label="店铺名称" :label-width="formLabelWidth">
+  <el-form :model="formForNotive"  ref="ruleForm" :rules="rules" >
+    <el-form-item label="店铺名称" :label-width="formLabelWidth" prop="title">
       <el-input v-model="formForNotive.title" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="店主姓名" :label-width="formLabelWidth">
+    <el-form-item label="店主姓名" :label-width="formLabelWidth"  prop="username">
       <el-input v-model="formForNotive.username" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="联系方式" :label-width="formLabelWidth">
+    <el-form-item label="联系方式" :label-width="formLabelWidth" prop="phone">
       <el-input v-model="formForNotive.phone" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="店主账号" :label-width="formLabelWidth">
+    <el-form-item label="店主账号" :label-width="formLabelWidth" prop="account">
       <el-input :disabled="!isAddItem" v-model="formForNotive.account" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item  label="所属行业"  :label-width="formLabelWidth">
+    <el-form-item  label="所属行业"  :label-width="formLabelWidth" prop="industry">
       <el-select v-model="formForNotive.industry" placeholder="请选择行业">
         <el-option
           v-for="item in industryList"
@@ -41,8 +42,7 @@
     </el-form-item>
     {{formForNotive.province}}+{{formForNotive.city}}
     <!-- 默认 0 17 湖北 武汉 -->
-    <el-form inline>
-      <el-form-item  label="省"  :label-width="formLabelWidth">
+      <el-form-item  label="省"  :label-width="formLabelWidth" prop="province">
         <el-select filterable @change="provinceChange" v-model="formForNotive.province" placeholder="请选择">
           <el-option
             v-for="item in optionsProvince"
@@ -52,7 +52,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item  label="城市">
+      <el-form-item  label="城市" prop="city"  :label-width="formLabelWidth" >
         <el-select filterable v-model="formForNotive.city" placeholder="请选择">
           <el-option
             v-for="item in optionsCity"
@@ -62,9 +62,8 @@
           </el-option>
         </el-select>
       </el-form-item>
-    </el-form>
 
-    <el-form-item  label="上传营业执照"  :label-width="formLabelWidth">
+    <el-form-item  label="上传营业执照"  :label-width="formLabelWidth" prop="fileList1">
           <el-upload 
           :auto-upload="false"
             action=""
@@ -81,7 +80,7 @@
           <i class="el-icon-plus"></i>
         </el-upload>
     </el-form-item>
-    <el-form-item  label="身份证(正反面)"  :label-width="formLabelWidth">
+    <el-form-item  label="身份证(正反面)"  :label-width="formLabelWidth" prop="fileList2">
           <el-upload 
           :auto-upload="false"
             action="" 
@@ -109,10 +108,10 @@
   </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="addNewShow = false">取 消</el-button>
-    <el-button v-if="isAddItem" type="primary" @click="addShop"
+    <el-button v-if="isAddItem" type="primary" @click="addShop('ruleForm')"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确 定</el-button>
-     <el-button v-else type="primary" @click="editShop"
+     <el-button v-else type="primary" @click="editShop('ruleForm')"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确认修改</el-button>
   </span>
@@ -192,7 +191,7 @@
     </el-table>
 </el-main>
 <el-footer>
-  <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
+  <el-pagination background @size-change="handleSizeChange"  @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
   </el-pagination>
 </el-footer>
 </el-container>
@@ -251,6 +250,46 @@ export default {
           label: '其他'
         }],
       formForNotive:Object.assign({},formForNotive),
+      rules: {
+        title: [
+            { required: true, message: '请输入店铺名称', trigger: 'blur' },
+            { min: 1, max: 5, message: '长度在 1 到 5 个字符', trigger: 'blur' }
+        ],
+        username: [
+            { required: true, message: '请输入用户名', trigger: 'blur' },
+            { min: 1, max: 5, message: '长度在 1 到 5 个字符', trigger: 'blur' }
+        ],
+        phone: [
+            { type:"string",required: true, message: '请输入联系方式', trigger: 'blur',min: 6},
+        ],
+        account: [
+            { type:"string",required: true, message: '请输入账号', trigger: 'blur',min: 1},
+        ],
+        industry: [
+            { type:"number",required: true, message: '请输入行业', trigger: 'blur',min: 1},
+        ],
+        province: [
+            { type:"number",required: true, message: '请输入省份', trigger: 'blur',min: 1},
+        ],
+        city: [
+            { type:"number",required: true, message: '请输入城市', trigger: 'blur',min: 1},
+        ],
+        fileList1:[
+          {
+            type: "array", required: true, len: 1,
+            message: '请选择一张图片',
+            // fields: {
+            //   0: {required: true}
+            // }
+          }
+        ],
+        fileList2:[
+          {
+            type: "array", required: true, len: 2,
+            message: '请选择两张图片',
+          }
+        ],
+      },
       //head
       formInline: {},
       //body
@@ -367,7 +406,23 @@ export default {
       console.log('change----',arguments)
       this.formForNotive.fileList2 = arguments[1]
     },
-    async addShop(){
+    async addShop(formName){
+      let res = await new Promise((res,rej)=>{
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            // alert('submit!');
+            res(true)
+          } else {
+            res(false)
+            // console.log('error submit!!');
+            // return false;
+          }
+        })
+      })
+      if(!res){
+        return 
+      }
+
       this.waitAddNotice = true
       let sendData = new FormData() 
       
@@ -418,7 +473,23 @@ export default {
         console.error('manageShop:getPostionList_api 接口错误')
       })
     },
-    async editShop(){ 
+    async editShop(formName){ 
+      let res = await new Promise((res,rej)=>{
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            // alert('submit!');
+            res(true)
+          } else {
+            res(false)
+            // console.log('error submit!!');
+            // return false;
+          }
+        })
+      })
+      if(!res){
+        return 
+      }
+
       this.waitAddNotice = true
       let sendData = {} 
       // let sendData = new FormData() 
@@ -567,7 +638,7 @@ export default {
             })
           })
           this.tableData = tempTableData
-          this.total = response.pagination.total?response.pagination.total:1
+          this.total = response.pagination&&response.pagination.total?response.pagination.total:1
         }else{
 
         }
