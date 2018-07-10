@@ -6,7 +6,7 @@
 
 <template>
 <div>
-  <el-dialog
+<el-dialog
   title="商品明细"
   :visible.sync="detailShow"
   width="80%"
@@ -162,17 +162,20 @@
       </el-table-column>
     </el-table>
 </el-main>
-    <el-footer>
-      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
-      </el-pagination>
-    </el-footer>
+<el-footer>
+  <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
+  </el-pagination>
+</el-footer>
 </el-container>
 </div>
 </template>
 <script>
-// getList 接口 获取
-// addNotice 接口 添加
+//getROrderList_api 接口异常 php :未定义变量 bannnerModel
+import {getROrderList_api} from '@/api/seller'
 export default {
+  created(){
+    // this.getList()
+  },
   data() {
     return {
       //out
@@ -223,6 +226,33 @@ export default {
     }
   },
   methods: {
+    // body table表单获取数据
+      getList() {
+        this.listLoading = true
+        let sendData = Object.assign({},this.listQuery)
+        
+        getROrderList_api(sendData).then(response => {
+          if(response.data&&response.data.status==="success"){
+            let result = response.data.result
+            let tempTableData = []
+            result.forEach((aData)=>{
+              tempTableData.push({
+                name:aData.name,
+                phone:aData.phone,
+                deviceCode:aData.deviceCode,
+                swingCard:aData.swingCard,
+                cashBack:aData.cashBack
+              })
+            })
+            this.tableData = tempTableData
+          }
+          console.log("getList",response)
+          // this.list = response.data
+          this.total = response.data.paging.total
+          this.listLoading = false
+        })
+      },
+    //尝试 测试 接口 ----------------------------------
     //header
     changeStaticType(index){
       this.activButton = index
@@ -288,33 +318,7 @@ export default {
       this.listQuery.page = val
       this.getList()
     },
-    getList() {
-      this.listLoading = true
-      let sendData = Object.assign({},this.listQuery)
-      if(!sendData.time){
-        delete sendData.time
-      }
-      fetchNoticeList(sendData).then(response => {
-        if(response.data&&response.data.status==="success"){
-          let result = response.data.result
-          let tempTableData = []
-          result.forEach((aData)=>{
-            tempTableData.push({
-              name:aData.name,
-              phone:aData.phone,
-              deviceCode:aData.deviceCode,
-              swingCard:aData.swingCard,
-              cashBack:aData.cashBack
-            })
-          })
-          this.tableData = tempTableData
-        }
-        console.log("getList",response)
-        // this.list = response.data
-        this.total = response.data.paging.total
-        this.listLoading = false
-      })
-    },
+    
   }
 }
 </script>

@@ -34,7 +34,7 @@ import { mapGetters } from 'vuex'
 import admin from './admin'
 import seller from './seller'
 
-import {test} from '@/api/admin'
+import {test} from '@/api/seller'
 
 import uploadFn from '@/utils/aahbs'
 

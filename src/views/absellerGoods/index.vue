@@ -307,7 +307,7 @@
 </div>
 </template>
 <script>
-import {addGoods_api,getGoodsList_api} from '@/api/seller'
+import {addGoods_api,getGoodsList_api,getSchoolList_api} from '@/api/seller'
 import uploadFn from '@/utils/aahbs'
 
 const formForNotive = {
@@ -317,7 +317,7 @@ const formForNotive = {
         goodsName:'奥术大师',
         goodsPrice:'100',
         goodsNum:'100',
-        school:2,
+        school:'',
         goodsTotal:'100',
 
         industry:0,
@@ -337,8 +337,8 @@ const formForNotiveChild2List = [{
       }]
 export default {
   created(){
+    this.getSchoolList()
     this.getList()
-    // this.getIndustryList()
   },
   data() {
     return {
@@ -533,25 +533,25 @@ export default {
   methods: {
     // out
       //初始化数据
-      getIndustryList(){ //获取 行业列表 
+      getSchoolList(){ //获取 行业列表 
         return new Promise((res,rej)=>{
-          getIndustryList_api().then(data=>{
+          getSchoolList_api({limit:0}).then(data=>{
             if(data.status===0){
               let tempData = []
               for(let i = 0 ,len = data.data.length;i<len;i++){
                 tempData.push({
-                  label:data.data[i].storeclass_name,
-                  value:data.data[i].storeclass_id,
+                  label:data.data[i].school_name,
+                  value:data.data[i].school_id,
                 })
               }
-              this.industryList = tempData
+              this.schoolList = tempData
               res()
             }else{
-              console.error('manageShop:getIndustryList_api 状态码为1')
+              console.error('manageShop:getSchoolList_api 状态码为1')
               rej(data)
             }
           }).catch(e=>{
-            console.error('manageShop:getIndustryList_api 接口错误')
+            console.error('manageShop:getSchoolList_api 接口错误')
             rej()
           })
         })

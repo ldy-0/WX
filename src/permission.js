@@ -18,7 +18,9 @@ const whiteList = ['/login', '/authredirect']// no redirect whitelist
 // const hasGetRoleList = ['admin','seller']
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
-  
+  //当前身份验证是通过 临时变量存储 
+  //如果需要做持久化缓存 可以只通过cookie判断，
+  // 但是，登出只能在全局拦截器进行，这需要后端的参数配合
   if (getToken()) {
     if (store.getters.hasGetRole) {
       // if (hasGetRoleList.indexOf(store.getters.hasGetRole)!==-1) { 

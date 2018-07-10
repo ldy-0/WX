@@ -4,9 +4,11 @@ import request from '@/utils/request'
 
 export function test(data) {
   return request({
-    url: '/api/v1/seller/storegc',
+    url: '/api/v1/seller/school',
     method: 'get',
-    params: data
+    params: {
+      limit:0
+    }
   })
 }
 // sellerGoods
@@ -18,9 +20,25 @@ export function test(data) {
     })
   }
   export function getGoodsList_api(data) {
-    console.log('inner getPostionList_api')
     return request({
       url: '/api/v1/seller/goods',
+      method: 'get',
+      params: data
+    })
+  }
+  export function getSchoolList_api(data) { //获取校区列表
+    console.log('inner getPostionList_api')
+    return request({
+      url: '/api/v1/seller/school',
+      method: 'get',
+      params: data
+    })
+  }
+// order => rOrder
+  export function getROrderList_api(data) {
+    console.log('inner getPostionList_api')
+    return request({
+      url: '/api/v1/seller/order',
       method: 'get',
       params: data
     })
