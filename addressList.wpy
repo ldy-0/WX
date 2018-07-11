@@ -24,7 +24,9 @@
 }
   
 .address{
+  box-sizing: border-box;
   height: 244rpx;
+  margin-bottom: 10rpx;
   padding: 30rpx 30rpx 0;
   background: #fff;
   .user_info{
@@ -69,20 +71,20 @@
 }
 
 .center{
+  // position: relative;
   display: flex;
   justify-content: center;
-}
-
-.add_btn{
-  position: absolute;
-  bottom: 30rpx;
-  width: 690rpx;
-  line-height: 90rpx;
-  margin: 0 auto;
-  font-size: 30rpx;
-  color: #fff;
-  background: linear-gradient(#e6002d, #e8441e);
-  text-align: center;
+  .add_btn{
+    position: fixed;
+    bottom: 30rpx;
+    width: 690rpx;
+    line-height: 90rpx;
+    margin: 0 auto;
+    font-size: 30rpx;
+    color: #fff;
+    background: linear-gradient(#e6002d, #e8441e);
+    text-align: center;
+  }
 }
     
 </style>
@@ -92,26 +94,28 @@
       <topBar :topBar='topBar'></topBar>
 
       <view wx:if='{{addressList.length !== 0}}'>
-          <repeat for='{{addressList}}' index='index' item='item'>
-              <view class='address'>
-                  <view class='user_info'>{{item.consignee}}<text class='inline'>{{item.phone}}</text></view>
-                  <view class='address_info'>{{item.details}}{{item.street}}</view>
-                  <view class='other_info'>
-                    <view class='default' wx:if='{{item.isDefault}}'>[默认地址]</view>
-                    <view></view>
-                    <view class='operate_info'>
-                        <view class='operate_btn' @tap='modify({{index}})'>
-                          <image src='../images/icon/编辑@2x.png' />
-                          <view>修改</view>
+          <scroll-view class='' scroll-y='true' style='height: 752rpx;'>
+              <repeat for='{{addressList}}' index='index' item='item'>
+                  <view class='address'>
+                      <view class='user_info'>{{item.consignee}}<text class='inline'>{{item.phone}}</text></view>
+                      <view class='address_info'>{{item.details}}{{item.street}}</view>
+                      <view class='other_info'>
+                        <view class='default' wx:if='{{item.isDefault}}'>[默认地址]</view>
+                        <view></view>
+                        <view class='operate_info'>
+                            <view class='operate_btn' @tap='modify({{index}})'>
+                              <image src='../images/icon/edit.png' />
+                              <view>修改</view>
+                            </view>
+                            <view class='operate_btn' @tap='delete({{index}})'>
+                              <image src='../images/del.png' />
+                              <view>删除</view>
+                            </view>
                         </view>
-                        <view class='operate_btn' @tap='delete({{index}})'>
-                          <image src='../images/删除@2x.png' />
-                          <view>删除</view>
-                        </view>
-                    </view>
+                      </view>
                   </view>
-              </view>
-          </repeat> 
+              </repeat> 
+          </scroll-view>
         
           <view class='center'>
               <view class='add_btn' @tap='add'>添加新地址</view>
@@ -122,7 +126,7 @@
       <view class='empty' wx:else>
           <view class='empty_info'>
             <view>
-              <image src='../images/my/地址-3@2x.png' />
+              <image src='../images/my/address-3.png' />
               <view>您还没有收货地址呢！</view>
             </view>
           </view>
@@ -182,13 +186,14 @@
     };
     
     async onShow(options){
+
       wx.showLoading({  
         title: 'Loading...',
       });
 
       let addressList = this.data.addressList,
           res = await addressApi.getAddressList({});
-      
+      console.log(res);
       if(!res){
         return wx.showToast({
           title: '获取地址信息失败',
@@ -197,9 +202,11 @@
         });
       }
 
-      for(let i = 0, len = res.length; i < len; i++){
-        addressList[i] = res[i];
-      }
+      // for(let i = 0, len = res.length; i < len; i++){
+      //   addressList[i] = res[i];
+      // }
+      
+      this.addressList = res;
       this.$apply();
 
       wx.hideLoading();
@@ -207,14 +214,16 @@
     
     async delete(id, index){
       let result = await addressApi.deleteAddress({ id, });
-              
+
       if(result){
-        this.data.addressList.splice(index - 1, 1);
+
+        this.data.addressList.splice(index, 1);
         this.$apply();
         return wx.showModal({
                 content:'删除成功',
                 showCancel:false
               });
+
       }
       
       wx.showModal({

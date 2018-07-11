@@ -48,19 +48,6 @@
 }
   
 
-.save{
-  position: absolute;
-  bottom: 30rpx;
-  width: 690rpx;
-  line-height: 90rpx;
-  margin: 0 auto;
-  font-size: 30rpx;
-  color: #fff;
-  background: linear-gradient(#e6002d, #e8441e);
-  text-align: center;
-}
-  
-
 .row_flex{
   display: flex;
   align-items: center;
@@ -82,6 +69,17 @@
 .center{
   display: flex;
   justify-content: center;
+  .save{
+    position: absolute;
+    bottom: 30rpx;
+    width: 690rpx;
+    line-height: 90rpx;
+    margin: 0 auto;
+    font-size: 30rpx;
+    color: #fff;
+    background: linear-gradient(#e6002d, #e8441e);
+    text-align: center;
+  }
 }
 
 .fc_gray{
@@ -89,11 +87,15 @@
 }
 
 .textarea{
-  height: 200rpx;
   padding: 50rpx 0 0;
   margin-bottom: 20rpx;
   padding-left: 23rpx;
   background: #fff;
+  textarea{
+    height: 200rpx;
+    font-size: 28rpx;
+    color: #999;
+  }
 }
 
 .space{
@@ -143,7 +145,7 @@
           </view>
 
           <view class='textarea'>
-            <textarea type='text' name='detail' class='inline' bindinput='setStreet' value='{{address.street}}' placeholder='请输入详细地址' />
+            <textarea type='text' name='detail' bindinput='setStreet' value='{{address.street}}' placeholder='请输入详细地址' />
           </view>
 
           <view class='setting'>
@@ -216,6 +218,12 @@
             icon: 'none',
             duration: 1000,
           });
+        }else if(this.baseAddress === '请选择'){
+          return wx.showToast({
+            title: '未选择省市区!',
+            icon: 'none',
+            duration: 1000,
+          });
         }else if(v.detail === ''){
           return wx.showToast({
             title: '详细地址不能为空!',
@@ -226,11 +234,10 @@
         console.log(v);
         this.data.address.id ? this.modifyAddress(this.data.address.id, v) : this.saveAddress(v);
 
-        this.data.isFirst ? wx.navigateBack({ delta: 2 }) : wx.navigateBack({});
+        // this.data.isFirst ? wx.navigateBack({ delta: 2 }) : wx.navigateBack({});
         // if(this.data.isFirst){
         //   return wx.navigateBack({ delta: 2 });
         // }
-        // wx.navigateBack({});
       },
       // picker
       openAddressPicker(){
@@ -242,10 +249,12 @@
         this.city = city;
         this.area = area;
         
-        this.baseAddress = province.name + ' ' + city.name + ' ' + area.name;
-        this.data.address.provinceId = province.code;
-        this.data.address.cityId = city.code;
-        this.data.address.zoneId = area.code;
+        let str = /北京|上海|天津|重庆/.test(province.name) ? '市' : '省'; 
+        
+        this.baseAddress = province.name + str + ' ' + city.name + '市 ' + area.name;
+        this.data.address.provinceId = province.id//province.code;
+        this.data.address.cityId = city.id//city.code;
+        this.data.address.zoneId = area.id//area.code;
         this.$apply();
         // console.log(this.address.consignee);
       }
@@ -262,45 +271,52 @@
       }
 
       let data = JSON.parse(decodeURIComponent(opt.address)),
-          address = this.data.address,
-          zone = await addressApi.getAddressDetail({
-            id: data.id,
-          });
-      // console.log(data);
+          address = this.data.address;
+          // zone = await addressApi.getAddressDetail({
+          //   id: data.id,
+          // })
+      
       for(let key in address){
         if(address.hasOwnProperty(key)){
           address[key] = data[key];
         }
       }
 
-      this.province = zone.zones[1];
-      this.city = zone.zones[2];
-      this.area = zone.zones[3];
+      this.province = data.zones[1];
+      this.city = data.zones[2];
+      this.area = data.zones[3];
 
-      this.baseAddress = zone.zones[1].name + ' ' + zone.zones[2].name + ' ' + zone.zones[3].name;
+      this.baseAddress = data.zones[1].name + ' ' + data.zones[2].name + ' ' + data.zones[3].name;
       this.$apply();
     }
 
     async saveAddress(address){
       
-      let res = await addressApi.saveAddress({
-        params: {
-          consignee: address.name,       // 收件人
-          phone: address.phone,          // 手机号 
-          provinceId: this.data.address.provinceId, // 省code
-          cityId: this.data.address.cityId,   // 市code
-          zoneId: this.data.address.zoneId,  // 区域code
-          street: address.detail,        // 详细地址
-          isDefault: this.data.isFirst ? true : address.isDefault,  // 是否为默认
-          certificateId: null,
-        },
-      });
+      try{
+        var res = await addressApi.saveAddress({
+          params: {
+            consignee: address.name,       // 收件人
+            phone: address.phone,          // 手机号 
+            provinceId: this.data.address.provinceId, // 省code
+            cityId: this.data.address.cityId,   // 市code
+            zoneId: this.data.address.zoneId,  // 区域code
+            street: address.detail,        // 详细地址
+            isDefault: this.data.isFirst ? true : address.isDefault,  // 是否为默认
+            // certificateId: null,
+          },
+        });
 
-      if(res){
-        return console.log('添加成功!');
+        if(res){
+          wx.showToast({ title: '添加成功!', icon: 'none', duration: 2000, });
+          return wx.navigateBack({});
+        }
+
+      }catch(e){
+        return wx.showToast({ title: 'error: --'+JSON.stringify(e), icon: 'none', duration: 2000, });
       }
       
-      console.log(`添加失败--${res}`);
+      // console.log(`添加失败--${res}`);
+      return wx.showToast({ title: '添加失败', icon: 'none', duration: 2000, });
       
     }
     
@@ -326,6 +342,7 @@
           showCancel: false
         });
         
+        return wx.navigateBack({});
       }
       
     }
