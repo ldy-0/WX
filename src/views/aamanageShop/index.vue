@@ -604,6 +604,8 @@ export default {
       this.listLoading = true
       let sendData = Object.assign({},this.listQuery)
       getShop_api(sendData).then(response => {
+        this.listLoading = false
+        
         if(response&&response.status==0){
           let result = response.data
           let tempTableData = []
