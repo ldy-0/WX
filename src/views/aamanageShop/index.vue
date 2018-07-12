@@ -117,7 +117,7 @@
   </span>
 </el-dialog>
 <el-container class="notice">
-<el-header class="header">
+<el-header class="header" style="height:auto;">
   <el-form :inline="true" :model="formInline" class="form">
     <el-form-item>
       <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增店铺</el-button>
@@ -140,14 +140,30 @@
       </el-select>
     </el-form-item>
     <el-button type="primary" icon="el-icon-search" @click="searchByDate">查询</el-button> -->
-  </el-form>       
+  </el-form>
+  <el-form :inline="true"  class="form">
+    <el-badge :value="selectedItem.length" style="margin-right:20px">
+      <el-button :type="selectedItem.length?'primary':''" round icon="el-icon-tickets">{{selectedItem.length>0?'已选'+selectedItem.length+'条目':'请勾选项目'}}</el-button>
+    </el-badge>
+    <el-form-item>
+      <el-button type="success" round @click="downMutilItem(1)"  :disabled="selectedItem.length<1">批量上架</el-button>
+    </el-form-item>
+    <el-form-item>
+      <el-button type="danger" round @click="downMutilItem(0)" :disabled="selectedItem.length<1">批量下架</el-button>
+    </el-form-item>
+  </el-form>          
 </el-header>
 <el-main>
     <el-table
       :data="tableData"
       stripe 
       v-loading="listLoading" element-loading-text="给我一点时间"
-      style="width: 100%" >
+      style="width: 100%" 
+      @selection-change="handleSelectionChange">
+      <el-table-column
+        type="selection"
+        width="55">
+      </el-table-column>
       <el-table-column
         label="店主姓名"
         prop="username"
@@ -291,6 +307,7 @@ export default {
         ],
       },
       //head
+      selectedItem:[],
       formInline: {},
       //body
       listLoading: false,
@@ -311,7 +328,10 @@ export default {
     }
   },
   methods: {
-
+    //test
+    // handleSelectionChange(row){
+    //   console.log(row)
+    // },
     //out
     getIndustryList(){ //获取 行业列表 
       return new Promise((res,rej)=>{
@@ -600,12 +620,14 @@ export default {
       this.getList()
     },
     //body
+    handleSelectionChange(row){ //批量处理
+      this.selectedItem = row
+    },
     getList() { //获取店铺列表
       this.listLoading = true
       let sendData = Object.assign({},this.listQuery)
       getShop_api(sendData).then(response => {
         this.listLoading = false
-        
         if(response&&response.status==0){
           let result = response.data
           let tempTableData = []
@@ -647,6 +669,8 @@ export default {
         console.log("getList",response)
         // this.list = response
         this.listLoading = false
+      }).catch(e=>{
+        this.listLoading = false
       })
     },
     editItem(index,rowData){
@@ -658,10 +682,22 @@ export default {
       this.isAddItem = false
       this.addNewShow = true
     },
-    async downShop(id,wantUp){
-      let sendData = {
-        store_id:id,
-        store_state:wantUp
+    async downShop(id,wantUp,mutil){
+      let sendData = {}
+      if(mutil){
+        let tempIdList = []
+        for(let i =0 ;i<this.selectedItem.length;i++){
+          tempIdList.push(this.selectedItem[i].id)
+        }
+        sendData = {
+          store_id:tempIdList,
+          store_state:wantUp
+        }
+      }else{
+        sendData = {
+          store_id:[id],
+          store_state:wantUp
+        }
       }
       upDownShop(sendData).then(res=>{
         if(res&&res.status===0){
@@ -683,6 +719,20 @@ export default {
       })
         
       
+    },
+    async downMutilItem(wantUp){
+        this.$confirm(`此操作将${wantUp===1?'批量上架':'批量下架'}该店铺, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.downShop(0,wantUp,true) //批量
+        }).catch(()=>{
+          this.$notify.info({
+            title: '消息',
+            message: '已取消'
+          });
+        })
     },
     async downItem(index,data,wantUp){
       let id = data.id

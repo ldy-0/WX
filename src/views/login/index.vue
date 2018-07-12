@@ -180,7 +180,6 @@ export default {
     }
   },
   created() {
-    window.hbs = this
     // window.addEventListener('hashchange', this.afterQRScan)
   },
   destroyed() {

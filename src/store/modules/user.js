@@ -113,7 +113,6 @@ const user = {
       // const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         loginByUsername(userInfo).then(response => {
-          console.log('store-user-loginbyusername',response)
           const data = response
           if(data&&data.status===0){
             //把getuserinfo的事情做完

@@ -14,14 +14,21 @@ export function test(data) {
 // sellerGoods
   export function addGoods_api(data) {
     return request({
-      url: '/api/v1/seller/goods',
+      url: '/api/v1/seller/goodscommon',
       method: 'post',
       data
     })
   }
   export function getGoodsList_api(data) {
     return request({
-      url: '/api/v1/seller/goods',
+      url: '/api/v1/seller/goodscommon',
+      method: 'get',
+      params: data
+    })
+  }
+  export function getGoods_api(data) {
+    return request({
+      url: '/api/v1/seller/goodscommon',
       method: 'get',
       params: data
     })
@@ -32,6 +39,13 @@ export function test(data) {
       url: '/api/v1/seller/school',
       method: 'get',
       params: data
+    })
+  }
+  export function upDownGoods_api(data) {
+    return request({
+      url: '/api/v1/admin/goodscommon',
+      method: 'put',
+      data
     })
   }
 // order => rOrder

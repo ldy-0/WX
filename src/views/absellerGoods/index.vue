@@ -8,6 +8,7 @@
   .out-dialog
     .el-dialog
       padding-right 10%
+      
 </style>
 
 <template>
@@ -15,14 +16,15 @@
   <!-- 编辑和添加共用 -->
 <el-dialog
   :title="isAddItem?'新增商品':'编辑商品'"
-  :visible.sync="addNewShow"
+  :visible.sync="addNewShow" 
+   
   width="70%" 
   class="out-dialog"
   >
   <el-dialog :visible.sync="dialogVisible" append-to-body>
     <img width="100%" :src="dialogImageUrl" alt="">
   </el-dialog>
-  <el-form :model="formForNotive"  ref="ruleForm" :rules="rules" size="medium" >
+  <el-form :model="formForNotive" v-loading="editLoading" ref="ruleForm" :rules="rules" size="medium" >
     <el-form-item  label="商品图片"  :label-width="formLabelWidth"  prop="fileList1">
           <el-upload 
           :auto-upload="false"
@@ -54,9 +56,9 @@
     <el-form-item label="商品名称" :label-width="formLabelWidth" prop="goodsName">
       <el-input v-model="formForNotive.goodsName" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="商品价格" :label-width="formLabelWidth" prop="goodsPrice">
+    <!-- <el-form-item label="商品价格" :label-width="formLabelWidth" prop="goodsPrice">
       <el-input v-model="formForNotive.goodsPrice" auto-complete="off"></el-input>
-    </el-form-item>
+    </el-form-item> -->
     <el-form-item label="商品编号" :label-width="formLabelWidth" prop="goodsNum">
       <el-input v-model="formForNotive.goodsNum" auto-complete="off"></el-input>
     </el-form-item>
@@ -70,9 +72,9 @@
         </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="商品库存" :label-width="formLabelWidth" prop="goodsTotal">
+    <!-- <el-form-item label="商品库存" :label-width="formLabelWidth" prop="goodsTotal">
       <el-input v-model="formForNotive.goodsTotal" auto-complete="off"></el-input>
-    </el-form-item>
+    </el-form-item> -->
     <el-form-item label="商品分类" :label-width="formLabelWidth" prop="industry">
       <!-- <el-input v-model="formForNotive.industry" auto-complete="off"></el-input> -->
       <el-select v-model="formForNotive.industry" placeholder="请选择行业">
@@ -216,17 +218,16 @@
   </span>
 </el-dialog>
 <el-container class="notice">
-<el-header class="header">
+<el-header class="header" style="height:auto;">
   <el-form :inline="true" :model="formInline" class="form">
     <el-form-item>
       <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增商品</el-button>
     </el-form-item>
-    <el-form-item>
+    <!-- 2018/7/12 取消搜索 -->
+    <!-- <el-form-item>
       <el-input style="width: 340px;" placeholder="请输入商品名称、编码" v-model="listQuery.search"></el-input>
-    </el-form-item>
-    <el-form-item>
       <el-button type="primary" icon="el-icon-search" @click="searchByDate">查询</el-button>
-    </el-form-item>
+    </el-form-item> -->
     <!-- 在listQuery中添加 ？ -->
     <!-- <el-form-item>
       <el-select v-model="industry" placeholder="请选择行业">
@@ -239,20 +240,37 @@
       </el-select>
     </el-form-item>
     <el-button type="primary" icon="el-icon-search" @click="searchByDate">查询</el-button> -->
-  </el-form>       
+  </el-form>
+  <el-form :inline="true"  class="form">
+    <el-badge :value="selectedItem.length" style="margin-right:20px">
+      <el-button :type="selectedItem.length?'primary':''" round icon="el-icon-tickets">{{selectedItem.length>0?'已选'+selectedItem.length+'条目':'请勾选项目'}}</el-button>
+    </el-badge>
+    <el-form-item>
+      <el-button type="success" round @click="downMutilItem(1)"  :disabled="selectedItem.length<1">批量上架</el-button>
+    </el-form-item>
+    <el-form-item>
+      <el-button type="danger" round @click="downMutilItem(0)" :disabled="selectedItem.length<1">批量下架</el-button>
+    </el-form-item>
+  </el-form>        
 </el-header>
 <el-main>
     <el-table
       :data="tableData"
       stripe 
-      v-loading="listLoading" element-loading-text="给我一点时间"
+      v-loading="listLoading" element-loading-text="给我一点时间" 
+      @selection-change="handleSelectionChange"
       style="width: 100%" >
-
+      <el-table-column
+        type="selection"
+        width="105">
+      </el-table-column>
       <el-table-column
         label="商品图片"
         >
         <template slot-scope="scope">
-          <img :src="scope.row.goodsImage" alt="" width="100px">
+          <div style="width:100px;height:100px;align-items:center;display:flex;">
+            <img :src="scope.row.goodsImage" alt="" style="width:100px">
+          </div>
         </template>
       </el-table-column>
       <el-table-column
@@ -270,68 +288,66 @@
         prop="goodsNum"
         >
       </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
         label="状态" 
         prop="goodsState"
         >
-      </el-table-column><el-table-column
+      </el-table-column> -->
+      <el-table-column
         label="价格" 
         prop="goodsPrice"
         >
-      </el-table-column><el-table-column
+      </el-table-column>
+      <!-- <el-table-column
         label="库存" 
         prop="goodsTotal"
         >
-      </el-table-column><el-table-column
+      </el-table-column> -->
+      <!-- <el-table-column
         label="销量" 
         prop="goodsSell"
         >
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         label="操作" 
         min-width='300px'
         >
         <template slot-scope="scope">
-        <el-button size="mini" type="primary" @click="editItem(scope.$index, scope.row)">编辑</el-button>
-        <el-button size="mini" type="danger" @click="lookItem(scope.$index, scope.row)">下架商品</el-button>
-        <el-button size="mini" type="info" @click="lookItem(scope.$index, scope.row)">查看明细</el-button>
+        <el-button size="mini" type="primary" @click="editItem(scope.$index, scope.row)">编辑和查看</el-button>
+        <el-button size="mini" type="danger" v-if="scope.row.isUp" @click="downItem(scope.$index, scope.row,0)">下架商品</el-button>
+        <el-button size="mini" v-else type="success" @click="downItem(scope.$index, scope.row,1)">上架商品</el-button>
         </template>
       </el-table-column>
     </el-table>
 </el-main>
-    <el-footer>
-      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
-      </el-pagination>
-    </el-footer>
+<el-footer>
+  <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
+  </el-pagination>
+</el-footer>
 </el-container>
 </div>
 </template>
 <script>
-import {addGoods_api,getGoodsList_api,getSchoolList_api} from '@/api/seller'
+import {addGoods_api,getGoodsList_api,getSchoolList_api,getGoods_api,upDownGoods_api} from '@/api/seller'
 import uploadFn from '@/utils/aahbs'
 
 const formForNotive = {
-
+        fileList1:[],
         goodsType:0,
-
         goodsName:'奥术大师',
-        goodsPrice:'100',
+        // goodsPrice:'100',
         goodsNum:'100',
         school:'',
-        goodsTotal:'100',
-
+        // goodsTotal:'100',
         industry:0,
-
-        goodsElement:'123',
-        goodsDescribe:'好东西',
-        goodsTrans:'1',
+        goodsDescribe:'暂无描述',
+        goodsTrans:'0',
         size:'one',
-        fileList1:[],
         fileList2:[],
       }
 const formForNotiveChild1 = {
-  price:'1',
-  count:'1'
+  price:'10',
+  count:'100'
 }
 const formForNotiveChild2List = [{
       }]
@@ -343,6 +359,7 @@ export default {
   data() {
     return {
       // out
+        editLoading:false,//此页面的编辑页为 获取单条详情方式，故添加loading
         imgLimit1:1,
         imgLimit2:2,
         dialogImageUrl: '',
@@ -376,18 +393,18 @@ export default {
               { required: true, message: '请输入商品名', trigger: 'blur' },
               { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
           ],
-          goodsPrice: [
-              { type:"string",required: true, message: '请输入商品价格', trigger: 'blur',min: 1},
-          ],
+          // goodsPrice: [
+          //     { type:"string",required: true, message: '请输入商品价格', trigger: 'blur',min: 1},
+          // ],
           goodsNum: [
               { type:"string",required: true, message: '请输入商品编号', trigger: 'blur',min: 1},
           ],
           school: [
               { type:"number",required: true, message: '请输入校区', trigger: 'blur'},
           ],
-          goodsTotal: [
-              { type:"string",required: true, message: '请输入库存', trigger: 'blur',min: 1},
-          ],
+          // goodsTotal: [
+          //     { type:"string",required: true, message: '请输入库存', trigger: 'blur',min: 1},
+          // ],
           industry: [
               { type:"number",required: true, message: '请输入行业', trigger: 'blur'},
           ],
@@ -443,6 +460,8 @@ export default {
         isAddItem:true,
       //head
         formInline: {},
+      //body
+        selectedItem:[],
       //FOOT
         listQuery_detail: {
           page: 1,
@@ -453,9 +472,6 @@ export default {
         total_detail:1,
       // --------------------
       //out
-      
-        
-      
       detailListLoading:false,
       detailShow:false,
       detailTableData:[
@@ -596,7 +612,7 @@ export default {
       },
       getFiles(arr){ //得到文件数组
         let files = []
-        let urls = []
+        let urls = [] 
         arr.forEach(item=>{
           if(item.raw){
             files.push(item.raw)
@@ -611,7 +627,6 @@ export default {
       },
       //添加新商品条目
       async addNewNotice(formName){
-        
           console.log(this.$refs)
           if(this.formForNotive.size === 'one'){
             //如果 size是统一 仅对统一表单进行验证
@@ -667,7 +682,9 @@ export default {
 
         this.waitAddNotice = true
         let sendData = {}
-        
+
+        // 类型转换
+        this.formForNotiveChild1.price =  this.formForNotiveChild1.price?Number(this.formForNotiveChild1.price):0
         //废物值
         sendData.cate_id = 764
         sendData.cate_name = '自定义分类'
@@ -682,11 +699,13 @@ export default {
         sendData.virtual_indate = ''
         sendData.is_platform_store = false
         sendData.is_virtual = false
-        
+
+        // 商品图片
         let urls1 = await uploadFn(this.formForNotive.fileList1[0].raw)
         sendData.goods_image = urls1[0]
         console.log('urls1',urls1,'-------------------------')
-        //万金油
+
+        // 商品详情 万金油
         let fileAndUrl = this.getFiles(this.formForNotive.fileList2)
         let files2 = fileAndUrl.files
         console.log('files2',files2,'-------------------------')
@@ -695,10 +714,23 @@ export default {
         let urls2 = urls2Piece1.concat(fileAndUrl.urls)
         sendData.goods_body= urls2?JSON.stringify(urls2):''
 
-        // return alert('图片上传完毕')
+        // 商品类型 
         sendData.is_appoint= this.formForNotive.goodsType===1
+        //商品名称
         sendData.goods_name= this.formForNotive.goodsName
-        sendData.goods_price= this.formForNotive.goodsPrice
+        //商品价格
+        if(this.formForNotive.size === 'one'){
+          sendData.goods_price= this.formForNotiveChild1.price
+          sendData.goods_marketprice = this.formForNotiveChild1.price
+          sendData.goods_costprice = this.formForNotiveChild1.price
+        }else{
+          // 类型转换
+          let temp = this.formForNotiveChild2List[0].price?Number(this.formForNotiveChild2List[0].price):0
+          sendData.goods_price= temp
+          sendData.goods_marketprice = temp
+          sendData.goods_costprice = temp
+        }
+        // 商品编号
         sendData.goods_serial= this.formForNotive.goodsNum
         // 校区
         sendData.school_id= this.formForNotive.school
@@ -709,24 +741,195 @@ export default {
             break
           }
         }
-        //库存
-        sendData.goodsTotal= this.formForNotive.goodsTotal
-        //自定义分类
-        sendData.storegc_id= this.formForNotive.industry
-        sendData.goods_advword= this.formForNotive.goodsDescribe
-        sendData.goods_freight= this.formForNotive.goodsTrans
+        
+        //库存 放在规格里 sendData.goodsTotal= this.formForNotive.goodsTotal
 
-        // sendData.is_appoint= this.formForNotive.goodsElement
+        //分类
+        sendData.storegc_id= this.formForNotive.industry
+        //描述
+        sendData.goods_advword= this.formForNotive.goodsDescribe
         //规格
         sendData.spec_name= this.formForNotive.size
-        if(this.formForNotive.size=='one'){
-          //如果是 统一规格 formForNotiveChild2List 
-          sendData.spec_value = this.formForNotiveChild1.price
-          sendData.goods_storage = this.formForNotive.goodsTotal
-          sendData.spec = []
+        if(this.formForNotive.size === 'one'){
+          //单规格
+          sendData.spec_value= null
+          sendData.goods_storage= this.formForNotiveChild1.count
         }else{
-          //多规格
+          // 多规格
           let tempMutil = []
+          let tempSepc_value = []
+          for(let i=0,len=this.formForNotiveChild2List.length;i<len;i++){
+            tempMutil.push({
+              price:this.formForNotiveChild2List[i].price,
+              marketprice:this.formForNotiveChild2List[i].price,
+              sp_value:this.formForNotiveChild2List[i].name,
+              stock:this.formForNotiveChild2List[i].count
+            })
+            tempSepc_value.push(this.formForNotiveChild2List[i].name)
+          }
+          sendData.spec_value = tempSepc_value
+          sendData.goods_storage = ''
+          sendData.spec = tempMutil
+        }
+        // 运费
+        sendData.goods_freight= this.formForNotive.goodsTrans
+
+        addGoods_api(sendData).then(data=>{
+          this.waitAddNotice = false
+          this.addNewShow = false
+          if(data.status===0){
+            this.$notify({
+              title: '上传成功',
+              message: '已新增商品',
+              type: 'success'
+            })
+            this.getList()
+          }else{
+            this.$notify({
+              title: '上传失败',
+              message: '新增商品失败',
+              type: 'error'
+            })
+          }
+        }).catch(e=>{
+          this.waitAddNotice = false
+          this.addNewShow = false
+          console.error('manageShop:addGoods_api 接口错误')
+        })
+      },
+      async editNewNotice(formName){
+
+          console.log(this.$refs)
+          if(this.formForNotive.size === 'one'){
+            //如果 size是统一 仅对统一表单进行验证
+            let resChild1 = await new Promise((res,rej)=>{
+              this.$refs['ruleFormChild1'].validate((valid) => {
+                  if (valid) {
+                    // alert('submit!');
+                    res(true)
+                  } else {
+                    res(false)
+                    // console.log('error submit!!');
+                    // return false;
+                  }
+                })
+              })
+              if(!resChild1){
+                return 
+              }
+          }else{
+            //如果 size是 多个 仅对 多个表单进行验证
+            let formChild2PromiseList = []
+            for(let i=0;i<this.formForNotiveChild2List.length;i++){
+              console.log(this.formForNotiveChild2List.length)
+              let one = new Promise((res,rej)=>{
+                this.$refs['ruleFormChild2'][i].validate((valid) => {
+                    res(valid)
+                  })
+                })
+              formChild2PromiseList.push(one)
+            }
+            let resChild2 = await Promise.all(formChild2PromiseList)
+              if(!resChild2){
+                return 
+              }
+          }
+        //基础验证
+        let res = await new Promise((res,rej)=>{
+          this.$refs[formName].validate((valid) => {
+              if (valid) {
+                // alert('submit!');
+                res(true)
+              } else {
+                res(false)
+                // console.log('error submit!!');
+                // return false;
+              }
+            })
+          })
+          if(!res){
+            return 
+          }
+        // 通过验证
+
+        this.waitAddNotice = true
+        let sendData = {}
+
+        // 类型转换
+        this.formForNotiveChild1.price =  this.formForNotiveChild1.price?Number(this.formForNotiveChild1.price):0
+        //废物值
+        sendData.cate_id = 764
+        sendData.cate_name = '自定义分类'
+        sendData.type_id = 0
+        sendData.mobile_body = 764
+        sendData.goods_marketprice = this.formForNotive.goodsPrice
+        sendData.goods_costprice = this.formForNotive.goodsPrice
+        sendData.goods_discount = 1
+        // 近似 废物值
+        sendData.is_virtual = false
+        sendData.virtual_limit = 10
+        sendData.virtual_indate = ''
+        sendData.is_platform_store = false
+        sendData.is_virtual = false
+
+        // 商品图片
+        let urls1 = await uploadFn(this.formForNotive.fileList1[0].raw)
+        sendData.goods_image = urls1[0]
+        console.log('urls1',urls1,'-------------------------')
+
+        // 商品详情 万金油
+        let fileAndUrl = this.getFiles(this.formForNotive.fileList2)
+        let files2 = fileAndUrl.files
+        console.log('files2',files2,'-------------------------')
+        let urls2Piece1 = await uploadFn(files2)
+        console.log('urls2Piece1',urls2Piece1,'-------------------------')
+        let urls2 = urls2Piece1.concat(fileAndUrl.urls)
+        sendData.goods_body= urls2?JSON.stringify(urls2):''
+
+        // 商品类型 
+        sendData.is_appoint= this.formForNotive.goodsType===1
+        //商品名称
+        sendData.goods_name= this.formForNotive.goodsName
+        //商品价格
+        if(this.formForNotive.size === 'one'){
+          sendData.goods_price= this.formForNotiveChild1.price
+          sendData.goods_marketprice = this.formForNotiveChild1.price
+          sendData.goods_costprice = this.formForNotiveChild1.price
+        }else{
+          // 类型转换
+          let temp = this.formForNotiveChild2List[0].price?Number(this.formForNotiveChild2List[0].price):0
+          sendData.goods_price= temp
+          sendData.goods_marketprice = temp
+          sendData.goods_costprice = temp
+        }
+        // 商品编号
+        sendData.goods_serial= this.formForNotive.goodsNum
+        // 校区
+        sendData.school_id= this.formForNotive.school
+        for(let i=0,len=this.schoolList.length;i<len;i++){
+          //获取校区名
+          if(this.schoolList[i].value===this.formForNotive.school){
+            sendData.school_name = this.schoolList[i].label
+            break
+          }
+        }
+        
+        //库存 放在规格里 sendData.goodsTotal= this.formForNotive.goodsTotal
+
+        //分类
+        sendData.storegc_id= this.formForNotive.industry
+        //描述
+        sendData.goods_advword= this.formForNotive.goodsDescribe
+        //规格
+        sendData.spec_name= this.formForNotive.size
+        if(this.formForNotive.size === 'one'){
+          //单规格
+          sendData.spec_value= null
+          sendData.goods_storage= this.formForNotiveChild1.count
+        }else{
+          // 多规格
+          let tempMutil = []
+          let tempSepc_value = []
           for(let i=0,len=this.formForNotiveChild2List.length;i<len;i++){
             tempMutil.push({
               price:this.formForNotiveChild2List[i].price,
@@ -734,18 +937,15 @@ export default {
               sp_value:this.formForNotiveChild2List[i].name,
               stock:this.formForNotiveChild2List[i].count
             })
+            tempSepc_value.push(this.formForNotiveChild2List[i].name)
           }
-          sendData.spec_value = ''
+          sendData.spec_value = tempSepc_value
           sendData.goods_storage = ''
           sendData.spec = tempMutil
         }
+        // 运费
+        sendData.goods_freight= this.formForNotive.goodsTrans
 
-        // sendData.is_appoint= this.formForNotive.
-        // sendData.is_appoint= this.formForNotive.
-        // sendData.is_appoint= this.formForNotive.
-        // sendData.is_appoint= this.formForNotive.
-        // sendData.is_appoint= this.formForNotive.
-        // sendData.is_appoint= this.formForNotive.
         addGoods_api(sendData).then(data=>{
           this.waitAddNotice = false
           this.addNewShow = false
@@ -771,7 +971,6 @@ export default {
       },
     //head
       addItem(){ //显示 弹框
-        // this.editLoading = false
         this.isAddItem = true
         this.addNewShow = true
         this.formForNotive = Object.assign({},formForNotive)
@@ -779,14 +978,158 @@ export default {
         this.formForNotiveChild2List = Object.assign([],formForNotiveChild2List)
       },
     //body
-      editItem(){
+      handleSelectionChange(row){ //批量处理
+        this.selectedItem = row
+      },
+      editItem(index,raw){ //由于该页面结构出现变化 故该方法需要给 正式方法传一个id
+        if(!raw||!raw.id){
+            this.$notify.error({
+              title: '错误',
+              message: 'id不存在'
+          })
+          return
+        }
         this.isAddItem = false
         this.addNewShow = true
-        //获取数据 填充form
-        this.formForNotive =  Object.assign({},this.tableData) 
+        this.editLoading = true
+        let id = raw.id
+        let sendData = {
+          goods_commonid:id
+        }
+        getGoods_api(sendData).then(data=>{
+          this.editLoading = false
+          this.waitAddNotice = false
+          if(data.status===0){
+            data = data.data 
+            //获取数据成功，这填充数据，三个formNative
+            let tempForm = {}
+            //商品图片
+            tempForm.fileList1 = [{url:data.goods_image}]
+            tempForm.goodsType = data.is_appoint 
+            tempForm.goodsName = data.goods_name
+            tempForm.goodsNum = data.goods_serial
+            tempForm.school = data.school_id
+            tempForm.industry = Number(data.goods_stcids)
+            tempForm.goodsDescribe = data.goods_advword
+            tempForm.size = data.spec_value?'mutil':'one'
+            tempForm.goodsTrans = data.goods_freight
+            console.log(tempForm)
+            try{
+              let tempImgs = JSON.parse(data.goods_body)
+              let tempFileList2 = []
+              for(let i=0,len = tempImgs.length;i<len;i++){
+                tempFileList2.push({
+                  url:tempImgs[i]
+                })
+              }
+              tempForm.fileList2 = tempFileList2
+            }catch(error){
+              tempForm.fileList2 = []
+            }
+            this.formForNotive = tempForm //基础form完成填充
+            // 此时需要 判断 规格 单或多
+            let tempForm2 = {} //单规格 零时变量
+            let tempForm3 = [] //多规格 零时变量
+            if(tempForm.size==='mutil'){
+                for(let i = 0 ,len = data.SKUList.length;i<len;i++){
+                  tempForm3.push({
+                    price:data.SKUList[i].goods_price,
+                    name:data.SKUList[i].goods_spec,
+                    count:data.SKUList[i].goods_storage,
+                  })
+                }
+                this.formForNotiveChild2List = tempForm3 
+            }else{
+              tempForm2 = {
+                price:data.goods_price,
+                count:data.SKUList[0].goods_storage
+              }
+              this.formForNotiveChild1 = tempForm2
+            }
+          }else{
+            this.$notify({
+              title: '失败',
+              message: '数据获取失败',
+              type: 'error'
+            })
+          }
+        }).catch(e=>{
+          this.waitAddNotice = false
+          this.editLoading = false
+          console.error('manageShop:getGoods_api 接口错误')
+        })
+        // this.formForNotive =  Object.assign({},this.tableData)
 
         // this.formForNotiveChild1 = Object.assign({},formForNotiveChild1)
         // this.formForNotiveChild2List = Object.assign([],formForNotiveChild2List)
+      },
+      async downShop(id,wantUp,mutil){ //批量传mutil
+        let sendData = {
+          goods_commonid:[id],
+          type:wantUp===0?'offline':'online'
+        }
+        if(mutil){
+          let tempIdList = []
+          for(let i =0 ;i<this.selectedItem.length;i++){
+            tempIdList.push(this.selectedItem[i].id)
+          }
+          sendData = {
+            goods_commonid:tempIdList,
+            type:wantUp===0?'offline':'online'
+          }
+        }else{
+          sendData = {
+            goods_commonid:[id],
+            type:wantUp===0?'offline':'online'
+          }
+        }
+        upDownGoods_api(sendData).then(res=>{
+          if(res&&res.status===0){
+              this.$notify({
+              title: '成功',
+              message: '操作成功',
+              type:'success'
+            });
+            this.getList()
+          }else{
+            this.$notify({
+              title: '错误',
+              message: '操作失败',
+              type:'error'
+            });
+          }
+        }).catch(err=>{
+          console.error('upDownShop')
+        })
+      },
+      async downMutilItem(wantUp){
+        this.$confirm(`此操作将${wantUp===1?'批量上架':'批量下架'}该商品, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.downShop(0,wantUp,true) //批量
+        }).catch(()=>{
+          this.$notify.info({
+            title: '消息',
+            message: '已取消'
+          });
+        })
+      },
+      async downItem(index,data,wantUp){
+        let id = data.id
+        this.$confirm(`此操作将${wantUp===1?'上架':'下架'}该商品, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.downShop(id,wantUp)
+        }).catch(()=>{
+          this.$notify.info({
+            title: '消息',
+            message: '已取消'
+          });
+        })
       },
       getList() {
         this.listLoading = true
@@ -795,7 +1138,7 @@ export default {
         //   delete sendData.time
         // }
         getGoodsList_api(sendData).then(response => {
-          
+          // 这里由于结构做了调整，导致编辑页面需要的数据无法从列表获取，这里只需要给tableData额外传一个id
           if(response&&response.status==0){
             let result = response.data
             let tempTableData = []
@@ -825,7 +1168,8 @@ export default {
               
               tempTableData.push({
                 //后端生成
-                id:aData.goods_id,
+                id:aData.goods_commonid,
+                isUp:aData.goods_state,
                 //前后统一
                 
                 goodsImage:aData.goods_image,//显示
@@ -835,27 +1179,27 @@ export default {
                 goodsName:aData.goods_name,//显示
                 goodsPrice:aData.goods_price,//显示
                 goodsNum:aData.goods_serial,//显示
-                goodsState:'在售',//显示 ！！！ 掩耳盗铃
-                goodsSell:Math.floor(Math.random()*1000),//显示 ！！！ 掩耳盗铃
-                school:aData.school_id,
+                // goodsState:'在售',//显示 ！！！ 掩耳盗铃
+                // goodsSell:Math.floor(Math.random()*1000),//显示 ！！！ 掩耳盗铃
+                // school:aData.school_id,
                 //库存没有接受的字段
-                goodsTotal:goodsTotal,//显示
+                // goodsTotal:goodsTotal,//显示
 
-                industry:aData.storegc_id,
+                // industry:aData.storegc_id, 
                 // goodsElement:aData.store_id,
-                goodsDescribe:aData.goods_advword,
-                goodsTrans:aData.goods_freight,
-                size:aData.spec_name,
+                // goodsDescribe:aData.goods_advword,
+                // goodsTrans:aData.goods_freight,
+                // size:aData.spec_name,
 
                 //child1 one 类型的表单
-                childForm1:{
-                  price:aData.spec_value,
-                  count:aData.goods_storage
-                },
+                // childForm1:{
+                //   price:aData.spec_value,
+                //   count:aData.goods_storage
+                // },
                 //child2 mutil类型的表单
-                childForm2:[],
-                fileList1:temp_fileList1,
-                fileList2:temp_fileList2,
+                // childForm2:[],
+                // fileList1:temp_fileList1,
+                // fileList2:temp_fileList2,
               })
             })
             this.tableData = tempTableData
@@ -865,6 +1209,8 @@ export default {
           }
           console.log("getList",response)
           // this.list = response
+          this.listLoading = false
+        }).catch(e=>{
           this.listLoading = false
         })
       },
