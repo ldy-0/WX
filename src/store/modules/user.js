@@ -1,5 +1,5 @@
 import { loginByUsername,loginByAdminname, logout, getUserInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken,setRoles } from '@/utils/auth'
 import store from '@/store'
 
 const user = {
@@ -80,8 +80,6 @@ const user = {
       // const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         loginByAdminname(userInfo).then(response => {
-        console.log('store-user-loginbyAdminname',response)
-          
           const data = response
           if(data&&data.status===0){
             //把getuserinfo的事情做完
@@ -94,9 +92,7 @@ const user = {
             }else{
               roles.push('admin2')
             }
-            commit('SET_ROLES', roles)
-
-            commit('SET_HASGETROLE', 'admin')
+            setRoles(JSON.stringify(roles))
             resolve()
           }else{
             //接口ok，权限问题，提示登出
@@ -125,9 +121,7 @@ const user = {
             }else{
               roles.push('seller2')
             }
-            commit('SET_ROLES', roles)
-
-            commit('SET_HASGETROLE', 'seller')
+            setRoles(JSON.stringify(roles))
             resolve()
           }else{
             //接口ok，权限问题，提示登出
