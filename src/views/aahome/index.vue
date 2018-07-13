@@ -9,8 +9,8 @@
 </style>
 
 <template>
-  <div class="dashboard-container">
-    <el-form :model="formForNotive" >
+  <div class="dashboard-container" id="home">
+    <!-- <el-form :model="formForNotive" >
       <el-form-item  label="所属行业" >
         <el-select v-model="formForNotive.industry" placeholder="请选择行业">
           <el-option
@@ -21,7 +21,7 @@
           </el-option>
         </el-select>
       </el-form-item>
-    </el-form>
+    </el-form> -->
     <!-- <input type="file" ref="i1" multiple >
     <button ref="b1" @click="upload">upload</button>
     <button  @click="getfile">getfile</button> -->
@@ -37,17 +37,14 @@ import seller from './seller'
 import {test} from '@/api/seller'
 
 import uploadFn from '@/utils/aahbs'
+let stop = false
 
 export default {
+  mounted(){
+  },
+  beforeDestroy(){
+  },
   created() {
-    test().then(data=>{
-      console.log(data)
-    })
-    if (this.roles.includes('admin')||this.roles.includes('admin2')) {
-      this.currentRole = 'admin'
-    }else{
-      this.currentRole = 'seller'
-    }
   },
   name: 'home',
   components: { 
@@ -56,6 +53,9 @@ export default {
   },
   data() {
     return {
+      //
+      timer:"",
+      timer2:"",
       formForNotive:{
         industry:'edu',
       },
@@ -86,10 +86,6 @@ export default {
     ])
   },
   
-  mounted(){
-    setTimeout(()=>{
-      this.down = 'hbs-down'
-    },1000)
-  }
+  
 }
 </script>

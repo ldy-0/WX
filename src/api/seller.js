@@ -2,15 +2,15 @@ import request from '@/utils/request'
 
 // test
 
-export function test(data) {
-  return request({
-    url: '/api/v1/seller/school',
-    method: 'get',
-    params: {
-      limit:0
-    }
-  })
-}
+  export function test(data) {
+    return request({
+      url: '/api/v1/seller/school',
+      method: 'get',
+      params: {
+        limit:0
+      }
+    })
+  }
 // sellerGoods
   export function addGoods_api(data) {
     return request({
@@ -59,9 +59,17 @@ export function test(data) {
   
 // order => rOrder
   export function getROrderList_api(data) {
-    console.log('inner getPostionList_api')
     return request({
       url: '/api/v1/seller/order',
+      method: 'get',
+      params: data
+    })
+  }
+
+// appointment
+  export function getAppointmentList_api(data) {
+    return request({
+      url: '/api/v1/seller/appointment',
       method: 'get',
       params: data
     })

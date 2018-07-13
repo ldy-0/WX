@@ -8,7 +8,7 @@
 <div>
   <!-- 编辑和添加共用 -->
 <el-dialog
-  :title="isAddItem?'新增动态':'编辑动态'"
+  title="新增动态"
   :visible.sync="addNewShow"
   width="80%"
   >

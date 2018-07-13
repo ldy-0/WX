@@ -17,7 +17,7 @@ service.interceptors.request.use(config => {
   // Do something before request is sent
   console.log('store.getters.token',store.getters.token)
   console.log('getToken()',getToken())
-  if (store.getters.token) {
+  if (getToken()) {
     // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
     config.headers['token'] = getToken()
   }
@@ -51,7 +51,16 @@ service.interceptors.response.use(
       // })
       // store.dispatch('FedLogOut')
       return Promise.reject('request.js拦截响应 res.status == 1')
-    } else {
+    } else if(res&&res.status === 10){
+        Message({
+          message: res.error,
+          type: 'error',
+          duration: 5 * 1000
+        })
+        store.dispatch('FedLogOut').then(() => {
+          location.reload() 
+        })
+    }else  {
       return response.data
     }
   },

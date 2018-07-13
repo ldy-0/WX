@@ -7,3 +7,17 @@ export function upFileToken_api(data) {
     params: data
   })
 }
+export function changePasswordForAdmin_api(data) {
+  return request({
+    url: '/api/v1/admin/password',
+    method: 'post',
+    data
+  })
+}
+export function changePasswordForSeller_api(data) {
+  return request({
+    url: '/api/v1/seller/password',
+    method: 'post',
+    data
+  })
+}
