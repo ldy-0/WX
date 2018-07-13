@@ -26,6 +26,13 @@ export function test(data) {
       params: data
     })
   }
+  export function editGoods_api(data) {
+    return request({
+      url: '/api/v1/seller/goodscommon',
+      method: 'put',
+      data
+    })
+  }
   export function getGoods_api(data) {
     return request({
       url: '/api/v1/seller/goodscommon',
@@ -43,11 +50,13 @@ export function test(data) {
   }
   export function upDownGoods_api(data) {
     return request({
-      url: '/api/v1/admin/goodscommon',
+      url: '/api/v1/seller/goodscommon',
       method: 'put',
       data
     })
   }
+  
+  
 // order => rOrder
   export function getROrderList_api(data) {
     console.log('inner getPostionList_api')

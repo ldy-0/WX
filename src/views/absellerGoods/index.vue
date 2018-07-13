@@ -162,9 +162,12 @@
   </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="addNewShow = false">取 消</el-button>
-    <el-button type="primary" @click="addNewNotice('ruleForm')"
+     <el-button v-if="isAddItem" type="primary" @click="addNewNotice('ruleForm')"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确 定</el-button>
+     <el-button v-else type="primary" @click="editNewNotice('ruleForm')"
+     :disabled="waitAddNotice"
+     :loading="waitAddNotice">确认修改</el-button>
   </span>
 </el-dialog>
 <el-dialog
@@ -328,7 +331,7 @@
 </div>
 </template>
 <script>
-import {addGoods_api,getGoodsList_api,getSchoolList_api,getGoods_api,upDownGoods_api} from '@/api/seller'
+import {addGoods_api,getGoodsList_api,getSchoolList_api,getGoods_api,upDownGoods_api,editGoods_api} from '@/api/seller'
 import uploadFn from '@/utils/aahbs'
 
 const formForNotive = {
@@ -353,7 +356,7 @@ const formForNotiveChild2List = [{
       }]
 export default {
   created(){
-    this.getSchoolList()
+    // this.getSchoolList()
     this.getList()
   },
   data() {
@@ -652,7 +655,14 @@ export default {
               console.log(this.formForNotiveChild2List.length)
               let one = new Promise((res,rej)=>{
                 this.$refs['ruleFormChild2'][i].validate((valid) => {
-                    res(valid)
+                    if (valid) {
+                      // alert('submit!');
+                      res(true)
+                    } else {
+                      rej(false)
+                      // console.log('error submit!!');
+                      // return false;
+                    }
                   })
                 })
               formChild2PromiseList.push(one)
@@ -798,8 +808,6 @@ export default {
         })
       },
       async editNewNotice(formName){
-
-          console.log(this.$refs)
           if(this.formForNotive.size === 'one'){
             //如果 size是统一 仅对统一表单进行验证
             let resChild1 = await new Promise((res,rej)=>{
@@ -824,7 +832,14 @@ export default {
               console.log(this.formForNotiveChild2List.length)
               let one = new Promise((res,rej)=>{
                 this.$refs['ruleFormChild2'][i].validate((valid) => {
-                    res(valid)
+                    if (valid) {
+                      // alert('submit!');
+                      res(true)
+                    } else {
+                      rej(false)
+                      // console.log('error submit!!');
+                      // return false;
+                    }
                   })
                 })
               formChild2PromiseList.push(one)
@@ -851,20 +866,28 @@ export default {
             return 
           }
         // 通过验证
-
+        
         this.waitAddNotice = true
         let sendData = {}
-
+        // gc_id
+        //id
+        sendData.goods_commonid = this.formForNotive.id
+        //good_state
+        sendData.goods_state = this.formForNotive.isUp
         // 类型转换
         this.formForNotiveChild1.price =  this.formForNotiveChild1.price?Number(this.formForNotiveChild1.price):0
-        //废物值
-        sendData.cate_id = 764
-        sendData.cate_name = '自定义分类'
-        sendData.type_id = 0
+        //废物值 编辑特殊情况
+        if(this.formForNotive.size === 'mutil'){
+          sendData.goods_commend = 0
+          sendData.gc_id = 764
+          sendData.cate_id = 764
+          sendData.cate_name = '自定义分类'
+          sendData.type_id = 0
+          sendData.goods_discount = 1
+        }
         sendData.mobile_body = 764
         sendData.goods_marketprice = this.formForNotive.goodsPrice
         sendData.goods_costprice = this.formForNotive.goodsPrice
-        sendData.goods_discount = 1
         // 近似 废物值
         sendData.is_virtual = false
         sendData.virtual_limit = 10
@@ -873,9 +896,15 @@ export default {
         sendData.is_virtual = false
 
         // 商品图片
-        let urls1 = await uploadFn(this.formForNotive.fileList1[0].raw)
-        sendData.goods_image = urls1[0]
-        console.log('urls1',urls1,'-------------------------')
+        console.log(this.formForNotive.fileList1[0],'商品图片-----')
+        if(this.formForNotive.fileList1[0].raw){
+          let urls1 = await uploadFn(this.formForNotive.fileList1[0].raw)
+          sendData.goods_image = urls1[0]
+          console.log('urls1',urls1,'-------------------------')
+        }else{
+           sendData.goods_image = this.formForNotive.fileList1[0].url
+        }
+        
 
         // 商品详情 万金油
         let fileAndUrl = this.getFiles(this.formForNotive.fileList2)
@@ -917,23 +946,27 @@ export default {
         //库存 放在规格里 sendData.goodsTotal= this.formForNotive.goodsTotal
 
         //分类
-        sendData.storegc_id= this.formForNotive.industry
+        if(this.formForNotive.size === 'one'){
+          sendData.goods_stcids= this.formForNotive.industry
+        }else{
+          sendData.storegc_id= this.formForNotive.industry
+        }
         //描述
         sendData.goods_advword= this.formForNotive.goodsDescribe
         //规格
-        sendData.spec_name= this.formForNotive.size
         if(this.formForNotive.size === 'one'){
           //单规格
-          sendData.spec_value= null
+          // sendData.spec_value= null
           sendData.goods_storage= this.formForNotiveChild1.count
         }else{
+          sendData.spec_name= this.formForNotive.size
           // 多规格
           let tempMutil = []
           let tempSepc_value = []
           for(let i=0,len=this.formForNotiveChild2List.length;i<len;i++){
             tempMutil.push({
               price:this.formForNotiveChild2List[i].price,
-              marketpriceprice:this.formForNotiveChild2List[i].price,
+              marketprice:this.formForNotiveChild2List[i].price,
               sp_value:this.formForNotiveChild2List[i].name,
               stock:this.formForNotiveChild2List[i].count
             })
@@ -946,7 +979,7 @@ export default {
         // 运费
         sendData.goods_freight= this.formForNotive.goodsTrans
 
-        addGoods_api(sendData).then(data=>{
+        editGoods_api(sendData).then(data=>{
           this.waitAddNotice = false
           this.addNewShow = false
           if(data.status===0){
@@ -1003,6 +1036,10 @@ export default {
             data = data.data 
             //获取数据成功，这填充数据，三个formNative
             let tempForm = {}
+            tempForm.id = data.goods_commonid
+            //
+            
+            tempForm.isUp = data.goods_state 
             //商品图片
             tempForm.fileList1 = [{url:data.goods_image}]
             tempForm.goodsType = data.is_appoint 
@@ -1042,7 +1079,7 @@ export default {
             }else{
               tempForm2 = {
                 price:data.goods_price,
-                count:data.SKUList[0].goods_storage
+                count:data.SKUList[0].goods_storage.toString()
               }
               this.formForNotiveChild1 = tempForm2
             }
