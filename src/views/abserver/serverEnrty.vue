@@ -8,15 +8,15 @@
 <div>
   <!-- 编辑和添加共用 -->
 <el-dialog
-  :title="isAddItem?'新增轮播图':'编辑轮播图'"
+  title="编辑"
   :visible.sync="addNewShow"
   width="80%"
   >
   <el-dialog :visible.sync="dialogVisible" append-to-body>
     <img width="100%" :src="dialogImageUrl" alt="">
   </el-dialog>
-  <el-form :model="formForNotive">
-      <el-form-item  label="图片"  :label-width="formLabelWidth">
+  <el-form :model="formForNotive"  ref="ruleForm" :rules="rules" size="medium" >
+      <el-form-item  label="商品图片"  :label-width="formLabelWidth"  prop="fileList1">
           <el-upload 
           :auto-upload="false"
             action=""
@@ -24,50 +24,22 @@
           list-type="picture-card" 
           :on-success="onsuccess"
           :on-preview="preview"
-          :on-remove="remove" 
-          :on-change="change" 
+          :on-remove="remove1" 
+          :on-change="change1" 
           :before-upload="beforeup" 
           :before-remove="beforere" 
-          :file-list="fileList1"
+          :file-list="formForNotive.fileList1"
           >
           <i class="el-icon-plus"></i>
         </el-upload>
-    </el-form-item>
-    <el-form-item label="标题" :label-width="formLabelWidth">
-      <el-input v-model="formForNotive.title" auto-complete="off"></el-input>
-    </el-form-item>
-    {{jumpType}}
-    <el-form-item label="跳转类型" :label-width="formLabelWidth">
-        <el-select v-model="jumpType" placeholder="请选择">
-            <el-option
-            v-for="item in jumpTypeOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-            </el-option>
-        </el-select>
-    </el-form-item>
-    <el-form-item v-if="jumpType=='tiao'" label="跳转图片" :label-width="formLabelWidth" >
-      <el-upload 
-              :auto-upload="false"
-                action=""
-                :limit="imgLimit1"
-              list-type="picture-card" 
-              :on-success="onsuccess" 
-              :on-preview="preview" 
-              :on-remove="remove" 
-              :on-change="change" 
-              :before-upload="beforeup" 
-              :before-remove="beforere" 
-              :file-list="fileList2" 
-              >
-              <i class="el-icon-plus"></i>
-        </el-upload>
-    </el-form-item>
+      </el-form-item>
+      <el-form-item label="标题" :label-width="formLabelWidth">
+        <el-input v-model="formForNotive.title" auto-complete="off"></el-input>
+      </el-form-item>
   </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="addNewShow = false">取 消</el-button>
-    <el-button type="primary" @click="addNewNotice"
+    <el-button type="primary" @click="editNewNotice"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确 定</el-button>
   </span>
@@ -108,43 +80,37 @@
 <script>
 // getList 接口 获取
 // addNotice 接口 添加
+import {getEntryList_api,editEntry_api} from '@/api/seller'
+import uploadFn from '@/utils/aahbs'
+
 export default {
   data() {
     return {
       //out
-      dialogImageUrl: '',
       imgLimit1:1,
-        dialogVisible: false,
-        fileList1: [{url: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3994633895,563142661&fm=27&gp=0.jpg'}],
-        fileList2: [{url: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3994633895,563142661&fm=27&gp=0.jpg'}],
-      jumpType:'butiao',
-      jumpTypeOptions:[{
-          value:'tiao',
-          label:'跳'
-      },{
-          value:'butiao',
-          label:'bu跳'
-      }],
-      
-      isAddItem:true,
+      dialogImageUrl: '',
+      dialogVisible: false,
       waitAddNotice:false,
-      formForNotive:{
-        name:'奥术大师',
-        value:'100',
+
+      formForNotive:{},
+      rules: {
+        fileList1:[
+            {
+              type: "array", required: true, len: 1,
+              message: '请选择一张图片',
+            }
+        ],
+        title: [
+              { required: true, message: '请输入标题', trigger: 'blur' },
+              { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+          ],
       },
       addNewShow:false,
       formLabelWidth:'80px',
       //header
-      industry:'',
-      formInline: {},
       // body 
       listLoading: false,
-      tableData: [
-        {
-          image:'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=2544791346,860572115&fm=27&gp=0.jpg',
-          title:'音乐',
-        }
-      ],
+      tableData: [],
       // footer
       listQuery: {
         page: 1,
@@ -155,17 +121,20 @@ export default {
       total:1,
     }
   },
+  created(){
+    this.getList()
+  },
   methods: {
-    //out
-    addDetailItem(){
-      this.formForNotive.goodsDetail.push({
-            fileList:[],
-            title:'xxx',
-            content:'cccxxx',
-          })
-    },
-      //file upload
-    onsuccess(){
+    //图片相关
+      remove1() { //每次改变图片获取最新的filelist
+          console.log('remove----',arguments)
+          this.formForNotive.fileList1 = arguments[1]
+      },
+      change1() {
+        console.log('change----',arguments)
+        this.formForNotive.fileList1 = arguments[1]
+      },
+      onsuccess(){
         console.log('sucess----',arguments)
       },
       beforere(){
@@ -174,116 +143,106 @@ export default {
       beforeup(){
         console.log('beforeup----',arguments)
       },
-      remove() {
-        console.log('remove----',arguments)
-      },
-      change() {
-        console.log('change----',arguments)
-      },
       preview(file) {
         this.dialogImageUrl = file.url;
         this.dialogVisible = true;
         console.log('preview----',arguments)
       },
-    
-    getList_detail(){
-      console.log('getList_detail 暂时留白')
-    },
-    handleSizeChange_detail(val) {
-      this.listQuery_detail.limit = val
-      this.getList_detail()
-    },
-    handleCurrentChange_detail(val) {
-      this.listQuery_detail.page = val
-      this.getList_detail()
-    },
-    addNewNotice(){
-      this.waitAddNotice = true
-      setTimeout(()=>{
-        //发送成功该做的事情
-        this.waitAddNotice = false
-        this.addNewShow = false
-        this.form = {}
-        this.$notify({
-          title: '发送成功',
-          message: '这是一条成功的提示消息',
-          type: 'success'
-        })
-        //如果失败
-        // this.waitAddNotice = false
-      },2000)
-    },
-    addItem(){
-      this.isAddItem = true
-      this.addNewShow = true
-      // this.formForNotive = {}
-    },
     //body
-    editItem(){
-      this.isAddItem = false
-      this.addNewShow = true
-      //获取数据 填充form
-      this.formForNotive = {
-        title:'当前轮播图名称',
-        username:'当前轮播图名称',
-        phone:'当前轮播图名称',
-        account:'当前轮播图名称',
-        name:'当前轮播图名称',
-        industry:'餐饮',
-        city:['杭州','西湖']
-      }
-    },
-    lookItem() {
-      console.log(arguments)
-      this.detailShow = true
-    },
-    searchByDate(){
-      if(!this.dataRange||!this.dataRange.length||this.dataRange.length!==2){
-        return console.log("日期错误")
-      }
-      let dateS = this.dataRange[0]
-      let dateE = this.dataRange[1]
-      let Sstr = dateS.getFullYear()+'-'+(dateS.getMonth()+1>9?(dateS.getMonth()+1):('0'+dateS.getMonth()))+'-'+(dateS.getDate()+1>9?(dateS.getDate()+1):('0'+dateS.getDate()))
-      let Estr = dateE.getFullYear()+'-'+(dateE.getMonth()+1>9?(dateE.getMonth()+1):('0'+dateE.getMonth()))+'-'+(dateE.getDate()+1>9?(dateE.getDate()+1):('0'+dateE.getDate()))
-      this.listQuery.time = Sstr+','+Estr
-      this.listQuery.page = 1
-      this.getList()
-    },
-    handleSizeChange(val) {
-      this.listQuery.limit = val
-      this.getList()
-    },
-    handleCurrentChange(val) {
-      this.listQuery.page = val
-      this.getList()
-    },
-    getList() {
-      this.listLoading = true
-      let sendData = Object.assign({},this.listQuery)
-      if(!sendData.time){
-        delete sendData.time
-      }
-      fetchNoticeList(sendData).then(response => {
-        if(response.data&&response.data.status==="success"){
-          let result = response.data.result
-          let tempTableData = []
-          result.forEach((aData)=>{
-            tempTableData.push({
-              name:aData.name,
-              phone:aData.phone,
-              deviceCode:aData.deviceCode,
-              swingCard:aData.swingCard,
-              cashBack:aData.cashBack
-            })
-          })
-          this.tableData = tempTableData
-        }
-        console.log("getList",response)
-        // this.list = response.data
-        this.total = response.data.paging.total
+      getList() {
+        this.listLoading = true
+        let sendData = Object.assign({},this.listQuery)
+        getEntryList_api(sendData).then(data=>{
         this.listLoading = false
-      })
-    },
+          if(data.status===0){
+            let tempData = []
+            for(let i = 0 ,len = data.data.length;i<len;i++){
+              tempData.push({
+                id:data.data[i].storegc_id,
+                storeId:data.data[i].store_id,
+                parentId:data.data[i].storegc_parent_id,
+                image:data.data[i].storegc_pic,
+                sort:data.data[i].storegc_sort,
+                title:data.data[i].storegc_name,
+                state:data.data[i].storegc_state,
+              })
+            }
+            this.tableData = tempData
+          }else{
+            console.error('manageShop:getEntryList_api 状态码为1')
+          }
+        }).catch(e=>{
+        this.listLoading = false
+          console.error('manageShop:getEntryList_api 接口错误')
+        })
+      },
+      async editNewNotice(){
+        let res = await new Promise((res,rej)=>{
+            this.$refs['ruleForm'].validate((valid) => {
+                if (valid) {
+                  res(true)
+                } else {
+                  res(false)
+                }
+              })
+            })
+            if(!res){
+              return 
+            }
+        this.waitAddNotice = true
+        let sendData = {
+          storegc_id:this.formForNotive.id,
+          storegc_name:this.formForNotive.title,
+        }
+        if(this.formForNotive.fileList1[0].raw){
+            let urls1 = await uploadFn(this.formForNotive.fileList1[0].raw)
+            sendData.storegc_pic = urls1[0]
+        }else{
+            sendData.storegc_pic = this.formForNotive.fileList1[0].url
+        }
+        editEntry_api(sendData).then(data=>{
+          this.waitAddNotice = false
+          this.addNewShow = false
+          if(data.status===0){
+            this.$notify({
+              title: '成功',
+              message: '操作成功',
+              type: 'success'
+            })
+            this.getList()
+          }else{
+            this.$notify({
+              title: '失败',
+              message: '操作失败',
+              type: 'error'
+            })
+          }
+        }).catch(e=>{
+          this.waitAddNotice = false
+          this.addNewShow = false
+          console.error('manageShop:editEntry_api 接口错误')
+        })
+      },
+      editItem(index){
+        this.formForNotive = Object.assign({},this.tableData[index])
+        this.formForNotive.fileList1 = []
+        if(this.formForNotive.image){
+          this.formForNotive.fileList1 = [
+            {url:this.formForNotive.image}
+          ]
+        }
+        this.addNewShow = true
+      },
+    // foot
+      handleSizeChange(val) {
+        this.listQuery.limit = val
+        this.getList()
+      },
+      handleCurrentChange(val) {
+        this.listQuery.page = val
+        this.getList()
+      },
+    // -------------------------
   }
 }
 </script>

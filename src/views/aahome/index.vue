@@ -5,7 +5,7 @@
     margin-left 20%
     transition all 1s 
   .hbs-down
-    transform translateY(100px)
+    transform translateY(60px)
 </style>
 
 <template>
@@ -41,6 +41,9 @@ let stop = false
 
 export default {
   mounted(){
+    setTimeout(()=>{
+      this.down = "hbs-down"
+    },800)
   },
   beforeDestroy(){
   },

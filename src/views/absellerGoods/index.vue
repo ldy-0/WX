@@ -4,10 +4,10 @@
       margin-top 20px
   .margin-btm20
     margin-bottom 20px
-#app    
-  .out-dialog
-    .el-dialog
-      padding-right 10%
+// #app    
+//   .out-dialog
+//     .el-dialog
+//       padding-right 10%
       
 </style>
 
@@ -106,7 +106,8 @@
     <el-form-item label="规格" :label-width="formLabelWidth" >
       <!-- size 和 size2xxx 都是单独的属性 -->
         <el-tabs v-model="formForNotive.size" style="margin-top:-3px;margin-left:10px">
-            <el-tab-pane label="统一规格" name="one" >
+            <el-tab-pane label="统一规格" name="one" 
+              :disabled="!isAddItem&&formForNotive.size!=='one'" >
               <el-form :model="formForNotiveChild1" :inline="true"   ref="ruleFormChild1" :rules="rulesChild1" class="margin-btm20">
                 <el-form-item label="价格" prop="price">
                   <el-input v-model="formForNotiveChild1.price" auto-complete="off"></el-input>
@@ -116,7 +117,8 @@
                 </el-form-item>
               </el-form>
             </el-tab-pane>
-            <el-tab-pane label="多规格" name="mutil" >
+            <el-tab-pane label="多规格" name="mutil" 
+               :disabled="!isAddItem&&formForNotive.size!=='mutil'"  >
               <div  v-for="(formItem,index) of formForNotiveChild2List"  :key="index" class="margin-btm20">
                 <el-form :inline="true"  :model="formItem"  ref="ruleFormChild2" :rules="rulesChild2">
                 <!-- <el-form :inline="true"  :model="formItem" > -->
@@ -170,7 +172,7 @@
      :loading="waitAddNotice">确认修改</el-button>
   </span>
 </el-dialog>
-<el-dialog
+<!-- <el-dialog
   title="商品明细"
   :visible.sync="detailShow"
   width="80%"
@@ -219,7 +221,7 @@
   <span slot="footer" class="dialog-footer">
     <el-button @click="detailShow = false">返 回</el-button>
   </span>
-</el-dialog>
+</el-dialog> -->
 <el-container class="notice">
 <el-header class="header" style="height:auto;">
   <el-form :inline="true" :model="formInline" class="form">
@@ -356,7 +358,7 @@ const formForNotiveChild2List = [{
       }]
 export default {
   created(){
-    // this.getSchoolList()
+    this.getSchoolList()
     this.getList()
   },
   data() {

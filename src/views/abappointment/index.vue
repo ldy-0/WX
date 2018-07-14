@@ -75,7 +75,7 @@
 <el-header class="header" style="height:auto;">
   <el-form :inline="true" class="form">
     <el-form-item>
-      <el-input style="width: 340px;" placeholder="请输入商品名称、编码" v-model="listQuery.search"></el-input>
+      <el-input style="width: 340px;" placeholder="请输入预约人姓名或联系方式" v-model="listQuery.search"></el-input>
       <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
     </el-form-item>
     <el-form-item label="时间">
@@ -182,7 +182,13 @@ export default {
       },
       getList(status) {
         this.listLoading = true
-        let sendData = Object.assign({},this.listQuery)
+        let sendData = {
+          page:this.listQuery.page,
+          limit:this.listQuery.limit,
+          search:this.listQuery.search?this.listQuery.search:null,
+          time:this.listQuery.time?this.listQuery.time:null,
+        }
+        // let sendData = Object.assign({},this.listQuery)
         // sendData.appointment_status = status?status:
         getAppointmentList_api(sendData).then(response => {
           // 这里由于结构做了调整，导致编辑页面需要的数据无法从列表获取，这里只需要给tableData额外传一个id

@@ -2,6 +2,11 @@
   .notice
     .header
       margin-top 20px
+  #servershopmap
+    width 80%
+    height 400px
+    min-width 300px
+    background-color gray
 </style>
 
 <template>
@@ -19,8 +24,14 @@
     <el-form-item label="店铺名称" :label-width="formLabelWidth">
       <el-input v-model="formForNotive.shopPosition" auto-complete="off"></el-input>
     </el-form-item>
+
     <el-form-item label="定位" :label-width="formLabelWidth">
-        ？？？
+        <div id="servershopmap"></div>
+        <br>
+        {{position}}
+    </el-form-item>
+    <el-form-item label="haha" :label-width="formLabelWidth">
+      <el-button type="danger" round @click="sendtest">send!</el-button>>
     </el-form-item>
     <el-form-item  label="店铺头像"  :label-width="formLabelWidth">
           <el-upload 
@@ -94,9 +105,11 @@
 <script>
 // getList 接口 获取
 // addNotice 接口 添加
+import {test2} from '@/api/seller'
 export default {
   data() {
     return {
+      position:'loading',
       //out
       dialogImageUrl: '',
       imgLimit1:1,
@@ -146,7 +159,91 @@ export default {
       total:1,
     }
   },
+  mounted(){
+      this.loadScript()
+      let that = this
+      //地图库加载完成的回调
+      window.hbsForMap = ()=>{
+        console.log('hbsForMap1---------------')
+        var center = new qq.maps.LatLng(39.916527,116.397128);
+        var map = new qq.maps.Map(document.getElementById('servershopmap'),{
+            center: center,
+            zoom: 13
+        });
+        var anchor = new qq.maps.Point(10, 30);
+        var size = new qq.maps.Size(32, 30);
+        var origin = new qq.maps.Point(0, 0);
+        var icon = new qq.maps.MarkerImage('plane.png', size, origin, anchor);
+        size = new qq.maps.Size(52, 30);
+        var originShadow = new qq.maps.Point(32, 0);
+        var shadow =new qq.maps.MarkerImage(
+            'plane.png', 
+            size, 
+            originShadow,
+            anchor 
+        );
+
+        var marker = new qq.maps.Marker({
+            icon: icon,
+            shadow: shadow,
+            map: map,
+            position:center,
+            animation: qq.maps.MarkerAnimation.BOUNCE
+        });
+
+        var jump = function(event) {
+            that.position = {
+              ...event.latLng
+            }
+            marker.setPosition(event.latLng);
+        };
+
+        qq.maps.event.addListener(map, 'click', jump);
+      }
+  },
   methods: {
+    sendtest(){
+      let sendData = {
+        store_banner:'',
+        store_description:'',
+        store_phone:'',
+        store_avatar:'',
+        store_address:'',
+        store_service:[],
+        store_images:[],
+        store_longitude:this.position.lat,
+        store_latitude:this.position.lng
+      }
+      test2(sendData).then(data=>{
+          if(data.status===0){
+            this.$notify({
+              title: '上传成功',
+              message: '已新增商品',
+              type: 'success'
+            })
+          }else{
+            this.$notify({
+              title: '上传失败',
+              message: '新增商品失败',
+              type: 'error'
+            })
+          }
+        }).catch(e=>{
+          console.error('manageShop:test2 接口错误')
+        })
+    },
+    loadScript() {
+        //创建script标签
+        var script = document.createElement("script");
+        //设置标签的type属性
+        script.type = "text/javascript";
+        //设置标签的链接地址
+        script.src = "https://map.qq.com/api/js?v=2.exp&key=QB5BZ-A5XW2-XCWU5-CVHRJ-EIVEF-PNFM4&callback=hbsForMap";
+        //添加标签到dom
+        document.body.appendChild(script);
+    },
+    
+    // -------------------------------
     //out
     addDetailItem(){
       this.formForNotive.goodsDetail.push({
