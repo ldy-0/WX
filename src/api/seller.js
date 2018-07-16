@@ -135,5 +135,102 @@ import request from '@/utils/request'
       data
     })
   }
-  
+//server => banner
+  export function getBannerList_api(data) {
+    return request ({
+      url:'/api/v1/seller/banner',
+      method:'get',
+      data
+    })
+  }
+
+  export function deleteBanner_api(id){
+    return request ({
+      url:'/api/v1/seller/banner?banner_id='+ id,
+      method:'delete',
+    })
+  }
+
+  export function addBanner_api(data){
+    return request({
+      url:'/api/v1/seller/banner',
+      method:'post',
+      data
+    })
+  }
+
+  export function editBanner_api(data){
+    return request({
+      url:'/api/v1/seller/banner',
+      method:'put',
+      data
+    })
+  }
+//server => act
+  export function deleAct_api(data) {
+    return request({
+      url: '/api/v1/seller/dynamic',
+      method: 'delete',
+      data: data
+    })
+  }
+  export function addAct_api(data) {
+    return request({
+      url: '/api/v1/seller/dynamic',
+      method: 'post',
+      data
+    })
+  }
+  export function getActList_api(data) {
+    return request({
+      url: '/api/v1/seller/dynamic',
+      method: 'get',
+      params: data
+    })
+  }
+// server => shop
+  export function editShopText_api(data){
+    return request({
+      url:'/api/v1/seller/storeinfo',
+      method:'put',
+      data
+    })
+  }
+
+  export function getIntroForm_api(data){
+    return request({
+      url:'/api/v1/seller/storeinfo',
+      method:'get',
+      params:data
+    })
+  }
+// auth
+export function getAuthList_api(data) {
+  return request({
+    url: '/api/v1/seller/seller',
+    method: 'get',
+    params: data
+  })
+}
+export function deleteAuth_api(data) {
+  return request({
+    url: '/api/v1/seller/seller',
+    method: 'delete',
+    data: data
+  })
+}
+export function addAuth_api(data) {
+  return request({
+    url: '/api/v1/seller/seller',
+    method: 'post',
+    data: data
+  })
+}
+export function editAuth_api(data) {
+  return request({
+    url: '/api/v1/seller/seller',
+    method: 'put',
+    data: data
+  })
+}
 // ----------------------------------------------
