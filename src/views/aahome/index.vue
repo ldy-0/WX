@@ -48,6 +48,11 @@ export default {
   beforeDestroy(){
   },
   created() {
+    if(this.roles.indexOf('admin')>-1||this.roles.indexOf('admin2')>-1){
+      this.currentRole = 'admin'
+    }else{
+      this.currentRole = 'seller'
+    }
   },
   name: 'home',
   components: { 
