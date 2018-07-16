@@ -285,8 +285,8 @@ export default {
           // 前段统一
           admin_nick:this.formForNotive.username,
           // seller_name:this.formForNotive.account,
-          admin_password:this.formForNotive.password,
-          admin_gid:0,
+          member_password:this.formForNotive.password,
+          sellergroup_id:0,
         }
         editAuth_api(sendData).then(data=>{
           this.waitAddNotice = false
