@@ -65,20 +65,12 @@
         >
       </el-table-column>
       <!-- icon测试 -->
-      <el-table-column 
-        label="商品"
-        >
-        <template slot-scope="scope">
-          <i v-if="1" class="el-icon-check big-icon"></i>
-          <i v-else class="el-icon-close big-icon-no"></i>
-          <!-- <span style="margin-left: 10px">{{ scope.row.goods }}</span> -->
-        </template>
-      </el-table-column>
+      
       <el-table-column 
         label="公告"
         >
         <template slot-scope="scope">
-          <i v-if="1" class="el-icon-check big-icon"></i>
+          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('affiche')!==-1" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
@@ -86,7 +78,7 @@
         label="店铺管理"
         >
         <template slot-scope="scope">
-          <i v-if="1" class="el-icon-check big-icon"></i>
+          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('store')!==-1" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
@@ -94,11 +86,18 @@
         label="运营管理"
         >
         <template slot-scope="scope">
-          <i v-if="1" class="el-icon-check big-icon"></i>
+          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('manage')!==-1" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
-      
+      <el-table-column 
+        label="权限管理"
+        >
+        <template slot-scope="scope">
+          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('auth')!==-1" class="el-icon-check big-icon"></i>
+          <i v-else class="el-icon-close big-icon-no"></i>
+        </template>
+      </el-table-column>
       <el-table-column 
         label="账号" 
         prop="account"

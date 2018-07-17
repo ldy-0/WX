@@ -71,6 +71,13 @@ import request from '@/utils/request'
       params: data
     })
   }
+  export function getROrder_api(data) {
+    return request({
+      url: '/api/v1/seller/order',
+      method: 'get',
+      params: data
+    })
+  }
   
 // appointment
   export function getAppointmentList_api(data) {
@@ -221,32 +228,32 @@ import request from '@/utils/request'
     })
   }
 // auth
-export function getAuthList_api(data) {
-  return request({
-    url: '/api/v1/seller/seller',
-    method: 'get',
-    params: data
-  })
-}
-export function deleteAuth_api(data) {
-  return request({
-    url: '/api/v1/seller/seller',
-    method: 'delete',
-    data: data
-  })
-}
-export function addAuth_api(data) {
-  return request({
-    url: '/api/v1/seller/seller',
-    method: 'post',
-    data: data
-  })
-}
-export function editAuth_api(data) {
-  return request({
-    url: '/api/v1/seller/seller',
-    method: 'put',
-    data: data
-  })
-}
+  export function getAuthList_api(data) {
+    return request({
+      url: '/api/v1/seller/seller',
+      method: 'get',
+      params: data
+    })
+  }
+  export function deleteAuth_api(data) {
+    return request({
+      url: '/api/v1/seller/seller',
+      method: 'delete',
+      data: data
+    })
+  }
+  export function addAuth_api(data) {
+    return request({
+      url: '/api/v1/seller/seller',
+      method: 'post',
+      data: data
+    })
+  }
+  export function editAuth_api(data) {
+    return request({
+      url: '/api/v1/seller/seller',
+      method: 'put',
+      data: data
+    })
+  }
 // ----------------------------------------------

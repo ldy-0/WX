@@ -127,6 +127,7 @@ export let asyncRouterMapSeller = [
     path: '/sellerGoods',
     component: Layout,
     redirect: '/sellerGoods/index',
+    meta:{roles:'goods'},
     children: [{
       path: 'index',
       component: () => import('@/views/absellerGoods/index'),
@@ -138,7 +139,7 @@ export let asyncRouterMapSeller = [
     path: '/order',
     component: Layout,
     redirect: '/order/rOrder',
-    meta: { title: 'order', icon: 'goods'},
+    meta: { title: 'order', icon: 'goods',roles:'order'},
     children: [{
       path: 'rOrder',
       component: () => import('@/views/aborder/rOrder'),
@@ -155,6 +156,7 @@ export let asyncRouterMapSeller = [
     path: '/appointment',
     component: Layout,
     redirect: '/appointment/index',
+    meta: { roles:'appointment'},
     children: [{
       path: 'index',
       component: () => import('@/views/abappointment/index'),
@@ -177,7 +179,7 @@ export let asyncRouterMapSeller = [
     path: '/server',
     component: Layout,
     redirect: '/server/serverBanner',
-    meta: { title: 'server', icon: 'goods'},
+    meta: { title: 'server', icon: 'goods',roles:'manage'},
     children: [{
       path: 'serverBanner',
       component: () => import('@/views/abserver/serverBanner'),
@@ -224,6 +226,7 @@ export let asyncRouterMapSeller = [
     path: '/sellerAuth',
     component: Layout,
     redirect: '/sellerAuth/index',
+    meta: { roles:'auth'},
     children: [{
       path: 'index',
       component: () => import('@/views/absellerAuth/index'),

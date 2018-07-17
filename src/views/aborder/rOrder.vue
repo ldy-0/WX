@@ -11,36 +11,94 @@
   :visible.sync="detailShow"
   width="80%"
   >
-  <el-table
-    :data="tableData2"
-    stripe 
-     element-loading-text="给我一点时间"
-    style="width: 100%" >
-    <el-table-column
-      label="图片"
-      >
-      <template slot-scope="scope">
-        <div style="width:100px;height:100px;align-items:center;display:flex;">
-          <img :src="scope.row.goodsImage" alt="" style="width:100px">
-        </div>
-      </template>
-    </el-table-column>
-    <el-table-column
-      label="商品名称" 
-      prop="goodsName"
-      >
-    </el-table-column>
-    <el-table-column
-      label="商品编号" 
-      prop="goodsNum"
-      >
-    </el-table-column>
-    <el-table-column
-      label="商品价格" 
-      prop="goodsPrice"
-      >
-    </el-table-column>
-  </el-table>
+  <el-form :model="formForNotive" v-loading="editLoading" size="medium" >
+    <el-form-item label="编号" :label-width="formLabelWidth">
+      <p class="hbs-no-margin-p">
+        {{formForNotive.num}}
+      </p>
+    </el-form-item>
+    <el-form-item label="金额" :label-width="formLabelWidth">
+      <p class="hbs-no-margin-p">
+        {{formForNotive.amount}}
+      </p>
+    </el-form-item>
+    <el-form-item label="运费" :label-width="formLabelWidth">
+      <p class="hbs-no-margin-p">
+        {{formForNotive.trans}}
+      </p>
+    </el-form-item>
+    <el-form-item label="下单时间" :label-width="formLabelWidth">
+      <p class="hbs-no-margin-p">
+        {{formForNotive.orderTime}}
+      </p>
+    </el-form-item>
+    <el-form-item label="付款时间" :label-width="formLabelWidth">
+      <p class="hbs-no-margin-p">
+        {{formForNotive.payTime}}
+      </p>
+    </el-form-item>
+    <el-form-item label="订单状态" :label-width="formLabelWidth">
+      <p class="hbs-no-margin-p">
+        {{formForNotive.state}}
+      </p>
+    </el-form-item>
+    <el-form-item label="订单列表" :label-width="formLabelWidth">
+      <el-table 
+         
+      :data="formForNotive.goodsTable"
+      stripe 
+       element-loading-text="给我一点时间"
+      style="margin-top:-10px;margin-left:10px"  >
+        <el-table-column
+            label="商品图片"
+            >
+            <template slot-scope="scope">
+            <img :src="scope.row.goods_image" alt="" width="100px">
+            </template>
+        </el-table-column>
+        <el-table-column
+            label="商品名" 
+            prop="goods_name"
+            >
+        </el-table-column>
+        <el-table-column
+            label="价格" 
+            prop="goods_price"
+            >
+        </el-table-column>
+        <el-table-column
+            label="编号" 
+            prop="goods_num"
+            >
+        </el-table-column>
+        <el-table-column
+            label="实付金额" 
+            prop="goods_pay_price"
+            >
+        </el-table-column>
+      </el-table>
+    </el-form-item>
+    <el-form-item label="收货信息" :label-width="formLabelWidth" v-if="formForNotive.buyerInfo">
+      <el-form >
+        <el-form-item label="收货地址" :label-width="formLabelWidth">
+          <p class="hbs-no-margin-p">
+            {{formForNotive.buyerInfo.address}}
+          </p>
+        </el-form-item>
+        <el-form-item label="收货人" :label-width="formLabelWidth">
+          <p class="hbs-no-margin-p">
+            {{formForNotive.buyerInfo.name}}
+          </p>
+        </el-form-item>
+        <el-form-item label="收货人电话" :label-width="formLabelWidth">
+          <p class="hbs-no-margin-p">
+            {{formForNotive.buyerInfo.phone}}
+          </p>
+        </el-form-item>
+      </el-form>
+    </el-form-item>
+
+  </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="detailShow = false">返 回</el-button>
   </span>
@@ -116,13 +174,15 @@
       v-loading="listLoading" element-loading-text="给我一点时间"
       style="width: 100%" >
 
-      <!-- <el-table-column
-        label="商品图片"
+      <el-table-column
+        label="店铺头像"
         >
         <template slot-scope="scope">
-          <img :src="scope.row.goodsImage" alt="" width="100px">
+          <div style="width:100px;height:100px;align-items:center;display:flex;">
+            <img :src="scope.row.storeImg" alt="" style="width:100px">
+          </div>
         </template>
-      </el-table-column> -->
+      </el-table-column>
       <!-- <el-table-column
         label="商品名" 
         prop="goodsName"
@@ -135,7 +195,7 @@
       </el-table-column> -->
       <el-table-column
         label="编号" 
-        prop="goodsNum"
+        prop="num"
         >
       </el-table-column>
       <!-- <el-table-column
@@ -186,14 +246,18 @@
 </template>
 <script>
 //getROrderList_api 接口异常 php :未定义变量 bannnerModel
-import {getROrderList_api} from '@/api/seller'
+import {getROrderList_api,getROrder_api} from '@/api/seller'
 export default {
   created(){
     this.getList()
+    // getROrder_api({order_id:59})
   },
   data() {
     return {
       // out
+        formLabelWidth:'140px',
+        formForNotive:{},
+        editLoading:false,
         detailShow:false,
         tableData2:[],
       // header
@@ -240,18 +304,57 @@ export default {
       },
     // body
       lookItem(index,raw) {
-        console.log(arguments)
-        let goodsList = raw.goodsList
-        let tempTableData = []
-        for(let i=0,len=goodsList.length;i<len;i++){
-          tempTableData.push({
-            goodsName:goodsList[i].goods_name,
-            goodsNum:goodsList[i].goods_num,
-            goodsName:goodsList[i].goods_image,
-            goodsPrice:goodsList[i].goods_price,
+        if(!raw||!raw.id){
+            this.$notify.error({
+              title: '错误',
+              message: 'id不存在'
           })
+          return
         }
+        let sendData = {
+          order_id:raw.id
+        }
+        console.log(arguments)
+        
         this.detailShow = true
+        this.editLoading = true
+        getROrder_api(sendData).then(data=>{
+          this.editLoading = false //detail 和 edit共用
+          // this.waitAddNotice = false
+          if(data.status===0){
+            data = data.data[0]
+            //获取数据成功，这填充数据，三个formNative
+            let tempForm = {}
+            // 编号
+            tempForm.num = data.order_sn
+            // 金额
+            tempForm.amount = data.order_amount
+            // 运费
+            tempForm.trans = data.shipping_fee
+            // 下单时间
+            tempForm.orderTime = data.add_time
+            // 付款时间
+            tempForm.payTime = data.payment_time
+            // 订单状态
+            tempForm.state = data.order_state
+            // 商品列表
+            tempForm.goodsTable = data.order_goods
+            // 收货信息
+            tempForm.buyerInfo = data.order_reciver_info 
+            
+            this.formForNotive = tempForm //基础form完成填充
+          }else{
+            this.$notify({
+              title: '失败',
+              message: '数据获取失败',
+              type: 'error'
+            })
+          }
+        }).catch(e=>{
+          // this.waitAddNotice = false
+          this.editLoading = false
+          console.error('manageShop:getROrder_api 接口错误')
+        })
       },
       getList() {
         this.listLoading = true
@@ -270,6 +373,7 @@ export default {
             result.forEach((aData)=>{
               tempTableData.push({
                 id:aData.order_id,
+                storeImg:aData.store_avatar,
                 num:aData.order_sn,
                 money:aData.order_amount,
                 time:aData.add_time,
@@ -281,7 +385,7 @@ export default {
           }
           console.log("getList",response)
           // this.list = response.data
-          this.total = response.data.paging.total
+          this.total = response.pagination&&response.pagination.total?response.pagination.total:1
         })
       },
     // foot

@@ -7,7 +7,8 @@
       color #409EFF
     .big-icon-no
       font-size 30px
-      color #F56C6C
+      color #b19999
+      // color #F56C6C
 </style>
 
 <template>
@@ -29,6 +30,11 @@
       <el-input v-model="formForNotive.password" auto-complete="off" 
       :placeholder="(!isAddItem)&&'此处可修改密码'"></el-input>
     </el-form-item>
+    <el-form-item label="授予权限" v-if="!isAddItem" :label-width="formLabelWidth" >
+      <el-checkbox-group v-model="formForNotive.checkboxGroup1">
+      <el-checkbox-button v-for="(item,index) of rolesList" :label="item.label" :key="index">{{item.text}}</el-checkbox-button>
+    </el-checkbox-group>
+    </el-form-item>
   </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="addNewShow=false" >取消</el-button>
@@ -46,7 +52,7 @@
   <el-form-item>
     <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增管理员</el-button>
   </el-form-item>
-</el-form>  
+</el-form>       
 </el-header>
 <el-main>
     <el-table
@@ -60,40 +66,47 @@
         >
       </el-table-column>
       <!-- icon测试 -->
+      
       <el-table-column 
         label="商品"
         >
         <template slot-scope="scope">
-          <i v-if="1" class="el-icon-check big-icon"></i>
-          <i v-else class="el-icon-close big-icon-no"></i>
-          <!-- <span style="margin-left: 10px">{{ scope.row.goods }}</span> -->
-        </template>
-      </el-table-column>
-      <el-table-column 
-        label="公告"
-        >
-        <template slot-scope="scope">
-          <i v-if="1" class="el-icon-check big-icon"></i>
+          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('goods')!==-1" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
       <el-table-column 
-        label="店铺管理"
+        label="订单"
         >
         <template slot-scope="scope">
-          <i v-if="1" class="el-icon-check big-icon"></i>
+          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('order')!==-1" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
       <el-table-column 
-        label="运营管理"
+        label="预约"
         >
         <template slot-scope="scope">
-          <i v-if="1" class="el-icon-check big-icon"></i>
+          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('appointment')!==-1" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
-      
+      <el-table-column 
+        label="运营"
+        >
+        <template slot-scope="scope">
+          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('manage')!==-1" class="el-icon-check big-icon"></i>
+          <i v-else class="el-icon-close big-icon-no"></i>
+        </template>
+      </el-table-column>
+      <el-table-column 
+        label="权限管理"
+        >
+        <template slot-scope="scope">
+          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('auth')!==-1" class="el-icon-check big-icon"></i>
+          <i v-else class="el-icon-close big-icon-no"></i>
+        </template>
+      </el-table-column>
       <el-table-column 
         label="账号" 
         prop="account"
@@ -136,6 +149,7 @@ const formForNotive = { //此页面 静态数据
   username:"",
   account:"",
   password:"",
+  checkboxGroup1:[]
 }
 export default {
   created(){
@@ -148,7 +162,29 @@ export default {
         waitAddNotice:false,
         addNewShow:false,
         isAddItem:true,
-
+        // rolesList:['appointment','auth','order','goods'],
+        rolesList:[
+          {
+            label:'goods',
+            text:'商品'
+          },
+          {
+            label:'order',
+            text:'订单'
+          },
+          {
+            label:'appointment',
+            text:'预约'
+          },
+          {
+            label:'manage',
+            text:'运营'
+          },
+          {
+            label:'auth',
+            text:'授权管理'
+          },
+        ],
         formLabelWidth:'140px',//弹框1 左侧文字默认宽度
         formForNotive:Object.assign({},formForNotive),
         rules: {
@@ -164,15 +200,7 @@ export default {
       },
       //body
         
-        tableData: [{
-            // username: '黄邦胜',
-            // account:'huang',
-            // password:'123456',
-              // goods: '1',
-              // notice: '1',
-              // manageShop: '1',
-              // manageSevice: '1',
-        }],
+        tableData: [{}],
       // -------------------------
       
       // ----------------------
@@ -253,7 +281,7 @@ export default {
         }).catch(e=>{
           this.waitAddNotice = false
           this.addNewShow = false
-          console.error('manageShop:addIndustry_api 接口错误')
+          console.error('appointmentShop:addIndustry_api 接口错误')
         })
       },
       addItem(){ //显示 弹框
@@ -281,11 +309,12 @@ export default {
         this.waitAddNotice = true
         let sendData = {
           // 后端生成
-          member_id:this.formForNotive.id,
+          seller_id:this.formForNotive.id,
           // 前段统一
-          admin_nick:this.formForNotive.username,
+          seller_nick:this.formForNotive.username,
           // seller_name:this.formForNotive.account,
-          member_password:this.formForNotive.password,
+          seller_password:this.formForNotive.password,
+          seller_limits:this.formForNotive.checkboxGroup1,
           sellergroup_id:0,
         }
         editAuth_api(sendData).then(data=>{
@@ -312,9 +341,9 @@ export default {
         })
       },
       editItem(index,rowData){
+        console.log(rowData)
         // this.editLoading = true
         this.formForNotive = Object.assign({},rowData)
-
         this.isAddItem = false
         this.addNewShow = true
       },
@@ -329,11 +358,13 @@ export default {
             result.forEach((aData)=>{
               tempTableData.push({
                 //后端生成
-                id:aData.member_id,
+                id:aData.seller_id,
                 //前后统一
-                username:aData.admin_nick,
-                password:aData.admin_password,
+                username:aData.seller_nick,
+                password:aData.seller_password,
                 account:aData.seller_name,
+                //
+                checkboxGroup1:aData.seller_limits
               })
             })
             this.tableData = tempTableData
@@ -362,7 +393,7 @@ export default {
       },
       deleteNewNotice(id){
         let sendData = {
-          member_id:id,
+          seller_id:id,
         }
         deleteAuth_api(sendData).then(res=>{
           if(res&&res.status===0){
@@ -380,19 +411,12 @@ export default {
             });
           }
         }).catch(err=>{
-          console.error('deleteAdmin_api')
+          console.error('deleteseller_api')
         })
           
         
       },
     // ----------------------
-    //body
-      
-    //bdoy
-      
-      
-      
-    // 0-----------------------
     //out
     addNewNotice(){
       this.waitAddNotice = true
