@@ -49,12 +49,12 @@
 <el-dialog
   title="动态详情"
   :visible.sync="detailShow"
-  width="50%"
+  width="60%"
   >
   <el-form :model="detailForm">
     <el-form-item label="动态图片" :label-width="formLabelWidth">
-        <div style="width:200px;height:200px;align-items:center;display:flex;">
-            <img :src="detailForm.image" alt="动态图片" style="width:200px">
+        <div style="width:150px;height:150px;align-items:center;display:inline-block;" v-for="item in detailForm.fileList">
+            <img :src="item.url" alt="动态图片" style="width:150px;padding:10px">
         </div>
     </el-form-item>
     <el-form-item label="动态内容" :label-width="formLabelWidth">
@@ -146,7 +146,7 @@ export default {
     return {
       //out
       dialogImageUrl: '',
-      imgLimit1:1,
+      imgLimit1:9,
       dialogVisible: false,
       detailShow:false,
       isAddItem:true,
@@ -177,7 +177,7 @@ export default {
       rules:{
         fileList:[
           {
-            type: "array", required: true, len: 1,message: '请选择一张图片',
+            type: "array", required: true,message: '请选择一张图片',
           }
         ],
         content: [
@@ -264,13 +264,17 @@ export default {
         if(response&&response.status == 0){
           let result = response.data
           let tempTableData = []
-            
           result.forEach((aData)=>{
-            let temp_fileList =[]
-            if(aData.dynamic_images){
-              temp_fileList.push({url:aData.dynamic_images})
-            }
             let image = JSON.parse(aData.dynamic_images)
+            let temp_fileList = []
+            if(aData.dynamic_images){
+              for(let i=0,len=image.length;i<len;i++){
+                temp_fileList.push({
+                  url:image[i]
+                })
+              }
+              console.log('110',temp_fileList)
+            }
             // let date = new Date(parseInt(aData.dynamic_created_at)*1000).toLocaleString().replace(/:\d{1,2}$/,'')
            let date = this.formatDateTime(aData.dynamic_created_at)
            tempTableData.push({
@@ -288,6 +292,22 @@ export default {
 
       })
     },
+
+      getFiles(arr){ //得到文件数组
+        let files = []
+        let urls = []
+        arr.forEach(item=>{
+          if(item.raw){
+            files.push(item.raw)
+          }else{
+            urls.push(item.url)
+          }
+        })
+        console.log('-----------------',arr,'-----------------')
+        return {
+          files,urls
+        }
+      },
     addItem(){   
       this.addNewShow = true
       this.formForNotive = Object.assign({},formForNotive)
@@ -310,12 +330,16 @@ export default {
       this.waitAddNotice = true
       let sendData = {}
       let allUrl1 
-      if(this.formForNotive.fileList[0].raw){
-        allUrl1 = await uploadFn(this.formForNotive.fileList[0].raw)
-      }else{
-        allUrl1 = [this.formForNotive.fileList[0].url]
-      }
-      sendData.dynamic_images = JSON.stringify(allUrl1)
+      let fileAndUrl = this.getFiles(this.formForNotive.fileList)
+      console.log(fileAndUrl,'files')
+      let files = fileAndUrl.files
+      console.log(files,'files')
+      let allUrl = await uploadFn(files)
+      console.log(allUrl,'allUrl')
+      let urls = allUrl.concat(fileAndUrl.urls)
+      console.log(urls,'urls')
+
+      sendData.dynamic_images = JSON.stringify(urls)
       
       sendData.dynamic_content = this.formForNotive.content
       addAct_api(sendData).then(data=>{

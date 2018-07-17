@@ -29,6 +29,11 @@
       <el-input v-model="formForNotive.password" auto-complete="off" 
       :placeholder="(!isAddItem)&&'此处可修改密码'"></el-input>
     </el-form-item>
+    <el-form-item label="授予权限" v-if="!isAddItem" :label-width="formLabelWidth" >
+      <el-checkbox-group v-model="formForNotive.checkboxGroup1">
+      <el-checkbox-button v-for="(item,index) of rolesList" :label="item.label" :key="index">{{item.text}}</el-checkbox-button>
+    </el-checkbox-group>
+    </el-form-item>
   </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="addNewShow=false" >取消</el-button>
@@ -136,6 +141,7 @@ const formForNotive = { //此页面 静态数据
   username:"",
   account:"",
   password:"",
+  checkboxGroup1:[]
 }
 export default {
   created(){
@@ -148,7 +154,25 @@ export default {
         waitAddNotice:false,
         addNewShow:false,
         isAddItem:true,
-
+        // rolesList:['manage','auth','store','affiche'],
+        rolesList:[
+          {
+            label:'affiche',
+            text:'公告'
+          },
+          {
+            label:'store',
+            text:'店铺管理'
+          },
+          {
+            label:'manage',
+            text:'运营管理'
+          },
+          {
+            label:'auth',
+            text:'授权管理'
+          },
+        ],
         formLabelWidth:'140px',//弹框1 左侧文字默认宽度
         formForNotive:Object.assign({},formForNotive),
         rules: {
@@ -286,6 +310,7 @@ export default {
           admin_nick:this.formForNotive.username,
           // admin_name:this.formForNotive.account,
           admin_password:this.formForNotive.password,
+          admin_limits:this.formForNotive.checkboxGroup1,
           admin_gid:0,
         }
         editAuth_api(sendData).then(data=>{
@@ -312,9 +337,9 @@ export default {
         })
       },
       editItem(index,rowData){
+        console.log(rowData)
         // this.editLoading = true
         this.formForNotive = Object.assign({},rowData)
-
         this.isAddItem = false
         this.addNewShow = true
       },
@@ -334,6 +359,8 @@ export default {
                 username:aData.admin_nick,
                 password:aData.admin_password,
                 account:aData.admin_name,
+                //
+                checkboxGroup1:aData.admin_limits
               })
             })
             this.tableData = tempTableData

@@ -35,6 +35,7 @@ import admin from './admin'
 import seller from './seller'
 
 import {test} from '@/api/seller'
+import { getRoles } from '@/utils/auth' // getToken from cookie
 
 import uploadFn from '@/utils/aahbs'
 let stop = false
@@ -48,7 +49,14 @@ export default {
   beforeDestroy(){
   },
   created() {
-    if(this.roles.indexOf('admin')>-1||this.roles.indexOf('admin2')>-1){
+    let roles = []
+    try{
+      roles = JSON.parse(getRoles())
+    }catch(e){
+      console.log(e)
+      roles = []
+    }
+    if(roles.indexOf('admin')>-1||roles.indexOf('admin2')>-1){
       this.currentRole = 'admin'
     }else{
       this.currentRole = 'seller'

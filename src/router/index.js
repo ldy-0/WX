@@ -67,22 +67,24 @@ export let asyncRouterMapAdmin = [
     path: '/notice',
     component: Layout,
     redirect: '/notice/index',
+    meta: {roles:['affiche']},
     children: [{
       path: 'index',
       component: () => import('@/views/aanotice/index'),
       name: 'notice',
-      meta: { title: 'notice', icon: 'notice', noCache: true }
+      meta: { title: 'notice', icon: 'notice', noCache: true ,roles:['affiche']}
     }]
   },
   {
     path: '/manageShop',
     component: Layout,
     redirect: '/manageShop/index',
+    meta: {roles:['store']},
     children: [{
       path: 'index',
       component: () => import('@/views/aamanageShop/index'),
       name: 'manageShop',
-      meta: { title: 'manageShop', icon: 'notice', noCache: true }
+      meta: { title: 'manageShop', icon: 'notice', noCache: true,roles:['store']} 
     }]
   },
   {
@@ -90,7 +92,7 @@ export let asyncRouterMapAdmin = [
     component: Layout,
     redirect: '/manageSevice/shopServer',
     name:'manageSevice',
-    meta: { title: 'manageSevice', icon: 'notice'},
+    meta: { title: 'manageSevice', icon: 'notice',roles:['manage']},
     children: [
       {
         path: 'shopServer', 
@@ -109,11 +111,12 @@ export let asyncRouterMapAdmin = [
     path: '/auth',
     component: Layout,
     redirect: '/auth/index',
+    meta: { roles:['auth']},
     children: [{
       path: 'index',
       component: () => import('@/views/aaauth/index'),
       name: 'auth',
-      meta: { title: 'auth', icon: 'notice' }
+      meta: { title: 'auth', icon: 'notice' ,roles:['auth']}
     }]
   },
   // { path: '*', redirect: '/404', hidden: true }

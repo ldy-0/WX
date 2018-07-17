@@ -71,13 +71,29 @@ import request from '@/utils/request'
       params: data
     })
   }
-
+  
 // appointment
   export function getAppointmentList_api(data) {
     return request({
       url: '/api/v1/seller/appointment',
       method: 'get',
       params: data
+    })
+  }
+
+// Coupon
+  export function getCouponList_api(data) {
+    return request({
+      url: '/api/v1/seller/discountCoupon',
+      method: 'get',
+      params: data
+    })
+  }
+  export function addCoupon_api(data) {
+    return request({
+      url: '/api/v1/seller/discountCoupon',
+      method: 'post',
+      data
     })
   }
 //server => entry

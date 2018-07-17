@@ -46,7 +46,7 @@
   <el-form-item>
     <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增管理员</el-button>
   </el-form-item>
-</el-form>       
+</el-form>  
 </el-header>
 <el-main>
     <el-table
@@ -228,10 +228,10 @@ export default {
         }
         this.waitAddNotice = true
         let sendData = {
-          admin_nick:this.formForNotive.username,
+          seller_nick:this.formForNotive.username,
           seller_name:this.formForNotive.account,
-          admin_password:this.formForNotive.password,
-          admin_gid:0,
+          seller_password:this.formForNotive.password,
+          sellergroup_id:0,
         }
         addAuth_api(sendData).then(data=>{
           this.waitAddNotice = false

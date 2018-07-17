@@ -10,14 +10,37 @@
 <el-dialog
   title="新增优惠券"
   :visible.sync="addNewShow"
-  width="30%"
+  width="70%" 
   >
-  <el-form :model="formForNotive">
-      <el-form-item label="名称" :label-width="formLabelWidth">
+  <el-form :model="formForNotive"  ref="ruleForm" :rules="rules">
+      <el-form-item label="名称" :label-width="formLabelWidth" prop="name">
           <el-input v-model="formForNotive.name" auto-complete="off"></el-input>
       </el-form-item>
-      <el-form-item label="面值" :label-width="formLabelWidth">
+      <el-form-item label="时间" :label-width="formLabelWidth"  prop="dateRange">
+        <el-date-picker
+          style="width:400px"
+          v-model="formForNotive.dateRange"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期">
+        </el-date-picker>
+      </el-form-item>
+      <el-form-item label="面值" :label-width="formLabelWidth" 
+      prop="value">
           <el-input v-model="formForNotive.value" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="发行数量" :label-width="formLabelWidth" 
+      prop="total">
+          <el-input v-model="formForNotive.total" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="个人获取限制" :label-width="formLabelWidth" 
+      prop="getTotal">
+          <el-input v-model="formForNotive.getTotal" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="使用次数限制" :label-width="formLabelWidth" 
+      prop="useTotal">
+          <el-input v-model="formForNotive.useTotal" auto-complete="off"></el-input>
       </el-form-item>
   </el-form>
   <span slot="footer" class="dialog-footer">
@@ -113,52 +136,195 @@
       </el-table-column>
     </el-table>
 </el-main>
-    <el-footer>
-      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
-      </el-pagination>
-    </el-footer>
+<el-footer>
+  <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
+  </el-pagination>
+</el-footer>
 </el-container>
 </div>
 </template>
 <script>
-// getList 接口 获取
-// addNotice 接口 添加
+import {getCouponList_api,addCoupon_api,getGoodsList_api} from '@/api/seller' 
+const formForNotive = { //此页面 静态数据
+  name:"优惠券名字", // 优惠券名字
+  // now:"", //优惠券 发行时间
+  // getType:"", //优惠券 领取方式
+  // useRange:"", //优惠券 使用范围
+  // goodId:"", //优惠券 商品id 此处特殊，编辑之前通过商品的id反查商店id
+  // startTime:"", //优惠券  起始时间
+  // endTime:"", //优惠券  起始时间
+  dateRange:'',
+  value:"10", //优惠券 面值
+  total:"100", //优惠券 数量
+  getTotal:"10", //优惠券 获取限制数量
+  useTotal:"5", //优惠券 使用限制
+}
 export default {
+  created(){
+    this.getList()
+  },
   data() {
     return {
       //out
-      waitAddNotice:false,
-      formForNotive:{
-        name:'奥术大师',
-        value:'100',
-      },
-      addNewShow:false,
-      formLabelWidth:'80px',
+        addNewShow:false,
+        formLabelWidth:'140px',
+        rules: {
+          name: [
+              { required: true, message: '请输入优惠券名字', trigger: 'blur',min: 1},
+          ],
+          dateRange:[
+            {
+              type: "array", required: true, len: 2,
+              message: '请选择日期',
+            }
+          ],
+          value: [
+              { required: true, message: '请输入优惠券面值', trigger: 'blur',min: 1, }
+          ],
+          total: [
+              { required: true, message: '请输入发行数量', trigger: 'blur',min: 1, }
+          ],
+          getTotal: [
+              { required: true, message: '请输入个人获得优惠券数量的限制', trigger: 'blur',min: 1, }
+          ],
+          useTotal: [
+              { required: true, message: '请输入个人使用优惠券数量的限制', trigger: 'blur',min: 1, }
+          ]
+        },
+      // head
+        waitAddNotice:false,
+        formForNotive:Object.assign({},formForNotive),
+      // body
+        listLoading: false,
+        tableData: [],
+      // footer
+        listQuery: {
+          page: 1,
+          limit: 20,
+          search:"",
+          time:""
+        },
+        total:1,
+      // ------------------------
+      
       //header
       industry:'',
       formInline: {},
       // body 
-      listLoading: false,
-      tableData: [
-        {
-          name:'10元优惠券',
-          value:'10'
-        },{
-          name:'20元优惠券',
-          value:'20'
-        }
-      ],
-      // footer
-      listQuery: {
-        page: 1,
-        limit: 20,
-        search:"",
-        time:""
-      },
-      total:1,
     }
   },
   methods: {
+    // out
+      async addNewNotice(){ //添加新公告
+        let res = await new Promise((res,rej)=>{
+          this.$refs['ruleForm'].validate((valid) => {
+            if (valid) {
+              // alert('submit!');
+              res(true)
+            } else {
+              res(false)
+              // console.log('error submit!!');
+              // return false;
+            }
+          })
+        })
+        if(!res){
+          return 
+        }
+        this.waitAddNotice = true
+        // 发行时间戳
+        let tempNow = new Date().getTime().toString().slice(0,10)
+        tempNow = Number(tempNow)
+        // 商品id goods_commonid
+        let goodsId = await getGoodsList_api().then(response => {
+          if(response&&response.status==0){
+            let result = response.data
+            return result[0].goods_commonid
+          }
+        }).catch(e=>{
+        })
+        if(!goodsId){
+          this.waitAddNotice = false
+          return console.log("goodsId 不存在")
+        }
+        // 优惠券生效范围时间戳 两个字段
+        let dateStart = Number(this.formForNotive.dateRange[0].getTime().toString().slice(0,10))
+        let dateEnd = Number(this.formForNotive.dateRange[1].getTime().toString().slice(0,10))
+        let sendData = {
+          // 名称
+          vouchertemplate_title:this.formForNotive.name,
+          // 发行时间戳
+          vouchertemplate_adddate:tempNow,
+          // 领取方式
+          vouchertemplate_payment:3,
+          // 使用范围
+          vouchertemplate_usable_range:'全店铺',
+          // 名称
+          vouchertemplate_goods_id:2,
+          // 优惠券开始生效时间戳
+          vouchertemplate_startdate:dateStart,
+          // 优惠券结束生效时间戳
+          vouchertemplate_enddate:dateEnd,
+          // 优惠券 面值
+          vouchertemplate_price:this.formForNotive.value,
+          // 优惠券 发行数量
+          vouchertemplate_total:this.formForNotive.total,
+          // 优惠券 领取限制数量
+          vouchertemplate_eachlimit:this.formForNotive.getTotal,
+          // 优惠券 使用数量限制
+          vouchertemplate_eachrestricted:this.formForNotive.useTotal,
+          // 描述
+          // vouchertemplate_desc:this.formForNotive.name,
+        }
+        addCoupon_api(sendData).then(()=>{
+          this.waitAddNotice = false
+          this.formForNotive = {}
+          this.addNewShow = false
+          this.$notify({
+            title: '发送成功',
+            message: '已新增一条公告',
+            type: 'success'
+          })
+          this.getList()
+        }).catch(err=>{
+          this.waitAddNotice = false
+          console.error('addCoupon_api:',err)
+        })
+      },
+    // head
+      addItem(){ //显示 弹框
+        // this.editLoading = false
+        this.isAddItem = true
+        this.addNewShow = true
+        this.formForNotive = Object.assign({},formForNotive)
+      },
+    // body
+      getList() {
+        this.listLoading = true
+        let sendData = Object.assign({},this.listQuery)
+        getCouponList_api(sendData).then(response => {
+          if(response&&response.status==0){
+            let result = response.data
+            let tempTableData = []
+            result.forEach((aData)=>{
+              tempTableData.push({
+                //后端生成
+                id:aData.vouchertemplate_id,
+                //前后统一
+                name:aData.vouchertemplate_title,
+                value:aData.vouchertemplate_price,
+              })
+            })
+            this.tableData = tempTableData
+            this.total = response.pagination&&response.pagination.total?response.pagination.total:1
+          }else{
+          }
+          console.log("getList",response)
+          // this.list = response
+          this.listLoading = false
+        })
+      }, 
+    // ---------------------------------
     //out
     addDetailItem(){
       this.formForNotive.goodsDetail.push({
@@ -200,26 +366,7 @@ export default {
       this.listQuery_detail.page = val
       this.getList_detail()
     },
-    addNewNotice(){
-      this.waitAddNotice = true
-      setTimeout(()=>{
-        //发送成功该做的事情
-        this.waitAddNotice = false
-        this.addNewShow = false
-        this.form = {}
-        this.$notify({
-          title: '发送成功',
-          message: '这是一条成功的提示消息',
-          type: 'success'
-        })
-        //如果失败
-        // this.waitAddNotice = false
-      },2000)
-    },
-    addItem(){
-      this.addNewShow = true
-      // this.formForNotive = {}
-    },
+    
     //body
     editItem(){
       this.addNewShow = true
@@ -258,33 +405,7 @@ export default {
       this.listQuery.page = val
       this.getList()
     },
-    getList() {
-      this.listLoading = true
-      let sendData = Object.assign({},this.listQuery)
-      if(!sendData.time){
-        delete sendData.time
-      }
-      fetchNoticeList(sendData).then(response => {
-        if(response.data&&response.data.status==="success"){
-          let result = response.data.result
-          let tempTableData = []
-          result.forEach((aData)=>{
-            tempTableData.push({
-              name:aData.name,
-              phone:aData.phone,
-              deviceCode:aData.deviceCode,
-              swingCard:aData.swingCard,
-              cashBack:aData.cashBack
-            })
-          })
-          this.tableData = tempTableData
-        }
-        console.log("getList",response)
-        // this.list = response.data
-        this.total = response.data.paging.total
-        this.listLoading = false
-      })
-    },
+    
   }
 }
 </script>
