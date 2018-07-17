@@ -6,6 +6,13 @@
   font: 30rpx MicrosoftYaHei;
 }
 
+.wrap{
+  margin: 50rpx 0 0;
+}
+.ios_wrap{
+  margin: 0;
+}
+
 .empty{
   height: 100%;
   .empty_info{
@@ -32,12 +39,19 @@
   .user_info{
     display: flex;
     justify-content: space-between;
+    font-weight: bold;
     color: #333;
   }
   .address_info{
     margin: 30rpx 0 60rpx;
+    width: 100%;
+    height: 30rpx;
+    line-height: 30rpx;
     font-size: 28rpx;
+    font-weight: bold;
     color: #333;
+    word-break: break-all;
+    overflow: hidden;
   }
   .other_info{
     display: flex;
@@ -48,6 +62,7 @@
     display: flex;
     justify-content: flex-end;
     font-size: 24rpx;
+    font-weight: bold;
     color: #333;
     .operate_btn{
       display: flex;
@@ -90,49 +105,53 @@
 </style>
 
 <template>
-  <view class='container'>
+  <view class="container {{isIos ? 'ios_container' : ''}}">
       <topBar :topBar='topBar'></topBar>
 
-      <view wx:if='{{addressList.length !== 0}}'>
-          <scroll-view class='' scroll-y='true' style='height: 752rpx;'>
-              <repeat for='{{addressList}}' index='index' item='item'>
-                  <view class='address'>
-                      <view class='user_info'>{{item.consignee}}<text class='inline'>{{item.phone}}</text></view>
-                      <view class='address_info'>{{item.details}}{{item.street}}</view>
-                      <view class='other_info'>
-                        <view class='default' wx:if='{{item.isDefault}}'>[默认地址]</view>
-                        <view></view>
-                        <view class='operate_info'>
-                            <view class='operate_btn' @tap='modify({{index}})'>
-                              <image src='../images/icon/edit.png' />
-                              <view>修改</view>
-                            </view>
-                            <view class='operate_btn' @tap='delete({{index}})'>
-                              <image src='../images/del.png' />
-                              <view>删除</view>
-                            </view>
-                        </view>
-                      </view>
-                  </view>
-              </repeat> 
-          </scroll-view>
-        
-          <view class='center'>
-              <view class='add_btn' @tap='add'>添加新地址</view>
-              <!-- <image src='../../images/Mall/icon_zuojiantou@2x.png' /> -->
-          </view>
+      <view class="wrap {{ isIos ? 'ios_wrap' : '' }}">
 
-      </view>
-      <view class='empty' wx:else>
-          <view class='empty_info'>
-            <view>
-              <image src='../images/my/address-3.png' />
-              <view>您还没有收货地址呢！</view>
+        <view wx:if='{{addressList.length !== 0}}'>
+            <scroll-view class='' scroll-y='true' style='height: 100%;'>
+                <repeat for='{{addressList}}' index='index' item='item'>
+                    <view class='address'>
+                        <view class='user_info'>{{item.consignee}}<text class='inline'>{{item.phone}}</text></view>
+                        <view class='address_info'>{{item.details}}{{item.street}}</view>
+                        <view class='other_info'>
+                          <view class='default' wx:if='{{item.isDefault}}'>[默认地址]</view>
+                          <view></view>
+                          <view class='operate_info'>
+                              <view class='operate_btn' @tap='modify({{index}})'>
+                                <image src='../images/icon/edit.png' />
+                                <view>修改</view>
+                              </view>
+                              <view class='operate_btn' @tap='delete({{index}})'>
+                                <image src='../images/del.png' />
+                                <view>删除</view>
+                              </view>
+                          </view>
+                        </view>
+                    </view>
+                </repeat> 
+            </scroll-view>
+          
+            <view class='center'>
+                <view class='add_btn' @tap='add'>添加新地址</view>
+                <!-- <image src='../../images/Mall/icon_zuojiantou@2x.png' /> -->
             </view>
-          </view>
-          <view class='center'>
-              <view class='add_btn' @tap='add'>添加新地址</view>
-          </view>
+
+        </view>
+        <view class='empty' wx:else>
+            <view class='empty_info'>
+              <view>
+                <image src='../images/my/address-3.png' />
+                <view>您还没有收货地址呢！</view>
+              </view>
+            </view>
+            <view class='center'>
+                <view class='add_btn' @tap='add'>添加新地址</view>
+            </view>
+        </view>
+
       </view>
       
   </view>
@@ -151,6 +170,7 @@
       },
       // 
       addressList: [  ],//{consignee: 'akfd', phone: '11111111111', details: 'sjfd', street: 'skf',}
+      isIos: null,
     };
     
     components = {
@@ -186,6 +206,8 @@
     };
     
     async onShow(options){
+
+      this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
 
       wx.showLoading({  
         title: 'Loading...',
