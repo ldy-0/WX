@@ -6,8 +6,9 @@
   "license": "MIT",
   "scripts": {
     "dev": "cross-env BABEL_ENV=development webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
-    "build:prod": "cross-env NODE_ENV=production env_config=prod node build/build.js",
+    "build:prod": "NODE_ENV=production env_config=prod node build/build.js",
     "build:sit": "cross-env NODE_ENV=production env_config=sit node build/build.js",
+    "copy": "mkdir ../mall-server/public/admin;rm -rf ../mall-server/public/admin/*;cp -r dist/* ../mall-server/public/admin/",
     "lint": "eslint --ext .js,.vue src",
     "test": "npm run lint"
   },
