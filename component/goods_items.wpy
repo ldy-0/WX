@@ -1,0 +1,73 @@
+<style lang="less">
+
+.goods_title{
+  width: 100%;
+  height: 30rpx;
+  line-height: 30rpx;
+  font-size: 26rpx;
+  color: #333;
+  overflow: hidden;
+  // text-overflow: ellipsis;
+  // white-space: nowrap;
+}
+  
+</style>
+<template>
+  <view class="">
+    
+    <repeat for='{{items.orderItems}}' index='i' item='item'>
+        <view class='package' wx:if='{{isPackage}}'>
+            <view class='left'>包裹{{i+1}}    来自顺丰优选</view>
+            <view class='right'>查看物流</view>
+        </view>
+        <navigator class='product_info' url="/pages/order_detail?id={{items.id}}">
+            <image src='{{item.productImgUrl}}' />
+            <view class='product'>
+                <view>
+                    <view class='product_title'>{{item.title}}</view>
+                    <view class='product_standard'>规格：{{item.skuStr}}</view>
+                </view>
+                <view class='row'>
+                    <view class='product_price'>¥{{item.price}}</view>
+                    <view class='product_number'>×{{item.amount}}</view>
+                    <!-- <view class='product_address'>福建福州</view> -->
+                </view>
+            </view>
+        </navigator>
+    </repeat>
+   
+  </view>
+</template>
+<script>
+import wepy from "wepy";
+
+export default class TopBar extends wepy.component{
+  props = {
+    items: Object
+  };
+
+  data = {
+    name: "",
+    company: {},
+    isIOS: false
+  };
+
+  methods = {
+    
+  };
+
+  onLoad() {
+    
+    this.init();
+  }
+
+  init() {
+    this.company = this.$parent.$parent.globalData.company;
+    var str = wx.getSystemInfoSync().system;
+    var isSystem = new RegExp("iOS", "g");
+    this.isIOS = isSystem.test(str);
+    this.$apply();
+  }
+  
+}
+</script>
