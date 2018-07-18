@@ -27,22 +27,22 @@
   <el-form :model="formForNotive" v-loading="editLoading" ref="ruleForm" :rules="rules" size="medium" >
     <el-form-item  label="商品图片"  :label-width="formLabelWidth"  prop="fileList1">
           <el-upload 
-          :auto-upload="false"
-            action=""
-            :limit="imgLimit1"
-          list-type="picture-card" 
-          :on-success="onsuccess"
-          :on-preview="preview"
-          :on-remove="remove1" 
-          :on-change="change1" 
-          :before-upload="beforeup" 
-          :before-remove="beforere" 
-          :file-list="formForNotive.fileList1"
+            :auto-upload="false" 
+              action="" 
+              :limit="imgLimit1"
+            list-type="picture-card" 
+            :on-success="onsuccess"
+            :on-preview="preview" 
+            :on-remove="remove1" 
+            :on-change="change1" 
+            :before-upload="beforeup" 
+            :before-remove="beforere" 
+            :file-list="formForNotive.fileList1" 
           >
           <i class="el-icon-plus"></i>
         </el-upload>
     </el-form-item>
-    <p class="hbs-margin-left140">请选择一张图片,建议像素 ：宽750*高750</p>
+    <p class="hbs-margin-left140">最多可选择6张图,建议像素 ：宽750*高750</p>
     <!-- 普通、预售 -->
     <el-form-item label="商品类型" :label-width="formLabelWidth" prop="goodsType">
       <el-select v-model="formForNotive.goodsType" placeholder="请选择">
@@ -367,8 +367,7 @@ export default {
     return {
       // out
         editLoading:false,//此页面的编辑页为 获取单条详情方式，故添加loading
-        imgLimit1:1,
-        imgLimit2:2,
+        imgLimit1:6,
         dialogImageUrl: '',
         dialogVisible: false,
 
@@ -426,8 +425,8 @@ export default {
           ],
           fileList1:[
             {
-              type: "array", required: true, len: 1,
-              message: '请选择一张图片',
+              type: "array", required: true, min: 1,
+              message: '至少选择一张图片',
               // fields: {
               //   0: {required: true}
               // }
@@ -716,9 +715,15 @@ export default {
         sendData.is_virtual = false
 
         // 商品图片
-        let urls1 = await uploadFn(this.formForNotive.fileList1[0].raw)
-        sendData.goods_image = urls1[0]
-        console.log('urls1',urls1,'-------------------------')
+          // let urls1 = await uploadFn(this.formForNotive.fileList1[0].raw)
+          // sendData.goods_image = urls1[0]
+          // console.log('urls1',urls1,'-------------------------')
+        let fileAndUrl0 = this.getFiles(this.formForNotive.fileList1)
+        let files0 = fileAndUrl0.files
+        let urls0Piece1 = await uploadFn(files0)
+        let urls0 = urls0Piece1.concat(fileAndUrl0.urls)
+        sendData.goods_image= urls0?JSON.stringify(urls0):''
+
 
         // 商品详情 万金油
         let fileAndUrl = this.getFiles(this.formForNotive.fileList2)
@@ -901,14 +906,19 @@ export default {
         sendData.is_virtual = false
 
         // 商品图片
-        console.log(this.formForNotive.fileList1[0],'商品图片-----')
-        if(this.formForNotive.fileList1[0].raw){
-          let urls1 = await uploadFn(this.formForNotive.fileList1[0].raw)
-          sendData.goods_image = urls1[0]
-          console.log('urls1',urls1,'-------------------------')
-        }else{
-           sendData.goods_image = this.formForNotive.fileList1[0].url
-        }
+        // console.log(this.formForNotive.fileList1[0],'商品图片-----')
+        // if(this.formForNotive.fileList1[0].raw){
+        //   let urls1 = await uploadFn(this.formForNotive.fileList1[0].raw)
+        //   sendData.goods_image = urls1[0]
+        //   console.log('urls1',urls1,'-------------------------')
+        // }else{
+        //    sendData.goods_image = this.formForNotive.fileList1[0].url
+        // }
+        let fileAndUrl0 = this.getFiles(this.formForNotive.fileList1)
+        let files0 = fileAndUrl0.files
+        let urls0Piece1 = await uploadFn(files0)
+        let urls0 = urls0Piece1.concat(fileAndUrl0.urls)
+        sendData.goods_image= urls0?JSON.stringify(urls0):''
         
 
         // 商品详情 万金油
@@ -1046,7 +1056,33 @@ export default {
             
             tempForm.isUp = data.goods_state 
             //商品图片
-            tempForm.fileList1 = [{url:data.goods_image}]
+            tempForm.fileList1 = []
+            let goodsimagesListTemp = data.goodsimagesList
+            let fileList1Temp = []
+            try{
+              for(let i=0,len = goodsimagesListTemp.length;i<len;i++){
+                fileList1Temp.push({
+                  url:goodsimagesListTemp[i].goodsimage_url
+                })
+              }
+              tempForm.fileList1 = fileList1Temp
+            }catch(error){
+              tempForm.fileList1 = []
+            }
+            
+            try{
+              let tempImgs0 = JSON.parse(data.goods_image)
+              let tempFileList0 = []
+              for(let i=0,len = tempImgs0.length;i<len;i++){
+                tempFileList0.push({
+                  url:tempImgs[i]
+                })
+              }
+              tempForm.fileList1 = tempFileList0
+            }catch(error){
+              tempForm.fileList0 = []
+            }
+
             tempForm.goodsType = data.is_appoint 
             tempForm.goodsName = data.goods_name
             tempForm.goodsNum = data.goods_serial
@@ -1055,7 +1091,6 @@ export default {
             tempForm.goodsDescribe = data.goods_advword
             tempForm.size = data.spec_value?'mutil':'one'
             tempForm.goodsTrans = Number(data.goods_freight)
-            console.log(tempForm)
             try{
               let tempImgs = JSON.parse(data.goods_body)
               let tempFileList2 = []
