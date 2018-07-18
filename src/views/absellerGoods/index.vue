@@ -42,7 +42,7 @@
           <i class="el-icon-plus"></i>
         </el-upload>
     </el-form-item>
-    <p class="hbs-margin-left140">请选择一张图片,建议像素 750*750</p>
+    <p class="hbs-margin-left140">请选择一张图片,建议像素 ：宽750*高750</p>
     <!-- 普通、预售 -->
     <el-form-item label="商品类型" :label-width="formLabelWidth" prop="goodsType">
       <el-select v-model="formForNotive.goodsType" placeholder="请选择">

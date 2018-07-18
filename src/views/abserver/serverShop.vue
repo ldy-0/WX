@@ -27,7 +27,7 @@
     <el-form-item label="定位" :label-width="formLabelWidth">
         <div id="servershopmap"></div>
         <br>
-        {{position}}
+        <p class="hbs-margin-left80 hbs-margin-justify ">纬度：{{position.lat}},经度：{{position.lng}}</p>
     </el-form-item>
     <el-form-item  label="店铺头像"  :label-width="formLabelWidth" prop="fileList1">
           <el-upload 
@@ -46,6 +46,7 @@
           <i class="el-icon-plus"></i>
         </el-upload>
     </el-form-item>
+    <p class="hbs-margin-left80 hbs-margin-justify">请选择一张图片,建议尺寸： 宽80*高80</p>
     <el-form-item  label="店铺主图"  :label-width="formLabelWidth" prop="fileList2">
           <el-upload 
           :auto-upload="false"
@@ -63,6 +64,7 @@
           <i class="el-icon-plus"></i>
         </el-upload>
     </el-form-item>
+    <p class="hbs-margin-left80 hbs-margin-justify">请选择一张图片,建议尺寸： 宽690*高390</p>
     <el-form-item  label="店铺展示"  :label-width="formLabelWidth" prop="fileList3">
           <el-upload 
           :auto-upload="false"
@@ -80,10 +82,10 @@
           <i class="el-icon-plus"></i>
         </el-upload>
     </el-form-item>
+    <p class="hbs-margin-left80 hbs-margin-justify">最多可选择9张图片,建议尺寸： 宽210*高210</p>
     <el-form-item label="店铺介绍" :label-width="formLabelWidth" prop='shopText'>
       <el-input v-model="formForNotive.shopText" type="textarea"  auto-complete="off"></el-input>
     </el-form-item>
-    {{formForNotive.checkList}}
     <el-form-item label="提供服务" :label-width="formLabelWidth" prop='checkList'>
         <el-checkbox-group v-model="formForNotive.checkList">
             <el-checkbox label="0" border>wifi</el-checkbox>
@@ -117,7 +119,7 @@ export default {
       dialogImageUrl: '',
       dialogVisible: false,
       imgLimit1:1,
-      imgLimit2:8,
+      imgLimit2:9,
       waitAddNotice:false,
       formForNotive:{
           shopName:"",

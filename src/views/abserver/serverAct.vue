@@ -34,6 +34,7 @@
           <i class="el-icon-plus"></i>
         </el-upload>
       </el-form-item>
+      <!-- <p class="hbs-margin-left80">请选择一张图片,建议尺寸： 宽750*高376</p> -->
     <el-form-item label="内容" :label-width="formLabelWidth" prop="content">
       <el-input v-model="formForNotive.content" auto-complete="off"></el-input>
     </el-form-item>

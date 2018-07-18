@@ -44,7 +44,9 @@
                     label="商品图片"
                     >
                     <template slot-scope="scope">
-                    <img :src="scope.row.goodsImage" alt="" width="100px">
+                      <div style="width:100px;height:100px;align-items:center;display:flex;">
+                        <img :src="scope.row.goodsImage" alt="" width="100px">
+                      </div>
                     </template>
                 </el-table-column>
                 <el-table-column

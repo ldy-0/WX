@@ -33,6 +33,7 @@
           <i class="el-icon-plus"></i>
         </el-upload>
       </el-form-item>
+      <p class="hbs-margin-left80">请选择一张图片,建议尺寸： 宽120*高120</p>
       <el-form-item label="标题" :label-width="formLabelWidth">
         <el-input v-model="formForNotive.title" auto-complete="off"></el-input>
       </el-form-item>
@@ -55,7 +56,9 @@
         label="图片"
         >
         <template slot-scope="scope">
-          <img :src="scope.row.image" alt="" width="100px">
+          <div style="width:100px;height:100px;align-items:center;display:flex;">
+              <img :src="scope.row.image" alt="" width="100px">
+          </div>
         </template>
       </el-table-column>
       <el-table-column

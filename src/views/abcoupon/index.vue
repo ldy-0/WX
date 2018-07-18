@@ -6,7 +6,7 @@
 
 <template>
 <div>
-  <!-- 编辑和添加共用 -->
+  <!-- 添加 -->
 <el-dialog
   title="新增优惠券"
   :visible.sync="addNewShow"
@@ -28,19 +28,19 @@
       </el-form-item>
       <el-form-item label="面值" :label-width="formLabelWidth" 
       prop="value">
-          <el-input v-model="formForNotive.value" auto-complete="off"></el-input>
+          <el-input v-model.number="formForNotive.value" auto-complete="off"></el-input>
       </el-form-item>
       <el-form-item label="发行数量" :label-width="formLabelWidth" 
       prop="total">
-          <el-input v-model="formForNotive.total" auto-complete="off"></el-input>
+          <el-input v-model.number="formForNotive.total" auto-complete="off"></el-input>
       </el-form-item>
       <el-form-item label="个人获取限制" :label-width="formLabelWidth" 
       prop="getTotal">
-          <el-input v-model="formForNotive.getTotal" auto-complete="off"></el-input>
+          <el-input v-model.number="formForNotive.getTotal" auto-complete="off"></el-input>
       </el-form-item>
       <el-form-item label="使用次数限制" :label-width="formLabelWidth" 
       prop="useTotal">
-          <el-input v-model="formForNotive.useTotal" auto-complete="off"></el-input>
+          <el-input v-model.number="formForNotive.useTotal" auto-complete="off"></el-input>
       </el-form-item>
   </el-form>
   <span slot="footer" class="dialog-footer">
@@ -195,10 +195,10 @@ const formForNotive = { //此页面 静态数据
   // startTime:"", //优惠券  起始时间
   // endTime:"", //优惠券  起始时间
   dateRange:'',
-  value:"10", //优惠券 面值
-  total:"100", //优惠券 数量
-  getTotal:"10", //优惠券 获取限制数量
-  useTotal:"5", //优惠券 使用限制
+  value:10, //优惠券 面值
+  total:100, //优惠券 数量
+  getTotal:10, //优惠券 获取限制数量
+  useTotal:5, //优惠券 使用限制
 }
 export default {
   created(){
@@ -222,16 +222,16 @@ export default {
             }
           ],
           value: [
-              { required: true, message: '请输入优惠券面值', trigger: 'blur',min: 1, }
+              { required: true, message: '请输入优惠券面值,请输入不少于1的整数', trigger: 'blur',min: 1, type:'integer'}
           ],
           total: [
-              { required: true, message: '请输入发行数量', trigger: 'blur',min: 1, }
+              { required: true, message: '请输入发行数量,请输入不少于1的整数', trigger: 'blur',min: 1, type:'integer' }
           ],
           getTotal: [
-              { required: true, message: '请输入个人获得优惠券数量的限制', trigger: 'blur',min: 1, }
+              { required: true, message: '请输入个人获得优惠券数量的限制,请输入不少于1的整数', trigger: 'blur',min: 1, type:'integer' }
           ],
           useTotal: [
-              { required: true, message: '请输入个人使用优惠券数量的限制', trigger: 'blur',min: 1, }
+              { required: true, message: '请输入个人使用优惠券数量的限制,请输入不少于1的整数', trigger: 'blur',min: 1, type:'integer' }
           ]
         },
       // head
