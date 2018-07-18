@@ -34,12 +34,8 @@
           <i class="el-icon-plus"></i>
         </el-upload>
     </el-form-item>
-    <el-form-item label="标题" :label-width="formLabelWidth" prop='title'>
-      <el-input v-model="formForNotive.title" auto-complete="off"></el-input>
-    </el-form-item>
-    {{jumpType}}
     <el-form-item label="跳转类型" :label-width="formLabelWidth">
-        <el-select v-model="jumpType" placeholder="请选择">
+        <el-select v-model="rules.fileList2[0].required" placeholder="请选择">
             <el-option
             v-for="item in jumpTypeOptions"
             :key="item.value"
@@ -48,7 +44,7 @@
             </el-option>
         </el-select>
     </el-form-item>
-    <el-form-item v-if="jumpType=='tiao'" label="跳转图片" :label-width="formLabelWidth" prop="fileList2">
+    <el-form-item v-if="rules.fileList2[0].required" label="跳转图片" :label-width="formLabelWidth" prop="fileList2">
       <el-upload 
               :auto-upload="false"
                 action=""
@@ -68,7 +64,6 @@
   </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="addNewShow = false">取 消</el-button>
-    
     <el-button v-if="isAddItem" type="primary" @click="addNewBanner('ruleForm')"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确 定</el-button>
@@ -95,18 +90,13 @@
       <el-table-column label="图片">
         <template slot-scope="scope">
           <div style="width:100px;height:100px;align-items:center;display:flex;">
-            <img :src="scope.row.image" alt="" style="width:100px">
+            <img :src="scope.row.pic" alt="" style="width:100px">
           </div>
         </template>
       </el-table-column>
-      <el-table-column
-        label="标题" 
-        prop="title"
-        >
-      </el-table-column>
         <el-table-column
         label="跳转类型" 
-        prop="type"
+        prop="urlTXT"
         >
       </el-table-column>
       <el-table-column
@@ -123,10 +113,10 @@
 
 <!-- footer     -->
 </el-main>
-    <el-footer>
-      <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
-      </el-pagination>
-    </el-footer>
+<el-footer>
+  <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
+  </el-pagination>
+</el-footer>
 </el-container>
 </div>
 </template>
@@ -135,41 +125,45 @@ import {getBannerList_api , deleteBanner_api , addBanner_api , editBanner_api} f
 import uploadFn from '@/utils/aahbs'
 // getList 接口 获取
 // addNotice 接口 添加
-const formForNotive = {}
+const formForNotive = {
+  fileList1:[],
+  fileList2:[]
+}
 export default {
   data() {
     return {
-      //out
-      dialogImageUrl: '',
-      imgLimit1:1,
-      dialogVisible: false,
-      fileList1: [{url: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3994633895,563142661&fm=27&gp=0.jpg'}],
-      fileList2: [{url: 'https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=3994633895,563142661&fm=27&gp=0.jpg'}],
-      jumpType:'butiao',
-      jumpTypeOptions:[{
-          value:'tiao',
-          label:'跳'
-      },{
-          value:'butiao',
-          label:'bu跳'
-      }],
-      
       isAddItem:true,
       waitAddNotice:false,
-      formForNotive:{},
+      formForNotive:Object.assign({},formForNotive),
+      addNewShow:false,
+      formLabelWidth:'80px',
+
+      dialogImageUrl: '',
+      dialogVisible: false,
+      // jumpType:'butiao',
+      imgLimit1:1,
+      jumpTypeOptions:[{
+          value:true,
+          label:'跳转'
+      },{
+          value:false,
+          label:'不跳转'
+      }],
       rules: {
-        title: [
-            { required: true, message: '请输入标题', trigger: 'blur',min: 1 }
-        ],        
         fileList1:[
           {
             type: "array", required: true, len: 1,
             message: '请选择一张图片',
           }
         ],
+        fileList2:[
+          {
+            type: "array", required: true, len: 1,
+            message: '请选择一张图片',
+          }
+        ],
       },
-      addNewShow:false,
-      formLabelWidth:'80px',
+      // ------------------------------------
       //header
       formInline: {},
       // body 
@@ -187,7 +181,7 @@ export default {
   },
   methods: {
     //file upload
-    onsuccess(){
+      onsuccess(){
         console.log('sucess----',arguments)
       },
       beforere(){
@@ -207,39 +201,28 @@ export default {
         this.dialogVisible = true;
         console.log('preview----',arguments)
       },
-    
-    // getList_detail(){
-    //   console.log('getList_detail 暂时留白')
-    // },
-    // handleSizeChange_detail(val) {
-    //   this.listQuery_detail.limit = val
-    //   this.getList_detail()
-    // },
-    // handleCurrentChange_detail(val) {
-    //   this.listQuery_detail.page = val
-    //   this.getList_detail()
-    // },
-    preview(file) { //预览任意图片
-        this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
-        console.log('preview----',arguments)
-    },
-    remove1() { //每次改变图片获取最新的filelist
-        console.log('remove----',arguments)
+
+      preview(file) { //预览任意图片
+          this.dialogImageUrl = file.url;
+          this.dialogVisible = true;
+          console.log('preview----',arguments)
+      },
+      remove1() { //每次改变图片获取最新的filelist
+          console.log('remove----',arguments)
+          this.formForNotive.fileList1 = arguments[1]
+      },
+      change1() {
+        console.log('change----',arguments)
         this.formForNotive.fileList1 = arguments[1]
-    },
-    change1() {
-      console.log('change----',arguments)
-      this.formForNotive.fileList1 = arguments[1]
-    },
-    remove2() { //每次改变图片获取最新的filelist
-        console.log('remove----',arguments)
+      },
+      remove2() { //每次改变图片获取最新的filelist
+          console.log('remove----',arguments)
+          this.formForNotive.fileList2 = arguments[1]
+      },
+      change2() {
+        console.log('change----',arguments)
         this.formForNotive.fileList2 = arguments[1]
-    },
-    change2() {
-      console.log('change----',arguments)
-      this.formForNotive.fileList2 = arguments[1]
-    },
+      },
     addItem(){
       this.isAddItem = true,
       this.addNewShow = true,
@@ -263,22 +246,19 @@ export default {
       }
 
       this.waitAddNotice = true
-      let sendData = new FormData() 
+      let sendData = {}
+      let jumpType = this.rules.fileList2[0].required 
+      //图一
       let allUrl1 = await uploadFn(this.formForNotive.fileList1[0].raw)
-      if(this.jumpType == "tiao"){
-        let allUrl2 = await uploadFn(this.formForNotive.fileList2[0].raw)
+      sendData.banner_pic = allUrl1[0]
+
+      // 跳转 图二
+      if(jumpType){
+        let allUrl2 =  await uploadFn(this.formForNotive.fileList2[0].raw)
+        sendData.banner_url = allUrl2[0]
       }
-      try{
-          sendData.append('banner_pic',allUrl1[0])
-        if(allUrl2){
-          sendData.append('banner_url',allUrl2[0])
-        }
-      }catch(err){
-        this.waitAddNotice = false
-        console.log(err,'图片不能为空')
-      }
-      sendData.append("banner_order",1)
-      
+      // 默认上传
+      sendData.banner_order = 1
       addBanner_api(sendData).then((data)=>{
         this.waitAddNotice = false
         this.addNewShow = false
@@ -302,8 +282,6 @@ export default {
         console.error('接口错误')
       })
     },
-
-
     //body
     getList() {
       this.listLoading = true
@@ -324,9 +302,9 @@ export default {
               temp_fileList2.push({url:aData.banner_url})
             }
             tempTableData.push({
-              fileList1:temp_fileList1,
-              fileList2:temp_fileList2,
-              image:aData.banner_pic,
+              pic:aData.banner_pic,
+              url:aData.banner_url,
+              urlTXT:aData.banner_url?'跳转':'不跳转',
               id:aData.banner_id,
               order:aData.banner_order
             })
@@ -350,14 +328,22 @@ export default {
     },
 
     editItem(index,rowData){
-      // this.editLoading = true
-      console.log(rowData)
-      this.formForNotive = Object.assign({},rowData)
+      let id = rowData.id
+      let fileList1 = [{url:rowData.pic}]
+      let fileList2 = rowData.url?[{url:rowData.url}]:[]
+      let order = rowData.order
+      this.rules.fileList2[0].required = !!rowData.url
+      this.formForNotive ={
+        fileList1,
+        fileList2,
+        order,
+        id
+      }
       this.isAddItem = false
       this.addNewShow = true
     },
 
-  async editNewBanner(formName){
+    async editNewBanner(formName){
       let res = await new Promise((res,rej)=>{
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -377,6 +363,7 @@ export default {
       this.waitAddNotice = true
       let sendData = {}
       let allUrl1,allUrl2
+      let jumpType = this.rules.fileList2[0].required 
       if(this.formForNotive.fileList1[0].raw){
          allUrl1 = await uploadFn(this.formForNotive.fileList1[0].raw)
          allUrl1 = allUrl1[0]
@@ -385,19 +372,20 @@ export default {
       }
       sendData['banner_pic'] = allUrl1
 
-    if(this.jumpType == "tiao"){          //判断是否有第二个上传图片
-      if(this.formForNotive.fileList2[0].raw){
-         allUrl2 = await uploadFn(this.formForNotive.fileList2[0].raw)
-         allUrl2 = allUrl2[0]
+      if(jumpType){    //判断是否有第二个上传图片
+        if(this.formForNotive.fileList2[0].raw){
+          allUrl2 = await uploadFn(this.formForNotive.fileList2[0].raw)
+          allUrl2 = allUrl2[0]
+        }else{
+          allUrl2 = this.formForNotive.fileList2[0].url
+        }
+        sendData['banner_url'] = allUrl2
       }else{
-         allUrl2 = this.formForNotive.fileList2[0].url
+        sendData['banner_url'] = null
       }
-      sendData['banner_url'] = allUrl2
-    }
-      
       sendData['banner_id'] = this.formForNotive.id
       sendData['banner_order'] = this.formForNotive.order
-
+      console.log(sendData,'-------------------')
       editBanner_api(sendData).then(data=>{
         this.waitAddNotice = false
         this.addNewShow = false

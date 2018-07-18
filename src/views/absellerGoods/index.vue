@@ -42,6 +42,7 @@
           <i class="el-icon-plus"></i>
         </el-upload>
     </el-form-item>
+    <p class="hbs-margin-left140">请选择一张图片,建议像素 750*750</p>
     <!-- 普通、预售 -->
     <el-form-item label="商品类型" :label-width="formLabelWidth" prop="goodsType">
       <el-select v-model="formForNotive.goodsType" placeholder="请选择">
@@ -102,7 +103,7 @@
       <el-input v-model="formForNotive.goodsDescribe" type="textarea" auto-complete="off"></el-input>
     </el-form-item>
 
-    {{formForNotive.size}}
+    <!-- {{formForNotive.size}} -->
     <el-form-item label="规格" :label-width="formLabelWidth" >
       <!-- size 和 size2xxx 都是单独的属性 -->
         <el-tabs v-model="formForNotive.size" style="margin-top:-3px;margin-left:10px">
@@ -110,10 +111,10 @@
               :disabled="!isAddItem&&formForNotive.size!=='one'" >
               <el-form :model="formForNotiveChild1" :inline="true"   ref="ruleFormChild1" :rules="rulesChild1" class="margin-btm20">
                 <el-form-item label="价格" prop="price">
-                  <el-input v-model="formForNotiveChild1.price" auto-complete="off"></el-input>
+                  <el-input v-model.number="formForNotiveChild1.price" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="库存" prop="count">
-                  <el-input v-model="formForNotiveChild1.count" auto-complete="off"></el-input>
+                  <el-input v-model.number="formForNotiveChild1.count" auto-complete="off"></el-input>
                 </el-form-item>
               </el-form>
             </el-tab-pane>
@@ -126,10 +127,10 @@
                     <el-input v-model="formItem.name" auto-complete="off" ></el-input>
                   </el-form-item>
                   <el-form-item label="价格"  prop="price">
-                    <el-input v-model="formItem.price" auto-complete="off"></el-input>
+                    <el-input v-model.number="formItem.price" auto-complete="off"></el-input>
                   </el-form-item>
                   <el-form-item label="库存"  prop="count">
-                    <el-input v-model="formItem.count" auto-complete="off"></el-input>
+                    <el-input v-model.number="formItem.count" auto-complete="off"></el-input>
                   </el-form-item>
                   <el-button @click="deleteSize_out(index)">删除</el-button>
                 </el-form>
@@ -142,7 +143,7 @@
         </el-tabs>
     </el-form-item>
     <el-form-item label="运费" :label-width="formLabelWidth" prop="goodsTrans">
-      <el-input v-model="formForNotive.goodsTrans" auto-complete="off"></el-input>
+      <el-input v-model.number="formForNotive.goodsTrans" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item label="商品详情设置" :label-width="formLabelWidth" prop="fileList2" >
       <el-upload 
@@ -161,6 +162,7 @@
         <i class="el-icon-plus"></i>
       </el-upload>
     </el-form-item>
+    <p class="hbs-margin-left140">建议尺寸：宽750*高不限 ，最多上传9张图</p>
   </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="addNewShow = false">取 消</el-button>
@@ -346,13 +348,13 @@ const formForNotive = {
         // goodsTotal:'100',
         industry:0,
         goodsDescribe:'暂无描述',
-        goodsTrans:'0',
+        goodsTrans:0,
         size:'one',
         fileList2:[],
       }
 const formForNotiveChild1 = {
-  price:'10',
-  count:'100'
+  price:10,
+  count:100
 }
 const formForNotiveChild2List = [{
       }]
@@ -405,7 +407,7 @@ export default {
               { type:"string",required: true, message: '请输入商品编号', trigger: 'blur',min: 1},
           ],
           school: [
-              { type:"number",required: true, message: '请输入校区', trigger: 'blur'},
+              { type:"number",required: true, message: '请输入校区，如果没有校区请先添加校区(运营=>校区)', trigger: 'blur'},
           ],
           // goodsTotal: [
           //     { type:"string",required: true, message: '请输入库存', trigger: 'blur',min: 1},
@@ -420,7 +422,7 @@ export default {
               { type:"string",required: true, message: '请输入描述', trigger: 'blur',min: 1},
           ],
           goodsTrans: [
-              { type:"string",required: true, message: '请输入运费', trigger: 'blur',min: 1},
+              { type:"number",required: true, message: '请输入运费', trigger: 'blur',min: 0},
           ],
           fileList1:[
             {
@@ -442,10 +444,10 @@ export default {
         formForNotiveChild1:Object.assign({},formForNotiveChild1),
         rulesChild1:{
           price: [
-              { required: true, message: '请输入商品价格', trigger: 'blur' , min: 1,type:'string'},
+              { required: true, message: '请输入商品价格,不少于0', trigger: 'blur' , min: 0,type:'number'},
           ],
           count: [
-              { required: true, message: '请输入商品库存', trigger: 'blur' , min: 1,type:'string'},
+              { required: true, message: '请输入商品库存,不少于0的整数', trigger: 'blur' , min: 0,type:'integer'},
           ]
         },
         formForNotiveChild2List:Object.assign([],formForNotiveChild2List),
@@ -454,10 +456,10 @@ export default {
               { required: true, message: '请输入名称', trigger: 'blur' , min: 1,type:'string'},
           ],
           price: [
-              { required: true, message: '请输入商品价格', trigger: 'blur' , min: 1,type:'string'},
+              { required: true, message: '请输入商品价格,不少于0', trigger: 'blur' , min: 0,type:'number'},
           ],
           count: [
-              { required: true, message: '请输入商品库存', trigger: 'blur' , min: 1,type:'string'},
+              { required: true, message: '请输入商品库存,不少于0', trigger: 'blur' , min: 0,type:'number'},
           ]
         },
         waitAddNotice:false,
@@ -697,6 +699,7 @@ export default {
 
         // 类型转换
         this.formForNotiveChild1.price =  this.formForNotiveChild1.price?Number(this.formForNotiveChild1.price):0
+
         //废物值
         sendData.cate_id = 764
         sendData.cate_name = '自定义分类'
@@ -986,15 +989,15 @@ export default {
           this.addNewShow = false
           if(data.status===0){
             this.$notify({
-              title: '上传成功',
-              message: '已新增商品',
+              title: '成功',
+              message: '已修改商品',
               type: 'success'
             })
             this.getList()
           }else{
             this.$notify({
-              title: '上传失败',
-              message: '新增商品失败',
+              title: '失败',
+              message: '修改商品失败',
               type: 'error'
             })
           }
@@ -1051,7 +1054,7 @@ export default {
             tempForm.industry = Number(data.goods_stcids)
             tempForm.goodsDescribe = data.goods_advword
             tempForm.size = data.spec_value?'mutil':'one'
-            tempForm.goodsTrans = data.goods_freight
+            tempForm.goodsTrans = Number(data.goods_freight)
             console.log(tempForm)
             try{
               let tempImgs = JSON.parse(data.goods_body)
@@ -1072,16 +1075,16 @@ export default {
             if(tempForm.size==='mutil'){
                 for(let i = 0 ,len = data.SKUList.length;i<len;i++){
                   tempForm3.push({
-                    price:data.SKUList[i].goods_price,
+                    price:Number(data.SKUList[i].goods_price),
                     name:data.SKUList[i].goods_spec,
-                    count:data.SKUList[i].goods_storage,
+                    count:Number(data.SKUList[i].goods_storage),
                   })
                 }
                 this.formForNotiveChild2List = tempForm3 
             }else{
               tempForm2 = {
-                price:data.goods_price,
-                count:data.SKUList[0].goods_storage.toString()
+                price:Number(data.goods_price),
+                count:Number(data.SKUList[0].goods_storage)
               }
               this.formForNotiveChild1 = tempForm2
             }
