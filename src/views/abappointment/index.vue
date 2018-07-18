@@ -29,7 +29,7 @@
         {{detailForm.date}}
       </p>
     </el-form-item>
-    <el-form-item label="校区" :label-width="formLabelWidth">
+    <el-form-item label="预约店铺" :label-width="formLabelWidth">
       <p class="hbs-no-margin-p">
         {{detailForm.school}}
       </p>
@@ -114,13 +114,15 @@
         prop="date"
         >
       </el-table-column>
+      <!-- 预约校区 -->
       <el-table-column
-        label="预约校区" 
+        label="预约店铺" 
         prop="school"
         >
       </el-table-column>
+      <!-- 预约课程 -->
       <el-table-column
-        label="预约课程" 
+        label="预约商品" 
         prop="class"
         >
       </el-table-column>

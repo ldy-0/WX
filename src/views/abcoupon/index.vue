@@ -50,56 +50,97 @@
      :loading="waitAddNotice">确 定</el-button>
   </span>
 </el-dialog>
-<!-- <el-dialog
+<el-dialog
   title="优惠券明细"
   :visible.sync="detailShow"
   width="80%"
   >
-    <el-container>
-      <el-main>
-      <el-table
-        :data="detailTableData"
-        stripe 
-        v-loading="detailListLoading" element-loading-text="给我一点时间"
-        style="width: 100%" >
-        <el-table-column
-          label="时间" 
-          prop="time"
-          >
-        </el-table-column>
-          
-          <el-table-column
-          label="姓名" 
-          prop="username"
-          >
-          </el-table-column>
-        <el-table-column
-          label="联系方式"
-          prop="phone"
-          >
-        </el-table-column>
-        <el-table-column
-          label="消费详情"
-          prop='detail'
-          >
-        </el-table-column>
-        <el-table-column
-          label="类型" 
-          prop="type"
-          >
-        </el-table-column>
-      </el-table>
-      </el-main>
-      <el-footer>
-        <el-pagination background @size-change="handleSizeChange_detail" 
-          @current-change="handleCurrentChange_detail" :current-page="listQuery_detail.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery_detail.limit" layout="total, sizes, prev, pager, next" :total="total_detail">
-        </el-pagination>
-      </el-footer>
-    </el-container>
+    <el-form :model="detailForm" size="medium" >
+      <el-form-item label="优惠券ID" :label-width="formLabelWidth">
+        <p class="hbs-no-margin-p">
+          {{detailForm.vouchertemplate_id}}
+        </p>
+      </el-form-item>
+      <el-form-item label="优惠券名字" :label-width="formLabelWidth">
+        <p class="hbs-no-margin-p">
+          {{detailForm.vouchertemplate_title}}
+        </p>
+      </el-form-item>
+      <el-form-item label="优惠券面值" :label-width="formLabelWidth">
+        <p class="hbs-no-margin-p">
+          {{detailForm.vouchertemplate_price}}
+        </p>
+      </el-form-item>
+      <!-- <el-form-item label="满减" :label-width="formLabelWidth">
+        <p class="hbs-no-margin-p">
+          {{detailForm.vouchertemplate_limit}}
+        </p>
+      </el-form-item> -->
+      <el-form-item label="创建人ID" :label-width="formLabelWidth">
+        <p class="hbs-no-margin-p">
+          {{detailForm.vouchertemplate_creator_id}}
+        </p>
+      </el-form-item>
+      <el-form-item label="优惠券状态" :label-width="formLabelWidth">
+        <p class="hbs-no-margin-p">
+          {{detailForm.vouchertemplate_state_text}}
+        </p>
+      </el-form-item>
+      <el-form-item label="发行总量" :label-width="formLabelWidth">
+        <p class="hbs-no-margin-p">
+          {{detailForm.vouchertemplate_total}}
+        </p>
+      </el-form-item>
+      <el-form-item label="已被领取量" :label-width="formLabelWidth">
+        <p class="hbs-no-margin-p">
+          {{detailForm.vouchertemplate_giveout}}
+        </p>
+      </el-form-item>
+      <el-form-item label="已被使用取量" :label-width="formLabelWidth">
+        <p class="hbs-no-margin-p">
+          {{detailForm.vouchertemplate_used}}
+        </p>
+      </el-form-item>
+      <el-form-item label="发行时间" :label-width="formLabelWidth">
+        <p class="hbs-no-margin-p">
+          {{detailForm.vouchertemplate_adddate}}
+        </p>
+      </el-form-item>
+      <el-form-item label="领取限制数量" :label-width="formLabelWidth">
+        <p class="hbs-no-margin-p">
+          {{detailForm.vouchertemplate_eachlimit}}
+        </p>
+      </el-form-item>
+      <el-form-item label="使用数量限制" :label-width="formLabelWidth">
+        <p class="hbs-no-margin-p">
+          {{detailForm.vouchertemplate_eachrestricted}}
+        </p>
+      </el-form-item>
+      <el-form-item label="生效时间范围" :label-width="formLabelWidth">
+        <p class="hbs-no-margin-p">
+          {{detailForm.vouchertemplate_aging}}
+        </p>
+      </el-form-item>
+      <el-form-item label="使用范围" :label-width="formLabelWidth">
+        <p class="hbs-no-margin-p">
+          {{detailForm.vouchertemplate_usable_range}}
+        </p>
+      </el-form-item>
+      <!-- <el-form-item label="开始生效时间" :label-width="formLabelWidth">
+        <p class="hbs-no-margin-p">
+          {{detailForm.vouchertemplate_startdate}}
+        </p>
+      </el-form-item>
+      <el-form-item label="生效结束时间" :label-width="formLabelWidth">
+        <p class="hbs-no-margin-p">
+          {{detailForm.vouchertemplate_enddate}}
+        </p>
+      </el-form-item> -->
+    </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="detailShow = false">返 回</el-button>
   </span>
-</el-dialog> -->
+</el-dialog>
 <el-container class="notice">
 <el-header class="header">
   <el-form :inline="true" :model="formInline" class="form">
@@ -130,7 +171,7 @@
         min-width='300px'
         >
         <template slot-scope="scope">
-        <el-button size="mini" type="danger" @click="lookItem(scope.$index, scope.row)">下架优惠券</el-button>
+        <el-button size="mini"  @click="lookItem(scope.$index, scope.row)">查看详情</el-button>
         <!-- <el-button size="mini" type="info" @click="lookItem(scope.$index, scope.row)">查看明细</el-button> -->
         </template>
       </el-table-column>
@@ -166,6 +207,8 @@ export default {
   data() {
     return {
       //out
+        detailShow:false,
+        detailForm:{},
         addNewShow:false,
         formLabelWidth:'140px',
         rules: {
@@ -313,6 +356,7 @@ export default {
                 //前后统一
                 name:aData.vouchertemplate_title,
                 value:aData.vouchertemplate_price,
+                detail:aData
               })
             })
             this.tableData = tempTableData
@@ -324,6 +368,11 @@ export default {
           this.listLoading = false
         })
       }, 
+      lookItem(index,raw) {
+        this.detailShow = true
+        this.detailForm = raw.detail
+        console.log(this.detailForm)
+      },
     // ---------------------------------
     //out
     addDetailItem(){
@@ -381,10 +430,7 @@ export default {
         city:['杭州','西湖']
       }
     },
-    lookItem() {
-      console.log(arguments)
-      this.detailShow = true
-    },
+    
     searchByDate(){
       if(!this.dataRange||!this.dataRange.length||this.dataRange.length!==2){
         return console.log("日期错误")

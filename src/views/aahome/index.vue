@@ -10,6 +10,17 @@
 
 <template>
   <div class="dashboard-container" id="home">
+    <!-- 数字测试 -->
+    <!-- <el-form :model="testform" :rules="testrule" ref="testref">
+      <el-form-item label="测试" prop="testinput">
+        <el-input v-model.number="testform.testinput" placeholder="请输入内容"></el-input>
+      </el-form-item>
+      <el-form-item label="测试" prop="testinput2">
+        <el-input v-model="testform.testinput2" placeholder="请输入内容"></el-input>
+      </el-form-item>
+    </el-form>
+    {{testform.testinput}}
+    <el-button type="primary" @click="submitForm('testref')">立即创建</el-button> -->
     <!-- <el-form :model="formForNotive" >
       <el-form-item  label="所属行业" >
         <el-select v-model="formForNotive.industry" placeholder="请选择行业">
@@ -69,7 +80,20 @@ export default {
   },
   data() {
     return {
-      //
+      testinput:"",
+      testform:{},
+      testrule:{
+        testinput:[
+          {
+            required:true,message:'请输入不小于0数字',trigger: 'blur' ,type:'number',min:0
+          }
+        ],
+        testinput2:[
+            { required: true, message: '请输入活动名称', trigger: 'blur' },
+            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ]
+      },
+      //-------------------
       timer:"",
       timer2:"",
       formForNotive:{
@@ -87,6 +111,16 @@ export default {
     }
   },
   methods:{
+    submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            console.log('submit!');
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+    },
     // getfile(){
     //   console.log(this.$refs['i1'].files)
     // },
