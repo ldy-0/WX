@@ -165,6 +165,11 @@
         width="55">
       </el-table-column>
       <el-table-column
+        label="店铺ID"
+        prop="id"
+        >
+      </el-table-column>
+      <el-table-column
         label="店主姓名"
         prop="username"
         >
