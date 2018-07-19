@@ -1,35 +1,56 @@
-<style lang="less">
+<style lang="css">
 
-.goods_title{
+.goods{
+  display: flex;
+  align-items: center;
+}
+
+.goods_img_wrap{
+  width: 190rpx;
+  height: 190rpx;
+  margin-right: 20rpx;
+}
+.goods_img_wrap image{
+  width: 100%;
+  height: 100%;
+}
+
+.goods_info{
+
+}
+
+.goods_name{
   width: 100%;
   height: 30rpx;
   line-height: 30rpx;
   font-size: 26rpx;
   color: #333;
   overflow: hidden;
-  // text-overflow: ellipsis;
-  // white-space: nowrap;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
   
 </style>
 <template>
-  <view class="">
+  <view class="goods_items">
     
-    <repeat for='{{items.orderItems}}' index='i' item='item'>
-        <view class='package' wx:if='{{isPackage}}'>
+    <repeat for='{{items.orderItems}}' index='index' item='item'>
+        <!-- <view class='package' wx:if='{{isPackage}}'>
             <view class='left'>包裹{{i+1}}    来自顺丰优选</view>
             <view class='right'>查看物流</view>
-        </view>
-        <navigator class='product_info' url="/pages/order_detail?id={{items.id}}">
-            <image src='{{item.productImgUrl}}' />
-            <view class='product'>
+        </view> -->
+        <navigator class='goods' url="/pages/order_detail?id={{items.id}}">
+            <view class='goods_img_wrap'>
+              <image src='{{item.productImgUrl}}' mode='widthFix' />
+            </view>
+            <view class='goods_info'>
                 <view>
-                    <view class='product_title'>{{item.title}}</view>
-                    <view class='product_standard'>规格：{{item.skuStr}}</view>
+                    <view class='goods_name'>{{item.title}}</view>
+                    <view class='goods_standard'>规格：{{item.skuStr}}</view>
                 </view>
                 <view class='row'>
-                    <view class='product_price'>¥{{item.price}}</view>
-                    <view class='product_number'>×{{item.amount}}</view>
+                    <view class='goods_price'>¥{{item.price}}</view>
+                    <view class='goods_number'>×{{item.amount}}</view>
                     <!-- <view class='product_address'>福建福州</view> -->
                 </view>
             </view>

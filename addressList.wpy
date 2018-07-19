@@ -86,13 +86,17 @@
 }
 
 .center{
-  // position: relative;
+  position: fixed;
+  bottom: 0rpx;
   display: flex;
   justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 244rpx;
+  background: #fff;
   .add_btn{
-    position: fixed;
-    bottom: 30rpx;
     width: 690rpx;
+    height: 90rpx;
     line-height: 90rpx;
     margin: 0 auto;
     font-size: 30rpx;
@@ -100,6 +104,10 @@
     background: linear-gradient(#e6002d, #e8441e);
     text-align: center;
   }
+}
+
+.bottom_space{
+  margin: 244rpx 0 0;
 }
     
 </style>
@@ -133,6 +141,8 @@
                     </view>
                 </repeat> 
             </scroll-view>
+
+            <view class='bottom_space'></view>
           
             <view class='center'>
                 <view class='add_btn' @tap='add'>添加新地址</view>
@@ -232,6 +242,14 @@
       this.$apply();
 
       wx.hideLoading();
+    }
+
+    onPullDownRefresh(){
+    
+      wx.redirectTo({
+        url: '/pages/addressList',
+      });
+
     }
     
     async delete(id, index){
