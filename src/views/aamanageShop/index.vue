@@ -594,6 +594,31 @@ export default {
 
       this.waitAddNotice = true
       let sendData = {} 
+      let payDataTemp = []
+      if(this.formForNotive.checked){
+        payDataTemp.push({
+          key:'appid',
+          value:this.formForNotiveChild.appid
+        })
+        payDataTemp.push({
+          key:'secretid',
+          value:this.formForNotiveChild.secretid
+        })
+        payDataTemp.push({
+          key:'shopNum',
+          value:this.formForNotiveChild.shopNum
+        })
+        payDataTemp.push({
+          key:'payKey',
+          value:this.formForNotiveChild.payKey
+        })
+      }
+      try{
+        payDataTemp = JSON.stringify(payDataTemp)
+      }catch(e){
+        payDataTemp = '[]'
+      }
+      sendData['payData'] = payDataTemp
       // let sendData = new FormData() 
       //图片处理
       let allUrl1,allUrl2,allUrl3

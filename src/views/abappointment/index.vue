@@ -193,7 +193,13 @@ export default {
           page:this.listQuery.page,
           limit:this.listQuery.limit,
           search:this.listQuery.search?this.listQuery.search:null,
-          time:this.listQuery.time?this.listQuery.time:null,
+          // time:this.listQuery.time?this.listQuery.time:null,
+        }
+        // time单独处理
+        if(this.listQuery.time){
+          sendData.time = this.listQuery.time[0].getTime().toString().slice(0,10)+'-'+this.listQuery.time[1].getTime().toString().slice(0,10)
+        }else{
+          sendData.time = null
         }
         // let sendData = Object.assign({},this.listQuery)
         // sendData.appointment_status = status?status:

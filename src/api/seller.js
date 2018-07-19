@@ -66,7 +66,7 @@ import request from '@/utils/request'
 // order => rOrder
   export function changeROrder_api(data) {
     return request({
-      url: '/api/v1/seller/order',
+      url: '/api/v1/seller/order?order_id='+data.order_id,
       method: 'put',
       data
     })

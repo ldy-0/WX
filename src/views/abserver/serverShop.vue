@@ -88,10 +88,10 @@
     </el-form-item>
     <el-form-item label="提供服务" :label-width="formLabelWidth" prop='checkList'>
         <el-checkbox-group v-model="formForNotive.checkList">
-            <el-checkbox label="0" border>wifi</el-checkbox>
-            <el-checkbox label="1" border>停车位</el-checkbox>
-            <el-checkbox label="2" border>支付宝</el-checkbox>
-            <el-checkbox label="3" border>微信支付</el-checkbox>
+            <el-checkbox label="1" border>wifi</el-checkbox>
+            <el-checkbox label="2" border>停车位</el-checkbox>
+            <el-checkbox label="3" border>支付宝</el-checkbox>
+            <el-checkbox label="4" border>微信支付</el-checkbox>
         </el-checkbox-group>
     </el-form-item>
     <div style="text-align:center;padding-bottom:80px">
