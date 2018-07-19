@@ -64,6 +64,13 @@ import request from '@/utils/request'
   
   
 // order => rOrder
+  export function changeROrder_api(data) {
+    return request({
+      url: '/api/v1/seller/order',
+      method: 'put',
+      data
+    })
+  }
   export function getROrderList_api(data) {
     return request({
       url: '/api/v1/seller/order',
@@ -134,6 +141,48 @@ import request from '@/utils/request'
       url: '/api/v1/seller/goodscommon',
       method: 'put',
       data
+    })
+  }
+//server => Activity =>dis
+  export function getActivityList_api(data) {
+    return request({
+      url: '/api/v1/seller/distribution',
+      method: 'get',
+      params: data
+    })
+  }
+  export function addActivity_api(data) { 
+    return request({
+      url: '/api/v1/seller/distribution',
+      method: 'post',
+      data
+    })
+  }
+  export function deleteActivity_api(data) { 
+    return request({
+      url: '/api/v1/seller/distribution?distribution_id='+data.distribution_id,
+      method: 'delete',
+    })
+  }
+//server => Activity => vote
+  export function getVoteList_api(data) {
+    return request({
+      url: '/api/v1/seller/vote',
+      method: 'get',
+      params: data
+    })
+  }
+  export function addVote_api(data) { 
+    return request({
+      url: '/api/v1/seller/vote',
+      method: 'post',
+      data
+    })
+  }
+  export function deleteVote_api(data) { 
+    return request({
+      url: '/api/v1/seller/vote?distribution_id='+data.distribution_id,
+      method: 'delete',
     })
   }
 //server => school

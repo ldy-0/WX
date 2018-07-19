@@ -220,6 +220,21 @@ export let asyncRouterMapSeller = [
       component: () => import('@/views/abserver/serverSchool'),
       name: 'serverSchool',
       meta: { title: 'serverSchool',  noCache: true }
+    },{
+      path: '/serverActivity',
+      component: () => import('@/views/abserver/serverActivity/index'),
+      meta: { title: 'serverActivity' },
+      children: [{
+        path: 'distribution',
+        component: () => import('@/views/abserver/serverActivity/distribution'),
+        name: 'distribution',
+        meta: { title: 'distribution', noCache: true }
+      },{
+        path: 'vote',
+        component: () => import('@/views/abserver/serverActivity/vote'),
+        name: 'vote',
+        meta: { title: 'vote', noCache: true }
+      }]
     }]
   },
   {

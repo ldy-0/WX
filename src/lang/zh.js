@@ -18,6 +18,11 @@ export default {
     serverKill:'砍价',
     serverSchool:'校区',
 
+    serverActivity:'活动',
+    distribution:'分销',
+    vote:'投票',
+
+
     sellerAuth:'权限',
     //平台
     home: '首页',

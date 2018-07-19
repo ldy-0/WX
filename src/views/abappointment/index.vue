@@ -111,7 +111,12 @@
       </el-table-column>
       <el-table-column
         label="预约时间" 
-        prop="date"
+        prop="dateTXT"
+        >
+      </el-table-column>
+      <el-table-column
+        label="付款时间" 
+        prop="paydateTXT"
         >
       </el-table-column>
       <!-- 预约校区 -->
@@ -207,7 +212,11 @@ export default {
                 //前后统一
                 name:aData.member_name,
                 phone:aData.appointment_phone,
+
                 date:aData.appointment_time,
+                dateTXT:aData.appointment_date,
+                paydateTXT:aData.payment_time,
+
                 school:aData.appointment_address,
                 class:aData.goods_name,
                 status:aData.appointment_status

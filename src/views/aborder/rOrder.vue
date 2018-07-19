@@ -232,7 +232,8 @@
         label="操作" 
         >
         <template slot-scope="scope">
-        <el-button size="mini" type="info" @click="lookItem(scope.$index, scope.row)">查看明细</el-button>
+          <el-button size="mini" type="info" @click="lookItem(scope.$index, scope.row)">查看明细</el-button>
+          <el-button size="mini" type="danger" @click="changeItem(scope.$index, scope.row)">修改状态</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -246,7 +247,7 @@
 </template>
 <script>
 //getROrderList_api 接口异常 php :未定义变量 bannnerModel
-import {getROrderList_api,getROrder_api} from '@/api/seller'
+import {getROrderList_api,getROrder_api,changeROrder_api} from '@/api/seller'
 export default {
   created(){
     this.getList()
@@ -303,6 +304,45 @@ export default {
         this.getList()
       },
     // body
+      changeNewNotice(id,num){
+        let sendData = {
+          order_id : id,
+          shipping_code : num
+        }
+        changeROrder_api(sendData).then(()=>{
+          if(res&&res.status===0){
+              this.$notify({
+              title: '成功',
+              message: '操作成功',
+              type:'success'
+            });
+            this.getList()
+          }else{
+            this.$notify({
+              title: '错误',
+              message: '操作失败',
+              type:'error'
+            });
+          }
+        }).catch(err=>{
+          this.waitAddNotice = false
+          console.error('addNotice_api:',err)
+        })
+      },  
+      changeItem(index,raw){
+        let id = raw.id
+        this.$prompt(`请输入单号?`, '发货', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then((data) => {
+          this.changeNewNotice(id,data.value)
+        }).catch(()=>{
+          this.$notify.info({
+            title: '消息',
+            message: '已取消'
+          });
+        })
+      },
       lookItem(index,raw) {
         if(!raw||!raw.id){
             this.$notify.error({

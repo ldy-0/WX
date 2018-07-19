@@ -40,7 +40,7 @@
         </el-option>
       </el-select>
     </el-form-item>
-    {{formForNotive.province}}+{{formForNotive.city}}
+    <!-- {{formForNotive.province}}+{{formForNotive.city}} -->
     <!-- 默认 0 17 湖北 武汉 -->
       <el-form-item  label="省"  :label-width="formLabelWidth" prop="province">
         <el-select filterable @change="provinceChange" v-model="formForNotive.province" placeholder="请选择">
@@ -97,14 +97,25 @@
           <i class="el-icon-plus"></i>
         </el-upload>
     </el-form-item>
-    <!-- <el-form-item label="公告内容" :label-width="formLabelWidth">
-      <el-input
-        type="textarea"
-        :rows="2"
-        placeholder="请输入内容"
-        v-model="formForNotive.content">
-      </el-input>
-    </el-form-item> -->
+    <!-- {{formForNotive.checked}} -->
+    <el-form-item label="支付数据" :label-width="formLabelWidth">
+      <el-checkbox v-model="formForNotive.checked">开启支付功能</el-checkbox>
+    </el-form-item>
+    <el-form :model="formForNotiveChild" v-if="formForNotive.checked" 
+      ref="ruleFormChild" :rules="rulesChild">
+      <el-form-item label="appid" :label-width="formLabelWidth" prop="appid" >
+        <el-input  v-model="formForNotiveChild.appid" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="secretid" :label-width="formLabelWidth" prop="secretid">
+        <el-input  v-model="formForNotiveChild.secretid" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="商户号" :label-width="formLabelWidth" prop="shopNum">
+        <el-input  v-model.number="formForNotiveChild.shopNum" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="支付秘钥" :label-width="formLabelWidth" prop="payKey">
+        <el-input  v-model="formForNotiveChild.payKey" auto-complete="off"></el-input>
+      </el-form-item>
+    </el-form>
   </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="addNewShow = false">取 消</el-button>
@@ -199,6 +210,11 @@
         </template> -->
       </el-table-column>
       <el-table-column
+        label="支持支付" 
+        prop="hasPayDataTXT"
+        >
+      </el-table-column>
+      <el-table-column
         label="操作" 
         min-width='300px'
         >
@@ -226,17 +242,21 @@ import uploadFn from '@/utils/aahbs'
 
 const formForNotive = { //此页面 静态数据
         title:'我的店铺',
-        username:'',
-        phone:'',
-        account:'',
-        province:'',
+        username:'我的名字',
+        phone:'13720263524',
+        account:'abcd',
         industry:'',
-
         province:'',
         city:'',
-
         fileList1:[],//[{url:'xxx},{raw:File}] 格式
         fileList2:[],
+        checked:false
+      }
+const formForNotiveChild = { //此页面 静态数据
+        appid:'wx688a62dbb767216d',
+        secretid:'28183b40e4dd912241ebe8144a799a90',
+        shopNum:'1234567890',
+        payKey:'28183b40e4dd912241ebe8144a799a90'
       }
 export default {
   created(){
@@ -311,6 +331,24 @@ export default {
           }
         ],
       },
+      formForNotiveChild:Object.assign({},formForNotiveChild),
+      rulesChild: {
+        appid: [
+            { required: true, message: '请输入appid,微信公众平台=>设置=>开发设置=>开发者设置', trigger: 'blur' },
+            { len:18, message: '请输入正确的appid', trigger: 'blur' }
+        ],
+        secretid: [
+            { required: true, message: '请输入secretid,微信公众平台=>设置=>开发设置=>开发者设置', trigger: 'blur' },
+            { len:32, message: '请输入正确的secretid', trigger: 'blur' }
+        ],
+        shopNum: [
+            { type:"integer",required: true, message: '请输入正确的商户号', trigger: 'blur',min: 1},
+        ],
+        payKey: [
+            { required: true, message: '请输入支付秘钥', trigger: 'blur' },
+            { len:32, message: '请输入正确的支付秘钥', trigger: 'blur' }
+        ],
+      },
       //head
       selectedItem:[],
       formInline: {},
@@ -322,14 +360,13 @@ export default {
       ],
       // footer
       listQuery: {
-        page: 1,
+        page: 2,
         limit: 20,
         search:"",
         time:""
       },
       total:1,
       // ------------------------
-      
     }
   },
   methods: {
@@ -432,6 +469,20 @@ export default {
       this.formForNotive.fileList2 = arguments[1]
     },
     async addShop(formName){
+      if(this.formForNotive.checked){
+        let resChild = await new Promise((res,rej)=>{
+          this.$refs['ruleFormChild'].validate((valid) => {
+            if (valid) {
+              res(true)
+            } else {
+              res(false)
+            }
+          })
+        })
+        if(!resChild){
+          return 
+        }
+      }
       let res = await new Promise((res,rej)=>{
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -447,10 +498,36 @@ export default {
       if(!res){
         return 
       }
-
+      
       this.waitAddNotice = true
       let sendData = new FormData() 
-      
+
+      let payDataTemp = []
+      if(this.formForNotive.checked){
+        payDataTemp.push({
+          key:'appid',
+          value:this.formForNotiveChild.appid
+        })
+        payDataTemp.push({
+          key:'secretid',
+          value:this.formForNotiveChild.secretid
+        })
+        payDataTemp.push({
+          key:'shopNum',
+          value:this.formForNotiveChild.shopNum
+        })
+        payDataTemp.push({
+          key:'payKey',
+          value:this.formForNotiveChild.payKey
+        })
+      }
+      try{
+        payDataTemp = JSON.stringify(payDataTemp)
+      }catch(e){
+        payDataTemp = '[]'
+      }
+      sendData.append('payData',payDataTemp)
+
       let allUrl1 = await uploadFn(this.formForNotive.fileList1[0].raw)
       let allUrl2 = await uploadFn(this.formForNotive.fileList2[0].raw)
       let allUrl3 = await uploadFn(this.formForNotive.fileList2[1].raw)
@@ -648,6 +725,30 @@ export default {
             if(aData.id_card_behind){
               temp_fileList2.push({url:aData.id_card_behind})
             }
+            // 返回的字段 改这个 aData.hasPayData 
+            let hasPayData = aData.payData
+            let temphasPayData = []
+            try{
+              //确保 hasPayData 是数组
+              //现在返回的是一个对象
+              let n = 0
+              for(let key in hasPayData){
+                temphasPayData.push(
+                  {
+                    value:hasPayData[key],
+                    key:key
+                  }
+                )
+                n++
+              }
+              if(temphasPayData.length===0){
+                hasPayData = []
+              }else{
+                hasPayData = temphasPayData
+              }
+            }catch(e){
+              hasPayData = []
+            }
             tempTableData.push({
               //后端生成
               id:aData.store_id,
@@ -663,7 +764,11 @@ export default {
               fileList1:temp_fileList1,
               fileList2:temp_fileList2,
               lastvisit:aData.total_view,
-              isUp:aData.store_state
+              isUp:aData.store_state,
+              // 支付数据
+              hasPayDataTXT:hasPayData.length>0?'是':'否',
+              hasPayData:hasPayData,
+              checked:hasPayData.length>0
             })
           })
           this.tableData = tempTableData
@@ -683,7 +788,16 @@ export default {
       this.formForNotive = Object.assign({},rowData)
       //补洞
       this.optionsCity = this.positonList[this.formForNotive.province]
-
+      if(rowData.checked){
+        let temp = {}
+        for(let i =0,len=rowData.hasPayData.length;i<len;i++){
+          console.log(rowData.hasPayData[i].key)
+          temp[rowData.hasPayData[i].key] = rowData.hasPayData[i].value
+        }
+        this.formForNotiveChild =  Object.assign({},temp)
+      }else{
+        this.formForNotiveChild =  Object.assign({},formForNotiveChild)
+      }
       this.isAddItem = false
       this.addNewShow = true
     },

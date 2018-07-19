@@ -43,6 +43,17 @@
         </el-upload>
     </el-form-item>
     <p class="hbs-margin-left140">最多可选择6张图,建议像素 ：宽750*高750</p>
+    <!-- 虚拟 -->
+    <el-form-item label="商品属性" :label-width="formLabelWidth" prop="school">
+      <el-select v-model="formForNotive.is_virtual" placeholder="请选择" @change="formForNotiveIs_virtual_fn">
+        <el-option
+          v-for="item in is_virtualList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+    </el-form-item>
     <!-- 普通、预售 -->
     <el-form-item label="商品类型" :label-width="formLabelWidth" prop="goodsType">
       <el-select v-model="formForNotive.goodsType" placeholder="请选择">
@@ -174,56 +185,6 @@
      :loading="waitAddNotice">确认修改</el-button>
   </span>
 </el-dialog>
-<!-- <el-dialog
-  title="商品明细"
-  :visible.sync="detailShow"
-  width="80%"
-  >
-    <el-container>
-      <el-main>
-      <el-table
-        :data="detailTableData"
-        stripe 
-        v-loading="detailListLoading" element-loading-text="给我一点时间"
-        style="width: 100%" >
-        <el-table-column
-          label="时间" 
-          prop="time"
-          >
-        </el-table-column>
-          
-          <el-table-column
-          label="姓名" 
-          prop="username"
-          >
-          </el-table-column>
-        <el-table-column
-          label="联系方式"
-          prop="phone"
-          >
-        </el-table-column>
-        <el-table-column
-          label="消费详情"
-          prop='detail'
-          >
-        </el-table-column>
-        <el-table-column
-          label="类型" 
-          prop="type"
-          >
-        </el-table-column>
-      </el-table>
-      </el-main>
-      <el-footer>
-        <el-pagination background @size-change="handleSizeChange_detail" 
-          @current-change="handleCurrentChange_detail" :current-page="listQuery_detail.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery_detail.limit" layout="total, sizes, prev, pager, next" :total="total_detail">
-        </el-pagination>
-      </el-footer>
-    </el-container>
-  <span slot="footer" class="dialog-footer">
-    <el-button @click="detailShow = false">返 回</el-button>
-  </span>
-</el-dialog> -->
 <el-container class="notice">
 <el-header class="header" style="height:auto;">
   <el-form :inline="true" :model="formInline" class="form">
@@ -287,7 +248,7 @@
       </el-table-column>
       <el-table-column
         label="类型" 
-        prop="goodsTypeTXT"
+        prop="is_virtualTXT"
         >
       </el-table-column>
       <el-table-column
@@ -335,7 +296,7 @@
 </div>
 </template>
 <script>
-import {addGoods_api,getGoodsList_api,getSchoolList_api,getGoods_api,upDownGoods_api,editGoods_api} from '@/api/seller'
+import {addGoods_api,getGoodsList_api,getSchoolList_api,getGoods_api,upDownGoods_api,editGoods_api,getEntryList_api} from '@/api/seller'
 import uploadFn from '@/utils/aahbs'
 
 const formForNotive = {
@@ -346,7 +307,7 @@ const formForNotive = {
         goodsNum:'100',
         school:'',
         // goodsTotal:'100',
-        industry:0,
+        industry:'',
         goodsDescribe:'暂无描述',
         goodsTrans:0,
         size:'one',
@@ -359,7 +320,8 @@ const formForNotiveChild1 = {
 const formForNotiveChild2List = [{
       }]
 export default {
-  created(){
+  async created(){
+    await this.getindustryList() //自定义分类
     this.getSchoolList()
     this.getList()
   },
@@ -370,7 +332,7 @@ export default {
         imgLimit1:6,
         dialogImageUrl: '',
         dialogVisible: false,
-
+        is_virtualList:[{label:'虚拟商品',value:1},{label:'实物商品',value:0},],
         schoolList:[{label:'校区1',value:1},{label:'校区2',value:2},],
         goodsTypehbsList:[
           {
@@ -381,15 +343,7 @@ export default {
             label:'预约商品'
           }
         ],
-        industryList: [{
-            value: 0,
-            label: '教育'
-          }, {
-            value: 1,
-            label: '其他'
-          }
-        ],
-
+        industryList: [],
         formForNotive:Object.assign({},formForNotive),
         rules: {
           goodsType: [
@@ -578,7 +532,54 @@ export default {
           })
         })
       },
+      getindustryList(){
+        return new Promise((res,rej)=>{
+          getEntryList_api({limit:0}).then(data=>{
+            if(data.status===0){
+              let tempData = []
+              for(let i = 0 ,len = data.data.length;i<len;i++){
+                tempData.push({
+                  label:data.data[i].storegc_name,
+                  value:data.data[i].storegc_id,
+                })
+              }
+              this.industryList = tempData
+              res()
+            }else{
+              console.error('manageShop:getEntryList_api 状态码为1')
+              rej(data)
+            }
+          }).catch(e=>{
+            console.error('manageShop:getEntryList_api 接口错误')
+            rej()
+          })
+        })
+      },
+      // 虚拟
+      formForNotiveIs_virtual_fn(nowValue){
+        if(nowValue){
+          // 虚拟 的 操作
+          this.goodsTypehbsList = [
+              {
+                value:0,
+                label:'普通商品'
+              },{
+                value:1,
+                label:'预约商品'
+              }
+          ]
+        }else{
+          this.goodsTypehbsList = [
+              {
+                value:0,
+                label:'普通商品'
+              }
+          ]
+          this.formForNotive.goodsType = 0
+        }
+      },
       //规格2
+      
       addSize_out(){
         this.formForNotiveChild2List.push({})
       },
@@ -708,11 +709,12 @@ export default {
         sendData.goods_costprice = this.formForNotive.goodsPrice
         sendData.goods_discount = 1
         // 近似 废物值
-        sendData.is_virtual = false
         sendData.virtual_limit = 10
         sendData.virtual_indate = ''
         sendData.is_platform_store = false
-        sendData.is_virtual = false
+
+        // 是否虚拟
+        sendData.is_virtual = this.formForNotive.is_virtual
 
         // 商品图片
           // let urls1 = await uploadFn(this.formForNotive.fileList1[0].raw)
@@ -899,11 +901,11 @@ export default {
         sendData.goods_marketprice = this.formForNotive.goodsPrice
         sendData.goods_costprice = this.formForNotive.goodsPrice
         // 近似 废物值
-        sendData.is_virtual = false
         sendData.virtual_limit = 10
         sendData.virtual_indate = ''
         sendData.is_platform_store = false
-        sendData.is_virtual = false
+        //是否是虚拟商品
+        sendData.is_virtual = this.formForNotive.is_virtual
 
         // 商品图片
         // console.log(this.formForNotive.fileList1[0],'商品图片-----')
@@ -1052,7 +1054,6 @@ export default {
             //获取数据成功，这填充数据，三个formNative
             let tempForm = {}
             tempForm.id = data.goods_commonid
-            //
             
             tempForm.isUp = data.goods_state 
             //商品图片
@@ -1082,7 +1083,8 @@ export default {
             }catch(error){
               tempForm.fileList0 = []
             }
-
+            //虚拟 
+            tempForm.is_virtual = data.is_virtual
             tempForm.goodsType = data.is_appoint 
             tempForm.goodsName = data.goods_name
             tempForm.goodsNum = data.goods_serial
@@ -1251,7 +1253,7 @@ export default {
                 
                 goodsImage:aData.goods_image,//显示
                 goodsType:aData.is_appoint?1:0,
-                goodsTypeTXT:aData.is_appoint?'虚拟':'实体',//显示补充，实际无用
+                is_virtualTXT:aData.is_virtual?'虚拟':'实体',//显示补充，实际无用
 
                 goodsName:aData.goods_name,//显示
                 goodsPrice:aData.goods_price,//显示
