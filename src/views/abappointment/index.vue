@@ -92,6 +92,12 @@
       <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
     </el-form-item>
   </el-form>
+  <el-form  :inline="true" class="form">
+    <el-form-item label="导出Excel">
+      <el-button  type="primary" icon="document" @click="handleDownload" :loading="downloadLoading">{{exportExcelStatus}}</el-button>
+      <span class="hbs-inline-tips">导出所有数据，这个过程可能会需要花费  <span class="hbs-hot">几分钟</span> 的时间，请耐心等待</span>
+    </el-form-item>
+  </el-form>
 </el-header>
 <el-main>
     <el-table
@@ -160,6 +166,12 @@ export default {
       detailForm:{},
       detailShow:false,
       //head
+        // excel 
+          tableDataAll:'',
+          autoWidth:true,
+          filename:'预约Excel',
+          exportExcelStatus:'导出',
+          downloadLoading:false,
         formInline: {},
       //body
       formLabelWidth:'140px',
@@ -179,6 +191,44 @@ export default {
   },
   methods: {
     //   head
+      formatJson(filterVal, jsonData) {
+        return jsonData.map(v => filterVal.map(j => {
+          if (j === 'timestamp') {
+            return parseTime(v[j])
+          } else {
+            return v[j]
+          }
+        }))
+      },
+      async handleDownload() {
+        this.downloadLoading = true
+        let allRes = await this.getList(true).catch(e=>{
+          this.$notify({
+              title: '失败',
+              message: '操作失败:'+e.toString(),
+              type: 'error'
+            })
+          return 0
+        })
+        console.log('allRes',allRes)
+        if(!allRes){
+          this.downloadLoading = false
+          return console.log('获取数据失败:handleDownload')
+        }
+        import('@/vendor/Export2Excel').then(excel => {
+          const tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '交易日期']
+          const filterVal = ['id', 'money', 'num', 'state', 'time']
+          const tableDataAll = this.tableDataAll
+          const data = this.formatJson(filterVal, tableDataAll)
+          excel.export_json_to_excel({
+            header: tHeader,
+            data,
+            filename: this.filename,
+            autoWidth: this.autoWidth
+          })
+          this.downloadLoading = false
+        })
+      },
       search(){
         this.getList()
       },
@@ -187,13 +237,18 @@ export default {
         this.detailForm = this.tableData[index]
         this.detailShow = true
       },
-      getList(status) {
+      async getList(all) {
+        // 立一个flag 因为当前函数 promise化 需要检测 接口返回状态 
+        let flag = false
         this.listLoading = true
         let sendData = {
           page:this.listQuery.page,
           limit:this.listQuery.limit,
           search:this.listQuery.search?this.listQuery.search:null,
           // time:this.listQuery.time?this.listQuery.time:null,
+        }
+        if(all){
+          sendData.limit = 0
         }
         // time单独处理
         if(this.listQuery.time){
@@ -203,9 +258,11 @@ export default {
         }
         // let sendData = Object.assign({},this.listQuery)
         // sendData.appointment_status = status?status:
-        getAppointmentList_api(sendData).then(response => {
+        await getAppointmentList_api(sendData).then(response => {
           // 这里由于结构做了调整，导致编辑页面需要的数据无法从列表获取，这里只需要给tableData额外传一个id
           if(response&&response.status==0){
+            // 将flag 状态变为true 表明获取接口成功
+            flag = true
             let result = response.data
             let tempTableData = []
             result.forEach((aData)=>{
@@ -228,7 +285,11 @@ export default {
                 status:aData.appointment_status
               })
             })
-            this.tableData = tempTableData
+            if(all){
+              this.tableDataAll = tempTableData
+            }else{
+              this.tableData = tempTableData
+            }
             this.total = response.pagination&&response.pagination.total?response.pagination.total:1
           }else{
 
@@ -239,6 +300,7 @@ export default {
         }).catch(e=>{
           this.listLoading = false
         })
+        return flag
       },
     //foot
       handleSizeChange(val) {
