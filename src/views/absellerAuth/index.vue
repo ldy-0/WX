@@ -71,7 +71,7 @@
         label="商品"
         >
         <template slot-scope="scope">
-          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('goods')!==-1" class="el-icon-check big-icon"></i>
+          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('goods')!==-1)" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
@@ -79,7 +79,7 @@
         label="订单"
         >
         <template slot-scope="scope">
-          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('order')!==-1" class="el-icon-check big-icon"></i>
+          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('order')!==-1)" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
@@ -87,7 +87,15 @@
         label="预约"
         >
         <template slot-scope="scope">
-          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('appointment')!==-1" class="el-icon-check big-icon"></i>
+          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('appointment')!==-1)" class="el-icon-check big-icon"></i>
+          <i v-else class="el-icon-close big-icon-no"></i>
+        </template>
+      </el-table-column>
+      <el-table-column 
+        label="优惠券"
+        >
+        <template slot-scope="scope">
+          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('coupon')!==-1)" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
@@ -95,7 +103,7 @@
         label="运营"
         >
         <template slot-scope="scope">
-          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('manage')!==-1" class="el-icon-check big-icon"></i>
+          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('manage')!==-1)" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
@@ -103,7 +111,7 @@
         label="权限管理"
         >
         <template slot-scope="scope">
-          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('auth')!==-1" class="el-icon-check big-icon"></i>
+          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('auth')!==-1)" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
@@ -111,6 +119,14 @@
         label="账号" 
         prop="account"
         >
+      </el-table-column>
+      <el-table-column 
+        label="超级管理员" 
+        prop="super"
+        >
+        <template slot-scope="scope">
+          <el-tag size="medium" :type="scope.row.super?'':'info'">{{ scope.row.super?'是':'否'}}</el-tag>
+        </template>
       </el-table-column>
       <!-- <el-table-column 
         label="密码" 
@@ -171,6 +187,10 @@ export default {
           {
             label:'order',
             text:'订单'
+          },
+          {
+            label:'coupon',
+            text:'优惠券'
           },
           {
             label:'appointment',
@@ -364,7 +384,9 @@ export default {
                 password:aData.seller_password,
                 account:aData.seller_name,
                 //
-                checkboxGroup1:aData.seller_limits
+                checkboxGroup1:aData.seller_limits,
+                //超级管理员标识
+                super:aData.is_admin
               })
             })
             this.tableData = tempTableData

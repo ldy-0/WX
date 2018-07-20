@@ -70,6 +70,16 @@ export function test(data) {
       data
     })
   }
+// manageSevice=>shopServer
+  // 获取访问量列表 
+  
+  export function changeShopServer_api(data) {
+    return request({
+      url: '/api/v1/admin/storeview',
+      method: 'put',
+      data
+    })
+  }
 // manageSevice=>industryList
   export function addIndustry_api(data) {
     return request({

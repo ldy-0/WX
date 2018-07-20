@@ -167,6 +167,7 @@ export let asyncRouterMapSeller = [
   {
     path: '/coupon',
     component: Layout,
+    meta: { roles:'coupon'},
     redirect: '/coupon/index',
     children: [{
       path: 'index',
@@ -220,6 +221,11 @@ export let asyncRouterMapSeller = [
       component: () => import('@/views/abserver/serverSchool'),
       name: 'serverSchool',
       meta: { title: 'serverSchool',  noCache: true }
+    },{
+      path: 'serverGetFlow',
+      component: () => import('@/views/abserver/serverGetFlow'),
+      name: 'serverGetFlow',
+      meta: { title: 'serverGetFlow',  noCache: true }
     },{
       path: '/serverActivity',
       component: () => import('@/views/abserver/serverActivity/index'),

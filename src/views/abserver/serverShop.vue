@@ -234,7 +234,7 @@ export default {
   },
   methods: {
       //file upload
-    onsuccess(){
+      onsuccess(){
         console.log('sucess----',arguments)
       },
       beforere(){

@@ -210,8 +210,10 @@
       </el-table-column> -->
         <el-table-column
         label="状态" 
-        prop="state"
         >
+        <template slot-scope="scope">
+          <el-tag size="medium" :type="getTableTagType(scope.row.stateID)">{{ scope.row.state }}</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         label="价格" 
@@ -233,7 +235,8 @@
         >
         <template slot-scope="scope">
           <el-button size="mini" type="info" @click="lookItem(scope.$index, scope.row)">查看明细</el-button>
-          <el-button size="mini" type="danger" @click="changeItem(scope.$index, scope.row)">修改状态</el-button>
+          <el-button size="mini" type="danger" @click="changeItem(scope.$index, scope.row)"
+           v-if="scope.row.stateID===20">发货</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -304,12 +307,25 @@ export default {
         this.getList()
       },
     // body
+      getTableTagType(typeid){
+        switch(typeid){
+          case 0 :
+          return 'info'
+          case 10 :
+          return ''
+          case 20 :
+          return 'success'
+          default :
+          return ''
+        }
+      },
       changeNewNotice(id,num){
         let sendData = {
           order_id : id,
-          shipping_code : num
+          shipping_code : num,
+          state_type:'deliver_goods'
         }
-        changeROrder_api(sendData).then(()=>{
+        changeROrder_api(sendData).then((res)=>{
           if(res&&res.status===0){
               this.$notify({
               title: '成功',
@@ -418,6 +434,8 @@ export default {
                 money:aData.order_amount,
                 time:aData.add_time,
                 state:aData.order_state,
+                stateID:aData.order_state_id,
+                
                 goodsList:aData.order_goods,
               })
             })

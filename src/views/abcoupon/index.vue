@@ -172,7 +172,7 @@
         >
         <template slot-scope="scope">
         <el-button size="mini"  @click="lookItem(scope.$index, scope.row)">查看详情</el-button>
-        <!-- <el-button size="mini" type="info" @click="lookItem(scope.$index, scope.row)">查看明细</el-button> -->
+        <el-button size="mini" type="danger" @click="deleteItem(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -185,7 +185,7 @@
 </div>
 </template>
 <script>
-import {getCouponList_api,addCoupon_api,getGoodsList_api} from '@/api/seller' 
+import {getCouponList_api,addCoupon_api,getGoodsList_api,deleteCoupon_api} from '@/api/seller' 
 const formForNotive = { //此页面 静态数据
   name:"优惠券名字", // 优惠券名字
   // now:"", //优惠券 发行时间
@@ -368,6 +368,44 @@ export default {
           this.listLoading = false
         })
       }, 
+      deleteNewNotice(id){
+        let sendData = {
+          vouchertemplate_id:id
+        }
+        deleteCoupon_api(sendData).then(res=>{
+          if(res&&res.status===0){
+              this.$notify({
+              title: '成功',
+              message: '操作成功',
+              type:'success'
+            });
+            this.getList()
+          }else{
+            this.$notify({
+              title: '错误',
+              message: '操作失败',
+              type:'error'
+            });
+          }
+        }).catch(err=>{
+          console.error('upDownShop')
+        })
+      },
+      deleteItem(index,raw) {
+        let id = raw.id
+        this.$confirm(`此操作将删除该条目, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.deleteNewNotice(id) //批量
+        }).catch(()=>{
+          this.$notify.info({
+            title: '消息',
+            message: '已取消'
+          });
+        })
+      },
       lookItem(index,raw) {
         this.detailShow = true
         this.detailForm = raw.detail

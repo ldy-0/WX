@@ -17,7 +17,7 @@ export default {
     serverAllbuy:'团购',
     serverKill:'砍价',
     serverSchool:'校区',
-
+    serverGetFlow:'流量充值',
     serverActivity:'活动',
     distribution:'分销',
     vote:'投票',

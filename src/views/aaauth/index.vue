@@ -70,7 +70,7 @@
         label="公告"
         >
         <template slot-scope="scope">
-          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('affiche')!==-1" class="el-icon-check big-icon"></i>
+          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('affiche')!==-1)" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
@@ -78,7 +78,7 @@
         label="店铺管理"
         >
         <template slot-scope="scope">
-          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('store')!==-1" class="el-icon-check big-icon"></i>
+          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('store')!==-1)" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
@@ -86,7 +86,7 @@
         label="运营管理"
         >
         <template slot-scope="scope">
-          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('manage')!==-1" class="el-icon-check big-icon"></i>
+          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('manage')!==-1)" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
@@ -94,7 +94,7 @@
         label="权限管理"
         >
         <template slot-scope="scope">
-          <i v-if="scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('auth')!==-1" class="el-icon-check big-icon"></i>
+          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('auth')!==-1)" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
@@ -102,6 +102,14 @@
         label="账号" 
         prop="account"
         >
+      </el-table-column>
+      <el-table-column 
+        label="超级管理员" 
+        prop="super"
+        >
+        <template slot-scope="scope">
+          <el-tag size="medium" :type="scope.row.super?'':'info'">{{ scope.row.super?'是':'否'}}</el-tag>
+        </template>
       </el-table-column>
       <!-- <el-table-column 
         label="密码" 
@@ -132,8 +140,6 @@
 </div>
 </template>
 <script>
-// getList 接口 获取
-// addNotice 接口 添加
 
 import {getAuthList_api,deleteAuth_api,addAuth_api,editAuth_api} from '@/api/admin' 
 const formForNotive = { //此页面 静态数据
@@ -359,7 +365,8 @@ export default {
                 password:aData.admin_password,
                 account:aData.admin_name,
                 //
-                checkboxGroup1:aData.admin_limits
+                checkboxGroup1:aData.admin_limits,
+                super:aData.is_admin
               })
             })
             this.tableData = tempTableData

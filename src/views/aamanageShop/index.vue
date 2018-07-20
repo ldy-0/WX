@@ -360,7 +360,7 @@ export default {
       ],
       // footer
       listQuery: {
-        page: 2,
+        page: 1,
         limit: 20,
         search:"",
         time:""

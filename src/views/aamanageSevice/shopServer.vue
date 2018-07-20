@@ -12,7 +12,7 @@
   :visible.sync="addNewShow"
   width="50%"
   >
-  <el-form :model="formForNotive">
+  <el-form :model="formForNotive" ref="ruleForm" :rules="rules" >
     <el-form-item label="添加访问量" :label-width="formLabelWidth">
       <el-input v-model="formForNotive.visitCount" auto-complete="off"></el-input>
     </el-form-item>
@@ -22,23 +22,6 @@
     <el-button  type="primary" @click="addNewNotice"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确 定</el-button>
-  </span>
-</el-dialog>
-<el-dialog
-  title="添加活动"
-  :visible.sync="addNewShow2"
-  width="50%"
-  >
-  <el-form :model="formForNotive2">
-    <el-form-item label="添加活动" :label-width="formLabelWidth">
-      <el-input v-model="formForNotive2.active" auto-complete="off"></el-input>
-    </el-form-item>
-  </el-form>
-  <span slot="footer" class="dialog-footer">
-    <el-button @click="addNewShow2 = false">取 消</el-button>
-    <el-button  type="primary" @click="addNewNotice2"
-     :disabled="waitAddNotice2"
-     :loading="waitAddNotice2">确 定</el-button>
   </span>
 </el-dialog>
 <el-container class="notice">
@@ -59,36 +42,24 @@
       v-loading="listLoading" element-loading-text="给我一点时间"
       style="width: 100%" >
       <el-table-column
-        label="店主姓名"
+        label="店铺ID" 
+        prop="id"
         >
-        <template slot-scope="scope">
-          <i class="el-icon-edit-outline"></i>
-          <span style="margin-left: 10px">{{ scope.row.username }}</span>
-        </template>
       </el-table-column>
       <el-table-column
-        label="联系方式"
+        label="店名" 
+        prop="title"
         >
-        <template slot-scope="scope">
-          <i class="el-icon-edit-outline"></i>
-          <span style="margin-left: 10px">{{ scope.row.phone }}</span>
-        </template>
       </el-table-column>
       <el-table-column
-        label="店名"
+        label="剩余访问量" 
+        prop="lastvisit"
         >
-        <template slot-scope="scope">
-          <i class="el-icon-edit-outline"></i>
-          <span style="margin-left: 10px">{{ scope.row.shopname }}</span>
-        </template>
       </el-table-column>
       <el-table-column
-        label="联系方式"
+        label="联系方式" 
+        prop="phone"
         >
-        <template slot-scope="scope">
-          <i class="el-icon-edit-outline"></i>
-          <span style="margin-left: 10px">{{ scope.row.lastvisit }}</span>
-        </template>
       </el-table-column>
       <el-table-column
         prop="opare"
@@ -98,11 +69,7 @@
         <el-button 
          type="primary"
           size="mini"
-          @click="addItem(scope.$index, scope.row)">添加访问量</el-button>
-          <el-button 
-         type="primary"
-          size="mini"
-          @click="addItem2(scope.$index, scope.row)">添加活动</el-button>
+          @click="changeItem(scope.$index, scope.row)">添加访问量</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -115,29 +82,27 @@
 </div>
 </template>
 <script>
-// getList 接口 获取
-// addNotice 接口 添加
+import {getShop_api,changeShopServer_api} from '@/api/admin'
+
 const formForNotive = {
         visitCount:'',
-        // num:''
       }
-const formForNotive2 = {
-        active:'',
-        // num:''
-      }      
 export default {
+  created(){
+    this.getList()
+  },
   data() {
     return {
       //out
         //访问量
       formForNotive:Object.assign({},formForNotive),
+      rules: {
+          visitCount: [
+              { required: true, message: '请输入访问量,值为正整数', trigger: 'blur' ,type:'integer',min:1},
+          ]
+      },
       waitAddNotice:false,
       addNewShow:false,
-        //活动
-      formForNotive2:Object.assign({},formForNotive2),
-      waitAddNotice2:false,
-      addNewShow2:false,
-      
       // --------------------
       //out
       
@@ -154,16 +119,7 @@ export default {
       formInline: {},
       // body
       listLoading: false,
-      tableData: [
-        {
-          username: '张三',
-          phone: '123456',
-          shopname: '肯德基',
-          industry: '餐饮',
-          lastvisit: '321',
-          opera: '查看123'
-        }
-      ],
+      tableData: [],
       // footer
       listQuery: {
         page: 1,
@@ -176,82 +132,96 @@ export default {
   },
   methods: {
     //out
-      addNewNotice(){
+      async addNewNotice(){
+        let res = await new Promise((res,rej)=>{
+          this.$refs['ruleForm'].validate((valid) => {
+            if (valid) {
+              // alert('submit!');
+              res(true)
+            } else {
+              res(false)
+              // console.log('error submit!!');
+              // return false;
+            }
+          })
+        })
+        if(!res){
+          return 
+        }
         this.waitAddNotice = true
-        setTimeout(()=>{
-          //发送成功该做的事情
+        let sendData = {}
+        sendData.store_id = this.formForNotive.id
+        sendData.view = this.formForNotive.visitCount
+        changeShopServer_api(sendData).then(data=>{
           this.waitAddNotice = false
           this.addNewShow = false
-          this.form = {}
-          this.$notify({
-            title: '成功',
-            message: '发送成功',
-            type: 'success'
-          })
-          //如果失败
-          // this.waitAddNotice = false
-        },2000)
-      },
-      addNewNotice2(){
-        this.waitAddNotice2 = true
-        setTimeout(()=>{
-          //发送成功该做的事情
-          this.waitAddNotice2 = false
-          this.addNewShow2 = false
-          this.form = {}
-          this.$notify({
-            title: '发送成功',
-            message: '这是一条成功的提示消息',
-            type: 'success'
-          })
-          //如果失败
-          // this.waitAddNotice = false
-        },2000)
+          if(data.status===0){
+            this.$notify({
+              title: '成功',
+              message: '已增加访问量',
+              type: 'success'
+            })
+            this.getList()
+          }else{
+            this.$notify({
+              title: '失败',
+              message: '操作失败',
+              type: 'error'
+            })
+          }
+        }).catch(e=>{
+          this.waitAddNotice = false
+          this.addNewShow = false
+          console.error('manageShop:addGoods_api 接口错误')
+        })
       },
     //head
       search(){ // 此时listQuery已经改变
         this.getList()
       },
-      getList() {
+      getList() { //获取店铺列表
         this.listLoading = true
         let sendData = Object.assign({},this.listQuery)
-        if(!sendData.time){
-          delete sendData.time
-        }
-        fetchNoticeList(sendData).then(response => {
-          if(response.data&&response.data.status==="success"){
-            let result = response.data.result
+        getShop_api(sendData).then(response => {
+          this.listLoading = false
+          if(response&&response.status==0){
+            let result = response.data
             let tempTableData = []
             result.forEach((aData)=>{
               tempTableData.push({
-                name:aData.name,
-                phone:aData.phone,
-                deviceCode:aData.deviceCode,
-                swingCard:aData.swingCard,
-                cashBack:aData.cashBack
+                //后端生成
+                id:aData.store_id,
+                industryName:aData.storeclass_name,
+                //前后统一
+                title:aData.store_name,
+                username:aData.contacts_name,
+                phone:aData.contacts_phone,
+                account:aData.seller_name,
+                lastvisit:aData.total_view,
+                isUp:aData.store_state,
               })
             })
             this.tableData = tempTableData
+            this.total = response.pagination&&response.pagination.total?response.pagination.total:1
+          }else{
+
           }
           console.log("getList",response)
-          // this.list = response.data
-          this.total = response.data.paging.total
+          // this.list = response
+          this.listLoading = false
+        }).catch(e=>{
           this.listLoading = false
         })
       },
     //body
-      addItem(){ //显示 弹框
+      changeItem(index,row){ //显示 弹框
         // this.editLoading = false
         this.isAddItem = true
         this.addNewShow = true
         this.formForNotive = Object.assign({},formForNotive)
+        this.formForNotive.id = row.id
       },
-      addItem2(){ //显示 弹框
-        // this.editLoading = false
-        this.isAddItem2 = true
-        this.addNewShow2 = true
-        this.formForNotive2 = Object.assign({},formForNotive2)
-      },
+
     //foot
       handleSizeChange(val) {
         this.listQuery.limit = val

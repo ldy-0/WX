@@ -66,7 +66,7 @@ import request from '@/utils/request'
 // order => rOrder
   export function changeROrder_api(data) {
     return request({
-      url: '/api/v1/seller/order?order_id='+data.order_id,
+      url: '/api/v1/seller/orderstate?order_id='+data.order_id,
       method: 'put',
       data
     })
@@ -107,6 +107,13 @@ import request from '@/utils/request'
     return request({
       url: '/api/v1/seller/discountCoupon',
       method: 'post',
+      data
+    })
+  }
+  export function deleteCoupon_api(data){
+    return request ({
+      url:'/api/v1/seller/discountCoupon',
+      method:'delete',
       data
     })
   }
@@ -181,7 +188,7 @@ import request from '@/utils/request'
   }
   export function deleteVote_api(data) { 
     return request({
-      url: '/api/v1/seller/vote?distribution_id='+data.distribution_id,
+      url: '/api/v1/seller/vote?vote_id='+data.vote_id,
       method: 'delete',
     })
   }

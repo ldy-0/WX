@@ -9,6 +9,8 @@ const service = axios.create({
   // withCredentials:true,
   // baseURL: process.env.BASE_API, // api的base_url
   baseURL: 'https://www.njjncm.com/', // api的base_url
+  // baseURL: 'http://203.195.203.67/', // api的base_url
+  
   timeout: 20000 // request timeout
 })
 // request interceptor
