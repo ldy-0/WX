@@ -28,7 +28,7 @@
       <el-input v-model="formForNotive.phone" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item label="店主账号" :label-width="formLabelWidth" prop="account">
-      <el-input :disabled="!isAddItem" v-model="formForNotive.account" auto-complete="off"></el-input>
+      <el-input :disabled="!isAddItem" v-model="formForNotive.account" placeholder="此处为商家账号，要求必须唯一" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item  label="所属行业"  :label-width="formLabelWidth" prop="industry">
       <el-select v-model="formForNotive.industry" placeholder="请选择行业">
@@ -152,6 +152,12 @@
     </el-form-item>
     <el-button type="primary" icon="el-icon-search" @click="searchByDate">查询</el-button> -->
   </el-form>
+  <el-form  :inline="true" class="form">
+    <el-form-item label="导出Excel">
+      <el-button  type="primary" icon="document" @click="handleDownload" :loading="downloadLoading">{{exportExcelStatus}}</el-button>
+      <span class="hbs-inline-tips">导出所有数据，这个过程可能会需要花费  <span class="hbs-hot">几分钟</span> 的时间，请耐心等待</span>
+    </el-form-item>
+  </el-form>
   <el-form :inline="true"  class="form">
     <el-badge :value="selectedItem.length" style="margin-right:20px">
       <el-button :type="selectedItem.length?'primary':''" round icon="el-icon-tickets">{{selectedItem.length>0?'已选'+selectedItem.length+'条目':'请勾选项目'}}</el-button>
@@ -248,10 +254,10 @@ import {getPostionList_api,getIndustryList_api,addShop_api,editShop_api,getShop_
 import uploadFn from '@/utils/aahbs'
 
 const formForNotive = { //此页面 静态数据
-        title:'我的店铺',
-        username:'我的名字',
-        phone:'13720263524',
-        account:'abcd',
+        title:'',
+        username:'',
+        phone:'',
+        account:'',
         industry:'',
         province:'',
         city:'',
@@ -260,11 +266,17 @@ const formForNotive = { //此页面 静态数据
         checked:false
       }
 const formForNotiveChild = { //此页面 静态数据
-        appid:'wx688a62dbb767216d',
-        secretid:'28183b40e4dd912241ebe8144a799a90',
-        shopNum:'1234567890',
-        payKey:'28183b40e4dd912241ebe8144a799a90'
+        appid:'',
+        secretid:'',
+        shopNum:'',
+        payKey:''
       }
+// const formForNotiveChild = { //此页面 静态数据
+//         appid:'wx688a62dbb767216d',
+//         secretid:'28183b40e4dd912241ebe8144a799a90',
+//         shopNum:1234567890,
+//         payKey:'28183b40e4dd912241ebe8144a799a90'
+//       }
 export default {
   created(){
     this.getList()
@@ -358,14 +370,17 @@ export default {
         ],
       },
       //head
+        // excel 
+          tableDataAll:'',
+          autoWidth:true,
+          filename:'店铺管理Excel',
+          exportExcelStatus:'导出',
+          downloadLoading:false,
       selectedItem:[],
       formInline: {},
       //body
       listLoading: false,
-      tableData: [
-        {
-        }
-      ],
+      tableData: [],
       // footer
       listQuery: {
         page: 1,
@@ -725,6 +740,44 @@ export default {
       })
     },
     //head
+      formatJson(filterVal, jsonData) {
+        return jsonData.map(v => filterVal.map(j => {
+          if (j === 'timestamp') {
+            return parseTime(v[j])
+          } else {
+            return v[j]
+          }
+        }))
+      },
+      async handleDownload() {
+        this.downloadLoading = true
+        let allRes = await this.getList(true).catch(e=>{
+          this.$notify({
+              title: '失败',
+              message: '操作失败:'+e.toString(),
+              type: 'error'
+            })
+          return 0
+        })
+        console.log('allRes',allRes)
+        if(!allRes){
+          this.downloadLoading = false
+          return console.log('获取数据失败:handleDownload')
+        }
+        import('@/vendor/Export2Excel').then(excel => {
+          const tHeader = ['店铺ID', '店主姓名', '联系方式', '店名', '行业','剩余访问量','独立小程序','上架状态']
+          const filterVal = ['id', 'username', 'phone', 'title', 'industryName','lastvisit','hasPayDataTXT','isUpTXT']
+          const tableDataAll = this.tableDataAll
+          const data = this.formatJson(filterVal, tableDataAll)
+          excel.export_json_to_excel({
+            header: tHeader,
+            data,
+            filename: this.filename,
+            autoWidth: this.autoWidth
+          })
+          this.downloadLoading = false
+        })
+      },
     addItem(){ //显示 弹框
       // this.editLoading = false
       this.isAddItem = true
@@ -776,12 +829,18 @@ export default {
     handleSelectionChange(row){ //批量处理
       this.selectedItem = row
     },
-    getList() { //获取店铺列表
+    async getList(all) { //获取店铺列表
+      // 立一个flag 因为当前函数 promise化 需要检测 接口返回状态 
+      let flag = false
       this.listLoading = true
       let sendData = Object.assign({},this.listQuery)
-      getShop_api(sendData).then(response => {
+      if(all){
+          sendData.limit = 0
+      }
+      await getShop_api(sendData).then(response => {
         this.listLoading = false
         if(response&&response.status==0){
+          flag = true
           let result = response.data
           let tempTableData = []
           result.forEach((aData)=>{
@@ -825,9 +884,9 @@ export default {
               id:aData.store_id,
               industryName:aData.storeclass_name,
               //前后统一
-              title:aData.store_name,
               username:aData.contacts_name,
               phone:aData.contacts_phone,
+              title:aData.store_name,
               account:aData.seller_name,
               province:aData.company_province_id,
               city:aData.company_city_id,
@@ -836,14 +895,19 @@ export default {
               fileList2:temp_fileList2,
               lastvisit:aData.total_view,
               isUp:aData.store_state,
+              isUpTXT:aData.store_state?'上架中':'已下架',
               // 支付数据
               hasPayDataTXT:hasPayData.length>0?'是':'否',
               hasPayData:hasPayData,
               checked:hasPayData.length>0
             })
           })
-          this.tableData = tempTableData
-          this.total = response.pagination&&response.pagination.total?response.pagination.total:1
+          if(all){
+              this.tableDataAll = tempTableData
+          }else{
+              this.tableData = tempTableData
+              this.total = response.pagination&&response.pagination.total?response.pagination.total:1
+          }
         }else{
 
         }
@@ -853,6 +917,7 @@ export default {
       }).catch(e=>{
         this.listLoading = false
       })
+      return flag
     },
     editItem(index,rowData){
       // this.editLoading = true
@@ -908,7 +973,6 @@ export default {
         console.error('upDownShop')
       })
         
-      
     },
     async downMutilItem(wantUp){
         this.$confirm(`此操作将${wantUp===1?'批量上架':'批量下架'}该店铺, 是否继续?`, '提示', {
