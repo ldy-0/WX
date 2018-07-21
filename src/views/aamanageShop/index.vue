@@ -99,7 +99,7 @@
     </el-form-item>
     <!-- {{formForNotive.checked}} -->
     <el-form-item label="支付数据" :label-width="formLabelWidth">
-      <el-checkbox v-model="formForNotive.checked">开启支付功能</el-checkbox>
+      <el-checkbox v-model="formForNotive.checked">是否为独立小程序</el-checkbox>
     </el-form-item>
     <el-form :model="formForNotiveChild" v-if="formForNotive.checked" 
       ref="ruleFormChild" :rules="rulesChild">
@@ -210,19 +210,26 @@
         </template> -->
       </el-table-column>
       <el-table-column
-        label="支持支付" 
+        label="独立小程序" 
         prop="hasPayDataTXT"
         >
       </el-table-column>
       <el-table-column
         label="操作" 
-        min-width='300px'
+        min-width='200px'
         >
         <template slot-scope="scope">
         <el-button size="mini" type="primary" @click="editItem(scope.$index, scope.row)">查看和编辑</el-button>
         <el-button size="mini" type="danger" v-if="scope.row.isUp" @click="downItem(scope.$index, scope.row,0)">下架店铺</el-button>
         <el-button size="mini" v-else type="success" @click="downItem(scope.$index, scope.row,1)">上架店铺</el-button>
         <!-- <el-button size="mini" type="info" @click="lookItem(scope.$index, scope.row)">查看明细</el-button> -->
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="危险操作" 
+        >
+        <template slot-scope="scope">
+        <el-button size="mini" type="danger" @click="deleteItem(scope.$index, scope.row)">删除店铺</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -237,7 +244,7 @@
 <script>
 // getList 接口 获取
 // addNotice 接口 添加
-import {getPostionList_api,getIndustryList_api,addShop_api,editShop_api,getShop_api,upDownShop} from '@/api/admin'
+import {getPostionList_api,getIndustryList_api,addShop_api,editShop_api,getShop_api,upDownShop,deleteShop_api,getROrderList_api} from '@/api/admin'
 import uploadFn from '@/utils/aahbs'
 
 const formForNotive = { //此页面 静态数据
@@ -264,6 +271,7 @@ export default {
     // console.log('created',window.JSON.parse(localStorage.positonList))
     this.getPostionList()
     this.getIndustryList()
+    // getROrderList_api()
   },
   data() {
     return {
@@ -727,6 +735,44 @@ export default {
       this.getList()
     },
     //body
+    deleteNewNotice(id){
+        let sendData = {
+          store_id:id,
+        }
+        deleteShop_api(sendData).then(res=>{
+          if(res&&res.status===0){
+              this.$notify({
+              title: '成功',
+              message: '操作成功',
+              type:'success'
+            });
+            this.getList()
+          }else{
+            this.$notify({
+              title: '错误',
+              message: '操作失败',
+              type:'error'
+            });
+          }
+        }).catch(err=>{
+          console.error('deleteAdmin_api')
+        })
+      },
+    deleteItem(index,row){
+        let id = row.id
+        this.$confirm(`此操作将删除该店铺，并删除该店铺所有数据, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.deleteNewNotice(id)
+        }).catch(()=>{
+          this.$notify.info({
+            title: '消息',
+            message: '已取消'
+          });
+        })
+    },
     handleSelectionChange(row){ //批量处理
       this.selectedItem = row
     },

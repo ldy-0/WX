@@ -56,6 +56,13 @@ export function test(data) {
       data
     })
   }
+  export function deleteShop_api(data) {
+    return request({
+      url: '/api/v1/admin/store',
+      method: 'delete',
+      data
+    })
+  }
   export function getShop_api(data) {
     return request({
       url: '/api/v1/admin/store',
@@ -68,6 +75,13 @@ export function test(data) {
       url: '/api/v1/admin/storeinfo',
       method: 'put',
       data
+    })
+  }
+  export function getROrderList_api(data) {
+    return request({
+      url: '/api/v1/seller/order',
+      method: 'get',
+      params: data
     })
   }
 // manageSevice=>shopServer

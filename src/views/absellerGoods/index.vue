@@ -89,7 +89,7 @@
     </el-form-item> -->
     <el-form-item label="商品分类" :label-width="formLabelWidth" prop="industry">
       <!-- <el-input v-model="formForNotive.industry" auto-complete="off"></el-input> -->
-      <el-select v-model="formForNotive.industry" placeholder="请选择行业">
+      <el-select v-model="formForNotive.industry" placeholder="请选择商品分类">
         <el-option
           v-for="item in industryList"
           :key="item.value"

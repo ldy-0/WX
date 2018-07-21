@@ -415,8 +415,6 @@ export default {
         }).catch(err=>{
           console.error('deleteAdmin_api')
         })
-          
-        
       },
     // ----------------------
     //body

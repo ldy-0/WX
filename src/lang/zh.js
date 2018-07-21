@@ -10,7 +10,7 @@ export default {
 
     server:'运营',
     serverBanner:'首页轮播图',
-    serverEnrty:'首页入口',
+    serverEnrty:'商品分类',
     serverRec:'精品推荐',
     serverAct:'动态',
     serverShop:'店铺介绍',
