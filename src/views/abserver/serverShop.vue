@@ -323,7 +323,7 @@ export default {
       sendData.store_avatar = allUrl1
 
       let allUrl2
-      if(this.formForNotive.fileList1[0].raw){
+      if(this.formForNotive.fileList2[0].raw){
         allUrl2 = await uploadFn(this.formForNotive.fileList2[0].raw)
         allUrl2 = allUrl2[0]
       }else{
