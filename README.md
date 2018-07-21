@@ -15,4 +15,5 @@
 </ol>
 <p>
   配置路径 @/config/
+  本地localhost接口: 默认localhost:9000,如需修改 请在 @/config/sit.env.js 中修改 BASE_API 属性
 </p>
