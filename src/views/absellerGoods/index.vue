@@ -121,8 +121,11 @@
             <el-tab-pane label="统一规格" name="one" 
               :disabled="!isAddItem&&formForNotive.size!=='one'" >
               <el-form :model="formForNotiveChild1" :inline="true"   ref="ruleFormChild1" :rules="rulesChild1" class="margin-btm20">
-                <el-form-item label="价格" prop="price">
+                <el-form-item label="现价" prop="price">
                   <el-input v-model.number="formForNotiveChild1.price" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="原价" prop="marketprice">
+                  <el-input v-model.number="formForNotiveChild1.marketprice" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="库存" prop="count">
                   <el-input v-model.number="formForNotiveChild1.count" auto-complete="off"></el-input>
@@ -137,8 +140,11 @@
                   <el-form-item label="名称"  prop="name">
                     <el-input v-model="formItem.name" auto-complete="off" ></el-input>
                   </el-form-item>
-                  <el-form-item label="价格"  prop="price">
+                  <el-form-item label="现价"  prop="price">
                     <el-input v-model.number="formItem.price" auto-complete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="原价"  prop="price">
+                    <el-input v-model.number="formItem.marketprice" auto-complete="off"></el-input>
                   </el-form-item>
                   <el-form-item label="库存"  prop="count">
                     <el-input v-model.number="formItem.count" auto-complete="off"></el-input>
@@ -399,6 +405,9 @@ export default {
           price: [
               { required: true, message: '请输入商品价格,不少于0', trigger: 'blur' , min: 0,type:'number'},
           ],
+          marketprice: [
+              { required: true, message: '请输入参考价格,不少于0', trigger: 'blur' , min: 0,type:'number'},
+          ],
           count: [
               { required: true, message: '请输入商品库存,不少于0的整数', trigger: 'blur' , min: 0,type:'integer'},
           ]
@@ -410,6 +419,9 @@ export default {
           ],
           price: [
               { required: true, message: '请输入商品价格,不少于0', trigger: 'blur' , min: 0,type:'number'},
+          ],
+          marketprice: [
+              { required: true, message: '请输入参考价格,不少于0', trigger: 'blur' , min: 0,type:'number'},
           ],
           count: [
               { required: true, message: '请输入商品库存,不少于0', trigger: 'blur' , min: 0,type:'number'},
@@ -743,13 +755,13 @@ export default {
         //商品价格
         if(this.formForNotive.size === 'one'){
           sendData.goods_price= this.formForNotiveChild1.price
-          sendData.goods_marketprice = this.formForNotiveChild1.price
+          sendData.goods_marketprice = this.formForNotiveChild1.marketprice
           sendData.goods_costprice = this.formForNotiveChild1.price
         }else{
           // 类型转换
           let temp = this.formForNotiveChild2List[0].price?Number(this.formForNotiveChild2List[0].price):0
           sendData.goods_price= temp
-          sendData.goods_marketprice = temp
+          sendData.goods_marketprice = this.formForNotiveChild2List[0].marketprice
           sendData.goods_costprice = temp
         }
         // 商品编号
@@ -1113,6 +1125,7 @@ export default {
                 for(let i = 0 ,len = data.SKUList.length;i<len;i++){
                   tempForm3.push({
                     price:Number(data.SKUList[i].goods_price),
+                    marketprice:Number(data.SKUList[i].goods_marketprice),
                     name:data.SKUList[i].goods_spec,
                     count:Number(data.SKUList[i].goods_storage),
                   })
@@ -1121,6 +1134,7 @@ export default {
             }else{
               tempForm2 = {
                 price:Number(data.goods_price),
+                marketprice:Number(data.goods_marketprice),
                 count:Number(data.SKUList[0].goods_storage)
               }
               this.formForNotiveChild1 = tempForm2
