@@ -29,9 +29,10 @@ export default {
     goods: '商品',
     notice: '公告',
     manageShop: '店铺管理',
-
+    
     manageSevice: '运营管理',
     shopServer:'店铺运营',
+    flowPackages:'流量套餐',
     industryList:'行业列表',
 
     auth: '授权管理',

@@ -85,6 +85,29 @@ import request from '@/utils/request'
       params: data
     })
   }
+
+// order => VOrder
+  export function changeVOrder_api(data) {
+    return request({
+      url: '/api/v1/seller/orderstate?order_id='+data.order_id,
+      method: 'put',
+      data
+    })
+  }
+  export function getVOrderList_api(data) {
+    return request({
+      url: '/api/v1/seller/vrorder',
+      method: 'get',
+      params: data
+    })
+  }
+  export function getVOrder_api(data) {
+    return request({
+      url: '/api/v1/seller/vrorder',
+      method: 'get',
+      params: data
+    })
+  }
   
 // appointment
   export function getAppointmentList_api(data) {
