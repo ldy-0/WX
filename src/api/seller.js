@@ -306,6 +306,30 @@ import request from '@/utils/request'
       params:data
     })
   }
+// server => glow
+  export function getFlowList_api(data){
+    return request({
+      url:'/api/v1/seller/flowpackage',
+      method:'get',
+      params:data
+    })
+  }
+  export function buyFlow_api(data){
+    return request({
+      url:'/api/v1/seller/floworder',
+      method:'post',
+      params:data,
+      data
+    })
+  }
+  export function buyFlowState_api(data){
+    return request({
+      url:'/api/v1/seller/floworder',
+      method:'get',
+      params:data
+    })
+  }
+
 // auth
   export function getAuthList_api(data) {
     return request({

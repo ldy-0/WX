@@ -149,7 +149,7 @@ export default {
         editSchool_api(sendData).then(data=>{
           this.waitAddNotice = false
           this.addNewShow = false
-          if(data.status===0){
+          if(data&&data.status===0){
             this.$notify({
               title: '成功',
               message: '操作成功',
