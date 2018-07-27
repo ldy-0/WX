@@ -1,0 +1,274 @@
+<style lang="less">
+
+.container{
+  padding-top: 100rpx;
+  height: 100%;
+  font: 28rpx MicrosoftYaHei;
+  color: #ccc;
+  background: #fff;
+}
+
+.search_wrap{
+  position: fixed;
+  top: 150rpx;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 16rpx 0;
+  .back{
+    width: 19rpx;
+    height: 24rpx;
+  }
+  .search{
+    //color: #333;
+    .search_content{
+      display: flex;
+      align-items: center;
+      width: 570rpx;
+      height: 56rpx;
+      border-radius: 10rpx;
+      background: #f5f5f5;
+    }
+    image{
+      width: 38rpx;
+      height: 38rpx;
+    }
+    .search_text{
+      width: 100%;
+      font-size: 28rpx;  
+    }
+  }
+  .cancle{
+    font-size: 30rpx;
+  }
+  .search_btn{
+    color: #333;
+  }
+}
+  
+    
+
+.search_history{
+  width: 100%;
+  margin: 120rpx 0 0;
+  .search_history_item{
+    display: flex;
+    align-items: center;
+    height: 90rpx;
+    margin: 4rpx 0;
+    padding-left: 30rpx;
+    image{
+      width: 34rpx;
+      height: 34rpx;
+      margin-right: 14rpx;
+    }
+  }
+    
+}
+
+// .history
+//   font-size: 26rpx
+//   color: #888
+//   padding: 0 30rpx
+//   .history_title
+//     display: flex
+//     justify-content: space-between
+//     margin: 30rpx 0
+//     image
+//       width: 29rpx
+//       height: 29rpx
+//   .history_list
+//     .history_item
+//       display: inline-block
+//       line-height: 50rpx
+//       margin-right: 30rpx
+//       padding: 5rpx
+//       border: 1rpx solid #636363
+//       border-radius: 4rpx
+
+</style>
+<template>
+  <view class="container {{isIos ? 'ios_container' : ''}}">
+      <topBar :topBar='topBar'></topBar>
+      
+      <view class="search_wrap">
+          <!-- <image class='back' src='../images/return.png' @tap='goBack' /> -->
+          <view class="search">
+              <view class="search_content">
+                <image src='../images/search.png' />
+                <input class="search_text" bindinput='search' bindconfirm='goSearchResult' placeholder="" value='{{setValue}}' />
+                <!-- <image src='' @tap='clearInput' /> -->
+              </view>
+          </view>
+          <!-- <view class="cancle" @tap='clearInput'>取消</view> -->
+          <view class='search_btn' @tap='goSearch'>搜索</view>
+      </view>
+      
+      <view class="search_history" wx:if="{{changeStatus}}">
+
+          <repeat for="{{searchs}}" index="index" item="item">
+              <view class='search_history_item'>
+                  <image src='../images/search.png' />
+                  <view class="" @tap="goGoodsDetail({{index}})">{{item.name}}</view>
+              </view>
+          </repeat>
+
+      </view>
+
+      <!-- <view class="history">
+          <view class="history_title">
+              <view>历史记录</view>
+              <image src='' class="delete" @tap='deleteHistory' />
+          </view>
+          <view class="history_list">
+              <repeat for="{{historys}}" index="i" item="item">
+                <view class="history_item" @tap="click({{i}})">{{item.name}}</view>
+              </repeat>
+          </view>
+      </view> -->
+  </view>  
+</template>
+
+<script>
+import wepy from "wepy";
+import shopApi from '../api/shopApi.js';
+import topBar from '../components/navigation';
+
+export default class searchPage extends wepy.page {
+  data = {
+    topBar: {
+      name: '搜索',
+      tapPage: false,
+    },
+    // input content
+    inputContent: null,
+    // search list flag
+    isShow: false,
+    // search list
+    searchs: [ ], // { id: '', name: "1" },
+    // history list
+    historys: [ { id: 'b8qp', name: "张一元茉莉花茶 花茶茶叶 茉莉龙毫" }, ],
+    isIos: null,
+    key: '',
+  };
+
+  components = {
+    topBar: topBar,
+  };
+
+  computed = {
+    changeStatus(){
+      console.log(`------ isShow status: ${this.data.isShow} -------`);
+      return this.data.isShow;
+    },
+    setValue: () => this.data.inputContent,
+  };
+
+  methods = {
+    // input事件回调函数
+    search(e){
+      let v = e.detail.value;
+      this.key = v;
+      // console.log('input:'+v);
+      if(v === ''){
+        return this.data.isShow = false;
+      }
+
+      this.data.inputContent = v;
+
+      this.searchByApp(v);
+    },
+    goBack(){
+
+      wx.navigateBack({});
+
+    },
+    goSearch(){
+
+      this.searchByApp(this.data.inputContent);
+
+    },
+    goSearchResult(e){
+      
+      wx.navigateTo({
+        // url: '/pages/home/searchResult?keyword='+this.data.inputContent,
+      });
+
+    },
+    //
+    goGoodsDetail(index){
+      
+      wx.navigateTo({
+        url: '/pages/goods_detail?id='+this.searchs[index].id,
+      });
+
+    },
+    clearInput(){
+
+      this.data.inputContent = '';
+      this.data.isShow = false;
+      
+      while(this.data.searchs.length > 0){
+        this.data.searchs.pop();
+      }
+
+      this.$apply();
+      
+    },
+    // 历史记录点击回掉函数
+    click(index){
+      
+      wx.navigateTo({
+        url: '/pages/home/goodsDetail?product='+this.historys[index].id,
+      });
+
+    },
+    deleteHistory(){
+
+      while(this.data.historys.length > 0){
+        this.data.historys.pop();
+      }
+
+    }
+
+  };
+
+  onLoad(){
+    this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
+  }
+
+  async searchByApp(value){
+    while(this.data.searchs[0]){
+      this.data.searchs.pop();
+    }
+    this.$apply();
+ 
+    const res = await shopApi.searchbyApp({
+      params: {
+        pageable: true,
+        page: 0,
+        size: 20,
+        key: value,
+        //scope: "FILTER",
+      }
+    }),
+      list = res.list;
+    // 屏蔽之前请求返回的数据
+    if(this.key !== value){
+      return ;
+    }
+    
+    for(let i = 0, len = list.length; i < len; i++){
+      this.data.searchs[i] = { id: list[i].id, 
+                               name: list[i].name };
+    }
+
+    this.data.isShow = true;
+    this.$apply();
+    console.log(`search --${res.list.length}---${this.data.isShow}`);
+
+  }
+  
+}
+</script>
