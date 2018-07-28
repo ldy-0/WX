@@ -951,13 +951,13 @@ export default {
         //商品价格
         if(this.formForNotive.size === 'one'){
           sendData.goods_price= this.formForNotiveChild1.price
-          sendData.goods_marketprice = this.formForNotiveChild1.price
+          sendData.goods_marketprice = this.formForNotiveChild1.marketprice
           sendData.goods_costprice = this.formForNotiveChild1.price
         }else{
           // 类型转换
           let temp = this.formForNotiveChild2List[0].price?Number(this.formForNotiveChild2List[0].price):0
           sendData.goods_price= temp
-          sendData.goods_marketprice = temp
+          sendData.goods_marketprice = this.formForNotiveChild2List[0].marketprice
           sendData.goods_costprice = temp
         }
         // 商品编号

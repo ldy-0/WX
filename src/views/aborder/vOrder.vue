@@ -239,8 +239,8 @@
         >
         <template slot-scope="scope">
           <el-button size="mini" type="info" @click="lookItem(scope.$index, scope.row)">查看明细</el-button>
-          <el-button size="mini" type="danger" @click="changeItem(scope.$index, scope.row)"
-           v-if="scope.row.stateID===20">发货</el-button>
+          <!-- <el-button size="mini" type="danger" @click="changeItem(scope.$index, scope.row)"
+           v-if="scope.row.stateID===20">发货</el-button> -->
         </template>
       </el-table-column>
     </el-table>

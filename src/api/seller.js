@@ -117,7 +117,14 @@ import request from '@/utils/request'
       params: data
     })
   }
-
+  export function changeAppointmentList_api(data) {
+    return request({
+      url: '/api/v1/seller/appointment',
+      method: 'put',
+      params: data,
+      data
+    })
+  }
 // Coupon
   export function getCouponList_api(data) {
     return request({
