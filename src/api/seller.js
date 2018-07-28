@@ -89,7 +89,7 @@ import request from '@/utils/request'
 // order => VOrder
   export function changeVOrder_api(data) {
     return request({
-      url: '/api/v1/seller/orderstate?order_id='+data.order_id,
+      url: '/api/v1/seller/vrorder?order_id='+data.order_id,
       method: 'put',
       data
     })

@@ -239,8 +239,8 @@
         >
         <template slot-scope="scope">
           <el-button size="mini" type="info" @click="lookItem(scope.$index, scope.row)">查看明细</el-button>
-          <!-- <el-button size="mini" type="danger" @click="changeItem(scope.$index, scope.row)"
-           v-if="scope.row.stateID===20">发货</el-button> -->
+          <el-button size="mini" type="danger" @click="changeItem(scope.$index, scope.row)"
+           v-if="scope.row.stateID===20">发货</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -370,7 +370,7 @@ export default {
       changeNewNotice(id,num){
         let sendData = {
           order_id : id,
-          shipping_code : num,
+          shipping_code : '',
           state_type:'deliver_goods'
         }
         changeVOrder_api(sendData).then((res)=>{
@@ -395,11 +395,12 @@ export default {
       },  
       changeItem(index,raw){
         let id = raw.id
-        this.$prompt(`请输入单号?`, '发货', {
+        this.$confirm(`请确认您已发货`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-        }).then((data) => {
-          this.changeNewNotice(id,data.value)
+          type: 'warning'
+        }).then(() => {
+          this.changeNewNotice(id)
         }).catch(()=>{
           this.$notify.info({
             title: '消息',
