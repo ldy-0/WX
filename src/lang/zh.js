@@ -16,7 +16,7 @@ export default {
     serverShop:'店铺介绍',
     serverAllbuy:'团购',
     serverKill:'砍价',
-    serverSchool:'校区',
+    serverSchool:'门店',
     serverGetFlow:'流量充值',
     serverActivity:'活动',
     distribution:'分销',

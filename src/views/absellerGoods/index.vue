@@ -74,8 +74,8 @@
     <el-form-item label="商品编号" :label-width="formLabelWidth" prop="goodsNum">
       <el-input v-model="formForNotive.goodsNum" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="校区" :label-width="formLabelWidth" prop="school">
-      <el-select v-model="formForNotive.school" placeholder="请选择校区">
+    <el-form-item label="门店" :label-width="formLabelWidth" prop="school">
+      <el-select  v-model="formForNotive.school" placeholder="请选择门店">
         <el-option
           v-for="item in schoolList"
           :key="item.value"
@@ -339,7 +339,7 @@ export default {
         dialogImageUrl: '',
         dialogVisible: false,
         is_virtualList:[{label:'虚拟商品',value:1},{label:'实物商品',value:0},],
-        schoolList:[{label:'校区1',value:1},{label:'校区2',value:2},],
+        schoolList:[{label:'门店1',value:1},{label:'门店2',value:2},],
         goodsTypehbsList:[
           {
             value:0,
@@ -366,7 +366,7 @@ export default {
               { type:"string",required: true, message: '请输入商品编号', trigger: 'blur',min: 1},
           ],
           school: [
-              { type:"number",required: true, message: '请输入校区，如果没有校区请先添加校区(运营=>校区)', trigger: 'blur'},
+              { type:"number",required: true, message: '请输入门店，如果没有门店请先添加门店(运营=>门店)', trigger: 'blur'},
           ],
           // goodsTotal: [
           //     { type:"string",required: true, message: '请输入库存', trigger: 'blur',min: 1},
@@ -766,10 +766,10 @@ export default {
         }
         // 商品编号
         sendData.goods_serial= this.formForNotive.goodsNum
-        // 校区
+        // 门店
         sendData.school_id= this.formForNotive.school
         for(let i=0,len=this.schoolList.length;i<len;i++){
-          //获取校区名
+          //获取门店名
           if(this.schoolList[i].value===this.formForNotive.school){
             sendData.school_name = this.schoolList[i].label
             break
@@ -962,10 +962,10 @@ export default {
         }
         // 商品编号
         sendData.goods_serial= this.formForNotive.goodsNum
-        // 校区
+        // 门店
         sendData.school_id= this.formForNotive.school
         for(let i=0,len=this.schoolList.length;i<len;i++){
-          //获取校区名
+          //获取门店名
           if(this.schoolList[i].value===this.formForNotive.school){
             sendData.school_name = this.schoolList[i].label
             break

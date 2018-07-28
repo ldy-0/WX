@@ -125,7 +125,7 @@
         prop="paydateTXT"
         >
       </el-table-column>
-      <!-- 预约校区 -->
+      <!-- 预约门店 -->
       <el-table-column
         label="预约店铺" 
         prop="school"

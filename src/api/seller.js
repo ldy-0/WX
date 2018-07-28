@@ -46,7 +46,7 @@ import request from '@/utils/request'
       params: data
     })
   }
-  export function getSchoolList_api(data) { //获取校区列表
+  export function getSchoolList_api(data) { //获取门店列表
     console.log('inner getPostionList_api')
     return request({
       url: '/api/v1/seller/school',

@@ -11,16 +11,16 @@
   <!-- 编辑和添加共用 -->
 
 <el-dialog
-  :title="isAddItem?'新增校区':'编辑校区'"
+  :title="isAddItem?'新增门店':'编辑门店'"
   :visible.sync="addNewShow" 
   width="30%" 
   class="out-dialog"
   >
   <el-form :model="formForNotive"  ref="ruleForm" :rules="rules" size="medium" >
-    <el-form-item label="校区名字" :label-width="formLabelWidth" prop="name">
+    <el-form-item label="门店名字" :label-width="formLabelWidth" prop="name">
       <el-input v-model="formForNotive.name" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="校区地址" :label-width="formLabelWidth" prop="address">
+    <el-form-item label="门店地址" :label-width="formLabelWidth" prop="address">
       <el-input v-model="formForNotive.address" auto-complete="off"></el-input>
     </el-form-item>
   </el-form>
@@ -38,7 +38,7 @@
 <el-header class="header" style="height:auto;">
   <el-form :inline="true" :model="formInline" class="form">
     <el-form-item>
-      <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增校区</el-button>
+      <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增门店</el-button>
     </el-form-item>
   </el-form>
 </el-header>
@@ -49,12 +49,12 @@
       v-loading="listLoading" element-loading-text="给我一点时间" 
       style="width: 100%" >
       <el-table-column
-        label="校区名" 
+        label="门店名" 
         prop="name"
         >
       </el-table-column>
       <el-table-column
-        label="校区地址" 
+        label="门店地址" 
         prop="address"
         >
       </el-table-column>
@@ -92,7 +92,7 @@ export default {
         formForNotive:Object.assign({},formForNotive),
         rules: {
           name: [
-              { required: true, message: '请输入校区名字', trigger: 'blur' },
+              { required: true, message: '请输入门店名字', trigger: 'blur' },
               { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
           ],
           address: [
@@ -194,14 +194,14 @@ export default {
           if(data.status===0){
             this.$notify({
               title: '上传成功',
-              message: '已新增校区',
+              message: '已新增门店',
               type: 'success'
             })
             this.getList()
           }else{
             this.$notify({
               title: '上传失败',
-              message: '新增校区失败',
+              message: '新增门店失败',
               type: 'error'
             })
           }
