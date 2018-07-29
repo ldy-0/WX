@@ -12,7 +12,8 @@
 
 <template>
 <div>
-<el-dialog :title="isAddItem?'新增流量包':'编辑流量包'" :visible.sync="addNewShow" width="30%">
+<!-- 弹窗 -->
+<el-dialog :title="isAddItem?'新增资讯':'编辑资讯'" :visible.sync="addNewShow" width="30%">
   <el-form :model="formForNotive"  ref="ruleForm" :rules="rules" >
     <el-form-item label="流量数" :label-width="formLabelWidth"  prop="value">
       <el-input v-model.number="formForNotive.value" auto-complete="off"></el-input>
@@ -32,11 +33,12 @@
     :loading="waitAddNotice">确认修改</el-button>
   </span>
 </el-dialog>
+
 <el-container class="notice">
 <el-header class="header">
 <el-form :inline="true" :model="formInline" class="form">
   <el-form-item>
-    <el-button type="primary" @click="addItem">新增流量包</el-button>
+    <el-button type="primary" @click="addItem">新增资讯</el-button>
   </el-form-item>
 </el-form>       
 </el-header>
