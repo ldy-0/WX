@@ -21,12 +21,56 @@ export function getPhone_api(data) {
 // caseList
 export function getCaseList_api(data) {
   return request({
-    url: '/api/v1/admin/cases',
+    url: '/api/v1/home/cases',
     method: 'get',
     params: data
   })
 }
+export function addCase_api(data) {
+  return request({
+    url: '/api/v1/admin/cases',
+    method: 'post',
+    data
+  })
+}
+export function deleteCase_api(data) {
+  return request({
+    url: '/api/v1/admin/cases',
+    method: 'delete',
+    data
+  })
+}
+export function editCase_api(data) {
+  return request({
+    url: '/api/v1/admin/cases',
+    method: 'put',
+    data
+  })
+}
 
+
+// caseClassify
+export function getCaseClassify_api(data) {
+  return request({
+    url: '/api/v1/admin/caseclass',
+    method: 'get',
+    params: data
+  })
+}
+export function addCaseClassify_api(data) {
+  return request({
+    url: '/api/v1/admin/caseclass',
+    method: 'post',
+    data
+  })
+}
+export function deleteCaseClassify_api(data) {
+  return request({
+    url: '/api/v1/admin/caseclass',
+    method: 'delete',
+    data
+  })
+}
 
 
 

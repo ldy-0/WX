@@ -1,7 +1,7 @@
 import {upFileToken_api} from '@/api/common' 
 // const COS = require('./cos-js-sdk-v5.min.js')
 const COS = window.COS
-const Bucket = 'admin-1256953590';
+const Bucket = ' webiteimg'; // 'admin-1256953590';
 const Region = 'ap-shanghai';
 //只接受 文件数组 非类数组！！如果你想对类数组处理可以在下面进行转换
 let upLoadFile = function (allFile){
@@ -13,6 +13,7 @@ let upLoadFile = function (allFile){
     length = 1
   }
   let promiseAll = []
+
   return new Promise((resUp,rejUp)=>{
     //初始化
     let cos = new COS({
@@ -31,8 +32,9 @@ let upLoadFile = function (allFile){
                   TmpSecretKey: data.credentials && data.credentials.tmpSecretKey,
                   XCosSecurityToken: data.credentials && data.credentials.sessionToken,
                   ExpiredTime: data.expiredTime,
-              })
+          })
         }).catch(err=>{
+
           console.log(err,'upFileToken_api')
         })
         }

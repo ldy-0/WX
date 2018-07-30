@@ -113,14 +113,9 @@ export let asyncRouterMapAdmin = [
         meta: { title: '案例列表', noCache: true }
       },{
         path: 'flowPackages', 
-        component: () => import('@/views/aamanageSevice/flowPackages'),
+        component: () => import('@/views/case/case_classify'),
         name: 'flowPackages',
-        meta: { title: 'flowPackages', noCache: true }
-      },{
-        path: 'industryList', 
-        component: () => import('@/views/aamanageSevice/industryList'),
-        name: 'industryList',
-        meta: { title: 'industryList', noCache: true }
+        meta: { title: '案例分类', noCache: true }
       }
     ]
   },

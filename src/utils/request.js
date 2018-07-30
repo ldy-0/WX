@@ -41,31 +41,7 @@ service.interceptors.response.use(
    * 以下代码均为样例，请结合自生需求加以修改，若不需要，则可删除
    */
   response => {
-    console.log('request.js', response)
-    const res = response.data
-    if (res&&res.status === 1) {
-      Message({
-        message: res.error,
-        type: 'error',
-        duration: 5 * 1000
-      })
-      // store.dispatch('FedLogOut').then(() => {
-      //   location.reload() // 为了重新实例化vue-router对象 避免bug
-      // })
-      // store.dispatch('FedLogOut')
-      return Promise.reject('request.js拦截响应 res.status == 1')
-    } else if(res&&res.status === 10){
-        Message({
-          message: res.error,
-          type: 'error',
-          duration: 5 * 1000
-        })
-        store.dispatch('FedLogOut').then(() => {
-          location.reload() 
-        })
-    }else  {
-      return response.data
-    }
+    return response.data
   },
   error => {
     console.log('err' + error) // for debug
