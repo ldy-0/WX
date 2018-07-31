@@ -63,30 +63,30 @@ export let asyncRouterMapAdmin = [
   //     meta: { title: 'goods', icon: 'goods', noCache: true }
   //   }]
   // },
+  {
+    path: '/phone',
+    component: Layout,
+    // redirect: '/notice/index',
+    meta: {roles:['affiche']},
+    children: [{
+      path: 'index',
+      component: () => import('@/views/phone/phone'),
+      name: 'notice',
+      meta: { title: '联系方式', icon: 'notice', noCache: true ,roles:['affiche']}
+    }]
+  },
   // {
-  //   path: '/phone',
+  //   path: '/notice',
   //   component: Layout,
   //   redirect: '/notice/index',
   //   meta: {roles:['affiche']},
   //   children: [{
   //     path: 'index',
-  //     component: () => import('@/views/phone/phone'),
+  //     component: () => import('@/views/aanotice/index'),
   //     name: 'notice',
-  //     meta: { title: '联系方式', icon: 'notice', noCache: true ,roles:['affiche']}
+  //     meta: { title: 'notice', icon: 'notice', noCache: true ,roles:['affiche']}
   //   }]
   // },
-  {
-    path: '/notice',
-    component: Layout,
-    redirect: '/notice/index',
-    meta: {roles:['affiche']},
-    children: [{
-      path: 'index',
-      component: () => import('@/views/aanotice/index'),
-      name: 'notice',
-      meta: { title: 'notice', icon: 'notice', noCache: true ,roles:['affiche']}
-    }]
-  },
   {
     path: '/manageShop',
     component: Layout,
