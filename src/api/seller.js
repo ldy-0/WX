@@ -336,7 +336,21 @@ import request from '@/utils/request'
       params:data
     })
   }
-
+// server => allBuy
+export function getAllBuyList_api(data){
+  return request({
+    url:'/api/v1/seller/groupbuying',
+    method:'get',
+    params:data
+  })
+}
+export function addAllBuy_api(data){
+  return request({
+    url:'/api/v1/seller/groupbuying',
+    method:'get',
+    params:data
+  })
+}
 // auth
   export function getAuthList_api(data) {
     return request({

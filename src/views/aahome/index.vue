@@ -45,7 +45,7 @@ import { mapGetters } from 'vuex'
 import admin from './admin'
 import seller from './seller'
 
-import {test} from '@/api/seller'
+import {getAllBuyList_api} from '@/api/seller'
 import { getRoles } from '@/utils/auth' // getToken from cookie
 
 import uploadFn from '@/utils/aahbs'
@@ -53,6 +53,9 @@ let stop = false
 
 export default {
   mounted(){
+    getAllBuyList_api({page:1,limit:10}).then(data=>{
+      console.log(data)
+    })
     setTimeout(()=>{
       this.down = "hbs-down"
     },800)
