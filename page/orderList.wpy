@@ -1,171 +1,143 @@
-<style lang="less">
+<style lang="sass">
+@import "../base.sass"
 
-.row{
-    display: flex;
-    justify-content: space-between;
-    align-content: center;
-}
+$BG_GRAY: #666
 
-.container{
-    font: 30rpx MicrosoftYaHei;
-}
-  
+.row
+  @include between
 
-.tab_wrap{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    line-height: 90rpx;
-    color: #666;
-    background: #fff;
-    .checked{
-        color: #e6002d;
-        border-bottom: 1rpx solid #e6002d;
-    }
-}
-    
+.container
+  font: 32rpx PingFang-SC-Medium
+  color: #000
 
-// .title
-//   line-height: 68rpx
-//   padding-left: 30rpx
-//   color: #202020
-//   border-bottom: 1rpx solid $BD_GRAY
-//   background: $BG_WHITE
+.tab_wrap
+  @include around
+  line-height: 80rpx
+  font-size: 28rpx
+  color: #666
+  border-bottom: 1rpx solid $BD_GRAY
+  background: $BG_WHITE
+  .checked
+    border-bottom: 1rpx solid $BG_YELLOW
 
-.order_title{
-    padding: 30rpx;
-    font-size: 28rpx;
-    color: #333;
-    background: #fff;
-}
+.title
+  line-height: 68rpx
+  padding-left: 30rpx
+  color: #202020
+  border-bottom: 1rpx solid $BD_GRAY
+  background: $BG_WHITE
 
-.package{
-    display: flex;
-    justify-content: space-between;
-    padding: 20rpx 30rpx;
-    background: #ffecea;
-    .left{
-        padding-left: 20rpx;
-        font-size: 26rpx;
-        color: #333;
-        border-left: 6rpx solid #e6002d;
-    }
-    .right{
-        font-size: 26rpx;
-        color: #e6002d;
-    }
-}
-.product_info{
-    display: flex;
-    height: 210rpx;
-    padding: 30rpx;
-    background: #fafafa;
-    image{
-        width: 190rpx;
-        height: 190rpx;
-        margin-right: 30rpx;
-    }
-    .product{
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 10rpx 0 30rpx 0;
-        .product_title{
-            font-size: 26rpx;
-            color: #333;
-        }
-        .product_standard{
-            margin: 20rpx 0 0;
-            font-size: 24rpx;
-            color: #999;
-        }
-        .product_price{
-            color: #e6002d;
-            text-align: center;
-            .product_address{
-                color: #666;
-            }
-        }   
-    }       
-}
+.product_info
+  @include around
+  height: 250rpx
+  background: $BG_WHITE
+  image
+    width: 180rpx
+    height: 180rpx
+    background: gray
+  .product
+    width: 500rpx
+    .product_title
+      color: #333
+      display: -webkit-box
+      -webkit-box-orient: vertical
+      -webkit-line-clamp: 2
+      overflow: hidden
+    .product_price
+      width: 180rpx
+      line-height: 44rpx
+      border-radius: 22rpx
+      font-size: 37rpx
+      color: $FC_DARK
+      background: $BG_YELLOW
+      text-align: center
+    .product_price, .product_address
+      margin: 15rpx 0 45rpx
+    .product_address, .product_number
+      font-size: 28rpx
+      color: #888
+    .product_standard
+      line-height: 36rpx
+      font-size: 24rpx
+      color: #888
+      width: 100%
+      height: 35rpx
+      display: -webkit-box
+      -webkit-box-orient: vertical
+      -webkit-line-clamp: 1
+      overflow: hidden
+.price_info
+  @include between
+  height: 88rpx
+  padding: 0 24rpx
+  border-top: 1rpx solid $BD_GRAY
+  background: $BG_WHITE
+  .price
+    color: $BG_RED
+  .freight
+    display: inline-block
+    margin-left: 10rpx
+    font-size: 24rpx
+    color: #888
 
-.price_info{
-    text-align: right;
-    padding: 30rpx;
-    background: #fff;
-}
-  
+.operate_info
+  display: flex
+  justify-content: flex-end
+  align-items: center
+  height: 88rpx
+  margin-bottom: 19rpx
+  border-top: 1rpx solid $BD_GRAY
+  background: $BG_WHITE
+  .Customer
+   padding: 0rpx
+   width: 144rpx
+   line-height: 44rpx
+   margin-right: 24rpx
+   border: 1rpx solid #333
+   border-radius: 10rpx
+   font-size: 28rpx
+   text-align: center
+  view
+    width: 144rpx
+    line-height: 44rpx
+    margin-right: 24rpx
+    border: 1rpx solid #333
+    border-radius: 10rpx
+    font-size: 28rpx
+    text-align: center
 
-.operate_info{
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    height: 88rpx;
-    margin-bottom: 19rpx;
-    border-top: 1rpx solid #d8d8d8;
-    background: #fff;
-    view{
-        width: 140rpx;
-        line-height: 60rpx;
-        margin-right: 24rpx;
-        border: 1rpx solid #999;
-        border-radius: 30rpx;
-        font-size: 25rpx;
-        color: #333;
-        text-align: center;
-    }
-    .red{
-        color: #e6002d;
-        border: 1rpx solid #e6002d;
-    }
-    .countDown{
-        display: flex;
-    }
-}
+.no_wrap
+  .no
+    position: absolute
+    top: calc(50% - 150rpx)
+    left: calc(50% - 190rpx)
+    text-align: center
+    image
+      width: 380rpx
+      height: 280rpx
+      margin-bottom: 24rpx
+    .no_title
+      font-size: 36rpx
+      color: #333
+    .no_desc
+      font-size: 24rpx
+      color: #888
+.view_hide
+    display: none
 
-.no_wrap{
-    position: relative;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    .no{
-        position: absolute;
-        top: 400rpx;
-        width: 100%;
-        // top: calc(50% - 150rpx);
-        // left: calc(50% - 190rpx);
-        text-align: center;
-        image{
-            width: 380rpx;
-            height: 280rpx;
-            margin-bottom: 24rpx;
-        }
-        .no_title{
-            font-size: 36rpx;
-            color: #333;
-        }
-        .no_desc{
-            font-size: 24rpx;
-            color: #888;
-        }
-        
-    }
-}
-    
-.view_hide{
-    display: none;
-}
+.view_show
+    display: block
+    padding-left: 30rpx
+    background: #FFFFFF
+    height: 68rpx
+    line-height: 68rpx
+    border-bottom: solid 1px #f2f2f2
 
-.view_show{
-    display: block;
-}
-     
 </style>
 
 <template>
   <view class="container">
-      <topBar :topBar="topBar"></topBar>
+      <navigation :navigationOption="navigation"></navigation>
 
       <view class='tab_wrap'>
           <view class="{{checkedList[0] ? 'checked' : '' }}" @tap='click(all)'>全部</view>
@@ -175,375 +147,320 @@
           <view class="{{checkedList[4] ? 'checked' : '' }}" @tap='click(comment)'>待评价</view>
       </view>
 
-      <view class='no_wrap' wx:if='{{isNullList}}'>
+      <view class='no_wrap' wx:if='{{isNull}}'>
           <view class='no'>
-              <!-- <image src='../../images/Mall/icon_kongbaiye@2x.png' /> -->
+              <image src='../../images/Mall/icon_kongbaiye@2x.png' mode='aspectFill' />
               <view class='no_title'>您还没有相关的订单</view>
               <view class='no_desc'>可以去看看有哪些想买的</view>
           </view>
       </view>
       <view wx:else>
-            <view class='title' class="{{orderList.length == 0 ?'view_hide':'view_show'}}" ></view>
+          <view>
 
-                <scroll-view scroll-y="true" class="swiper-item-box" bindscrolltolower="onReachBottom">
+                <view>
+                    <view class='title waitpay' class="{{orderList.length==0 ?'view_hide':'view_show'}}" >{{getStatus}}</view> <!-- 待付款 -->
 
                     <repeat for='{{orderList}}' index='index' item='items'>
 
-                        <view>
-                            <view class='row order_title'>
-                                <view>订单编号：{{items.orderNo}}</view>
-                                <view>{{items.statusStr}}</view>
-                            </view>
-
-                            <repeat for='{{items.orderItems}}' index='i' item='item'>
-                                <view class='package' wx:if='{{isPackage}}'>
-                                    <view class='left'>包裹{{i+1}}    来自顺丰优选</view>
-                                    <view class='right'>查看物流</view>
-                                </view>
-                                <navigator class='product_info' url="/pages/order_detail?id={{items.id}}">
-                                    <image src='{{item.productImgUrl}}' />
+                        <view @tap='goOrderDetail({{index}}, submitted)'>
+                            <repeat for='{{items.orderItems}}' item='item'>
+                                <navigator class='product_info' url='../home/orderDetail?id={{items.id}}'>
+                                    <image src='{{item.productImgUrl}}' mode='aspectFill' />
                                     <view class='product'>
-                                        <view>
-                                            <view class='product_title'>{{item.title}}</view>
-                                            <view class='product_standard'>规格：{{item.skuStr}}</view>
-                                        </view>
+                                        <view class='product_title'>{{item.title}}</view>
                                         <view class='row'>
                                             <view class='product_price'>¥{{item.price}}</view>
-                                            <view class='product_number'>×{{item.amount}}</view>
                                             <!-- <view class='product_address'>福建福州</view> -->
+                                        </view>
+                                        <view class='row'>
+                                            <view class='product_standard'>规格：{{item.skuStr}}</view>
+                                            <view class='product_number'>×{{item.amount}}</view>
                                         </view>
                                     </view>
                                 </navigator>
                             </repeat>
 
-                            <view class='price_info'>共{{submittedSize[index]}}件商品  合计：￥<text>{{items.totalFee}}</text></view>
+                            <view class='price_info'>
+                                <view>实付款</view>
+                                <view>
+                                    <text class='price'>¥{{items.totalFee}}</text>
+                                    <text class='freight'>运费{{items.logisticsFee}}</text>
+                                </view>
+                            </view>
 
-                            <view class='operate_info' wx:if="{{items.status === 'CANCELLED'}}">
-                                <!-- <view class='btn' @tap='goLookBill({{index}})'>查看发票</view> -->
-                                <!-- <view class='btn' @tap='goRefund({{index}})'>申请退款</view> -->
+                            <view class='operate_info' wx:if="{{items.status === 'SUBMITTED'}}"> <!-- checkedList[1] -->
+                                <button  class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
+                                <view @tap="payMoney({{items.mainOrderId}})">支付</view>
                             </view>
-                            <view class='operate_info' wx:if="{{items.status === 'SUBMITTED'}}">
-                                <!-- <view class='countDown'>{{minute[index]}}:{{second[index]}}</view> -->
-                                <view class='btn' @tap="cancelOrder({{index}}, {{items.id}})">取消订单</view>
-                                <view class='btn red' @tap="payMoney({{items.mainOrderId}})">去付款</view>
+                            <view class='operate_info' wx:if="{{items.status === 'PAID'}}"> <!-- checkedList[2] -->
+                              <button  class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
+                              <view @tap="returnGoods({{items.id}})">退货/换货</view>  
+                                <!-- <view>提醒发货</view>  -->
                             </view>
-                            <view class='operate_info' wx:if="{{items.status === 'PAID'}}">
-                                <!-- <view class='btn' @tap='goLookBill({{index}})'>查看发票</view> -->
-                                <view class='btn' @tap='goRefund({{index}})'>申请退款</view>
-                                <!-- <view>退货/换货</view>
-                                <view>联系客服</view>
-                                <view>提醒发货</view> -->
+                            <view class='operate_info' wx:if="{{items.status === 'SHIPPED'}}"> <!-- checkedList[3] -->
+                                <button  class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
+                                <view @tap="returnGoods({{items.id}})">退货/换货</view>
+                                <view @tap="Confirm({{items}})">确认收货</view>
+                                <!-- <view>查看物流</view> -->
                             </view>
-                            <view class='operate_info' wx:if="{{items.status === 'SHIPPED'}}">
-                                <!-- <view class='btn' @tap='goLookBill({{index}})'>查看发票</view> -->
-                                <view class='btn' @tap='confirm({{index}})'>确认收货</view>
-                                <view class='btn' @tap='goRefund({{index}})'>申请退款</view>
-                                <!-- <view>退货/换货</view>
-                                <view>联系客服</view>
-                                <view>确认收货</view>
-                                <view>查看物流</view> -->
+                            <view class='operate_info' wx:if="{{items.status === 'COMMENT'}}"> <!-- checkedList[4] -->
+                                <button  class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
+                                <!-- <view>删除订单</view> -->
+                                <view  @tap="goAssess({{items}})" wx:if='{{!item.isCommented}}'>评价</view>
                             </view>
                         </view>
                         
                     </repeat>
-
-                </scroll-view>
-
-            </view>
-
+                </view>
+                
+          </view>
           
       </view>
+
+      
 
   </view>
 </template>
 
 <script>
-import wepy from 'wepy';
-import topBar from '../../components/navigation';
-import timer from '../../components/countDown';
-import orderApi from '../../api/orderApi.js';
-
+import wepy from "wepy";
+import Navigation from "../../components/navigation";
+import orderApi from "../../utils/api/orderApi.js";
+import shopApi from '../../utils/api/shopApi.js';
 export default class OrderList extends wepy.page {
-  
   data = {
-    topBar: {
-      name: "我的订单",
+    navigation: {
+      name: "Hi站",
       tabPage: false
-    }, 
+    },
     // 订单是否为空
-    isNullList: true,
+    isNullList: [true, true, true, true, true],
     //
-    checkedList: [ true, false, false, false, false ],
+    checkedList: [true, false, false, false, false],
     // 订单状态
-    status: 'all',
-    orderList: [],
+    status: "all",
+    // 待付款订单列表
     submittedList: [],
-    intervalList: [],
-    minute: [],
-    second: [],
-    isPackage: false, // 是否显示包裹
+    // 待收货订单列表
+    paidList: [],
+    // 待收货订单列表
+    shippedList: [],
+    // 待评价订单列表
+    commentList: [],
+    isNull: false, // 是否为空
     currentPage: 0,
-    isEnd: false,
+    orderList: [], // 订单列表
+    isFirst: true,
   };
 
   components = {
-    topBar,
-    timer,
+    navigation: Navigation
   };
 
   computed = {
     // getIsNull(){ return this.data.isNull; },
+    getStatus(){
+      if (this.status === "submitted") {
+        return '待收款';
+      } else if (this.status === "paid") {
+        return '待发货';
+      } else if (this.status === "shipped") {
+        return '待收货';
+      } else if (this.status === "comment") {
+        return '待评价';
+      }
+
+    },
   };
 
   methods = {
-    cancelOrder(index, id, status){
-        this.cancelOrder(index, id, status);
-    },
-    payMoney(idx){
-        this.pay(idx);
-    },
-    click(status){
-
-        this.getOrderList(status, 0);
+    //进入订单评价
+    goAssess(item){
+      wx.navigateTo({
+         url: '../home/assess?idx='+item.orderItems[0].orderId,
+      });
 
     },
-    goRefund(index){
-        wx.navigateTo({
-            url: '/pages/refund?status=0&order='+encodeURIComponent(JSON.stringify(this.orderList[index])),
-        });
+    //支付
+    payMoney(idx) {
+      this.pay(idx);
     },
-    goLookBill(index){
-        wx.navigateTo({
-            // url: '/pages/lookBill?id='+,
-            url: '/pages/lookBill?order='+encodeURIComponent(JSON.stringify(this.orderList[index])),
-        });
+    //切换
+    click(status) {
+      if(this.status === status){
+        return ;
+      }
+
+      let checkedList = this.data.checkedList;
+
+      checkedList.forEach((v, i) => (checkedList[i] = false));
+      // checkedList[Number(index)] = true;
+
+      this.orderList = [];
+      this.currentPage = 0;
+      this.status = status;
+
+      this.getOrderList(0);
+    },
+    //退货换货
+    returnGoods(item){
+
+      console.log(item)
+      wx.navigateTo({
+        //  url: '../home/select?idx='+item.orderItems[0].orderId,
+        url: '../home/returnGoods?id='+item,
+      });
+    },
+    //确认收货
+    Confirm(item) {
+      let that=this;
+      wx.showModal({
+        title: "提示",
+        content: "是否确认收货？",
+        success: function(res) {
+          if (res.confirm) {
+            that.comfirmOrder(item.id);
+          } else if (res.cancel) {
+            return;
+          }
+        }
+      });
+    },
+
+    //查看订单详情
+    goOrderDetail(index, status) {
     }
   };
-
-  async pay(orderId, orderDetailId){
-    
-        wx.showToast({
-            title: '支付申请中...',
-            icon: 'none',
-            duration: 2000,
-        });
-    
-        let res = await orderApi.getPayInfo({
-                        params: {
-                            orderId: orderId,
-                            payType: "WEIXIN_APP",
-                            currentUrl:
-                            "https%3A%2F%2Fwoxifan.51shop.mobi%2Fshop%3Fcode%3D001nLu8P1MW8Z21JDn9P1TVq8P1nLu89%26state%3Dwxloginmhaawxloginaj6wd1mm"
-                        }
-        }),
-        goodsList = this.data.goodsList,
-        goods = this.data.goods,
-        order = this.data.order;
-        
-        if(res){
-        //console.log(`getPayinfo--${res}`);
-        wx.requestPayment({
-            timeStamp: res.timestamp,
-            nonceStr: res.noncestr, //res.nonceStr,
-            package: 'prepay_id='+res.prepayid, //res.package,
-            signType: "MD5",
-            paySign: res.sign, //res.paySign,
-            appId: res.appid,
-            success: function(res) {
-            console.log('支付成功返回的结果')
-            console.log(res)
-            order.payAt = Date.now();
-            
-            if(goodsList[0]){
-                return wx.reLaunch({
-                url: './bought?goodsList='+encodeURIComponent(JSON.stringify(goodsList))+'&order='+encodeURIComponent(JSON.stringify(order)),
-                });
-            }
-
-            wx.reLaunch({
-                url: './bought?goods='+encodeURIComponent(JSON.stringify(goods))+'&order='+encodeURIComponent(JSON.stringify(order)),
-            });
-            },
-            fail: function(res) {
-
-            wx.showToast({
-                title: '支付失败',
-                icon: 'none',
-                duration: 2000,
-            });
-
-            }
-        });
+  async pay(orderId) {
+    console.log("支付参数" + orderId);
+    wx.showToast({
+      title: "支付申请中...",
+      icon: "none",
+      duration: 2000
+    });
+    let res = await orderApi.getPayInfo({
+      params: {
+        orderId: orderId,
+        payType: "WEIXIN",
+        currentUrl:
+          "https%3A%2F%2Fwoxifan.51shop.mobi%2Fshop%3Fcode%3D001nLu8P1MW8Z21JDn9P1TVq8P1nLu89%26state%3Dwxloginmhaawxloginaj6wd1mm"
+      }
+    });
+    //console.log("唤起支付返回结果。。。")
+    // console.log(res)
+    if (res) {
+      //console.log(`getPayinfo--${res}`);
+      wx.requestPayment({
+        timeStamp: res.timeStamp,
+        nonceStr: res.nonceStr,
+        package: res.package,
+        signType: "MD5",
+        paySign: res.paySign,
+        success: function(res) {
+          // console.log('支付成功返回的结果')
+          // console.log(res)
+          order.payAt = Date.now();
+          this.$apply();
+        },
+        fail: function(res) {
+          wx.showToast({
+            title: "支付失败",
+            icon: "none",
+            duration: 2000
+          });
         }
-        //console.log(`pay: ==${res}`);
+      });
     }
+  }
+  async comfirmOrder(orderId) {
+    let res = await orderApi.confirmReceive({
+      params: {
+        orderId: orderId
+      }
+    });
+
+    console.log("确认返回的结果");
+    console.log(res);
+    if (!res) {
+      return wx.showToast({ title: res.moreInfo, icon: "none", duration: 2000 });
+    } 
+
+    wx.showToast({ title: "收货成功", icon: "success", duration: 2000 });
+    this.orderList = [];
+    this.currentPage = 0;
+    this.isNull = true;
+    this.$apply();
+
+    this.getOrderList(0);
+
+  }
+
+  async onLoad(params) {
+
+    this.status = params.status ? params.status : 'all';
+
+  }
 
   async onShow(){
-      
-      if(this.$parent.globalData.orderListStatus){
-          this.getOrderList(this.$parent.globalData.orderListStatus, 0);
-      }
+
+    this.orderList = [];
+    this.currentPage = 0;
+    this.isNull = true;
+
+    this.getOrderList(0);
 
   }
 
-  onHide(){
-      
-      this.$parent.globalData.orderListStatus = this.status;
+  async onReachBottom(){
 
-  }
-    
-  async onLoad(params){
-     
-    this.getOrderList(params.status, 0);
-
+    this.getOrderList(++this.currentPage);
+  
   }
 
-  async getOrderList(status, page){
-    let checkedList = this.checkedList;
-
-    wx.showLoading({ title: 'Loading...', });
-
-    checkedList.forEach((v, i) => checkedList[i] = false);
-    // 跳转至指定状态
-    if(status){
-        
-        if(status === 'all'){
-            checkedList[0] = true;
-        }else if(status === 'submitted'){
-            checkedList[1] = true;
-        }else if(status === 'paid'){
-            checkedList[2] = true;
-        }else if(status === 'shipped'){
-            checkedList[3] = true;
-        }else if(status === 'comment'){
-            checkedList[4] = true;
-        }
-    }else{
-        checkedList[0] = true;
-    }
+  async getOrderList(page){
+    wx.showLoading({ title: "加载中" });
 
     let res = await orderApi.getOrderList({
-        orderStatus: status ? status : 'all',
-        params: { page: page, 
-                  size: 10,
-        }
-    });
-
-    if(page !== 0 && res.length < 10){
-        return wx.showToast({ title: '已经到底了!', icon: 'none', duration: 2000, });
-    }
-
-    this.isNullList = res[0] ? false : true;
-    this.orderList = [];
-    this.submittedList = [];
-    this.intervalList.forEach(v => clearInterval(v));
-    this.intervalList = [];
-    this.status = status;
-
-    res.forEach((v) => {
-        this.orderList.push(v);
-        if(v.status === 'SUBMITTED'){
-            if(Date.parse(new Date()) - v.createdAt - 30 <= 0){
-                return this.cancelOrder(null, v.id, status);
-            }
-
-            this.submittedList.push(v);
-        
-        }
-    });
-
-    // this.submittedList.forEach((v, i) => {
-    //         // this.setTimer(v.createdAt, 40, i);
-    // });
-    
-    wx.hideLoading();
-    this.$apply();
-  }
-
-  async cancelOrder(index, id, status){
-        let ind = 0; // 
-        // if(typeof status !== 'string'){
-        //     status = this.checkedList[1] ? 'submitted' : 'all';
-        // }
-
-        let result = await orderApi.cancelOrder({
-                params: { orderId: id, }
-            });
-        
-        if(!result){
-            return wx.showToast({ title: '操作失败，请稍后重试!', icon: 'none', duration: 2000, });
-        }
-
-        wx.showToast({ title: '订单已取消', icon: 'success', duration: 2000, });
-
-
-        this.getOrderList(this.status, 0);
-        // wx.redirectTo({
-        //     url: '/pages/my/orderList?status='+status,
-        // });
-  }
-
-  async setTimer(start, time, index){
-    var totalSecond = Math.floor(start/1000) + time - Date.parse(new Date())/1000; 
-
-    var interval = setInterval(()=>{
-
-      if (totalSecond <= 0) {
-        clearInterval(interval);
-
-        this.cancelOrder(index, this.submittedList[index].id, 'submitted');
-
-        // this.setData({
-        //   countDownDay: '00',
-        //   countDownHour: '00',
-        //   countDownMinute: '00',
-        //   countDownSecond: '00',
-        // });
+      orderStatus: this.status,
+      params: {
+        page: page,
+        size: 10
       }
-      // 秒数
-      var second = totalSecond;
- 
-      // 天数位
-      var day = Math.floor(second / 3600 / 24);
-      var dayStr = day.toString();
-      if (dayStr.length == 1) dayStr = '0' + dayStr;
- 
-      // 小时位
-      var hr = Math.floor((second - day * 3600 * 24) / 3600);
-      var hrStr = hr.toString();
-      if (hrStr.length == 1) hrStr = '0' + hrStr;
- 
-      // 分钟位
-      var min = Math.floor((second - day * 3600 *24 - hr * 3600) / 60);
-      var minStr = min.toString();
-      if (minStr.length == 1) minStr = '0' + minStr;
- 
-      // 秒位
-      var sec = second - day * 3600 * 24 - hr * 3600 - min*60;
-      var secStr = sec.toString();
-      if (secStr.length == 1) secStr = '0' + secStr;
- 
-        // this.day = dayStr;
-        // this.hour = hrStr;
-        this.minute[index] = minStr;
-        this.second[index] = secStr;
+    });
 
-      totalSecond--;
+    if(!res[0]){
+      wx.hideLoading();
+      if(page !== 0){
+        return wx.showToast({ title: '已经到底了!', icon: 'none', duration: 2000, });
+      }
+
+      this.isNull = true;
       this.$apply();
 
-    }, 1000);
+    }
 
-    this.intervalList.push(interval);
+    this.orderList = this.orderList.concat(res);
+    this.isNull = this.orderList[0] ? false : true;
+    wx.hideLoading();
+
+    // 跳转至指定状态
+    let status = this.status;
+    if (status) {
+      //console.log(`status: =-=${status}`);
+      this.checkedList[0] = false;
+      if (status === "submitted") {
+        this.checkedList[1] = true;
+      } else if (status === "paid") {
+        this.checkedList[2] = true;
+      } else if (status === "shipped") {
+        this.checkedList[3] = true;
+      } else if (status === "comment") {
+        this.checkedList[4] = true;
+      }
+    }
+
+    this.$apply();
   }
-
-  //加载更多
-  onReachBottom(){
-
-    console.log('-=load more--=');
-
-    this.getOrderList(this.status, ++this.currentPage);
-
-  };
 
 }
 </script>
