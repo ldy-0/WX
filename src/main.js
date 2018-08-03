@@ -22,6 +22,12 @@ import '@/viewscss/hbs_reset.styl'
 
 import * as filters from './filters' // global filters
 
+//
+import './utils/UE/ueditor.config.js'
+import './utils/UE/ueditor.all.min.js'
+import './utils/UE/lang/zh-cn/zh-cn.js'
+import './utils/UE/ueditor.parse.min.js'
+
 Vue.use(Element, {
   size: 'medium', // set element-ui default size
   i18n: (key, value) => i18n.t(key, value)

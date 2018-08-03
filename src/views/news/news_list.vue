@@ -47,6 +47,10 @@
         <el-option v-for="item in classifyList" :label="item.consult_classname" :value="item.consult_classid"></el-option>
       </el-select>
     </el-form-item>
+    <el-form-item>
+      <!-- 加载编辑器的容器 -->
+      <script id="editor" type="text/plain"></script>
+    </el-form-item>
     <!-- <el-form-item label="图片" :label-width="formLabelWidth">
       
       <el-upload
@@ -129,7 +133,7 @@
 
 import { getNewsClassify_api, getNewsList_api, deleteNews_api, addNews_api, editNews_api } from '@/api/admin'
 import upLoadFile from '@/utils/aahbs.js'
-import editor from '@/utils/editor.js'
+// import editor from '@/utils/editor.js'
 
 const formForNotive = { //此页面 静态数据
   price:"",
@@ -139,7 +143,9 @@ const formForNotive = { //此页面 静态数据
 
 export default {
   created(){
-    console.log(editor);
+    let ue = UE.getEditor('editor')
+console.log('-=-===============')
+console.log(ue)
     this.getList(this.listQuery)
     this.getClassifyList()
   },
