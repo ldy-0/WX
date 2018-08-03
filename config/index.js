@@ -73,7 +73,7 @@ module.exports = {
      * then assetsPublicPath should be set to "/bar/".
      * In most cases please use '/' !!!
      */
-    assetsPublicPath: '/admin/', // If you are deployed on the root path, please use '/'
+    assetsPublicPath: '/seller/', // If you are deployed on the root path, please use '/'
 
     /**
      * Source Maps
