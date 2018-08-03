@@ -3,6 +3,38 @@ import wepy from 'wepy';
 const DOMAIN = 'http://101.37.30.205/';
 // const DOMAIN = 'https://www.hi-zhan.com/';
 
+async pay(orderId){
+
+  wx.showToast({ title: "支付申请中...", icon: "none", duration: 2000 });
+
+  let res = await orderApi.getPayInfo({
+    params: {
+      orderId: orderId,
+      payType: "WEIXIN",
+      currentUrl:
+        "https%3A%2F%2Fwoxifan.51shop.mobi%2Fshop%3Fcode%3D001nLu8P1MW8Z21JDn9P1TVq8P1nLu89%26state%3Dwxloginmhaawxloginaj6wd1mm"
+    }
+  });
+  // console.log(res)
+  if (res) {
+
+    wx.requestPayment({
+      timeStamp: res.timeStamp,
+      nonceStr: res.nonceStr,
+      package: res.package,
+      signType: "MD5",
+      paySign: res.paySign,
+      success: res => {
+        // console.log(res)
+        this.$apply();
+      },
+      fail: res => wx.showToast({ title: "支付失败", icon: "none", duration: 2000, }),
+    });
+
+  }
+  
+}
+
 async getQR(id){
   wx.showLoading({ title: 'loading...' });
 

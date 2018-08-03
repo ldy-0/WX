@@ -158,11 +158,14 @@ $BG_GRAY: #666
           <view>
 
                 <view>
-                    <view class='title waitpay' class="{{orderList.length==0 ?'view_hide':'view_show'}}" >{{getStatus}}</view> <!-- 待付款 -->
+                    <!-- <view class='title waitpay' class="{{orderList.length==0 ?'view_hide':'view_show'}}" >{{getStatus}}</view> 待付款 -->
 
                     <repeat for='{{orderList}}' index='index' item='items'>
 
-                        <view @tap='goOrderDetail({{index}}, submitted)'>
+                        <view class='title waitpay' wx:if="{{orderList[index - 1].status !== items.status ? true : false}}">{{items.statusStr}}</view> 
+
+                        <view>
+
                             <repeat for='{{items.orderItems}}' item='item'>
                                 <navigator class='product_info' url='../home/orderDetail?id={{items.id}}'>
                                     <image src='{{item.productImgUrl}}' mode='aspectFill' />
@@ -251,6 +254,7 @@ export default class OrderList extends wepy.page {
     currentPage: 0,
     orderList: [], // 订单列表
     isFirst: true,
+    currentStatus: '', // 
   };
 
   components = {
@@ -259,18 +263,19 @@ export default class OrderList extends wepy.page {
 
   computed = {
     // getIsNull(){ return this.data.isNull; },
-    getStatus(){
-      if (this.status === "submitted") {
-        return '待收款';
-      } else if (this.status === "paid") {
-        return '待发货';
-      } else if (this.status === "shipped") {
-        return '待收货';
-      } else if (this.status === "comment") {
-        return '待评价';
-      }
+    // getStatus(){
+      
+    //   if (this.status === "submitted") {
+    //     return '待付款';
+    //   } else if (this.status === "paid") {
+    //     return '待发货';
+    //   } else if (this.status === "shipped") {
+    //     return '待收货';
+    //   } else if (this.status === "comment") {
+    //     return '待评价';
+    //   }
 
-    },
+    // },
   };
 
   methods = {
