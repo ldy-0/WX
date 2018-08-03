@@ -48,7 +48,6 @@ export function editCase_api(data) {
   })
 }
 
-
 // caseClassify
 export function getCaseClassify_api(data) {
   return request({
@@ -72,6 +71,57 @@ export function deleteCaseClassify_api(data) {
   })
 }
 
+// newsList
+export function getNewsList_api(data) {
+  return request({
+    url: '/api/v1/home/news',
+    method: 'get',
+    params: data
+  })
+}
+export function addNews_api(data) {
+  return request({
+    url: '/api/v1/admin/news',
+    method: 'post',
+    data
+  })
+}
+export function deleteNews_api(data) {
+  return request({
+    url: '/api/v1/admin/news',
+    method: 'delete',
+    data
+  })
+}
+export function editNews_api(data) {
+  return request({
+    url: '/api/v1/admin/news',
+    method: 'put',
+    data
+  })
+}
+// newsClassify
+export function getNewsClassify_api(data) {
+  return request({
+    url: '/api/v1/admin/newsclass',
+    method: 'get',
+    params: data
+  })
+}
+export function addNewsClassify_api(data) {
+  return request({
+    url: '/api/v1/admin/newsclass',
+    method: 'post',
+    data
+  })
+}
+export function deleteNewsClassify_api(data) {
+  return request({
+    url: '/api/v1/admin/newsclass',
+    method: 'delete',
+    data
+  })
+}
 
 
 //notice

@@ -37,26 +37,26 @@
 <template>
 <div>
 <!-- 弹窗 -->
-<el-dialog :title="isAddItem?'新增案例':'编辑案例'" :visible.sync="addNewShow" width="30%" :before-close="handleClose">
+<el-dialog :title="isAddItem?'新增资讯':'编辑资讯'" :visible.sync="addNewShow" width="30%">
   <el-form :model="formForNotive"  ref="ruleForm" :rules="rules" >
-    <el-form-item label="案列名称" :label-width="formLabelWidth"  prop="formForNotive.case_name">
+    <el-form-item label="资讯名称" :label-width="formLabelWidth"  prop="formForNotive.case_name">
       <el-input v-model.number="formForNotive.case_name" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item label='分类' :label-width="formLabelWidth">
       <el-select v-model="formForNotive.case_classid" placeholder="请选择">
-        <el-option v-for="item in classifys" :label="item.case_classname" :value="item.case_classid"></el-option>
+        <el-option v-for="item in classifyList" :label="item.consult_classname" :value="item.consult_classid"></el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="图片" :label-width="formLabelWidth">
-      <!-- <input type='file' v-on:change='uploadImg' /> -->
+    <!-- <el-form-item label="图片" :label-width="formLabelWidth">
+      
       <el-upload
         class="avatar-uploader"
-        action="" 
-        :auto-upload="false" 
+        action=""
         :show-file-list="false"
         :on-success="handleAvatarSuccess"
-        :on-change='addImage'>
-        <img v-if="case_img" :src="formForNotive.case_img" class="avatar">
+        :on-change='addImage'
+        :before-upload="beforeAvatarUpload">
+        <img v-if="formForNotive.case_img" :src="formForNotive.case_img" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
     </el-form-item>
@@ -64,20 +64,19 @@
       <el-upload
         class="avatar-uploader"
         action= ""
-        :auto-upload="false" 
         :show-file-list="false"
         :on-success="handleAvatarSuccess"
-        :on-change='addQrImg'>
-        <img v-if="case_qrcodeimg" :src="formForNotive.case_qrcodeimg" class="avatar">
+        :before-upload="beforeAvatarUpload">
+        <img v-if="formForNotive.case_qrcodeimg" :src="formForNotive.case_qrcodeimg" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
-    </el-form-item>
+    </el-form-item> -->
     <!-- <el-form-item label="价格" :label-width="formLabelWidth" prop="price">
       <el-input v-model.number="formForNotive.price" auto-complete="off"></el-input>
     </el-form-item> -->
   </el-form>
   <span slot="footer" class="dialog-footer">
-    <el-button @click="cancle" >取消</el-button>
+    <el-button @click="addNewShow=false" >取消</el-button>
     <el-button v-if="isAddItem" type="primary" @click="addAuth('ruleForm')"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确 定</el-button>
@@ -92,18 +91,19 @@
 <el-header class="header">
 <el-form :inline="true" :model="formInline" class="form">
   <el-form-item>
-    <el-button type="primary" @click="addItem">新增案例</el-button>
+    <el-button type="primary" @click="addItem">新增资讯</el-button>
   </el-form-item>
   <el-select v-model="currentClassify" placeholder="请选择" @change='changeCaseClassify'>
-    <el-option v-for="item in classifyList" :label="item.case_classname" :value="item.case_classid"></el-option>
+    <el-option v-for="item in classifyList" :label="item.consult_classname" :value="item.consult_classid"></el-option>
   </el-select>
 </el-form>
 </el-header>
 
 <el-main>
     <el-table :data="tableData" stripe v-loading="listLoading" element-loading-text="给我一点时间" style="width: 100%" >
-      <el-table-column label="案例名字" prop="case_name"></el-table-column>
-      <el-table-column label="分类" prop='case_classname'></el-table-column>
+      <el-table-column label="资讯标题" prop="consult_title"></el-table-column>
+      <el-table-column label="分类" prop='consult_classname'></el-table-column>
+      <el-table-column label="时间" prop='ctime'></el-table-column>
       <!-- <el-table-column label="价格" >
         <template slot-scope="scope">
           <el-tag size="medium" >{{ scope.row.price}}</el-tag>
@@ -127,15 +127,19 @@
 </template>
 <script>
 
-import { getCaseClassify_api, getCaseList_api, deleteCase_api, addCase_api, editCase_api } from '@/api/admin' 
+import { getNewsClassify_api, getNewsList_api, deleteNews_api, addNews_api, editNews_api } from '@/api/admin'
 import upLoadFile from '@/utils/aahbs.js'
+import editor from '@/utils/editor.js'
+
 const formForNotive = { //此页面 静态数据
   price:"",
   value:"",
   imgList: [],
 }
+
 export default {
   created(){
+    console.log(editor);
     this.getList(this.listQuery)
     this.getClassifyList()
   },
@@ -175,7 +179,6 @@ export default {
       },
       currentClassify: 0,
       classifyList: [],
-      classifys: [],
       img_name: '',
       //body  
       tableData: [],
@@ -208,8 +211,6 @@ export default {
         // time:""
       },
       total: 0,
-      case_img: null,
-      case_qrcodeimg: null
     }
   },
   methods: {
@@ -231,8 +232,8 @@ export default {
 
       this.waitAddNotice = true
       
-      // this.formForNotive.case_img = 'http://webiteimg-1253114089.file.myqcloud.com/home/1.png'
-      // this.formForNotive.case_qrcodeimg = 'http://webiteimg-1253114089.file.myqcloud.com/home/1.jpg'
+      this.formForNotive.case_img = 'http://webiteimg-1253114089.file.myqcloud.com/home/1.png'
+      this.formForNotive.case_qrcodeimg = 'http://webiteimg-1253114089.file.myqcloud.com/home/1.jpg'
       let sendData = {
         case_name: this.formForNotive.case_name,
         case_classid: this.formForNotive.case_classid,
@@ -245,8 +246,6 @@ export default {
 
         this.waitAddNotice = false
         this.addNewShow = false
-        this.case_img = null
-        this.case_qrcodeimg = null
 
         if (data.status === 0) {
           this.$notify({ title: '成功', message: '操作成功', type: 'success' })
@@ -298,8 +297,6 @@ export default {
       editCase_api(sendData).then(data=>{
         this.waitAddNotice = false
         this.addNewShow = false
-        this.case_img = null
-        this.case_qrcodeimg = null
         if (data.status === 0) {
           this.$notify({ title: '成功', message: '操作成功', type: 'success' })
           this.getList(this.listQuery)
@@ -316,8 +313,6 @@ export default {
       console.log(rowData)
       // this.editLoading = true
       this.formForNotive = Object.assign({},rowData)
-      this.case_img = true
-      this.case_qrcodeimg = true
       this.isAddItem = false
       this.addNewShow = true
     },
@@ -326,7 +321,7 @@ export default {
       this.listLoading = true
       // let sendData = Object.assign({},this.listQuery)
 
-      getCaseList_api(params).then(response => {
+      getNewsList_api(params).then(response => {
         
         if (response && response.status === 0) {
 
@@ -423,14 +418,13 @@ export default {
     },
     getClassifyList() {
 
-      getCaseClassify_api({}).then(response => {
+      getNewsClassify_api({}).then(response => {
 
         if (response && response.status === 0) {
           this.classifyList = response.data
         }
         
-        this.classifys = this.classifyList.slice()
-        this.classifyList.unshift({ case_classid: 0, case_classname: '全部' })
+        this.classifyList.unshift({ consult_classid: 0, consult_classname: '全部' })
       })
 
     },
@@ -442,15 +436,11 @@ export default {
       alert(res, file);
     },
     addImage(e) {
-      // alert(JSON.stringify(e, arguments[1]))
+      alert(JSON.stringify(arguments[1]))
+      // alert(JSON.stringify(e))
       upLoadFile(e.raw).then(v => {
-        this.formForNotive.case_img = v[0]
-        this.case_img = true
-        console.log(this.formForNotive.case_img)
-      }).catch(e=>{
-        console.error(e)
-      })
-
+        alert('then')
+      }).catch(e => alert('catch'))
       // let reader = new FileReader(); //文件预览对象
       // reader.readAsDataURL(e.target.files[0]); //设置要预览的文件
       // reader.onload = function(e) {//监听文件加载完成事件
@@ -460,26 +450,7 @@ export default {
       //   }).catch(e => alert(e))
         
       // }
-    },
-    addQrImg(e) {
-      upLoadFile(e.raw).then(v => {
-        this.formForNotive.case_qrcodeimg = v[0]
-        this.case_qrcodeimg = true
-      }).catch(e=>{
-        console.error(e)
-      })
-    },
-    cancle(e) { // 取消按钮
-      this.case_img = null
-      this.case_qrcodeimg = null
-    },
-    handleClose(done) {  
-      this.case_img = null
-      this.case_qrcodeimg = null
-      done()
     }
-
   }
-  
 }
 </script>

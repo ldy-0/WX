@@ -1,10 +1,10 @@
 import {upFileToken_api} from '@/api/common' 
 // const COS = require('./cos-js-sdk-v5.min.js')
 const COS = window.COS
-const Bucket = ' webiteimg'; // 'admin-1256953590';
+const Bucket = 'webiteimg-1253114089'; // 'admin-1256953590';1253114089
 const Region = 'ap-shanghai';
 //只接受 文件数组 非类数组！！如果你想对类数组处理可以在下面进行转换
-let upLoadFile = function (allFile){
+let upLoadFile = function (allFile) {
   let length = 0
   if(allFile instanceof Array){
     length = allFile.length
@@ -17,31 +17,35 @@ let upLoadFile = function (allFile){
   return new Promise((resUp,rejUp)=>{
     //初始化
     let cos = new COS({
+
       getAuthorization: function (options, callback) {
-        // callback({
-        //           TmpSecretId: 'AKIDH3UROAZYg2YS39RqlOhZciWZNAiNUWsQ',
+        // callback({TmpSecretId: 'AKIDH3UROAZYg2YS39RqlOhZciWZNAiNUWsQ',
         //           TmpSecretKey: 'tZ8mwW3rOYwhYvNSOeDkd3KLgFD2pLk1',
         //           XCosSecurityToken: '40ffcf2987cfacac7a0f86a11b4294a066852dc230001',
         //           ExpiredTime: 1530851445,
         //       });
+
         upFileToken_api().then(data=>{
           data = data.data
           console.log('------',data,'-------')
           callback({
-                  TmpSecretId: data.credentials && data.credentials.tmpSecretId,
-                  TmpSecretKey: data.credentials && data.credentials.tmpSecretKey,
-                  XCosSecurityToken: data.credentials && data.credentials.sessionToken,
-                  ExpiredTime: data.expiredTime,
+            TmpSecretId: data.credentials && data.credentials.tmpSecretId,
+            TmpSecretKey: data.credentials && data.credentials.tmpSecretKey,
+            XCosSecurityToken: data.credentials && data.credentials.sessionToken,
+            ExpiredTime: data.expiredTime,
           })
         }).catch(err=>{
 
           console.log(err,'upFileToken_api')
         })
-        }
-    });
+      }
+
+    })
+
     //上传一个文件 返回一个promise
     function upLoadOneFile(file) {
         return new Promise((oneOK,oneFail)=>{
+
           cos.sliceUploadFile({
               Bucket: Bucket,
               Region: Region,
@@ -54,9 +58,10 @@ let upLoadFile = function (allFile){
                   console.log('上传中', JSON.stringify(progressData));
               },
           }, function (err, data) {
-              console.log(err, data);
+              console.log(err, data)
               if(err){
-                oneFail()
+                
+                oneFail(err)
               }else{
                 oneOK(data.Location)
               }
@@ -64,10 +69,12 @@ let upLoadFile = function (allFile){
         })
       // })  
     };
-    function upLoadAllFile(allFile){
+    function upLoadAllFile(allFile) {
+
       for(let i=0;i<length;i++){
         promiseAll.push(upLoadOneFile(allFile[i]))
       }
+      
       Promise.all(promiseAll).then(allUrl=>{
         for(let i = 0;i<allUrl.length;i++){
           allUrl[i] = "http://"+allUrl[i]
@@ -75,13 +82,15 @@ let upLoadFile = function (allFile){
         console.log(allUrl)
         resUp(allUrl)
       }).catch(err=>{
+        
         console.log(err)
         rejUp()
       })
     }
+    
     upLoadAllFile(allFile)
+
   })
     
-
 }
 export default upLoadFile

@@ -33,13 +33,13 @@ export const constantRouterMap = [
   {
     path: '',
     component: Layout,
-    redirect: 'home',
-    children: [{
-      path: 'home',
-      component: () => import('@/views/aahome/index'),
-      name: 'home',
-      meta: { title: 'home', icon: 'dashboard', noCache: true }
-    }]
+    redirect: '/phone/index',
+    // children: [{
+    //   path: 'home',
+    //   component: () => import('@/views/phone/phone'), // '@/views/aahome/index'
+    //   // name: 'home',
+    //   meta: { title: '联系方式', icon: 'dashboard', noCache: true }
+    // }]
   },
   //maijia
   //pt
@@ -66,14 +66,54 @@ export let asyncRouterMapAdmin = [
   {
     path: '/phone',
     component: Layout,
-    // redirect: '/notice/index',
+    redirect: '/phone/index',
     meta: {roles:['affiche']},
     children: [{
       path: 'index',
       component: () => import('@/views/phone/phone'),
       name: 'notice',
-      meta: { title: '联系方式', icon: 'notice', noCache: true ,roles:['affiche']}
+      meta: { title: '联系方式', icon: 'guide', noCache: true, roles:['affiche']}
     }]
+  },
+  {
+    path: '/case',
+    component: Layout,
+    redirect: '/case/list',
+    name: 'case',
+    meta: { title: '案例', icon: 'guide', roles:['manage']},
+    children: [
+      {
+        path: 'list', // url
+        component: () => import('@/views/case/case_list'),
+        name: 'case_list',
+        meta: { title: '案例列表', noCache: true }
+      },{
+        path: 'classify', 
+        component: () => import('@/views/case/case_classify'),
+        name: 'flowPackages',
+        meta: { title: '案例分类', noCache: true }
+      }
+    ]
+  },
+  {
+    path: '/news',
+    component: Layout,
+    redirect: '/news/list',
+    name: 'news',
+    meta: { title: '资讯', icon: 'guide', roles:['manage']},
+    children: [
+      {
+        path: 'list', // no import
+        component: () => import('@/views/news/news_list'),
+        name: 'case_list',
+        meta: { title: '资讯列表', noCache: true }
+      },{
+        path: 'classify', 
+        component: () => import('@/views/news/news_classify'),
+        name: 'flowPackages',
+        meta: { title: '资讯分类', noCache: true }
+      }
+    ]
   },
   // {
   //   path: '/notice',
@@ -87,75 +127,55 @@ export let asyncRouterMapAdmin = [
   //     meta: { title: 'notice', icon: 'notice', noCache: true ,roles:['affiche']}
   //   }]
   // },
-  {
-    path: '/manageShop',
-    component: Layout,
-    redirect: '/manageShop/index',
-    meta: {roles:['store']},
-    children: [{
-      path: 'index',
-      component: () => import('@/views/aamanageShop/index'),
-      name: 'manageShop',
-      meta: { title: 'manageShop', icon: 'notice', noCache: true,roles:['store']} 
-    }]
-  },
-  {
-    path: '/case',
-    component: Layout,
-    redirect: '/case/case_list',
-    name: 'manageSevice',
-    meta: { title: '案例', icon: 'notice',roles:['manage']},
-    children: [
-      {
-        path: 'case', // no import
-        component: () => import('@/views/case/case_list'),
-        name: 'case_list',
-        meta: { title: '案例列表', noCache: true }
-      },{
-        path: 'flowPackages', 
-        component: () => import('@/views/case/case_classify'),
-        name: 'flowPackages',
-        meta: { title: '案例分类', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '/manageSevice',
-    component: Layout,
-    redirect: '/manageSevice/shopServer',
-    name:'manageSevice',
-    meta: { title: 'manageSevice', icon: 'notice',roles:['manage']},
-    children: [
-      {
-        path: 'shopServer', 
-        component: () => import('@/views/aamanageSevice/shopServer'),
-        name: 'shopServer',
-        meta: { title: 'shopServer', noCache: true }
-      },{
-        path: 'flowPackages', 
-        component: () => import('@/views/aamanageSevice/flowPackages'),
-        name: 'flowPackages',
-        meta: { title: 'flowPackages', noCache: true }
-      },{
-        path: 'industryList', 
-        component: () => import('@/views/aamanageSevice/industryList'),
-        name: 'industryList',
-        meta: { title: 'industryList', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '/auth',
-    component: Layout,
-    redirect: '/auth/index',
-    meta: { roles:['auth']},
-    children: [{
-      path: 'index',
-      component: () => import('@/views/aaauth/index'),
-      name: 'auth',
-      meta: { title: 'auth', icon: 'notice' ,roles:['auth']}
-    }]
-  },
+  // {
+  //   path: '/manageShop',
+  //   component: Layout,
+  //   redirect: '/manageShop/index',
+  //   meta: {roles:['store']},
+  //   children: [{
+  //     path: 'index',
+  //     component: () => import('@/views/aamanageShop/index'),
+  //     name: 'manageShop',
+  //     meta: { title: 'manageShop', icon: 'notice', noCache: true,roles:['store']} 
+  //   }]
+  // },
+  // {
+  //   path: '/manageSevice',
+  //   component: Layout,
+  //   redirect: '/manageSevice/shopServer',
+  //   name:'manageSevice',
+  //   meta: { title: 'manageSevice', icon: 'notice',roles:['manage']},
+  //   children: [
+  //     {
+  //       path: 'shopServer', 
+  //       component: () => import('@/views/aamanageSevice/shopServer'),
+  //       name: 'shopServer',
+  //       meta: { title: 'shopServer', noCache: true }
+  //     },{
+  //       path: 'flowPackages', 
+  //       component: () => import('@/views/aamanageSevice/flowPackages'),
+  //       name: 'flowPackages',
+  //       meta: { title: 'flowPackages', noCache: true }
+  //     },{
+  //       path: 'industryList', 
+  //       component: () => import('@/views/aamanageSevice/industryList'),
+  //       name: 'industryList',
+  //       meta: { title: 'industryList', noCache: true }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/auth',
+  //   component: Layout,
+  //   redirect: '/auth/index',
+  //   meta: { roles:['auth']},
+  //   children: [{
+  //     path: 'index',
+  //     component: () => import('@/views/aaauth/index'),
+  //     name: 'auth',
+  //     meta: { title: 'auth', icon: 'notice' ,roles:['auth']}
+  //   }]
+  // },
   // { path: '*', redirect: '/404', hidden: true }
 ]
 
