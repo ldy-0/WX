@@ -39,7 +39,7 @@
           <svg-icon icon-class="eye" />
         </span>
       </el-form-item>
-      <el-switch
+      <!-- <el-switch
         class="hbs-login-switch"
         style="display: block;"
         v-model="isAdmin" 
@@ -47,7 +47,7 @@
         inactive-color="#13ce66"
         active-text="我是平台"
         inactive-text="我是商家">
-      </el-switch>
+      </el-switch> -->
       <el-button type="primary" style="width:100%;margin-bottom:30px;" :loading="loading" @click.native.prevent="handleLogin">{{$t('login.logIn')}}</el-button>
 
       <!-- <div class="tips">
@@ -101,7 +101,7 @@ export default {
     }
     return {
       // -------------
-      isAdmin: true,
+      isAdmin: false,
       tabRole: '',
       // -------------
       loginForm: {
