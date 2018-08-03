@@ -8,13 +8,13 @@
 <div>
   <!-- 编辑和添加共用 -->
 <el-dialog
-  title="新增商品"
+  title="添加团购商品"
   :visible.sync="addNewShow"
   width="80%"
   >
   <el-container class="notice">
         <el-header class="header">
-        <el-form :inline="true" :model="formInline" class="form">
+          <el-form :inline="true" :model="formInline" class="form">
             <el-form-item>
                 <el-input style="width: 340px;" placeholder="请输入商品名称、编码" v-model="listQuery2.search"></el-input>
             </el-form-item>
@@ -31,73 +31,73 @@
                         </el-option>
                   </el-select>
                 </el-form-item>
-            </el-form>       
+          </el-form>       
         </el-header>
         <el-container>
-<el-main>
-    <el-table
-      :data="tableData2"
-      stripe 
-      v-loading="listLoading" element-loading-text="给我一点时间" 
-      style="width: 100%" >
-      <el-table-column
-        label="商品图片"
-        >
-        <template slot-scope="scope">
-          <div style="width:100px;height:100px;align-items:center;display:flex;">
-            <img :src="scope.row.goodsImage" alt="" style="width:100px">
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="商品名" 
-        prop="goodsName"
-        >
-      </el-table-column>
-      <el-table-column
-        label="类型" 
-        prop="is_virtualTXT"
-        >
-      </el-table-column>
-      <el-table-column
-        label="编号" 
-        prop="goodsNum"
-        >
-      </el-table-column>
-        <!-- <el-table-column
-        label="状态" 
-        prop="goodsState"
-        >
-      </el-table-column> -->
-      <el-table-column
-        label="价格" 
-        prop="goodsPrice"
-        >
-      </el-table-column>
-      <!-- <el-table-column
-        label="库存" 
-        prop="goodsTotal"
-        >
-      </el-table-column> -->
-      <!-- <el-table-column
-        label="销量" 
-        prop="goodsSell"
-        >
-      </el-table-column> -->
-      <el-table-column
-        label="操作" 
-        min-width='300px'
-        >
-        <template slot-scope="scope">
-        <el-button size="mini" type="primary" @click="editItem(scope.$index, scope.row)">选择</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-</el-main>
+          <el-main>
+              <el-table
+                :data="tableData2"
+                stripe 
+                v-loading="listLoading" element-loading-text="给我一点时间" 
+                style="width: 100%" >
+                <el-table-column
+                  label="商品图片"
+                  >
+                  <template slot-scope="scope">
+                    <div style="width:100px;height:100px;align-items:center;display:flex;">
+                      <img :src="scope.row.goodsImage" alt="" style="width:100px">
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="商品名" 
+                  prop="goodsName"
+                  >
+                </el-table-column>
+                <el-table-column
+                  label="类型" 
+                  prop="is_virtualTXT"
+                  >
+                </el-table-column>
+                <el-table-column
+                  label="编号" 
+                  prop="goodsNum"
+                  >
+                </el-table-column>
+                  <!-- <el-table-column
+                  label="状态" 
+                  prop="goodsState"
+                  >
+                </el-table-column> -->
+                <el-table-column
+                  label="价格" 
+                  prop="goodsPrice"
+                  >
+                </el-table-column>
+                <!-- <el-table-column
+                  label="库存" 
+                  prop="goodsTotal"
+                  >
+                </el-table-column> -->
+                <!-- <el-table-column
+                  label="销量" 
+                  prop="goodsSell"
+                  >
+                </el-table-column> -->
+                <el-table-column
+                  label="操作" 
+                  min-width='300px'
+                  >
+                  <template slot-scope="scope">
+                  <el-button size="mini" type="primary" @click="editItem(scope.$index, scope.row)">选择</el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+          </el-main>
         </el-container>
         <el-footer>
-        <el-pagination background @size-change="handleSizeChange2" @current-change="handleCurrentChange2" :current-page="listQuery2.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery2.limit" layout="total, sizes, prev, pager, next" :total="total2">
-        </el-pagination>
+          <el-pagination background @size-change="handleSizeChange2" @current-change="handleCurrentChange2" :current-page="listQuery2.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery2.limit" layout="total, sizes, prev, pager, next" :total="total2">
+          </el-pagination>
         </el-footer>
   </el-container>
   <!-- <span slot="footer" class="dialog-footer">
@@ -107,11 +107,40 @@
      :loading="waitAddNotice">确 定</el-button>
   </span> -->
 </el-dialog>
+<el-dialog
+    :title="QisAddItem?'新增题目':'编辑题目'"
+    :visible.sync="QaddNewShow" 
+    width="50%"
+    >
+    <el-form :model="QformForNotive"  ref="qruleForm" :rules="Qrules" >
+      <el-form-item label="团购价" :label-width="formLabelWidth"  prop="tprice">
+        <el-input v-model.number="QformForNotive.tprice" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="团购人数" :label-width="formLabelWidth"  prop="tpeople">
+        <el-input v-model.number="QformForNotive.tpeople" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="团购时限" :label-width="formLabelWidth"  prop="thours">
+        <el-input v-model.number="QformForNotive.thours" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="成团数量限制" :label-width="formLabelWidth"  prop="tlimit">
+        <el-input v-model.number="QformForNotive.tlimit" auto-complete="off"></el-input>
+      </el-form-item>
+    </el-form>
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="QaddNewShow=false" >取消</el-button>
+      <el-button v-if="QisAddItem" type="primary" @click="QaddOne('ruleForm')"
+      :disabled="QwaitAddNotice"
+      :loading="QwaitAddNotice">确 定</el-button>
+      <el-button v-else type="primary" @click="QeditOne('ruleForm')"
+      :disabled="QwaitAddNotice" 
+      :loading="QwaitAddNotice">确认修改</el-button>
+    </span>
+</el-dialog>
 <el-container class="notice">
 <el-header class="header">
   <el-form :inline="true" :model="formInline" class="form">
     <el-form-item>
-      <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增商品</el-button>
+      <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">添加团购商品</el-button>
     </el-form-item>
   </el-form>       
 </el-header>
@@ -122,20 +151,27 @@
       v-loading="listLoading" element-loading-text="给我一点时间"
       style="width: 100%" >
       <el-table-column
-        label="图片"
+        label="商品图片"
         >
         <template slot-scope="scope">
-          <img :src="scope.row.image" alt="" width="100px">
+          <div style="width:100px;height:100px;align-items:center;display:flex;">
+            <img :src="scope.row.image" alt="" style="width:100px">
+          </div>
         </template>
       </el-table-column>
       <el-table-column
-        label="商品名称" 
-        prop="goodsName"
+        label="ID" 
+        prop="id"
         >
       </el-table-column>
       <el-table-column
-        label="商品价格" 
-        prop="goodsPrice"
+        label="商品名" 
+        prop="name"
+        >
+      </el-table-column>
+      <el-table-column
+        label="价格" 
+        prop="price"
         >
       </el-table-column>
       <el-table-column
@@ -143,7 +179,8 @@
         min-width='300px'
         >
         <template slot-scope="scope">
-        <el-button size="mini" type="danger" @click="lookItem(scope.$index, scope.row)">删除</el-button>
+        <el-button size="mini"  @click="HeditItem(scope.$index, scope.row)">编辑</el-button>
+        <el-button size="mini" type="danger" @click="deleteItem(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -158,11 +195,52 @@
 <script>
 // getList 接口 获取
 // addNotice 接口 添加
-import {getGoodsList_api,getAllBuyList_api,addAllBuy_api,getEntryList_api} from "@/api/seller"
+import {getGoodsList_api,getAllBuyList_api,addAllBuy_api,getEntryList_api,editAllBuy_api,deleteAllBuy_api} from "@/api/seller"
+const QformForNotive = {}
+
 export default {
   data() {
     return {
+      // out Q
+        // out
+          QrulesChild:{},
+          QisAddItem:false,
+          QwaitAddNotice:false,
+          QaddNewShow:false,
+          QformForNotive:Object.assign({},QformForNotive),
+          Qrules:{
+            tprice: [
+              { required: true, message: '请输入价格,不少于0', trigger: 'blur' , min: 0,type:'number'},
+            ],
+            tpeople: [
+                { required: true, message: '请输入团购人数', trigger: 'blur' , min: 0,type:'integer'},
+            ],
+            thours: [
+                { required: true, message: '团购小时数', trigger: 'blur' , min: 0,type:'integer'},
+            ],
+            tlimit: [
+                { required: true, message: '成员数量限制', trigger: 'blur' , min: 0,type:'integer'},
+            ]
+          },
+          
+        Q_outData:'',
+        Q_Aid:'',
+
+        Qlistshow:false,
+        inline:true,
+        QaddNewShow:false,
+        QtableData:[],
+        QlistLoading:false,
+        QlistQuery:{
+          page: 1,
+          limit: 10,
+          search:"",
+          time:""
+        },
+        Qtotal:1,
       //out
+      addNewShow:false,
+      formInline:{},
       listQuery2: {
         page: 1,
         limit: 10,
@@ -210,7 +288,7 @@ export default {
         value:'100',
       },
       addNewShow:false,
-      formLabelWidth:'80px',
+      formLabelWidth:'120px',
       //header
       industry:'',
       formInline: {},
@@ -238,6 +316,159 @@ export default {
     this.getList()
   },
   methods: {
+    // Q
+    HeditItem(index,row){
+      this.QformForNotive = Object.assign({},row)
+      this.QaddNewShow = true
+    },
+    // out Q
+        // out
+        async QaddOne(){},
+        async QeditOne(){
+          let res = await new Promise((res,rej)=>{
+            this.$refs['qruleForm'].validate((valid) => {
+              if (valid) {
+                res(true)
+              } else {
+                res(false)
+              }
+            })
+          })
+          if(!res){
+            return 
+          }
+          this.QwaitAddNotice = true
+          
+          let sendData = {
+            goods_commonid:this.QformForNotive.id,
+            goods_pintuan_price:this.QformForNotive.tprice,
+            pintuan_limit_number:this.QformForNotive.tpeople,
+            pintuan_limit_hour:this.QformForNotive.thours,
+            pintuan_limit_quantity:this.QformForNotive.tlimit,
+          }
+          editAllBuy_api(sendData).then(data=>{
+            this.QwaitAddNotice = false
+            this.QaddNewShow = false
+            if(data&&data.status===0){
+              this.$notify({
+                title: '成功',
+                message: '操作成功',
+                type: 'success'
+              })
+              this.getList()
+            }else{
+              this.$notify({
+                title: '失败',
+                message: '操作失败',
+                type: 'error'
+              })
+            }
+          }).catch(e=>{
+            this.waitAddNotice = false
+            this.addNewShow = false
+            console.error('manageShop:editAllBuy_api 接口错误')
+          })
+        },
+        QdeleteAA(index){
+          this.QformForNotiveChildList.splice(index,1)
+        },
+        QaddAA(){
+          this.QformForNotiveChildList.push({})
+        },
+        // head
+        QaddItem(){ //显示 弹框
+          this.QisAddItem = true
+          this.QaddNewShow = true
+          this.QformForNotive = Object.assign({},QformForNotive)
+        },
+        // body
+
+        QgetList(){
+          this.QlistLoading = true
+          let sendData = Object.assign({},this.QlistQuery)
+          sendData.id = this.Q_Aid
+          getQList_api(sendData).then(response => {
+            if(response&&response.status=='success'){
+              let result = response.result
+              let tempTableData = []
+              result.forEach((aData)=>{
+                tempTableData.push({
+                  id:aData.examinationId,//试卷id
+                  QID:aData.id,//题目id
+                  title:aData.title,//问题
+                  order:aData.order,//序号
+                  answer:aData.answer//答案
+                })
+              })
+              this.QtableData = tempTableData
+            }
+            // this.list = response
+            this.Qtotal = response.paging&&response.paging.total?response.paging.total:0
+            this.QlistLoading = false
+          }).catch(e=>{
+            console.error(e)
+            this.QlistLoading = false
+          })
+        },
+        QeditItem(index,rowData){
+          // this.editLoading = true
+          this.QformForNotive = Object.assign({},rowData)
+          let answerList = JSON.parse(rowData.answer)
+          this.QformForNotiveChildList = Object.assign([],answerList)
+          this.QisAddItem = false
+          this.QaddNewShow = true
+        },
+        QdeleteNewNotice(id,QID){
+          let sendData = {
+            examinationId:id,
+            questionId:QID // 父亲(外层)id
+          }
+          deleteQOne_api(sendData).then(res=>{
+            if(res&&res.status==='success'){
+                this.$notify({
+                title: '成功',
+                message: '操作成功',
+                type:'success'
+              });
+              this.QgetList()
+            }else{
+              this.$notify({
+                title: '错误',
+                message: '操作失败',
+                type:'error'
+              });
+            }
+          }).catch(err=>{
+            console.error('deleteAdmin_api')
+          })
+        },
+        QdeleteItem(index,row){
+          let QID = row.QID
+          let id = row.id
+          this.$confirm(`此操作将删除该条目, 是否继续?`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.QdeleteNewNotice(id,QID)
+          }).catch(()=>{
+            this.$notify.info({
+              title: '消息',
+              message: '已取消'
+            });
+          })
+        },
+        Qsave(){},
+        // foot 
+        QhandleSizeChange(val) {
+          this.QlistQuery.limit = val
+          this.getList()
+        },
+        QhandleCurrentChange(val) {
+          this.QlistQuery.page = val
+          this.getList()
+        },
+      
     search2(){
       this.listQuery2.page = 1
       this.getList2()
@@ -394,7 +625,7 @@ export default {
     //body
     editNewNotice(id){
         let sendData = {
-          goods_id:id,
+          goods_commonid:id,
           pin_token:"join"
         }
         addAllBuy_api(sendData).then(res=>{
@@ -431,10 +662,45 @@ export default {
           });
         })
       },
-    lookItem() {
-      console.log(arguments)
-      this.detailShow = true
-    },
+    deleteNewNotice(id){
+        let sendData = {
+          goods_commonid:id,
+          pin_token:'wipe'
+        }
+        deleteAllBuy_api(sendData).then(res=>{
+          if(res&&res.status===0){
+              this.$notify({
+              title: '成功',
+              message: '操作成功',
+              type:'success'
+            });
+            this.getList()
+          }else{
+            this.$notify({
+              title: '错误',
+              message: '操作失败',
+              type:'error'
+            });
+          }
+        }).catch(err=>{
+          console.error('deleteAdmin_api')
+        })
+      },
+    deleteItem(index,row){
+        let id = row.id
+        this.$confirm(`此操作将删除该条目, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.deleteNewNotice(id)
+        }).catch(()=>{
+          this.$notify.info({
+            title: '消息',
+            message: '已取消'
+          });
+        })
+      },
     searchByDate(){
       if(!this.dataRange||!this.dataRange.length||this.dataRange.length!==2){
         return console.log("日期错误")
@@ -466,11 +732,18 @@ export default {
             result.forEach((aData)=>{
               tempTableData.push({
                 //后端生成
-                id:aData.goods_commonid
+                id:aData.goods_commonid,
+                image:aData.goods_image,
+                name:aData.goods_name,
+                price:aData.goods_price,
+                tprice:aData.goods_pintuan_price?aData.goods_pintuan_price:'',
+                tpeople:aData.pintuan_limit_hour?aData.pintuan_limit_hour:'',
+                thours:aData.pintuan_limit_hour?aData.pintuan_limit_hour:'',
+                tlimit:aData.pintuan_limit_quantity?aData.pintuan_limit_quantity:'',
               })
             })
             this.tableData = tempTableData
-            this.total = response.pagination&&response.pagination.total?response.pagination.total:1
+            this.total = response.pagination&&response.pagination.total?response.pagination.total:0
           }else{
 
           }

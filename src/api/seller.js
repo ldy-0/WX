@@ -351,6 +351,22 @@ export function addAllBuy_api(data){
     params:data
   })
 }
+export function deleteAllBuy_api(data){
+  return request({
+    url:'/api/v1/seller/groupbuying',
+    method:'get',
+    params:data
+  })
+}
+export function editAllBuy_api(data){
+  return request({
+    url:'/api/v1/seller/groupbuying',
+    method:'post',
+    params:data,
+    data
+  })
+}
+
 // auth
   export function getAuthList_api(data) {
     return request({
