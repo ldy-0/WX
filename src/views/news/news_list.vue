@@ -49,7 +49,8 @@
     </el-form-item>
     <el-form-item>
       <!-- 加载编辑器的容器 -->
-      <script id="editor" type="text/plain"></script>
+      <!-- <script id="editor" type="text/plain"></script> -->
+      <vue-editor v-model='content'></vue-editor>
     </el-form-item>
     <!-- <el-form-item label="图片" :label-width="formLabelWidth">
       
@@ -134,6 +135,7 @@
 import { getNewsClassify_api, getNewsList_api, deleteNews_api, addNews_api, editNews_api } from '@/api/admin'
 import upLoadFile from '@/utils/aahbs.js'
 // import editor from '@/utils/editor.js'
+import {VueEditor} from 'vue2-editor'
 
 const formForNotive = { //此页面 静态数据
   price:"",
@@ -143,11 +145,13 @@ const formForNotive = { //此页面 静态数据
 
 export default {
   created(){
-    let ue = UE.getEditor('editor')
-console.log('-=-===============')
-console.log(ue)
+    //let ue = UE.getEditor('editor')
+
     this.getList(this.listQuery)
     this.getClassifyList()
+  },
+  components: {
+    VueEditor
   },
   data() {
     return {
@@ -217,11 +221,13 @@ console.log(ue)
         // time:""
       },
       total: 0,
+      content: '',
     }
   },
   methods: {
     // out
     async addAuth(formName) {
+      //return alert(this.content);
       let res = await new Promise((res,rej)=>{
         this.$refs[formName].validate((valid) => {
             if (valid) {
