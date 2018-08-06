@@ -40,18 +40,21 @@
 <el-dialog :title="isAddItem?'新增资讯':'编辑资讯'" :visible.sync="addNewShow" width="30%">
   <el-form :model="formForNotive"  ref="ruleForm" :rules="rules" >
     <el-form-item label="资讯名称" :label-width="formLabelWidth"  prop="formForNotive.case_name">
-      <el-input v-model.number="formForNotive.case_name" auto-complete="off"></el-input>
+      <el-input v-model.number="formForNotive.consult_title" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item label='分类' :label-width="formLabelWidth">
-      <el-select v-model="formForNotive.case_classid" placeholder="请选择">
-        <el-option v-for="item in classifyList" :label="item.consult_classname" :value="item.consult_classid"></el-option>
+      <el-select v-model="formForNotive.consult_classid" placeholder="请选择">
+        <el-option v-for="item in classifys" :label="item.consult_classname" :value="item.consult_classid"></el-option>
       </el-select>
     </el-form-item>
     <el-form-item>
-      <!-- 加载编辑器的容器 -->
       <!-- <script id="editor" type="text/plain"></script> -->
-      <vue-editor v-model='content'></vue-editor>
+      <vue-editor v-model='formForNotive.consult_content'></vue-editor>
     </el-form-item>
+    <!-- <el-form-item>
+      <el-radio v-model='formForNotive.is_hot' label=0></el-radio>
+      <el-radio v-model='formForNotive.is_hot' label=1></el-radio>
+    </el-form-item> -->
     <!-- <el-form-item label="图片" :label-width="formLabelWidth">
       
       <el-upload
@@ -94,14 +97,14 @@
 <el-container class="notice">
 
 <el-header class="header">
-<el-form :inline="true" :model="formInline" class="form">
-  <el-form-item>
-    <el-button type="primary" @click="addItem">新增资讯</el-button>
-  </el-form-item>
-  <el-select v-model="currentClassify" placeholder="请选择" @change='changeCaseClassify'>
-    <el-option v-for="item in classifyList" :label="item.consult_classname" :value="item.consult_classid"></el-option>
-  </el-select>
-</el-form>
+  <el-form :inline="true" :model="formInline" class="form">
+    <el-form-item>
+      <el-button type="primary" @click="addItem">新增资讯</el-button>
+    </el-form-item>
+    <el-select v-model="currentClassify" placeholder="请选择" @change='changeNewsClassify'>
+      <el-option v-for="item in classifyList" :label="item.consult_classname" :value="item.consult_classid"></el-option>
+    </el-select>
+  </el-form>
 </el-header>
 
 <el-main>
@@ -134,7 +137,6 @@
 
 import { getNewsClassify_api, getNewsList_api, deleteNews_api, addNews_api, editNews_api } from '@/api/admin'
 import upLoadFile from '@/utils/aahbs.js'
-// import editor from '@/utils/editor.js'
 import {VueEditor} from 'vue2-editor'
 
 const formForNotive = { //此页面 静态数据
@@ -144,7 +146,7 @@ const formForNotive = { //此页面 静态数据
 }
 
 export default {
-  created(){
+  created() {
     //let ue = UE.getEditor('editor')
 
     this.getList(this.listQuery)
@@ -189,6 +191,7 @@ export default {
       },
       currentClassify: 0,
       classifyList: [],
+      classifys: [],
       img_name: '',
       //body  
       tableData: [],
@@ -214,13 +217,11 @@ export default {
       // body
       listLoading: false,
       // footer
-      listQuery: {
+      listQuery: { // 请求参数
         page: 1,
         limit: 20,
-        // search:"",
-        // time:""
       },
-      total: 0,
+      total: 0, // 资讯总数
       content: '',
     }
   },
@@ -242,19 +243,23 @@ export default {
         return 
       }
 
+      if(!this.formForNotive.consult_content) {
+        return alert('资讯内容不能为空!')
+      }
+
       this.waitAddNotice = true
       
-      this.formForNotive.case_img = 'http://webiteimg-1253114089.file.myqcloud.com/home/1.png'
-      this.formForNotive.case_qrcodeimg = 'http://webiteimg-1253114089.file.myqcloud.com/home/1.jpg'
+      // this.formForNotive.case_img = 'http://webiteimg-1253114089.file.myqcloud.com/home/1.png'
+      // this.formForNotive.case_qrcodeimg = 'http://webiteimg-1253114089.file.myqcloud.com/home/1.jpg'
+
       let sendData = {
-        case_name: this.formForNotive.case_name,
-        case_classid: this.formForNotive.case_classid,
-        case_img: this.formForNotive.case_img,
-        case_qrcodeimg: this.formForNotive.case_qrcodeimg,
-        // flowpackage_value:this.formForNotive.value,
-        // flowpackage_price:this.formForNotive.price,
+        consult_title: this.formForNotive.consult_title,
+        consult_classid: this.formForNotive.consult_classid,
+        consult_content: this.formForNotive.consult_content,
+        is_hot: 0,// this.formForNotive.is_hot,
+
       }
-      addCase_api(sendData).then(data=>{
+      addNews_api(sendData).then(data=>{
 
         this.waitAddNotice = false
         this.addNewShow = false
@@ -271,7 +276,7 @@ export default {
         console.error('manageShop:addFlowPackage_api 接口错误')
       })
     },
-    addItem(){ //显示 弹框
+    addItem() { //显示 弹框
       this.isAddItem = true
       this.addNewShow = true
       this.formForNotive = Object.assign({},formForNotive)
@@ -295,18 +300,18 @@ export default {
       this.waitAddNotice = true
       
       let sendData = {
-        case_id: this.formForNotive.case_id,
-        case_name: this.formForNotive.case_name,
-        case_classid: this.formForNotive.case_classid,
-        case_img: this.formForNotive.case_img,
-        case_qrcodeimg: this.formForNotive.case_qrcodeimg
+        consult_id: this.formForNotive.consult_id,
+        consult_title: this.formForNotive.consult_title,
+        consult_classid: this.formForNotive.consult_classid,
+        consult_content: this.formForNotive.consult_content,
+        is_hot: this.formForNotive.is_hot
         // 后端生成
         // flowpackage_id:this.formForNotive.id,
         // flowpackage_value:this.formForNotive.value,
         // flowpackage_price:this.formForNotive.price,
       }
 
-      editCase_api(sendData).then(data=>{
+      editNews_api(sendData).then(data=>{
         this.waitAddNotice = false
         this.addNewShow = false
         if (data.status === 0) {
@@ -321,7 +326,7 @@ export default {
         console.error('editAuth_api 接口错误')
       })
     },
-    editItem(index,rowData){
+    editItem(index,rowData) {
       console.log(rowData)
       // this.editLoading = true
       this.formForNotive = Object.assign({},rowData)
@@ -352,17 +357,17 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.deleteNewNotice(row.case_id)
+        this.deleteNewNotice(row.consult_id)
       }).catch(()=>{
         this.$notify.info({ title: '消息', message: '已取消' })
       })
     },
     deleteNewNotice(id) {
       let sendData = {
-        case_id: id
+        consult_id: id
       }
 
-      deleteCase_api(sendData).then(res=> {
+      deleteNews_api(sendData).then(res=> {
         if(res&&res.status===0) {
           this.$notify({ title: '成功', message: '操作成功', type:'success' })
           this.getList(this.listQuery)
@@ -373,12 +378,15 @@ export default {
         console.error('deleteAdmin_api')
       })
     },
-    changeCaseClassify(id) { 
-      let params = id === 0 ? null : {
-        case_classid: id
-      }
+    changeNewsClassify(id) { 
 
-      getCaseList_api(params).then(res => {
+      this.listQuery = {
+        page: 1,
+        limit: 20
+      }
+      id === 0 ? void(0) : this.listQuery.consult_classid = id
+
+      getNewsList_api(this.listQuery).then(res => {
 
         if (res && res.status === 0) {
 
@@ -422,20 +430,21 @@ export default {
     // },
     handleSizeChange(val) {
       this.listQuery.limit = val
-      this.getList()
+      this.getList(this.listQuery)
     },
     handleCurrentChange(val) {
       this.listQuery.page = val
-      this.getList()
+      this.getList(this.listQuery)
     },
     getClassifyList() {
 
-      getNewsClassify_api({}).then(response => {
+      getNewsClassify_api({}).then(res => {
 
-        if (response && response.status === 0) {
-          this.classifyList = response.data
+        if (res && res.status === 0) {
+          this.classifyList = res.data
         }
         
+        this.classifys = res.data.slice()
         this.classifyList.unshift({ consult_classid: 0, consult_classname: '全部' })
       })
 

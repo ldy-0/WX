@@ -37,26 +37,53 @@
 <template>
 <div>
 <!-- 弹窗 -->
-<el-dialog :title="isAddItem?'新增案例':'编辑案例'" :visible.sync="addNewShow" width="30%" :before-close="handleClose">
-  <el-form :model="formForNotive"  ref="ruleForm" :rules="rules" >
-    <el-form-item label="案列名称" :label-width="formLabelWidth"  prop="formForNotive.case_name">
-      <el-input v-model.number="formForNotive.case_name" auto-complete="off"></el-input>
+<el-dialog :title="isAddItem?'新增热门资讯':'资讯详情'" :visible.sync="addNewShow" width="30%">
+  <el-form v-if='isAddItem'>
+    <el-select v-model="currentClassify" placeholder="请选择" @change='changeCaseClassify'>
+      <el-option v-for="item in classifyList" :label="item.consult_classname" :value="item.consult_classid"></el-option>
+    </el-select>
+    <el-table :data="allNews" stripe v-loading="listLoading" element-loading-text="给我一点时间" style="width: 100%" >
+      <el-table-column label="资讯标题" prop="consult_title"></el-table-column>
+      <el-table-column label="分类" prop='consult_classname'></el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button size="mini" type="primary" @click="editItem(scope.$index, scope.row)">选择</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-pagination background @size-change="allNewsSizeChange" @current-change="allNewsPageChange" :current-page="allNewsPagination.page" :page-sizes="[10,20,30,50]" :page-size="allNewsPagination.limit" layout="total, sizes, prev, pager, next" :total="allNewsPagination.total">
+    </el-pagination>
+  </el-form>
+
+  <el-form :model="formForNotive"  ref="ruleForm" :rules="rules" v-else>
+    <el-form-item label="资讯名称" :label-width="formLabelWidth"> <!-- prop="formForNotive.case_name" -->
+      {{formForNotive.consult_title}}
+      <!-- <el-input v-model.number="formForNotive.consult_title" auto-complete="off"></el-input> -->
     </el-form-item>
     <el-form-item label='分类' :label-width="formLabelWidth">
-      <el-select v-model="formForNotive.case_classid" placeholder="请选择">
-        <el-option v-for="item in classifys" :label="item.case_classname" :value="item.case_classid"></el-option>
-      </el-select>
+      {{formForNotive.consult_classname}}
+      <!-- <el-select v-model="formForNotive.consult_classid" placeholder="请选择">
+        <el-option v-for="item in classifyList" :label="item.consult_classname" :value="item.consult_classid"></el-option>
+      </el-select> -->
     </el-form-item>
-    <el-form-item label="图片" :label-width="formLabelWidth">
-      <!-- <input type='file' v-on:change='uploadImg' /> -->
+    <el-form-item label='内容' :label-width="formLabelWidth">
+      <!-- <script id="editor" type="text/plain"></script> -->
+      <vue-editor v-model='formForNotive.consult_content' :editorToolbar=[] disabled></vue-editor>
+    </el-form-item>
+    <!-- <el-form-item>
+      <el-radio v-model='formForNotive.is_hot' label=0></el-radio>
+      <el-radio v-model='formForNotive.is_hot' label=1></el-radio>
+    </el-form-item> -->
+    <!-- <el-form-item label="图片" :label-width="formLabelWidth">
+      
       <el-upload
         class="avatar-uploader"
-        action="" 
-        :auto-upload="false" 
+        action=""
         :show-file-list="false"
         :on-success="handleAvatarSuccess"
-        :on-change='addImage'>
-        <img v-if="case_img" :src="formForNotive.case_img" class="avatar">
+        :on-change='addImage'
+        :before-upload="beforeAvatarUpload">
+        <img v-if="formForNotive.case_img" :src="formForNotive.case_img" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
     </el-form-item>
@@ -64,27 +91,26 @@
       <el-upload
         class="avatar-uploader"
         action= ""
-        :auto-upload="false" 
         :show-file-list="false"
         :on-success="handleAvatarSuccess"
-        :on-change='addQrImg'>
-        <img v-if="case_qrcodeimg" :src="formForNotive.case_qrcodeimg" class="avatar">
+        :before-upload="beforeAvatarUpload">
+        <img v-if="formForNotive.case_qrcodeimg" :src="formForNotive.case_qrcodeimg" class="avatar">
         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
-    </el-form-item>
+    </el-form-item> -->
     <!-- <el-form-item label="价格" :label-width="formLabelWidth" prop="price">
       <el-input v-model.number="formForNotive.price" auto-complete="off"></el-input>
     </el-form-item> -->
   </el-form>
-  <span slot="footer" class="dialog-footer">
-    <el-button @click="cancle" >取消</el-button>
+  <!-- <span slot="footer" class="dialog-footer">
+    <el-button @click="addNewShow=false" >取消</el-button>
     <el-button v-if="isAddItem" type="primary" @click="addAuth('ruleForm')"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确 定</el-button>
     <el-button v-else type="primary" @click="editAuth('ruleForm')"
     :disabled="waitAddNotice" 
     :loading="waitAddNotice">确认修改</el-button>
-  </span>
+  </span> -->
 </el-dialog>
 
 <el-container class="notice">
@@ -92,18 +118,19 @@
 <el-header class="header">
 <el-form :inline="true" :model="formInline" class="form">
   <el-form-item>
-    <el-button type="primary" @click="addItem">新增案例</el-button>
+    <el-button type="primary" @click="addItem">新增热门资讯</el-button>
   </el-form-item>
-  <el-select v-model="currentClassify" placeholder="请选择" @change='changeCaseClassify'>
-    <el-option v-for="item in classifyList" :label="item.case_classname" :value="item.case_classid"></el-option>
-  </el-select>
+  <!-- <el-select v-model="currentClassify" placeholder="请选择" @change='changeCaseClassify'>
+    <el-option v-for="item in classifyList" :label="item.consult_classname" :value="item.consult_classid"></el-option>
+  </el-select> -->
 </el-form>
 </el-header>
 
 <el-main>
     <el-table :data="tableData" stripe v-loading="listLoading" element-loading-text="给我一点时间" style="width: 100%" >
-      <el-table-column label="案例名字" prop="case_name"></el-table-column>
-      <el-table-column label="分类" prop='case_classname'></el-table-column>
+      <el-table-column label="资讯标题" prop="consult_title"></el-table-column>
+      <el-table-column label="分类" prop='consult_classname'></el-table-column>
+      <!-- <el-table-column label="时间" prop='ctime'></el-table-column> -->
       <!-- <el-table-column label="价格" >
         <template slot-scope="scope">
           <el-tag size="medium" >{{ scope.row.price}}</el-tag>
@@ -112,7 +139,7 @@
       <!-- <el-table-column label="密码" prop="password"></el-table-column> -->
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="editItem(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="mini" type="primary" @click="lookItem(scope.$index, scope.row)">详情</el-button>
           <el-button size="mini" type="danger" @click="deleteItem(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -127,17 +154,22 @@
 </template>
 <script>
 
-import { getCaseClassify_api, getCaseList_api, deleteCase_api, addCase_api, editCase_api } from '@/api/admin' 
+import { getNewsClassify_api, getNewsList_api, deleteNews_api, addNews_api, editNews_api } from '@/api/admin'
 import upLoadFile from '@/utils/aahbs.js'
+import {VueEditor} from 'vue2-editor'
+
 const formForNotive = { //此页面 静态数据
   price:"",
   value:"",
   imgList: [],
 }
+
 export default {
-  created(){
+  created() {
     this.getList(this.listQuery)
-    this.getClassifyList()
+  },
+  components: {
+    VueEditor
   },
   data() {
     return {
@@ -175,7 +207,6 @@ export default {
       },
       currentClassify: 0,
       classifyList: [],
-      classifys: [],
       img_name: '',
       //body  
       tableData: [],
@@ -204,17 +235,18 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        // search:"",
-        // time:""
+        is_hot: 1,
       },
       total: 0,
-      case_img: null,
-      case_qrcodeimg: null
+      content: '',
+      allNews: [],
+      allNewsPagination: { page: 1, limit: 20, total: 0 },
     }
   },
   methods: {
     // out
     async addAuth(formName) {
+      //return alert(this.content);
       let res = await new Promise((res,rej)=>{
         this.$refs[formName].validate((valid) => {
             if (valid) {
@@ -231,22 +263,16 @@ export default {
 
       this.waitAddNotice = true
       
-      // this.formForNotive.case_img = 'http://webiteimg-1253114089.file.myqcloud.com/home/1.png'
-      // this.formForNotive.case_qrcodeimg = 'http://webiteimg-1253114089.file.myqcloud.com/home/1.jpg'
       let sendData = {
-        case_name: this.formForNotive.case_name,
-        case_classid: this.formForNotive.case_classid,
-        case_img: this.formForNotive.case_img,
-        case_qrcodeimg: this.formForNotive.case_qrcodeimg,
-        // flowpackage_value:this.formForNotive.value,
-        // flowpackage_price:this.formForNotive.price,
+        consult_title: this.formForNotive.consult_title,
+        consult_classid: this.formForNotive.consult_classid,
+        consult_content: this.formForNotive.consult_content,
+        is_hot: 0,// this.formForNotive.is_hot,
       }
-      addCase_api(sendData).then(data=>{
+      addNews_api(sendData).then(data=>{
 
         this.waitAddNotice = false
         this.addNewShow = false
-        this.case_img = null
-        this.case_qrcodeimg = null
 
         if (data.status === 0) {
           this.$notify({ title: '成功', message: '操作成功', type: 'success' })
@@ -260,46 +286,53 @@ export default {
         console.error('manageShop:addFlowPackage_api 接口错误')
       })
     },
-    addItem(){ //显示 弹框
+    addItem() { //显示 弹框
       this.isAddItem = true
       this.addNewShow = true
       this.formForNotive = Object.assign({},formForNotive)
+      this.getClassifyList()
+      getNewsList_api(this.allNewsPagination).then(res => {
+        if (res && res.status === 0) {
+
+          this.allNews = res.data
+          this.allNewsPagination.total = res.pagination.total ? res.pagination.total : 0
+        }
+
+      });
     },
-    async editAuth(formName) {
-      let res = await new Promise((res,rej)=>{
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            // alert('submit!');
-            res(true)
-          } else {
-            res(false)
-            // console.log('error submit!!');
-          }
-        })
-      })
-      if (!res) {
-        return 
-      }
+    async editAuth(data, formName) {
+      // let res = await new Promise((res,rej)=>{
+      //   this.$refs[formName].validate((valid) => {
+      //     if (valid) {
+      //       // alert('submit!');
+      //       res(true)
+      //     } else {
+      //       res(false)
+      //       // console.log('error submit!!');
+      //     }
+      //   })
+      // })
+      // if (!res) {
+      //   return 
+      // }
       
       this.waitAddNotice = true
       
       let sendData = {
-        case_id: this.formForNotive.case_id,
-        case_name: this.formForNotive.case_name,
-        case_classid: this.formForNotive.case_classid,
-        case_img: this.formForNotive.case_img,
-        case_qrcodeimg: this.formForNotive.case_qrcodeimg
+        consult_id: data.consult_id,
+        consult_title: data.consult_title,
+        consult_classid: data.consult_classid,
+        consult_content: data.consult_content,
+        is_hot: 1
         // 后端生成
         // flowpackage_id:this.formForNotive.id,
         // flowpackage_value:this.formForNotive.value,
         // flowpackage_price:this.formForNotive.price,
       }
 
-      editCase_api(sendData).then(data=>{
+      editNews_api(sendData).then(data=>{
         this.waitAddNotice = false
         this.addNewShow = false
-        this.case_img = null
-        this.case_qrcodeimg = null
         if (data.status === 0) {
           this.$notify({ title: '成功', message: '操作成功', type: 'success' })
           this.getList(this.listQuery)
@@ -312,21 +345,25 @@ export default {
         console.error('editAuth_api 接口错误')
       })
     },
-    editItem(index,rowData){
+    editItem(index, rowData) {
       console.log(rowData)
       // this.editLoading = true
-      this.formForNotive = Object.assign({},rowData)
-      this.case_img = true
-      this.case_qrcodeimg = true
+      // this.formForNotive = Object.assign({},rowData)
+      // this.isAddItem = false
+      // this.addNewShow = true
+      this.editAuth(rowData);
+    },
+    lookItem(index, rowData) {
       this.isAddItem = false
       this.addNewShow = true
+      this.formForNotive = rowData
     },
     // body
     getList(params) { //获取列表
       this.listLoading = true
       // let sendData = Object.assign({},this.listQuery)
 
-      getCaseList_api(params).then(response => {
+      getNewsList_api(params).then(response => {
         
         if (response && response.status === 0) {
 
@@ -345,17 +382,17 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.deleteNewNotice(row.case_id)
+        this.deleteNewNotice(row.consult_id)
       }).catch(()=>{
         this.$notify.info({ title: '消息', message: '已取消' })
       })
     },
     deleteNewNotice(id) {
       let sendData = {
-        case_id: id
+        consult_id: id
       }
 
-      deleteCase_api(sendData).then(res=> {
+      deleteNews_api(sendData).then(res=> {
         if(res&&res.status===0) {
           this.$notify({ title: '成功', message: '操作成功', type:'success' })
           this.getList(this.listQuery)
@@ -367,21 +404,21 @@ export default {
       })
     },
     changeCaseClassify(id) { 
-      this.listQuery = {
+      this.allNewsPagination = {
         page: 1,
-        limit: 20
+        limit: 20,
+        consult_classid: id === 0 ? null : id
       }
-      id === 0 ? void(0) : this.listQuery.case_classid = id
 
-      getCaseList_api(this.listQuery).then(res => {
+      getNewsList_api(this.allNewsPagination).then(res => {
 
         if (res && res.status === 0) {
 
-          this.tableData = res.data
-          this.total = res.data.length // res.pagination.total ? res.pagination.total : 1
+          this.allNews = res.data
+          this.allNewsPagination.total = res.data.length // res.pagination.total ? res.pagination.total : 1
         } else {
 
-          this.tableData = []
+          this.allNews = []
           this.total = 0
         }
 
@@ -423,18 +460,35 @@ export default {
       this.listQuery.page = val
       this.getList(this.listQuery)
     },
+    allNewsSizeChange(val) {
+      this.allNewsSizeChange.limit = val;
+      this.getAllNewsList(this.allNewsPagination)
+    },
+    allNewsPageChange(val) {
+      this.allNewsPagination.page = val;
+      this.getAllNewsList(this.allNewsPagination)
+    },
     getClassifyList() {
 
-      getCaseClassify_api({}).then(response => {
+      getNewsClassify_api({}).then(response => {
 
         if (response && response.status === 0) {
           this.classifyList = response.data
         }
         
-        this.classifys = this.classifyList.slice()
-        this.classifyList.unshift({ case_classid: 0, case_classname: '全部' })
+        this.classifyList.unshift({ consult_classid: 0, consult_classname: '全部' })
       })
 
+    },
+    getAllNewsList(params) {
+      getNewsList_api(params).then(res => {
+        if (res && res.status === 0) {
+
+          this.allNews = res.data
+          this.allNewsPagination.total = res.pagination.total ? res.pagination.total : 0
+        }
+
+      });
     },
     beforeAvatarUpload(file){
       
@@ -444,15 +498,11 @@ export default {
       alert(res, file);
     },
     addImage(e) {
-      // alert(JSON.stringify(e, arguments[1]))
+      alert(JSON.stringify(arguments[1]))
+      // alert(JSON.stringify(e))
       upLoadFile(e.raw).then(v => {
-        this.formForNotive.case_img = v[0]
-        this.case_img = true
-        console.log(this.formForNotive.case_img)
-      }).catch(e=>{
-        console.error(e)
-      })
-
+        alert('then')
+      }).catch(e => alert('catch'))
       // let reader = new FileReader(); //文件预览对象
       // reader.readAsDataURL(e.target.files[0]); //设置要预览的文件
       // reader.onload = function(e) {//监听文件加载完成事件
@@ -462,26 +512,7 @@ export default {
       //   }).catch(e => alert(e))
         
       // }
-    },
-    addQrImg(e) {
-      upLoadFile(e.raw).then(v => {
-        this.formForNotive.case_qrcodeimg = v[0]
-        this.case_qrcodeimg = true
-      }).catch(e=>{
-        console.error(e)
-      })
-    },
-    cancle(e) { // 取消按钮
-      this.case_img = null
-      this.case_qrcodeimg = null
-    },
-    handleClose(done) {  
-      this.case_img = null
-      this.case_qrcodeimg = null
-      done()
     }
-
   }
-  
 }
 </script>

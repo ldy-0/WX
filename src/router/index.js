@@ -112,6 +112,11 @@ export let asyncRouterMapAdmin = [
         component: () => import('@/views/news/news_classify'),
         name: 'flowPackages',
         meta: { title: '资讯分类', noCache: true }
+      },{
+        path: 'hot',
+        component: () => import('@/views/news/news_hot'),
+        name: 'case_list',
+        meta: { title: '热门资讯', noCache: true }
       }
     ]
   },
