@@ -12,6 +12,36 @@
   :visible.sync="addNewShow"
   width="80%"
   >
+  <el-dialog
+      :title="QisAddItem?'新增团购':'编辑团购'"
+      :visible.sync="QaddNewShow" 
+      width="50%" 
+      append-to-body
+      >
+      <el-form :model="QformForNotive"  ref="qruleForm" :rules="Qrules" >
+        <el-form-item label="团购价" :label-width="formLabelWidth"  prop="tprice">
+          <el-input v-model.number="QformForNotive.tprice" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="团购人数" :label-width="formLabelWidth"  prop="tpeople">
+          <el-input v-model.number="QformForNotive.tpeople" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="团购时限" :label-width="formLabelWidth"  prop="thours">
+          <el-input v-model.number="QformForNotive.thours" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="成团数量限制" :label-width="formLabelWidth"  prop="tlimit">
+          <el-input v-model.number="QformForNotive.tlimit" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="QaddNewShow=false" >取消</el-button>
+        <el-button v-if="QisAddItem" type="primary" @click="QaddOne('ruleForm')"
+        :disabled="QwaitAddNotice"
+        :loading="QwaitAddNotice">确 定</el-button>
+        <el-button v-else type="primary" @click="QeditOne('ruleForm')"
+        :disabled="QwaitAddNotice" 
+        :loading="QwaitAddNotice">确认修改</el-button>
+      </span>
+  </el-dialog>
   <el-container class="notice">
         <el-header class="header">
           <el-form :inline="true" :model="formInline" class="form">
@@ -107,35 +137,7 @@
      :loading="waitAddNotice">确 定</el-button>
   </span> -->
 </el-dialog>
-<el-dialog
-    :title="QisAddItem?'新增题目':'编辑题目'"
-    :visible.sync="QaddNewShow" 
-    width="50%"
-    >
-    <el-form :model="QformForNotive"  ref="qruleForm" :rules="Qrules" >
-      <el-form-item label="团购价" :label-width="formLabelWidth"  prop="tprice">
-        <el-input v-model.number="QformForNotive.tprice" auto-complete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="团购人数" :label-width="formLabelWidth"  prop="tpeople">
-        <el-input v-model.number="QformForNotive.tpeople" auto-complete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="团购时限" :label-width="formLabelWidth"  prop="thours">
-        <el-input v-model.number="QformForNotive.thours" auto-complete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="成团数量限制" :label-width="formLabelWidth"  prop="tlimit">
-        <el-input v-model.number="QformForNotive.tlimit" auto-complete="off"></el-input>
-      </el-form-item>
-    </el-form>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="QaddNewShow=false" >取消</el-button>
-      <el-button v-if="QisAddItem" type="primary" @click="QaddOne('ruleForm')"
-      :disabled="QwaitAddNotice"
-      :loading="QwaitAddNotice">确 定</el-button>
-      <el-button v-else type="primary" @click="QeditOne('ruleForm')"
-      :disabled="QwaitAddNotice" 
-      :loading="QwaitAddNotice">确认修改</el-button>
-    </span>
-</el-dialog>
+
 <el-container class="notice">
 <el-header class="header">
   <el-form :inline="true" :model="formInline" class="form">
@@ -179,8 +181,8 @@
         min-width='300px'
         >
         <template slot-scope="scope">
-        <el-button size="mini"  @click="HeditItem(scope.$index, scope.row)">编辑</el-button>
-        <el-button size="mini" type="danger" @click="deleteItem(scope.$index, scope.row)">删除</el-button>
+        <!-- <el-button size="mini"  @click="HeditItem(scope.$index, scope.row)">编辑</el-button> -->
+        <el-button size="mini" type="danger" @click="deleteItem(scope.$index, scope.row)">取消团购</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -317,13 +319,15 @@ export default {
   },
   methods: {
     // Q
-    HeditItem(index,row){
-      this.QformForNotive = Object.assign({},row)
+    HeditItem(id){
+      this.QformForNotive = Object.assign({id})
       this.QaddNewShow = true
     },
     // out Q
         // out
-        async QaddOne(){},
+        async QaddOne(){
+          this.QeditOne()
+        },
         async QeditOne(){
           let res = await new Promise((res,rej)=>{
             this.$refs['qruleForm'].validate((valid) => {
@@ -356,6 +360,8 @@ export default {
                 type: 'success'
               })
               this.getList()
+              this.QaddNewShow = false
+              this.addNewShow = false
             }else{
               this.$notify({
                 title: '失败',
@@ -364,8 +370,8 @@ export default {
               })
             }
           }).catch(e=>{
-            this.waitAddNotice = false
-            this.addNewShow = false
+            this.QwaitAddNotice = false
+            this.QaddNewShow = false
             console.error('manageShop:editAllBuy_api 接口错误')
           })
         },
@@ -647,20 +653,10 @@ export default {
           console.error('addAllBuy_api')
         })
       },
-    editItem(index,row){
+    
+    editItem(index,row){ //点击选择商品
         let id = row.id
-        this.$confirm(`此操作将选择该条目作为团购商品, 是否继续?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.editNewNotice(id)
-        }).catch(()=>{
-          this.$notify.info({
-            title: '消息',
-            message: '已取消'
-          });
-        })
+        this.HeditItem(id) //弹出表单
       },
     deleteNewNotice(id){
         let sendData = {
