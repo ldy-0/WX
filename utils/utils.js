@@ -55,6 +55,18 @@ async getQR(id){
   wx.hideLoading();
 }
 
+toQueryStr(obj){
+  let query = '';
+
+  for(let key in params){
+    if(params.hasOwnProperty(key))){
+      query += (query === '' ? '?' : '&') + key + '=' + params[key];
+    }
+  }
+
+  return query;
+}
+
 add_minus(nub1, nub2){
   let len1, len2, m;
  
@@ -68,5 +80,6 @@ add_minus(nub1, nub2){
 
 module.exports = {
   getQR,
-  add_minus
+  add_minus,
+  toQueryStr,
 };
