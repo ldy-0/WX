@@ -2,9 +2,15 @@ export default {
   route: {
     //卖家
     sellerGoods:'商品',
+
     order:'订单',
     rOrder:'实物订单',
     vOrder:'虚拟订单',
+
+    return:'退款',
+    rReturn:'实物退款',
+    vReturn:'虚拟退款',
+
     appointment:'预约',
     coupon:'优惠券',
 

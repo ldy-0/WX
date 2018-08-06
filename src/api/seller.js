@@ -108,6 +108,21 @@ import request from '@/utils/request'
       params: data
     })
   }
+// return => rReturn
+  export function getReturnList(data) {
+    return request({
+      url: '/api/v1/seller/refundreturn',
+      method: 'get',
+      params:data,
+    })
+  }
+  export function editReturnList(data) {
+    return request({
+      url: '/api/v1/seller/refundreturn',
+      method: 'put',
+      data,
+    })
+  }
   
 // appointment
   export function getAppointmentList_api(data) {

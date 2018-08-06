@@ -158,6 +158,23 @@ export let asyncRouterMapSeller = [
     }]
   },
   {
+    path: '/return',
+    component: Layout,
+    redirect: '/return/rReturn',
+    meta: { title: 'return', icon: 'goods'},
+    children: [{
+      path: 'rReturn', 
+      component: () => import('@/views/abreturn/rReturn'),
+      name: 'rReturn',
+      meta: { title: 'rReturn', noCache: true }
+    },{
+      path: 'vReturn',
+      component: () => import('@/views/abreturn/vReturn'),
+      name: 'vReturn',
+      meta: { title: 'vReturn', noCache: true }
+    }]
+  },
+  {
     path: '/appointment',
     component: Layout,
     redirect: '/appointment/index',
