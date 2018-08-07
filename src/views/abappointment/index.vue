@@ -26,7 +26,7 @@
     </el-form-item>
     <el-form-item label="日期" :label-width="formLabelWidth">
       <p class="hbs-no-margin-p">
-        {{detailForm.date}}
+        {{detailForm.dateTXT}}
       </p>
     </el-form-item>
     <el-form-item label="预约店铺" :label-width="formLabelWidth">
