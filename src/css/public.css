@@ -1,0 +1,209 @@
+/* 布局样式 */
+#clear{clear:both;}
+.content {
+    width:100%;
+    height:100%;
+    /*background:#f0f6f8;*/
+    background-size:100%;
+    /*overflow: hidden;*/
+}
+.content-max{
+	width: 100%;
+	/*height: 100%;*/
+}
+.content-min{
+	width: 1225px;
+	margin: 0 auto;
+/*	height: 100%;*/
+	overflow: hidden;
+	/*background: #f0faaa;*/
+}
+/*公用颜色样式*/
+.red {
+	color: red !important;
+}
+.red-a {
+	color: #FF0000 !important;
+}
+
+.blue {
+	color: #1977DF !important;
+}
+.blue-a {
+	color: #3091F2 !important;
+}
+.Orange {
+	color: #F2AC49 !important;
+}
+.gray {
+	color: #666666 !important;
+}
+
+
+
+
+/*背景颜色样式*/
+.bg-a {
+	background: #F0F0F0 !important;
+}
+.bg-b {
+	background-image: url(http://webiteimg-1253114089.file.myqcloud.com/topsee/bg_banner_01.jpg);
+}
+.bg-c {
+	background-image: url(http://webiteimg-1253114089.file.myqcloud.com/topsee/bg_banner_02.jpg);
+}
+.bg-d {
+	background-image: url(http://webiteimg-1253114089.file.myqcloud.com/topsee/bg_banner_03.jpg);
+}
+.bg-e {
+	background: #373D44 !important;
+}
+
+/*背景边距样式*/
+.before	 {
+	margin-top: 4em;
+}
+
+/*.before	 {
+	padding-bottom: 2em;
+}*/
+
+.bg-list-a {
+	width: 100%;
+	height: 100%;
+	background-image: url(http://webiteimg-1253114089.file.myqcloud.com/topsee/0001.png);
+}
+
+.bg-list-b {
+	width: 100%;
+	height: 100%;
+	background-image: url(http://webiteimg-1253114089.file.myqcloud.com/topsee/0002.png);
+}
+.bg-list-c {
+	width: 100%;
+	height: 100%;
+	background-image: url(http://webiteimg-1253114089.file.myqcloud.com/topsee/0003.png);
+}
+.bg-list-d {
+	background-image: url(http://webiteimg-1253114089.file.myqcloud.com/topsee/0004.png);
+}
+.bg-list-e {
+	background-image: url(http://webiteimg-1253114089.file.myqcloud.com/topsee/0005.png);
+}
+.bg-list-f {
+	background-image: url(http://webiteimg-1253114089.file.myqcloud.com/topsee/0006.png);
+}
+.bg-list-g {
+	background-image: url(http://webiteimg-1253114089.file.myqcloud.com/topsee/0007.png);
+}
+.bg-list-h {
+	background-image: url(http://webiteimg-1253114089.file.myqcloud.com/topsee/0008.png);
+}
+.bg-list-i {
+	background-image: url(http://webiteimg-1253114089.file.myqcloud.com/topsee/0009.png);
+}
+.bg-list-j {
+	background-image: url(http://webiteimg-1253114089.file.myqcloud.com/topsee/0010.png);
+}
+.bg-list-k {
+	background-image: url(http://webiteimg-1253114089.file.myqcloud.com/topsee/0011.png);
+}
+.bg-list-l {
+	background-image: url(http://webiteimg-1253114089.file.myqcloud.com/topsee/0012.png);
+}
+
+
+
+
+
+
+
+
+/*公用浮动样式*/
+
+.left {
+	display: block;
+	float: left;
+
+}
+.right {
+	display: block;
+	float: right;
+	
+}
+/*图标样式*/
+.icon-a {
+	display: block;
+	height: 20px;
+	width: 24px;
+}
+.flip-horizontal {
+	-moz-transform: scaleX(-1);
+	-webkit-transform: scaleX(-1); 
+	-o-transform: scaleX(-1);
+	transform: scaleX(-1);
+	 filter: fliph; /*IE*/
+	 
+}
+
+.flip-vertical {
+	 -moz-transform: scaleY(0);
+	 -webkit-transform: scaleY(0);
+	 -o-transform: scaleY(0);
+	 transform: scaleY(0);
+	 filter: flipv; /*IE*/ 
+	}
+
+/*共用title*/
+
+.title {
+	width: 330px;
+	height: 40px;
+	margin: 0 auto;
+	padding-top: 30px;
+	padding-bottom: 30px;
+
+
+}
+.title p{
+	display: block;
+	width: 192px;
+	float: left;
+	font-size: 32px !important;
+	text-align: center;
+	padding-left: 4px;
+	font: MicrosoftYaHeiLight;
+	padding:0 0 0 3px !important;
+	
+}
+.title span{ 
+	display: block;
+	
+	-moz-padding-top:12px;
+	-webkit-padding-top:10px; 
+	-o-padding-top:8px;
+	padding-top:10px;
+	width: 65px;
+	
+}
+
+.title-w-a{
+	width: 330px !important;
+
+}
+.title-w-b{
+	width: 425px !important;
+	
+}
+.title-w-b p{
+	width: 290px !important;
+	
+}
+.title-w-c{
+	width: 455px !important;
+	
+}
+.title-w-c p{
+	width: 320px !important;
+	
+}

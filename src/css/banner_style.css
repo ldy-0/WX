@@ -1,0 +1,87 @@
+ #banner {
+            width: 100%;
+            height: 450px;
+            overflow: hidden;
+    }
+    #banner .sections,#banner .section {
+        height:100%;
+    }
+    #banner,.sections {
+        position: relative;
+    }
+    #banner .section {
+        background-color: #f0f0f0;
+        background-size: cover;
+        background-position: 50% 50%;
+        text-align: center;
+        color: white;
+    }
+    .section a{
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+    #section0 {
+        background-image: url('http://webiteimg-1253114089.file.myqcloud.com/topsee/1.jpg');
+    }
+    #section1 {
+        background-image: url('http://webiteimg-1253114089.file.myqcloud.com/topsee/2.jpg');
+    }
+    #section2 {
+        background-image: url('http://webiteimg-1253114089.file.myqcloud.com/topsee/3.jpg');
+    }
+    #section3 {
+        background-image: url('http://webiteimg-1253114089.file.myqcloud.com/topsee/4.jpg');
+    }
+
+
+
+/*
+    小banner*/
+     #bannermin {
+            width: 408px;
+            height: 412px;
+            overflow: hidden;
+    }
+    #bannermin .sections,.section {
+        height:100%;
+    }
+    #bannermin,#bannermin .sections {
+        position: relative;
+    }
+    #bannermin .section {
+        background-color: #000;
+        background-size: cover;
+        background-position: 50% 50%;
+        text-align: center;
+        color: white;
+    }
+    .section a{
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+    #sec0 {
+        background-image: url('http://webiteimg-1253114089.file.myqcloud.com/topsee/bg_1.png');
+    }
+    #sec0 a:hover{
+        background-image: url('http://webiteimg-1253114089.file.myqcloud.com/topsee/bg_1_1.png');
+    }
+    #sec1 {
+        background-image: url('http://webiteimg-1253114089.file.myqcloud.com/topsee/bg_2.png');
+    }
+    #sec1 a:hover{
+        background-image: url('http://webiteimg-1253114089.file.myqcloud.com/topsee/bg_2_1.png');
+    }
+    #sec2 {
+        background-image: url('http://webiteimg-1253114089.file.myqcloud.com/topsee/bg_3.png');
+    }
+    #sec2 a:hover{
+        background-image: url('http://webiteimg-1253114089.file.myqcloud.com/topsee/bg_3_1.png');
+    }
+    #sec3 {
+        background-image: url('http://webiteimg-1253114089.file.myqcloud.com/topsee/bg_4.png');
+    }
+    #sec3 a:hover{
+        background-image: url('http://webiteimg-1253114089.file.myqcloud.com/topsee/bg_4_1.png');
+    }
