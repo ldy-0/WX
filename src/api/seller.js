@@ -351,6 +351,30 @@ import request from '@/utils/request'
       params:data
     })
   }
+// server => kill
+export function getKillList_api(data){
+  return request({
+    url:'/api/v1/seller/cutprice',
+    method:'get',
+    params:data
+  })
+}
+export function addKillBuy_api(data){
+  return request({
+    url:'/api/v1/seller/cutprice',
+    method:'post',
+    params:data,
+    data
+  })
+}
+export function deleteKill_api(data){
+  return request({
+    url:'/api/v1/seller/cutprice',
+    method:'delete',
+    params:data,
+    data
+  })
+}
 // server => allBuy
 export function getAllBuyList_api(data){
   return request({
