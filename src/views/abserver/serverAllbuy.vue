@@ -215,13 +215,13 @@ export default {
               { required: true, message: '请输入价格,不少于0', trigger: 'blur' , min: 0,type:'number'},
             ],
             tpeople: [
-                { required: true, message: '请输入团购人数', trigger: 'blur' , min: 0,type:'integer'},
+                { required: true, message: '请输入团购人数', trigger: 'blur' , min: 2,type:'integer'},
             ],
             thours: [
-                { required: true, message: '团购小时数', trigger: 'blur' , min: 0,type:'integer'},
+                { required: true, message: '团购小时数', trigger: 'blur' , min: 1,type:'integer'},
             ],
             tlimit: [
-                { required: true, message: '成员数量限制', trigger: 'blur' , min: 0,type:'integer'},
+                { required: true, message: '成员数量限制', trigger: 'blur' , min: 1,type:'integer'},
             ]
           },
           
