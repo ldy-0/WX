@@ -35,10 +35,12 @@
                 </div>
                 <div class="see-list">
                     <h2>资讯动态</h2>
-                    <ul v-for='item in newsList'>
-                        <li class="see-list-top">
-                            <span class="icon"></span>
-                            <a href="">{{item.consult_title}}</a>
+                    <ul>
+                        <li class="see-list-top" v-for='item in newsList'>
+                            <router-link :to="{path: '/newsDetail', query: {id: item.consult_id} }">
+                                <span class="icon"></span>
+                                <a href="">{{item.consult_title}}</a>
+                            </router-link>
                         </li>
                     </ul>
 

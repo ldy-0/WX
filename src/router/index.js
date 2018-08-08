@@ -17,6 +17,7 @@ import introduction from '@/pages/index/introduction'
 // import aboutus from '@/pages/index/aboutus'
 // import recruit from '@/pages/index/recruit'
 import news from '@/pages/index/news'
+import newsDetail from '@/pages/index/newsDetail'
 // import HelloWorld from '@/components/HelloWorld'
 
 Vue.use(Router)
@@ -42,6 +43,10 @@ export default new Router({
         {
           path:"/news",
           component:news
+        },
+        {
+          path:"/newsDetail",
+          component:newsDetail
         },
         // {
         //   path:"/business",

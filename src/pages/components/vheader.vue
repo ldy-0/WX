@@ -48,17 +48,17 @@
                          @click.native="changeTab(2)" 
                         :class="index===2?'vh-active':''" to="/example">合作案例</router-link></li>
                         <li>
-                            <router-link @click.native="changeTab(6)" :class="index === 6 ?'vh-active':''" to="/news">资讯动态</router-link>
+                            <router-link @click.native="changeTab(3)" :class="index === 3 ? 'vh-active':''" to="/news">资讯动态</router-link>
                         </li>
-                        <li><router-link 
-                         @click.native="changeTab(3)" 
-                        :class="index===3?'vh-active':''" to="/introduction">小程序介绍</router-link></li>
+                        <li>
+                            <router-link @click.native="changeTab(4)" :class="index === 4 ? 'vh-active':''" to="/introduction">小程序介绍</router-link>
+                        </li>
                         <!-- <li><router-link 
                         @click.native="changeTab(3)" 
                         :class="index===3?'vh-active':''" to="/business">招商加盟</router-link></li> -->
                         <!-- <li><router-link to="/news">资讯动态</router-link></li> -->
                         <li @click="toggleab"><a href="javascript:void(0)"  
-                        :class="index>3?'vh-active':''">关于我们</a></li>
+                        :class="index>4?'vh-active':''">关于我们</a></li>
                         <div id="clear"></div>
                     </ul>
                 </div>
@@ -83,14 +83,14 @@
         </div>
         <div class="about-us-tab" 
             v-show="showab" @mouseleave="toggleab" >
-            <router-link @click.native="changeTab(4)" 
+            <router-link @click.native="changeTab(5)" 
             to="/aboutus" class="about-us-item" >
                 <span class="iconfont icon-sanjiaoright"></span>
-                <span :class="index===4?'vh-active':''">公司简介</span>
+                <span :class="index===5?'vh-active':''">公司简介</span>
             </router-link>
-            <router-link @click.native="changeTab(5)" to="/recruit" class="about-us-item">
+            <router-link @click.native="changeTab(6)" to="/recruit" class="about-us-item">
                 <span class="iconfont icon-sanjiaoright"></span>
-                <span :class="index===5?'vh-active':''">诚聘英才</span>
+                <span :class="index===6?'vh-active':''">诚聘英才</span>
             </router-link>
         </div>
     </div>
@@ -106,7 +106,7 @@
             return {
                 index:1,
                 showab:false,
-                tablist:["/","/home","/example","/introduction","/aboutus","/recruit"]
+                tablist:["/","/home","/example", "/news", "/introduction","/aboutus","/recruit"]
             }
         },
         mounted() {
