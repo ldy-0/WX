@@ -108,6 +108,21 @@ import request from '@/utils/request'
       params: data
     })
   }
+// return => rReturn
+  export function getReturnList(data) {
+    return request({
+      url: '/api/v1/seller/refundreturn',
+      method: 'get',
+      params:data,
+    })
+  }
+  export function editReturnList(data) {
+    return request({
+      url: '/api/v1/seller/refundreturn',
+      method: 'put',
+      data,
+    })
+  }
   
 // appointment
   export function getAppointmentList_api(data) {
@@ -336,6 +351,30 @@ import request from '@/utils/request'
       params:data
     })
   }
+// server => kill
+export function getKillList_api(data){
+  return request({
+    url:'/api/v1/seller/cutprice',
+    method:'get',
+    params:data
+  })
+}
+export function addKillBuy_api(data){
+  return request({
+    url:'/api/v1/seller/cutprice',
+    method:'post',
+    params:data,
+    data
+  })
+}
+export function deleteKill_api(data){
+  return request({
+    url:'/api/v1/seller/cutprice',
+    method:'delete',
+    params:data,
+    data
+  })
+}
 // server => allBuy
 export function getAllBuyList_api(data){
   return request({
