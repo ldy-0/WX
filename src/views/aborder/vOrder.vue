@@ -151,6 +151,17 @@
       </el-select>
     <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
     </el-form-item>
+    <el-form-item label="订单类别">
+      <el-select v-model="listQuery.order_type" placeholder="请选择">
+        <el-option
+          v-for="item in orderTypeOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+      <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
+    </el-form-item>
     <!-- <el-form-item label="时间">
       <el-date-picker
         style="width:400px"
@@ -235,6 +246,11 @@
         >
       </el-table-column>
       <el-table-column
+        label="订单类型" 
+        prop="orderTypeTXT"
+        >
+      </el-table-column>
+      <el-table-column
         label="操作" 
         >
         <template slot-scope="scope">
@@ -295,6 +311,25 @@ export default {
             value: 40,
             label: '已收货'
         }],
+        orderTypeOptions:[{
+            value: '',
+            label: '全部类别'
+          },{
+            value: 1,
+            label: '普通订单'
+          }, {
+            value: 6,
+            label: '团购订单'
+          }, {
+            value: 7,
+            label: '预约订单'
+          } ,{
+            value: 8,
+            label: '预约且团购订单'
+          },{
+            value: 9,
+            label: '砍价订单'
+          }],
       // body
         listLoading: false,
         tableData: [],
@@ -461,6 +496,22 @@ export default {
           console.error('manageShop:getVOrder_api 接口错误')
         })
       },
+      getOrderType(type){
+        switch(type){
+          case 0:
+          return "普通订单"
+          case 6:
+          return "团购订单"
+          case 7:
+          return "预约订单"
+          case 8:
+          return "团购预约订单"
+          case 9:
+          return "砍价订单"
+          default :
+          return "普通订单"
+        }
+      },
       async getList(all) {
         // 立一个flag 因为当前函数 promise化 需要检测 接口返回状态 
         let flag = false
@@ -492,6 +543,8 @@ export default {
                 time:aData.add_time,
                 state:aData.order_state,
                 stateID:aData.order_state_id,
+                orderTypeTXT :this.getOrderType(aData.order_type) 
+                
                 // goodsList:aData.order_goods,
               })
             })

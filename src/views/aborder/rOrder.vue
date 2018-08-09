@@ -105,41 +105,7 @@
 </el-dialog>
 <el-container class="notice">
 <el-header class="header" style="height:auto !important">
-  <!-- <el-form :inline="true" class="form">
-    <el-form-item>
-      <el-button type="primary" :plain="activButton!=1" icon="el-icon-edit-outline" @click="changeStaticType(1)">所有订单</el-button>
-    </el-form-item>
-    <el-form-item>
-      <el-button type="primary" :plain="activButton!=2" icon="el-icon-edit-outline" @click="changeStaticType(2)">申请退款订单</el-button>
-    </el-form-item>
-    <el-form-item>
-      <el-button type="primary" :plain="activButton!=3" icon="el-icon-edit-outline" @click="changeStaticType(3)">申请退货订单</el-button>
-    </el-form-item>
-    <el-form-item>
-      <el-button type="primary" :plain="activButton!=4" icon="el-icon-edit-outline" @click="changeStaticType(4)">退款订单记录</el-button>
-    </el-form-item>
-    <el-form-item>
-      <el-button type="primary" :plain="activButton!=5" icon="el-icon-edit-outline" @click="changeStaticType(5)">退货订单记录</el-button>
-    </el-form-item>
-  </el-form> -->
   <el-form :inline="true"  class="form">
-    <!-- <el-form-item>
-      <el-input style="width: 340px;" placeholder="请输入联系方式或店名" v-model="listQuery.search"></el-input>
-    </el-form-item>
-    <el-form-item>
-      <el-button type="primary" icon="el-icon-search" @click="searchByDate">查询</el-button>
-    </el-form-item>
-    <el-form-item label="订单类型">
-      <el-select v-model="orderType" placeholder="请选择">
-        <el-option
-          v-for="item in orderTypeOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
-    <el-button type="primary" icon="el-icon-search" @click="searchByDate">查询</el-button>
-    </el-form-item> -->
     <el-form-item label="订单状态">
       <el-select v-model="orderState" placeholder="请选择">
         <el-option
@@ -149,20 +115,19 @@
           :value="item.value">
         </el-option>
       </el-select>
-    <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
+      <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
     </el-form-item>
-    <!-- <el-form-item label="时间">
-      <el-date-picker
-        style="width:400px"
-        v-model="dataRange"
-        type="daterange"
-        range-separator="至"
-        start-placeholder="开始日期"
-        end-placeholder="结束日期">
-      </el-date-picker>
-      <el-button type="primary" icon="el-icon-search" @click="searchByDate">查询</el-button>
-    </el-form-item> -->
-   
+    <el-form-item label="订单类别">
+      <el-select v-model="listQuery.order_type" placeholder="请选择">
+        <el-option
+          v-for="item in orderTypeOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+      <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
+    </el-form-item>
   </el-form>  
   <el-form  :inline="true" class="form">
     <el-form-item label="导出Excel">
@@ -235,6 +200,11 @@
         >
       </el-table-column>
       <el-table-column
+        label="订单类型" 
+        prop="orderTypeTXT"
+        >
+      </el-table-column>
+      <el-table-column
         label="操作" 
         >
         <template slot-scope="scope">
@@ -295,6 +265,19 @@ export default {
             value: 40,
             label: '已收货'
         }],
+        orderTypeOptions:[{
+            value: '',
+            label: '全部类别'
+          },{
+            value: 1,
+            label: '普通订单'
+          }, {
+            value: 6,
+            label: '团购订单'
+          }, {
+            value: 9,
+            label: '砍价订单'
+          }],
       // body
         listLoading: false,
         tableData: [],
@@ -303,7 +286,8 @@ export default {
           page: 1,
           limit: 20,
           search:"",
-          time:""
+          time:"",
+          order_type:''
         },
         total:1,
       // -------------------------
@@ -407,6 +391,22 @@ export default {
           });
         })
       },
+      getOrderType(type){
+        switch(type){
+          case 0:
+          return "普通订单"
+          case 6:
+          return "团购订单"
+          case 7:
+          return "预约订单"
+          case 8:
+          return "团购预约订单"
+          case 9:
+          return "砍价订单"
+          default :
+          return "普通订单"
+        }
+      },
       lookItem(index,raw) {
         if(!raw||!raw.id){
             this.$notify.error({
@@ -445,7 +445,8 @@ export default {
             tempForm.goodsTable = data.order_goods
             // 收货信息
             tempForm.buyerInfo = data.order_reciver_info 
-            
+            // 订单类别
+
             this.formForNotive = tempForm //基础form完成填充
           }else{
             this.$notify({
@@ -491,6 +492,8 @@ export default {
                 time:aData.add_time,
                 state:aData.order_state,
                 stateID:aData.order_state_id,
+                orderTypeTXT :this.getOrderType(aData.order_type) 
+                
                 // goodsList:aData.order_goods,
               })
             })

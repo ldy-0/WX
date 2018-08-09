@@ -110,7 +110,7 @@ export default {
   },
   login: {
     title: '平台登录',
-    title2: '商家登录',
+    title2: '商 家 登 录',
     logIn: '登录',
     username: '账号',
     password: '密码',

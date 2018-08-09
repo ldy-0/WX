@@ -216,6 +216,27 @@
     <el-button type="primary" icon="el-icon-search" @click="searchByDate">查询</el-button> -->
   </el-form>
   <el-form :inline="true"  class="form">
+    <el-form-item>
+        <el-input style="width: 340px;" placeholder="请输入商品名称、编码" v-model="listQuery.search"></el-input>
+    </el-form-item>
+    <el-form-item>
+      <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
+    </el-form-item>
+    <el-form-item label="分类" :label-width="formLabelWidth">
+      <el-select v-model="listQuery.storegc_id" placeholder="请选择">
+            <el-option
+            v-for="item in industryListSearch"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+            </el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item>
+      <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
+    </el-form-item>
+  </el-form>       
+  <el-form :inline="true"  class="form">
     <el-badge :value="selectedItem.length" style="margin-right:20px">
       <el-button :type="selectedItem.length?'primary':''" round icon="el-icon-tickets">{{selectedItem.length>0?'已选'+selectedItem.length+'条目':'请勾选项目'}}</el-button>
     </el-badge>
@@ -350,6 +371,7 @@ export default {
           }
         ],
         industryList: [],
+        industryListSearch: [],
         formForNotive:Object.assign({},formForNotive),
         rules: {
           goodsType: [
@@ -556,6 +578,9 @@ export default {
                 })
               }
               this.industryList = tempData
+              let tempData2 = Object.assign([],tempData)
+              tempData2.unshift({"label":"全部分类",value:null})
+              this.industryListSearch = tempData2
               res()
             }else{
               console.error('manageShop:getEntryList_api 状态码为1')
@@ -1032,6 +1057,10 @@ export default {
         })
       },
     //head
+      search(){
+        this.listQuery.page = 1
+        this.getList()
+      },
       addItem(){ //显示 弹框
         this.isAddItem = true
         this.addNewShow = true
