@@ -151,6 +151,17 @@
       </el-select>
     <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
     </el-form-item>
+    <el-form-item label="订单类别">
+      <el-select v-model="listQuery.order_type" placeholder="请选择">
+        <el-option
+          v-for="item in orderTypeOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+      <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
+    </el-form-item>
     <!-- <el-form-item label="时间">
       <el-date-picker
         style="width:400px"
@@ -295,6 +306,25 @@ export default {
             value: 40,
             label: '已收货'
         }],
+        orderTypeOptions:[{
+            value: '',
+            label: '全部类别'
+          },{
+            value: 1,
+            label: '普通订单'
+          }, {
+            value: 6,
+            label: '团购订单'
+          }, {
+            value: 7,
+            label: '预约订单'
+          } ,{
+            value: 8,
+            label: '预约且团购订单'
+          },{
+            value: 9,
+            label: '砍价订单'
+          }],
       // body
         listLoading: false,
         tableData: [],
