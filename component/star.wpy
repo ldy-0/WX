@@ -1,0 +1,44 @@
+<template>
+  <view class='star'>
+      <repeat for='{{5}}' index='index'>
+          <image class='star_img' src='../../images/normal.png' wx:if='{{index + 1 > level}}' />
+          <image class='star_img' src='../../images/selected.png' wx:else />
+      </repeat>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+
+export default class StarLevel extends wepy.component {
+  props = {
+    level: Number,
+  }
+
+  components = {
+  }
+
+  data = {
+
+  }
+
+  onLoad() {
+  
+  }
+
+  methods = {
+
+  }
+  
+}
+
+</script>
+<style lang="css">
+.star{
+  
+}
+
+.star_img{
+  width: 32rpx;
+  height: 32rpx;
+}
+</style>

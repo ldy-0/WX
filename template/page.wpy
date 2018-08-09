@@ -1,0 +1,50 @@
+<template>
+  <view class="contianer">
+    <topBar :config='config'></topBar>
+
+    <view class='wrap'>Page</view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import topBar from '../../components/topBar';
+
+export default class Page extends wepy.page {
+  config = {
+    enablePullDownRefresh: false,
+    disableScroll: true,
+  }
+
+  components = {
+    topBar,
+  }
+
+  data = {
+    config: {
+      isLeft: false,
+      name: '',
+      canBack: false,
+    },
+  }
+
+  onLoad() {
+  
+  }
+
+  methods = {
+
+  }
+  
+}
+
+</script>
+<style lang="less">
+page {
+  width: 100%;
+  height: 100%;
+}
+
+.wrap{
+  margin: 150rpx 0 0;
+}
+</style>
