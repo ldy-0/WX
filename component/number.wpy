@@ -1,0 +1,73 @@
+<template>
+    <view class='number_wrap'>
+      <view class='minus' @tap='minus'>-<image class='icon_minus' src='' /></view>
+      <view class='number'>{{number}}</view>
+      <view class='add' @tap='add'>+<image class='icon_add' src='' /></view>
+    </view>
+</template>
+<script>
+import wepy from 'wepy';
+
+export default class Number extends wepy.component {
+  props = {
+    number: Number,
+    max: Number,
+  }
+
+  components = {
+  }
+
+  data = {
+
+  }
+
+  onLoad() {
+  
+  }
+
+  methods = {
+    minus(){
+      const parent = this.$parent;
+
+      parent.number <= 1 ? wx.showModal({ title: '提示', content: '数量最小为1', showCancel: false, }) : parent.number--;
+      parent.$apply();
+
+      this.$emit('change');
+    },
+    add(){
+      this.$parent.number++;
+      this.$parent.$apply();
+
+      this.$emit('change');
+    },
+  }
+  
+}
+
+</script>
+<style lang="css">
+.number_wrap{
+  display: flex;
+  line-height: 50rpx;
+  text-align: center;
+}
+.minus, .add{
+  margin: 0 18rpx;
+  font-size: 48rpx;
+  color: #959595;
+}
+.icon_minus{
+  width: 19rpx;
+  height: 2rpx;
+}
+.icon_add{
+  width: 20rpx;
+  height: 20rpx;
+}
+.number{
+  margin: 0 8rpx;
+  padding: 7rpx 21rpx;
+  color: #333;
+  background: #E5E5E5;
+}
+</style>

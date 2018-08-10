@@ -2,14 +2,14 @@
   <view class="contianer">
     <topBar :config='config'></topBar>
 
-    <view class='wrap'>Page</view>
+    <view>page</view>
   </view>
 </template>
 <script>
 import wepy from 'wepy';
 import topBar from '../../components/topBar';
 
-export default class Page extends wepy.page {
+export default class page extends wepy.page {
   config = {
     enablePullDownRefresh: false,
     disableScroll: true,
@@ -21,7 +21,7 @@ export default class Page extends wepy.page {
 
   data = {
     config: {
-      isLeft: false,
+      isLeft: true,
       name: '',
       canBack: false,
     },
