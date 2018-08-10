@@ -1,0 +1,200 @@
+<!--商品列表模块-->
+<template>
+  <scroll-view scroll-y="true" class="swiper-item-box">
+    <view class="shop_item" wx:if='{{lev === 1}}'>
+      
+      <navigator class="list" wx:for="{{list}}" wx:key="item" url="/pages/goods_detail?id={{item.productId}}&purchasetype={{purchasetype}}&special={{special}}">
+        <view class='img_wrap'>
+          <image class="discover_img" src="{{item.productImg}}" mode='widthFix'></image>
+        </view>
+        <view class="info">
+            <view class='name'>{{item.productName}}</view>
+            <view class='origin_price'>原价：¥ {{item.productPrice % 1 === 0 ? item.productPrice+'.00' : item.productPrice}} </view>
+            <view class='exchange_price'>兑换价：¥{{item.duiPrice}}+{{item.deductionDPoint}}德分</view>
+            <view class='discount' wx:if="{{getIdentity}}">
+                <view>省 ¥{{item.point}}</view>
+                <image src='/images/member.png' />
+            </view>
+        </view>
+        <!-- <view class="image_box">
+          <image src="{{item.picture[0]}}"></image>
+        </view> -->
+        <!-- <view class="goods">
+          <view class="product_name" wx:if="{{showTitle}}">{{item.name}}</view>
+          <view class="product_info">
+            <view class="price">￥{{item.price.prePrice}}</view>
+            <view class="cost_price">￥{{item.marketPrice}}</view>
+            <view class="sale_num">销量{{item.sale}}件</view>
+          </view>
+        </view>  -->
+      </navigator>
+
+    </view>
+    <view class="shop_item" wx:if='{{lev === 2}}'>
+      <navigator class="list" wx:for="{{list}}" wx:key="item" url="/pages/goods_detail?id={{item.id}}&purchasetype={{purchasetype}}&special={{special}}">
+        <view class='img_wrap'>
+          <image class="discover_img" src="{{item.imgUrl}}" mode='widthFix'></image>
+        </view>
+        <view class="info">
+            <view class='name'>{{item.name}}</view>
+            <view class='origin_price'>原价：¥ {{item.price % 1 === 0 ? item.price+'.00' : item.price}} </view>
+            <view class='exchange_price'>兑换价：¥{{item.duiPrice}}+{{item.deductionDPoint}}德分</view>
+            <view class='discount' wx:if="{{getIdentity}}">
+                <view>省 ¥{{item.point}}</view>
+                <image src='/images/member.png' />
+            </view>
+        </view>
+      </navigator>
+    </view>
+    
+  </scroll-view>
+</template>
+<script>
+import wepy from 'wepy'
+
+export default class ShopGridList extends wepy.component {
+  props = {
+    list: [],
+    lev: 1,
+    purchasetype: {
+      default: 1  //类型:1-商品订单;2-商品补单;
+    },
+    special:{
+      default: 0 //0-正常入库;1-特价专区和换货专区
+    },
+    showTitle:{
+      default:true
+    },
+  }
+
+  computed = {
+    getIdentity(){
+      return wx.getStorageSync('userInfo').hasIdentity;
+    },
+  }
+
+  methods = {
+
+  }
+
+  onLoad(){
+    console.log('-0=-=--=-');
+    console.log(wx.getStorageSync('userInfo').hasIdentity);
+  }
+
+}
+
+</script>
+<style lang="less">
+.shop_item {
+  padding: 0rpx 15rpx;
+  background: #f7f7f7;
+  display: flex;
+  flex-wrap: wrap;
+  padding-bottom: 30rpx;
+}
+
+.list:nth-child(odd) {
+  margin-right: 10rpx;
+}
+
+.list {
+  background: #fff;
+  width: 355rpx;
+  margin-top: 15rpx;
+  .image_box {
+    image {
+      width: 100%;
+      height: 345rpx;
+    }
+  }
+  .product_name {
+    color: #1a1a1a;
+    font-size: 28rpx;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    word-break: break-all;
+  }
+  .price {
+    color: #de0000;
+    font-size: 35rpx;
+    font-weight: 600;
+  }
+  .cost_price {
+    color: #666666;
+    font-size: 24rpx;
+    text-decoration: line-through;
+    font-weight: 600;
+  }
+  .sale_num {
+    color: #666666;
+    font-size: 22rpx;
+  }
+  .goods {
+    padding: 15rpx 12rpx;
+  }
+  .product_info {
+    padding-top: 20rpx;
+    display: flex;
+    align-items: flex-end;
+  }
+  .cost_price {
+    padding-left: 20rpx;
+  }
+  .sale_num {
+    padding-left: 20rpx;
+  }
+}
+//
+.img_wrap{
+  display: flex;
+  align-items: center;
+  height: 352rpx;
+  .discover_img {
+      width: 352rpx;
+  }
+}
+
+.info {
+    padding: 0 15rpx;
+    font-size: 24rpx;
+    text-align: left;
+    .name{
+        width: 90%;
+        height: 48rpx;
+        line-height: 48rpx;
+        margin: 20rpx 15rpx;
+        font-size: 24rpx;
+        color: #333;
+        overflow: hidden;
+    }
+    .origin_price {
+        padding-left: 15rpx;
+        font-size: 24rpx;
+        color: #999;
+        border-top: 1rpx dashed rgb(153,153,153);
+    }
+    .exchange_price{
+        margin: 10rpx 15rpx;
+        font-size: 23rpx;
+        color: #333;
+        background: #ffecea;
+    }
+    .discount{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        view{
+          padding-left: 15rpx;
+          color: rgb(232,56,32);
+        }
+        image{
+            width: 21rpx;
+            height: 19rpx;
+        }
+    }
+}
+
+</style>

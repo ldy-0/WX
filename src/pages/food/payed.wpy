@@ -1,0 +1,50 @@
+<template>
+  <view class="contianer">
+    <topBar :config='config'></topBar>
+
+    <view class='wrap'>微信返回支付完成状态后，跳转去 订单详情页面</view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import topBar from '../../components/topBar';
+
+export default class Payed extends wepy.page {
+  config = {
+    enablePullDownRefresh: false,
+    disableScroll: true,
+  }
+
+  components = {
+    topBar,
+  }
+
+  data = {
+    config: {
+      isLeft: true,
+      name: '',
+      canBack: false,
+    },
+  }
+
+  onLoad() {
+  
+  }
+
+  methods = {
+
+  }
+  
+}
+
+</script>
+<style lang="less">
+page {
+  width: 100%;
+  height: 100%;
+}
+
+.wrap{
+  margin: 150rpx 0 0;
+}
+</style>

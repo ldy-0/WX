@@ -1,0 +1,372 @@
+<style lang="less">
+
+.container{
+  height: 100%;
+  font: 30rpx MicrosoftYaHei;
+  background: #f5f5f5;
+}
+
+.wrap{
+  height: 100%;
+  background: #fff;
+  .class_list{
+    .class_item{
+      line-height: 91rpx;
+      // padding: 0 20rpx;
+      color: #999;
+      text-align: center;
+    }
+    .sel{
+      color: #e83820;
+      border-left: 6rpx solid #e83820;
+    }
+      
+  }
+  
+  .content_wrap{
+    .content_title{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 91rpx;
+      .content_desc{
+        margin: 0 48rpx;
+        color: #020202;
+      }
+      .line{
+        width: 100rpx;
+        height: 3rpx;
+        background: #000;
+      }
+    }
+    .row{
+      display: flex;
+      padding: 7rpx 0 0;
+      background: #fff;
+      .content_item{
+        margin-left: 18rpx;
+        .content_name{
+          margin: 20rpx 0;
+          font-size: 24rpx;
+          color: rgb(77,77,77);
+          text-align: center;
+        }
+        .content_img{
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 168rpx;
+          height: 168rpx;
+        }
+      }
+      .item {
+        width: 270rpx;
+        text-align: center;
+        background: #fff;
+        margin: 0 0 15rpx 15rpx;
+        padding-bottom: 15rpx;
+        .item_img{
+          width: 270rpx;
+          height: 270rpx;
+          .discover_img {
+              width: 270rpx;
+          }
+        }
+        .info {
+          box-sizing: border-box;
+          width: 270rpx;
+          // height: 252rpx;
+          padding: 0 15rpx;
+          text-align: left;
+          .name{
+            box-sizing: border-box;
+            width: 100%;
+            height: 60rpx;
+            line-height: 30rpx;
+            margin: 20rpx 0 10rpx;
+            font-size: 25rpx;
+            color: #4d4d4d;
+            overflow: hidden;
+          }
+          .origin_price {
+            font-size: 24rpx;
+            color: #999;
+            border-top: 1rpx dashed #999;
+          }
+          .other_price{
+            width: 100%;
+            height: 30rpx;
+            line-height: 30rpx;
+            font-size: 24rpx;
+            color: #4d4d4d;
+            overflow: hidden;
+          }
+          .border_bottom{
+            border-bottom: 1rpx dashed #999;
+          }
+          .discount{
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              view{
+                  font-size: 25rpx;
+                  color: #e83820;
+              }
+              image{
+                  width: 21rpx;
+                  height: 19rpx;
+              }
+          }
+        }
+        
+        
+      }
+      
+
+    }
+    .bg{
+      background: #fff;
+    }
+    
+    
+  }
+          
+}
+.ios_wrap{
+  // margin: 100rpx 0 0;
+}
+  
+</style>
+
+<template>
+  <view class="container">
+      <topBar :config='config'></topBar>
+      
+      <!-- <view class="topBar2 ios_topBar2"> 
+        <navigator class="search_content" open-type="navigate" url="/pages/search">
+          <image src='../images/search.png' />
+          <view class="search_input">请输入搜索</view>
+        </navigator>
+      </view> -->
+
+      <view class="wrap {{isIos ? 'ios_wrap' : ''}}">
+          <view class="class_list">
+
+              <view class='address'>{{address}}</view>
+            
+              <view class="search_content" > 
+                <input class="search_input" type='text' bindinput='search' placeholder='请输入搜索'></input>
+              </view>
+            
+              <view class='tab'>
+                <repeat for="{{classList}}" index="index" item="item">
+                    <!-- <view class="class_item {{ checkedList[index] ? 'sel' : '' }}" @tap="getTwo({{index,item.isleaf,item.id}})">{{item.name}}</view> -->
+                    <view class="tab_item {{ checkedList[index] ? 'sel' : '' }}" @tap="">{{item.name}}</view>
+                
+                </repeat>
+              </view>
+          </view>
+
+          <view class="content_wrap">
+
+              <!-- <repeat for="{{goodsList}}" item="items">
+                  <view class="row {{checkedList[0] ? 'bg' : ''}}"> -->
+                      <repeat for="{{goodsList}}" item='item'>
+                        
+                          <navigator class="item" open-type="navigate" url='/pages/food/businessDetail?id={{item.name}}'>
+                              <view class='item_img'>
+                                <image class="discover_img" src="{{item.imgUrl}}" mode='widthFix' />
+                              </view>
+                              <view class="info">
+                                  <view class='name'>{{item.name}}</view>
+                                  <view class='origin_price'>原价：¥ {{item.price}} </view>
+                                  <view class='other_price'>兑换价</view>
+                                  <view class='other_price border_bottom'>¥{{item.duiPrice}}+{{item.deductionDPoint}}德分</view>
+                                  <view class='discount' wx:if="{{getIdentity}}">
+                                      <view>省 ¥{{item.point}}</view>
+                                      <image src='/images/member.png' />
+                                  </view>
+                              </view>
+                              <starLevel :level='item.level'></starLevel>
+                          </navigator>
+                        
+                      </repeat> 
+                  <!-- </view>
+              </repeat> -->
+
+          </view>
+      </view>
+  </view>
+</template>
+
+<script>
+import wepy from "wepy";
+import shopApi from "../api/shopApi.js";
+import topBar from '../components/topBar';
+import starLevel from '../components/star';
+import bd from '../utils/bmap-wx.min.js';
+
+export default class Classify extends wepy.page {
+
+  data = {
+    config: {
+              name: '美食',
+              canBack: false,
+              search: true,
+              bg: '#f5f5f5',
+              //share: { name: '商品详情', path: '/pages/comfire_order', },
+    },
+    // 一级列表
+    classList: [],
+    //
+    checkedList: [],
+    title: "",
+    goodsList: [
+      { name: '12343', price: '1432', imgUrl: '../images/background_info.@3x.png', level: 2 },
+      { name: '12343', price: '1432', imgUrl: '../images/background_info.@3x.png', level: 4 },
+    ],
+    currentType: null,
+    currentPage: 0,
+    total: null,
+    isIos: null,
+    page:0,
+    address: null,
+  };
+  
+  components = {
+    topBar,
+    starLevel,
+  };
+  
+  computed = {
+    getIdentity(){
+      return wx.getStorageSync('userInfo').hasIdentity;
+    }
+  };
+
+  methods = {
+    search(e){
+      console.log(e.detail.value);
+    },
+    goBusinessDetail(id){
+      
+      wx.navigateTo({
+        url: '/pages/food/businessDetail?id='+id,
+      }); 
+     
+    },
+
+  };
+      
+ events = {
+   //自定义分类列表事件
+    arrlist(params) {
+      var result = [];
+        for (var i = 0, len = params.length; i < len; i += 3) {
+          result.push(params.slice(i, i + 3));
+        }
+      return result;
+    },
+    arr2(params) {
+        var result = [];
+        for (var i = 0, len = params.length; i < len; i += 2) {
+
+            params[i].duiPrice = this.add_minus(params[i].price, -params[i].deductionDPoint/10);
+            if(params[i+1]){
+              params[i+1].duiPrice = this.add_minus(params[i+1].price, -params[i+1].deductionDPoint/10);
+            }
+            result.push(params.slice(i, i + 2));
+
+        }
+
+        return result;
+    },
+
+ };
+
+ onShow(){
+  
+  this.setAddress();
+ }
+
+  onLoad(){
+
+    this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
+
+  }
+
+  //加载更多
+  onReachBottom(tatal) {
+    let that = this;
+    that.showLoading = true;
+
+    if(this.checkedList[0]){
+      return ;
+    }
+
+    if(this.total < (this.currentPage + 1) * 10){
+      return wx.showToast({ title: '已经是最后一页了!', icon: 'none', duration: 2000, });
+    }
+
+    this.getGoodsList(++this.currentPage);
+
+  };
+
+  async getGoodsList(page){
+    wx.showLoading({ title: 'Loading...', });
+
+    let res = await shopApi.getGoodsList({
+        type: 'NORMAL', //全部商品
+        params: {
+          categoryId: this.currentType == undefined ? '' : this.currentType,
+          keys: '',
+          page: Number(page),
+          size: 10,
+          // order:'price',
+          // direction:'desc',
+          // pageable: true,
+        }
+      });
+
+    if(res.count <= 0){
+
+      wx.showToast({ title: '暂无相关商品', icon: 'none', duration: 2000, });
+      
+    };
+
+    this.total = res.count;
+    this.events.arr2(res.list).forEach(v => {
+      // v[0].duiPrice = this.add_minus(v[0].price, - v[0].deductionDPoint/10);
+      // v[1].duiPrice = this.add_minus(v[1].price, - v[1].deductionDPoint/10);
+      this.goodsList.push(v);
+    });
+    console.log('-=-===-=-=-=-==');
+    console.log(this.goodsList);
+    this.$apply();
+    wx.hideLoading();
+  }
+
+  add_minus(nub1, nub2){
+	  let len1, len2, m;
+	 
+    try{len1 = nub1.toString().split('.')[1].length;}catch(e){len1 = 0;}
+    try{len2 = nub2.toString().split('.')[1].length;}catch(e){len2 = 0;}
+	  m = 10**Math.max(len1, len2);
+	 
+	  return (nub1*m+nub2*m)/m;
+  }
+
+  setAddress(){
+    const bmap = new bd.BMapWX({ ak: 'AawWMRmcrLeHbsvEdbl4yf72kzZhYmxg', });
+
+    bmap.regeocoding({
+      success: res => {
+        // console.log(JSON.stringify(res.wxMarkerData));
+        this.address = res.wxMarkerData[0].address;
+        this.$apply();
+      },
+    }); 
+  }
+}
+</script>
+

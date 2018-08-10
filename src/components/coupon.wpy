@@ -1,0 +1,64 @@
+<template>
+  <view class='coupon' @tap="goGoodsDetail({{canRedirect ? coupon.id : ''}})">
+    <view class='coupon_title'>{{coupon.name}}</view>
+    <view>{{canBuy}}</view>
+    <view class='pay_btn no' wx:if='{{canBuy === false}}'>购买</view>
+    <view class='pay_btn' catchtap="goSubmitOrder({{coupon.id}})" wx:else>购买</view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+
+export default class Coupon extends wepy.component {
+  props = {
+    coupon: Object,
+    canRedirect: Boolean,
+    canBuy: Boolean,
+  }
+
+  components = {
+  }
+
+  data = {
+
+  }
+
+  onLoad() {
+  
+  }
+
+  methods = {
+    goGoodsDetail(id){
+
+      if(id !== ''){
+        wx.navigateTo({
+          url: '/pages/food/goodsDetail?id=' + id,
+        });
+      }
+
+    },
+    goSubmitOrder(id){
+      if(id !== ''){
+        wx.navigateTo({
+          url: '/pages/food/submitOrder?id=' + id,
+        });
+      }
+
+    },
+  }
+  
+}
+
+</script>
+<style lang="css">
+.coupon{
+  height: 100rpx;
+  background: #ccc;
+}
+
+.pay_btn{
+  width: 70rpx;
+  height: 50rpx;
+  background: blue;
+}
+</style>

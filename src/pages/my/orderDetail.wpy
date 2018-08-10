@@ -1,0 +1,64 @@
+<template>
+  <view class="contianer">
+    <topBar :config='config'></topBar>
+
+    <view class='wrap'>
+      <view>goods-info</view>
+
+      <view>order-info</view>
+
+      <view class='btn'>立即付款</view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import topBar from '../../components/topBar';
+
+export default class Authorize extends wepy.page {
+  config = {
+    enablePullDownRefresh: false,
+    disableScroll: true,
+  }
+
+  components = {
+    topBar,
+  }
+
+  data = {
+    config: {
+      isLeft: true,
+      name: '订单详情页',
+      canBack: true,
+    },
+  }
+
+  onLoad() {
+  
+  }
+
+  methods = {
+
+  }
+  
+}
+
+</script>
+<style lang="less">
+page {
+  width: 100%;
+  height: 100%;
+}
+
+.wrap{
+  margin: 150rpx 0 0;
+}
+
+.btn{
+  width: 150rpx;
+  line-height: 100rpx;
+  border: 1rpx solid #000;
+  border-radius: 4rpx;
+  text-align: center;
+}
+</style>

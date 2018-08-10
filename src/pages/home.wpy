@@ -1,0 +1,361 @@
+<template>
+  <view class="container bc">
+    <topBar :config='config'></topBar>
+
+    <swiper class="swiper" 
+            indicator-active-color="{{swiperConfig.indicatorActiveColor}}"  
+            indicator-dots="{{swiperConfig.indicatorDots}}"
+            autoplay="{{swiperConfig.autoplay}}" 
+            interval="{{swiperConfig.interval}}" 
+            duration="{{swiperConfig.duration}}"  
+            circular="true">
+      <block wx:for="{{adList}}" wx:key='key'>
+        <swiper-item>
+          <image src="{{item.imgUrl}}" class="slide_image" @tap="goToAdvert({{item}})" mode='widthFix' />
+        </swiper-item>
+      </block>
+    </swiper>
+
+    <!-- <view class="pos {{isIos ? 'ios_pos' : ''}}">
+      <view class="search_read_only">
+        <navigator class="search_content" open-type="navigate" url="/pages/search">
+          <image src='../images/search.png' />
+          <view class="search_input">请输入搜索</view>
+        </navigator>
+      </view>
+    </view> -->
+
+    <view class=''>
+      
+    </view>
+
+    <view class='secKill'>
+      <view class='secKill_title'>
+        <image src='' />
+        <view class='title'>秒杀商品</view>
+      </view>
+    </view>
+
+    <!--  -->
+    <discover :list.sync="discoverList"></discover>
+    <!-- 加载更多 -->
+    <bottomLoadMore :show.sync="showLoading" message="正在加载"></bottomLoadMore>
+    <!--暂无数据显示-->
+    <placeholder :show.sync="is_empty" message="暂无发现数据"></placeholder>
+
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import {shttp} from '../utils/http.js';
+import shopApi from '../api/shopApi.js';
+import Discover from '@/components/discover';
+import BottomLoadMore from "../components/common/bottomLoadMore";
+import Placeholder from "../components/common/placeholder";
+import topBar from "../components/topBar";
+import request from '../utils/request.js';
+
+export default class Home extends wepy.page {
+  config = {
+    // navigationBarTitleText: '汉薇商城',
+  }
+  components = {
+    discover: Discover,
+    bottomLoadMore: BottomLoadMore,
+    placeholder: Placeholder,
+    topBar,
+  };
+  data = {
+    config: {
+      name: '电小乐',
+      canBack: false,
+    },
+    currentType:'',
+    swiperConfig: {
+      indicatorActiveColor: "#fff",
+      indicatorDots: true,
+      autoplay: true,
+      interval: 3000,
+      duration: 1000,
+    },
+    adList: [], //广告列表
+    discoverList: [],
+    hasHotList: false, // 是否有热门商品
+    hotList:[],        
+    //是否有数据
+    is_empty: false,
+    //当前页面
+    currentPage: 0,
+    isEnd: false, // 是否最后一页
+    //总页数
+    page_total: 0,
+    //是否显示 底部loading
+    showLoading: false,
+    isIos: null,
+  }
+
+
+  // 获取某类商品列表
+  async getDiscoverList(page){
+    if(this.isEnd){
+      this.showLoading = false;
+      this.$apply()
+      return wx.showToast({ title: '已经是最后一页了!', icon: 'none', duration: 1000, });
+    }
+
+    let id = this.currentType // event.target.dataset.id
+
+    let data = await shopApi.getGoodsList({
+            type: 'NORMAL',
+            params: {
+              categoryId: id == undefined ? '' : id,
+              keys: '',
+              page: Number(page),
+              size: 10,
+            },
+        });
+
+    if(!data){
+      return wx.showToast({ title: '获取商品列表失败', icon: 'none', duration: 2000, });
+    }
+
+    if(data.list && data.list.length === 0 && this.discoverList.length === 0){
+      this.showLoading = false;
+      this.is_empty = true;
+      return this.$apply();
+    }else if(data.list.length === 1 || data.list.length < 10){ //total
+      this.isEnd = true;
+      this.is_empty = false;
+    }
+
+    this.currentType = id;
+    this.currentPage = Number(page);
+    
+    data.list.forEach((v, i) => {
+
+      v.duiPrice = this.add_minus(v.price, -v.deductionDPoint/10); 
+      this.discoverList.push(v);
+
+    });
+
+    this.showLoading = false;
+    this.$apply();
+  }
+  //轮播图
+  async getAdList() {
+
+    const sessionId = wx.getStorageSync('sessionId'),
+          res = await request.get('v2/openapi/home/carousels'),
+          // res = await shttp.get('/v2/openapi/home/carousels', sessionId).end(),
+          imgs = res.data ? res.data.images : null;
+
+    if(!imgs){
+      return wx.showToast({ title: res.moreInfo, icon: 'none', duration: 2000, });
+    }
+    
+    this.adList = imgs;
+    this.$apply();
+
+  }
+
+  async onShow(){
+    if(!wx.getStorageSync('sessionId')){
+      let res = await wepy.login();
+    
+      if(res.errMsg === 'login:ok'){
+        wx.setStorageSync('code', res.code);
+      }
+
+      // return wx.redirectTo({ url:'/pages/authorize' });
+    }
+
+    this.getAdList();
+    this.discoverList = [
+  { name: 'sfisfdjijfsod', img: '../images/background_info.@3x.png', price: '10' },
+      { name: 'sfisfdjijfsod', img: '../images/background_info.@3x.png', price: '10' },
+      { name: 'sfisfdjijfsod', img: '../images/background_info.@3x.png', price: '10' },
+];return this.$apply();
+  }
+
+  onLoad(params) {
+
+    this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
+    
+  }
+
+  computed = {
+
+  }
+
+  methods = {
+    goToAdvert(item) {
+
+      if(true){
+        
+        return wx.navigateTo({
+          url: '/pages/foods/goodsDetail?id=' + item.id,
+        });
+
+      }
+
+      wx.navigateTo({
+        url: "/pages/web_view?url=" + encodeURIComponent(item.targetUrl)
+      });
+      
+      // if (item.targetType == "PRODUCT") {
+
+      //   if (item.target.length == 0) {
+      //     return;
+      //   }
+
+      //   wepy.navigateTo({
+      //     url: "/pages/goods_detail?id=" + item.target,
+      //   });
+        
+      // }else if(item.targetType=="CUSTOMIZED"){
+      //   // wepy.navigateTo({
+      //   //   url: "/pages/web_view?url=" + encodeURIComponent(item.targetUrl)
+      //   // });
+        
+      // }
+
+    },
+    goVivi(){
+      wx.navigateTo({
+        url: "/pages/web_view?url=http://wechat.enmega.com/home",
+      });
+    },
+  }
+  events = {};
+
+  onPullDownRefresh(){
+    
+    wx.reLaunch({
+      url: '/pages/home',
+    });
+
+  }
+
+  //加载更多
+  onReachBottom() {
+    this.showLoading = true;
+    console.log(this.page_total + "=loading=" + this.currentPage + this.currentType);
+    this.currentPage = this.currentPage + 1;
+    this.getDiscoverList(this.currentPage);
+
+  };
+
+  add_minus(nub1, nub2){
+	  let len1, len2, m;
+	 
+    try{len1 = nub1.toString().split('.')[1].length;}catch(e){len1 = 0;}
+    try{len2 = nub2.toString().split('.')[1].length;}catch(e){len2 = 0;}
+	  m = 10**Math.max(len1, len2);
+	 
+	  return (nub1*m+nub2*m)/m;
+  }
+  
+}
+
+</script>
+<style lang="less">
+.container {
+  font: 29rpx 'MicrosoftYaHei';
+  background: #f5f5f5;
+}
+
+.swiper {
+  height: 375rpx;
+  background: #ccc;
+  .swiper_item{
+    display: flex;
+    align-items: center;
+  }
+}
+.ios_swiper{
+  // margin: 0;
+}
+.middle-title{
+  margin-top:5rpx;
+  font-weight: bold;
+}
+.small_title{
+  line-height: 45rpx;
+  margin-right: 20rpx;
+  font-size: 25rpx;
+  color: #808080;
+  margin-top:5rpx;
+}
+
+.slide_image {
+  width: 100%;
+  // height: 100%;
+}
+
+.pos {
+  position: absolute;
+  top: 170rpx;
+  left: 0;
+  right: 0;
+  .search_content {
+    border: 1px solid #efefee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 61rpx;
+    background: #fff;
+    .icon-search{
+      font-size: 40rpx;
+    }
+    .search_input {
+      font-size: 29rpx;
+      color: #999;
+    }
+    image{
+      width: 30rpx;
+      height: 30rpx;
+      margin-right: 10rpx;
+    }
+  }
+  .message {
+    display: block;
+    text-align: center;
+    margin-left: 20rpx;
+  }
+  .doc {
+    font-size: 16rpx;
+    display: block;
+  }
+}
+.ios_pos{
+  top: 220rpx;
+}
+
+.secKill{
+  margin: 15rpx;
+  background: #fff;
+  .secKill_title{
+    display: flex;
+    align-items: center;
+    .title{
+      margin: 30rpx 0;
+      font-weight: bold;
+      color: #808080;
+       font-weight: bold
+    }
+    image{
+      width: 46rpx;
+      height: 46rpx;
+      margin:0 13rpx 0 23rpx;
+    }
+  }
+  
+}
+
+.bar{
+  margin: 15rpx;
+  background: #fff;
+  // overflow: hidden;
+}
+
+</style>

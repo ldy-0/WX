@@ -1,0 +1,97 @@
+<template>
+  <view class="contianer">
+    <topBar :config='config'></topBar>
+
+    <view class='wrap'>
+      <view class='business'>商家信息
+        <!-- <map latitude='{{markers[0].latitude}}' longitude='{{markers[0].longitude}}' markers='{{markers}}' scale='14'></map> -->
+      </view>
+      <view class='tab'>
+        <repeat for='{{tab}}' item='item' index='index'>
+          <view class="tab_item {{item === status}}" @tap='changeStatus({{index}})'>{{item}}</view>
+        </repeat>
+      </view>
+      <view class='coupon' wx:if="{{status === tab[0]}}">
+        
+        <view class='coupon_list'>
+          <repeat for='{{couponList}}' item='item'>
+            <coupon :coupon.sync='item' :canRedirect.sync='canRedirect'></coupon>
+          </repeat>
+        </view>
+
+      </view>
+      <view class='comment' wx:if="{{status === tab[1]}}">评论</view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import topBar from '../../components/topBar';
+import coupon from '../../components/coupon';
+
+export default class businessDetail extends wepy.page {
+  config = {
+    enablePullDownRefresh: false,
+    disableScroll: true,
+  }
+
+  components = {
+    topBar,
+    coupon,
+  }
+
+  data = {
+    config: {
+      isLeft: true,
+      name: '商家',
+      canBack: true,
+    },
+    tab: ['优惠劵', '用户评论'],
+    status: '优惠劵',
+    couponList: [
+      { id: '123', name: '1', price: 10, }
+    ],
+    canRedirect: true,
+    markers: [],
+  }
+
+  onLoad(param){
+    console.log(param.id);
+    this.markers = [{"id":0,"latitude":30.58145,"longitude":114.21498,"address":"湖北省武汉市硚口区沿河大道518号","desc":"硚口区政府内,武汉市硚口区安监局南107米","business":"韩家墩,宗关,古田","alpha":1}]
+  }
+
+  methods = {
+    changeStatus: index => this.status = this.tab[index],
+  }
+  
+}
+
+</script>
+<style lang="less">
+page {
+  width: 100%;
+  height: 100%;
+}
+
+.wrap{
+  margin: 150px 0 0;
+}
+
+.tab{
+  display: flex;
+}
+.tab_item{
+  flex-grow: 1;
+  text-align: center;
+}
+.sel{
+  color: #fff;
+  background: #000;
+}
+
+.coupon{
+  .coupon_list{
+    
+  }
+}
+</style>

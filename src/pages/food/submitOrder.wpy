@@ -1,0 +1,91 @@
+<template>
+  <view class="contianer">
+    <topBar :config='config'></topBar>
+
+    <view class='wrap'>
+      <view class='goods'></view>
+
+      <view class=''>
+        <add :number.sync='number' @change.user='changeNumber'></add>
+      </view>
+
+      <view class='bottom_bar'>
+          <!-- <view class='icon'>
+              <view class='red_dot_wrap'>
+                <image class='split_line' src='../../images/Mall/icon_home_gouwuche@2x.png' @tap='goShoppingCart' mode='aspectFill' />
+                <view class='red_dot' wx:if='{{isShowSize}}'>+{{getSize}}</view>
+              </view>
+              <view>
+                <image class='split_line' src='../../images/Mall/icon_xingxing_lighlight@2x.png' @tap="goodsUnFavorite" mode='aspectFill' wx:if='{{isFavorite}}' />
+                <image class='split_line' src='../../images/Mall/icon_shoucang@2x.png' @tap="goodsFavorite" mode='aspectFill' wx:else />
+              </view>
+              <button  class="split_line share" style='width: auto;' open-type="contact" session-from="weapp" plain="true">
+                <view><image class='kefu_img' src='../../images/NetRed/kefu.png' mode='aspectFill' /></view>
+              </button>
+          </view> -->
+          <view class='add_btn' @tap='addShoppingCart'>加入购物车</view>
+          <view class='buy_btn' @tap='submitOrder'>立即购买</view>
+      </view>
+
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import topBar from '../../components/topBar';
+import add from '../../components/number';
+
+export default class submitOrder extends wepy.page {
+  config = {
+    enablePullDownRefresh: false,
+    disableScroll: true,
+  }
+
+  components = {
+    topBar,
+    add,
+  }
+
+  data = {
+    config: {
+      isLeft: true,
+      name: '提交订单',
+      canBack: true,
+    },
+    number: null, // number
+    max: 1, // number
+  }
+
+  onLoad() {
+    this.number = 1;
+  }
+
+  methods = {
+    changeNumber(){
+      console.log('-----change Number----', this.number);
+      
+    },
+    submitOrder(){
+
+      wx.navigateTo({
+        url: '/pages/food/payed',
+      });
+
+    }
+  }
+  
+}
+
+</script>
+<style lang="less">
+page {
+  width: 100%;
+  height: 100%;
+}
+
+.wrap{
+  margin: 150rpx 0 0;
+}
+
+        
+</style>

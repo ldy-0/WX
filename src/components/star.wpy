@@ -1,0 +1,52 @@
+<template>
+  <view class='star'>
+      <repeat for='{{5}}' index='index'>
+          <image class='star_img' src='../../images/normal.png' @tap="click({{canModify ? index : -1}})" wx:if='{{index + 1 > level}}' />
+          <image class='star_img' src='../../images/selected.png' @tap="click({{canModify ? index : -1}})" wx:else />
+      </repeat>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+
+export default class StarLevel extends wepy.component {
+  props = {
+    level: Number,
+    canModify: Boolean,
+  }
+
+  components = {
+  }
+
+  data = {
+
+  }
+
+  onLoad() {
+  
+  }
+
+  methods = {
+    click(index){
+      console.log(index);
+      if(index === -1){
+        return ;
+      }
+      this.$parent.level = index + 1;
+      this.$parent.$apply();
+    },
+  }
+  
+}
+
+</script>
+<style lang="css">
+.star{
+  
+}
+
+.star_img{
+  width: 32rpx;
+  height: 32rpx;
+}
+</style>

@@ -1,0 +1,143 @@
+<template>
+    <view class="bc">
+        
+        <view class="discover_list">
+
+            <navigator class="item" wx:for="{{list}}" wx:key="item" url="/pages/food/goodsDetail?id={{item.id}}" >
+                <view class='image_wrap'>
+                    <image class="discover_img" src="{{item.img}}" /> <!-- style="width:{{item.imgWidth}}px;height:{{item.imgHeight}}px" -->
+                </view>
+                <view class="info">
+                    <view class='discover_name'>{{item.name}}</view>
+                    <view class='origin_price'>原价：¥ {{item.price}} </view>
+                    <!-- <view class='exchange_price'>兑换价：¥{{item.duiPrice}}+{{item.deductionDPoint}}德分</view>
+                    <view class='discount' wx:if="{{getIdentity}}">
+                        <view>省 ¥{{item.point}}</view>
+                        <image src='/images/member.png' />
+                    </view> -->
+                </view>
+            </navigator>
+            
+        </view>
+    </view>
+</template>
+<script>
+import wepy from "wepy";
+
+export default class Discover extends wepy.component {
+  props = {
+    list: []
+  };
+
+  data = {};
+  onLoad() {
+    
+  }
+
+  computed = {
+    getIdentity() {
+      return wx.getStorageSync("userInfo").hasIdentity;
+    }
+  };
+  methods = {};
+}
+</script>
+<style lang="less">
+.discover {
+  text-align: center;
+  font-size: 30rpx;
+  padding: 30rpx 0rpx;
+  position: relative;
+}
+
+.discover_title_doc {
+  display: inline-block;
+  position: relative;
+  z-index: 999;
+  width: 190rpx;
+  background: #f7f7f7;
+}
+
+.discover:before {
+  content: "";
+  height: 1rpx;
+  width: 460rpx;
+  position: absolute;
+  background: #dbdbdb;
+  top: 50rpx;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+}
+
+.discover_list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16rpx;
+  .item {
+    width: 49%;
+    text-align: center;
+    background: #fff;
+    margin-bottom: 15rpx;
+    padding-bottom: 15rpx;
+    .image_wrap {
+      display: flex;
+      align-items: center;
+      height: 352rpx;
+      .discover_img {
+        max-width: 352rpx;
+        max-height: 353rpx;
+        margin: 0 auto;
+      }
+    }
+    .info {
+      padding: 0 15rpx;
+      font-size: 24rpx;
+      text-align: left;
+      .discover_name {
+        width: 90%;
+        height: 50rpx;
+        line-height: 48rpx;
+        padding-left: 15rpx;
+        overflow: hidden;
+        font-size: 24rpx;
+        font-weight: bold;
+        color: #4d4d4d;
+      }
+    }
+    .origin_price {
+      padding-left: 15rpx;
+      font-size: 24rpx;
+      color: rgb(153, 153, 153);
+      border-top: 1rpx dashed rgb(153, 153, 153);
+    }
+    .exchange_price {
+      padding: 7rpx 30rpx 7rpx 15rpx;
+      font-size: 23rpx;
+      color: #333;
+      background: #ffecea;
+      overflow: hidden;
+    }
+    .discount {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      view {
+        padding-left: 15rpx;
+        font-size: 24rpx;
+        color: rgb(232, 56, 32);
+      }
+      image {
+        width: 21rpx;
+        height: 19rpx;
+      }
+    }
+  }
+}
+
+.bc {
+  background: #f7f7f7;
+}
+</style>
