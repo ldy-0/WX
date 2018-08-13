@@ -3,14 +3,24 @@
     <topBar :config='config'></topBar>
 
     <view class='wrap'>
-      <view class='business'>商家信息
+      <view class='business'>
+        <view class='business_name'>小麻巷（江汉北路店）</view>
+        <view class='between'>
+          <view class='business_level'>
+            <businessLevel :level='businessLevel'></businessLevel>
+            <text class='number'>{{businessLevel}}</text>
+          </view>
+          <view class=''>联系电话：027-61811671</view>
+        </view>
         <!-- <map latitude='{{markers[0].latitude}}' longitude='{{markers[0].longitude}}' markers='{{markers}}' scale='14'></map> -->
       </view>
+
       <view class='tab'>
         <repeat for='{{tab}}' item='item' index='index'>
           <view class="tab_item {{item === status}}" @tap='changeStatus({{index}})'>{{item}}</view>
         </repeat>
       </view>
+
       <view class='coupon' wx:if="{{status === tab[0]}}">
         
         <view class='coupon_list'>
@@ -20,7 +30,18 @@
         </view>
 
       </view>
-      <view class='comment' wx:if="{{status === tab[1]}}">评论</view>
+
+      <view class='comment' wx:if="{{status === tab[1]}}">
+        <view>评论</view>
+        
+        <repeat for='{{commentList}}' item='item'>
+          <view class='comment_item'>
+            <view>{{item.name}}</view>
+            <starLevel :level='item.level' :onlySel='onlySel'></starLevel>
+          </view>
+        </repeat>
+
+      </view>
     </view>
   </view>
 </template>
@@ -28,6 +49,7 @@
 import wepy from 'wepy';
 import topBar from '../../components/topBar';
 import coupon from '../../components/coupon';
+import starLevel from '../../components/star';
 
 export default class businessDetail extends wepy.page {
   config = {
@@ -38,6 +60,8 @@ export default class businessDetail extends wepy.page {
   components = {
     topBar,
     coupon,
+    businessLevel: starLevel,
+    starLevel,
   }
 
   data = {
@@ -46,17 +70,22 @@ export default class businessDetail extends wepy.page {
       name: '商家',
       canBack: true,
     },
+    business: {},
+    businessLevel: 4,
+    markers: [],
     tab: ['优惠劵', '用户评论'],
     status: '优惠劵',
     couponList: [
       { id: '123', name: '1', price: 10, }
     ],
     canRedirect: true,
-    markers: [],
+    commentList: [ { name: 'aaa', level: 1, } ],
+    onlySel: true,
   }
 
   onLoad(param){
     console.log(param.id);
+    this.business = { name: '', level: 4, };
     this.markers = [{"id":0,"latitude":30.58145,"longitude":114.21498,"address":"湖北省武汉市硚口区沿河大道518号","desc":"硚口区政府内,武汉市硚口区安监局南107米","business":"韩家墩,宗关,古田","alpha":1}]
   }
 
@@ -73,8 +102,25 @@ page {
   height: 100%;
 }
 
+.between{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .wrap{
-  margin: 150px 0 0;
+  margin: 150rpx 0 0;
+}
+
+.business{
+  font-size: 28rpx;
+  color: #101010;
+  .business_level{
+    display: flex;
+    .number{
+      margin-left: 20rpx;
+    } 
+  }
 }
 
 .tab{

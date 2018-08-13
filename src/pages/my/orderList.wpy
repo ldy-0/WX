@@ -37,10 +37,7 @@
 
 .no_wrap{
   .no{
-    position: absolute;
-    top: 50%;
-    // top: calc(50% - 150rpx);
-    // left: calc(50% - 190rpx);
+    margin: 50% 0 0;
     text-align: center;
     image{
       width: 380rpx;
