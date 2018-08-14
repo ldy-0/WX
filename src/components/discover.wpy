@@ -4,17 +4,16 @@
         <view class="discover_list">
 
             <navigator class="item" wx:for="{{list}}" wx:key="item" url="/pages/food/goodsDetail?id={{item.id}}" >
-                <view class='image_wrap'>
-                    <image class="discover_img" src="{{item.img}}" /> <!-- style="width:{{item.imgWidth}}px;height:{{item.imgHeight}}px" -->
-                </view>
-                <view class="info">
-                    <view class='discover_name'>{{item.name}}</view>
-                    <view class='origin_price'>原价：¥ {{item.price}} </view>
-                    <!-- <view class='exchange_price'>兑换价：¥{{item.duiPrice}}+{{item.deductionDPoint}}德分</view>
-                    <view class='discount' wx:if="{{getIdentity}}">
-                        <view>省 ¥{{item.point}}</view>
-                        <image src='/images/member.png' />
-                    </view> -->
+                <!-- <view class='image_wrap'> -->
+                    <image class="item_img" src="{{item.img}}" /> <!-- style="width:{{item.imgWidth}}px;height:{{item.imgHeight}}px" -->
+                <!-- </view> -->
+                <view class='item_info'>
+                  <view class="info">
+                      <view class='item_name'>{{item.name}}</view>
+                      <view class='item_price'>¥{{item.price}} </view>
+                      <view class='origin_price'>¥{{item.originPrice}}</view>
+                  </view>
+                  <view class='btn'>马上抢</view>
                 </view>
             </navigator>
             
@@ -49,7 +48,7 @@ export default class Discover extends wepy.component {
   padding: 30rpx 0rpx;
   position: relative;
 }
-
+/*
 .discover_title_doc {
   display: inline-block;
   position: relative;
@@ -107,19 +106,6 @@ export default class Discover extends wepy.component {
         color: #4d4d4d;
       }
     }
-    .origin_price {
-      padding-left: 15rpx;
-      font-size: 24rpx;
-      color: rgb(153, 153, 153);
-      border-top: 1rpx dashed rgb(153, 153, 153);
-    }
-    .exchange_price {
-      padding: 7rpx 30rpx 7rpx 15rpx;
-      font-size: 23rpx;
-      color: #333;
-      background: #ffecea;
-      overflow: hidden;
-    }
     .discount {
       display: flex;
       justify-content: space-between;
@@ -135,6 +121,48 @@ export default class Discover extends wepy.component {
       }
     }
   }
+}
+*/
+
+.discover_list{
+  padding: 0 38rpx;
+  .item{
+    .item_img{
+      width: 680rpx;
+      height: 318rpx;
+      background: #ccc;
+    }
+    .item_info{
+      display: flex;
+      justify-content: space-between;
+      .info{
+        display: flex;
+        align-items: center;
+        .item_name{
+          width: 178rpx;
+          margin-right: 30rpx;
+          overflow: hidden;
+        }
+        .item_price{
+          color: #ff5f00;
+          margin-right: 30rpx;
+        }
+        .origin_price{
+          text-decoration: line-through; 
+        }
+      }
+      .btn{
+        width: 174rpx;
+        line-height: 69rpx;
+        margin: 10rpx 0;
+        color: #fff;
+        background: #ff5f00;
+        text-align: center;
+      }
+    }
+
+  }
+
 }
 
 .bc {

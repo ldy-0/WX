@@ -1,9 +1,19 @@
 <template>
   <view class='coupon' @tap="goGoodsDetail({{canRedirect ? coupon.id : ''}})">
-    <view class='coupon_title'>{{coupon.name}}</view>
-    <view>{{canBuy}}</view>
-    <view class='pay_btn no' wx:if='{{canBuy === false}}'>购买</view>
-    <view class='pay_btn' catchtap="goSubmitOrder({{coupon.id}})" wx:else>购买</view>
+    <view class='coupon_info'>
+      <view class='tuan_img'>
+        <image src='' wx:if='{{true}}' />
+      </view>
+      <image class='coupon_img' src='' />
+      <view class='info'>
+        <view class='coupon_title'>{{coupon.name}}</view>
+        <text class='coupon_price'>¥75.00</text>
+        <text class='origin_price'>¥120.00</text>
+      </view>
+    </view>
+    <view class='coupon_sale'>已售3351</view>
+    <view class='pay_btn no' wx:if='{{showBuy && canBuy === false}}'>购买</view>
+    <view class='pay_btn' catchtap="goSubmitOrder({{coupon.id}})" wx:if='{{showBuy && canBuy}}'>购买</view>
   </view>
 </template>
 <script>
@@ -14,6 +24,7 @@ export default class Coupon extends wepy.component {
     coupon: Object,
     canRedirect: Boolean,
     canBuy: Boolean,
+    showBuy: Boolean,
   }
 
   components = {
@@ -52,8 +63,54 @@ export default class Coupon extends wepy.component {
 </script>
 <style lang="css">
 .coupon{
-  height: 100rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 200rpx;
+  padding: 0 20rpx;
+  background: #fff;
+}
+
+.coupon_info{
+  display: flex;
+}
+.tuan_img{
+  width: 50rpx;
+  height: 50rpx;
+  margin-right: 20rpx;
+}
+.tuan_img image{
+  width: 50rpx;
+  height: 50rpx;
   background: #ccc;
+}
+.coupon_img{
+  width: 139rpx;
+  height: 139rpx;
+  margin: 0 27rpx 0 0;
+  border-radius: 10rpx;
+  background: #ccc;
+}
+.coupon_info .info{
+  width: 182rpx;
+}
+
+.coupon_title{
+  margin-bottom: 40rpx;
+  font-size: 34rpx;
+}
+
+.coupon_price{
+  margin-right: 50rpx;
+  font-size: 34rpx;
+  color: #ff9056;
+}
+.origin_price{
+  font-size: 24rpx;
+}
+
+.coupon_sale{
+  font-size: 22rpx; 
 }
 
 .pay_btn{

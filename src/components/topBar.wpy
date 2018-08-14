@@ -79,7 +79,7 @@
 }
   
 .name{
-  font: 200 34rpx MicrosoftYaHei;
+  font: 30rpx 'RTWSYueGoTrial-Regular';
   color: #333;
 }
   

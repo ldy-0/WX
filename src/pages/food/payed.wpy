@@ -1,8 +1,8 @@
 <template>
-  <view class="contianer">
+  <view class="container">
     <topBar :config='config'></topBar>
 
-    <view class='wrap'>微信返回支付完成状态后，跳转去 订单详情页面</view>
+    <view class='wrap'>微信返回支付完成状态后，跳转去订单详情页</view>
   </view>
 </template>
 <script>
@@ -22,7 +22,7 @@ export default class Payed extends wepy.page {
   data = {
     config: {
       isLeft: true,
-      name: '',
+      name: '提交订单',
       canBack: false,
     },
   }
@@ -39,12 +39,15 @@ export default class Payed extends wepy.page {
 
 </script>
 <style lang="less">
-page {
+page, .container{
   width: 100%;
   height: 100%;
 }
 
+
 .wrap{
-  margin: 150rpx 0 0;
+  margin: 50% 0;
+  font: 30rpx 'RTWSYueGoTrial-Regular';
+  text-align: center;
 }
 </style>

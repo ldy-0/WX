@@ -3,10 +3,68 @@
     <topBar :config='config'></topBar>
 
     <view class='wrap'>
-      <view class='business'>商家信息</view>
-      <view class='coupon'>优惠劵
-        <coupon :coupon.sync='coupon' :canRedirect.sync='canRedirect' :canBuy.sync='canBuy'></coupon>
+      <view class='business'>
+        <view class='business_name'>小麻巷（江汉北路店）</view>
+        <image class='business_img' src='' />
+        <view class='goods_name'>情侣价值100元套餐</view>
+        <view class='goods_price'>
+          <text class='price'>¥19</text>
+          <text class='origin'>¥100</text>
+        </view>
+        <view class='goods_row'>
+          <view>到店使用</view>
+          <view>月售1095</view>
+        </view>
       </view>
+
+      <view class='other'>
+        <view class='no_refund'><text class='circle'></text>不可退款</view>
+        <view class='flow'>
+
+          <view class='flow_item'>
+            <image class='' src='' />
+            <view class=''>下单购买</view>
+          </view>
+          <image class='' src='' />
+          <view class='flow_item'>
+            <image src='' />
+            <view>到店消费</view>
+          </view>
+          <image class='' src='' />
+          <view class='flow_item'>
+            <image src='' />
+            <view>商家验证</view>
+          </view>
+        
+        </view>
+      </view>
+
+      <view class='goods_detail'>
+        <view class='detail_title'>商品详情</view>
+        <view class='detail_img'>
+          <repeat for='imgList' item='item'>
+            <image src='' />
+          </repeat>
+        </view>
+      </view>
+      <!-- <view class='coupon'>优惠劵
+        <coupon :coupon.sync='coupon' :canRedirect.sync='canRedirect' :canBuy.sync='canBuy'></coupon>
+      </view> -->
+      <view class='bottom_bar'>
+        <view class='operate'>
+          <view class='item'>
+            <image src='' />
+            <view class=''>首页</view>
+          </view>
+          <view class='item'>
+            <image src='' />
+            <view class=''>客服</view>
+          </view>
+        </view>
+        <view class='btn s-1'>加入购物车</view>
+        <view class='btn s-2' @tap='goSubmitOrder'>立即购买</view>
+      </view>
+
     </view>
   </view>
 </template>
@@ -29,7 +87,7 @@ export default class goodsDetail extends wepy.page {
   data = {
     config: {
       isLeft: true,
-      name: '商家首页',
+      name: '商家详情',
       canBack: true,
     },
     coupon: {},
@@ -43,7 +101,13 @@ export default class goodsDetail extends wepy.page {
   }
 
   methods = {
+    goSubmitOrder(){
 
+      return wx.navigateTo({
+        url: '/pages/food/submitOrder',
+      });
+
+    },
   }
   
 }
@@ -57,5 +121,124 @@ page {
 
 .wrap{
   margin: 150rpx 0 0;
+  font: 30rpx 'RTWSYueGoTrial-Regular';
+  color: #000;
+  background: #f5f5f5;
+  overflow: hidden;
+}
+
+.business{
+  margin: 5rpx 0 2rpx;
+  padding: 0 15rpx 37rpx;
+  background: #fff;
+  .business_name{
+    line-height: 87rpx;
+    font-size: 36rpx;
+    text-align: center;
+  }
+  .business_img{
+    width: 100%;
+    height: 360rpx;
+    background: #ccc;
+  }
+  .goods_name{
+    margin: 20rpx 0 0;
+    font-size: 36rpx;
+  }
+  .goods_price{
+    margin: 37rpx 0 0;
+    font-size: 48rpx;
+    .price{
+      color: #ff5c00;
+    }
+    .origin{
+      margin-left: 54rpx;
+      text-decoration: line-through;
+    }
+  }
+  .goods_row{
+    margin: 80rpx 0 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 24rpx;
+  }
+}
+
+.other{
+  margin-bottom: 5rpx;
+  background: #fff;
+  .no_refund{
+    line-height: 69rpx;
+    padding: 0 22rpx;
+    font-size: 28rpx;
+    .circle{
+      display: inline-block;
+      width: 27rpx;
+      height: 27rpx;
+      margin-right: 15rpx;
+      border-radius: 50%;
+      background: #ff5f00;
+    }
+  }
+ .flow{
+    display: flex;
+    justify-content: space-around;
+    font-size: 28rpx;
+    padding-bottom: 40rpx;
+    .flow_item{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    image{
+      width: 42rpx;
+      height: 42rpx;
+      margin-bottom: 30rpx;
+      background: #ccc;
+    }
+ } 
+}
+
+.goods_detail{
+  padding: 0 20rpx;
+  background: #fff;
+  .detail_title{
+    padding: 30rpx 0;
+    font-size: 28rpx;
+  }
+}
+
+.bottom_bar{
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  .operate{
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    .item{
+      color: #787878;
+      font-size: 22rpx;
+      image{
+        width: 50rpx;
+        height: 45rpx;
+        background: #ccc;
+      }
+    }
+  }
+  .btn{
+    width: 236rpx;
+    line-height: 90rpx;
+    color: #fff;
+    text-align: center;
+  }
+  .s-1{
+    background: #ff5f00;
+  }
+  .s-2{
+    background: #ff3333;
+  }
 }
 </style>
