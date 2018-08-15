@@ -1,19 +1,24 @@
 <template>
-  <view class="contianer">
+  <view class="container">
     <topBar :config='config'></topBar>
 
     <view class='wrap'>
       <view class='business'>
-        <view class='business_name'>小麻巷（江汉北路店）</view>
+        <view class='business_name'>小麻巷（江汉北路店）小麻巷（江汉北路店）小麻巷（江汉北路店）小麻巷（江汉北路店）小麻巷（江汉北路店）</view>
         <view class='between'>
           <view class='business_level'>
-            <businessLevel :level='businessLevel'></businessLevel>
+            <businessLevel :size='businessStarSize' :level='businessLevel'></businessLevel>
             <text class='number'>{{businessLevel}}</text>
           </view>
           <view class='linkPhone'>联系电话：027-61811671</view>
         </view>
         <image class='business_img' src='' />
-        <view class='business_address'>国际企业峰汇A3座（民航大酒店）</view>
+        
+        <view class='business_address_wrap'>
+          <image style='width: 24rpx; height: 30rpx; margin-right: 15rpx; background: #ccc;' src='' />
+          <view class='business_address'>国际企业峰汇A3座（民航大酒店）国际企业峰汇A3座（民航大酒店）国际企业峰汇A3座（民航大酒店）国际企业峰汇A3座（民航大酒店）</view>
+        </view>
+        
         <view class='business_time'>营业时间：09:00-21:00</view>
         <!-- <map latitude='{{markers[0].latitude}}' longitude='{{markers[0].longitude}}' markers='{{markers}}' scale='14'></map> -->
       </view>
@@ -44,10 +49,10 @@
             <view class='comment_info'>
               <view class='row'>
                 <view class='user_name'>{{item.name}}</view>
-                <view class='user_time'>{{item.name}}</view>
+                <view class='user_time'>{{item.level}}</view>
               </view>
               <view style='display: flex;'>
-                <starLevel :level='item.level'></starLevel><text class='s-1'>{{item.level}}</text>
+                <starLevel :size='36' :level='item.level'></starLevel><text class='s-1' style='margin-left: 20rpx;'>{{item.level}}</text>
               </view>
               <view class='comment_content'>味道很正宗，服务态度不错，地好找...</view>
               <view class='comment_img'>
@@ -92,16 +97,17 @@ export default class businessDetail extends wepy.page {
     },
     business: {},
     businessLevel: 4,
+    businessStarSize: 36,
     markers: [],
     tab: [{ name: '优惠劵', img: '../../images/icon_classify.png', selImg: '' }, 
           { name: '商品评价', img: '../../images/icon_alert.png', selImg: '' }, 
     ],
     status: '优惠劵',
     couponList: [
-      { id: '123', name: '1', price: 10, }
+      { id: '123', name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', price: 10, }
     ],
     canRedirect: true,
-    commentList: [ { name: 'aaa', level: 1, } ],
+    commentList: [ { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, } ],
   }
 
   onLoad(param){
@@ -123,10 +129,16 @@ page {
   height: 100%;
 }
 
+.container{
+  font: 30rpx 'RTWSYueGoTrial-Regular';
+  color: #000;
+}
+
 .between{
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin: 10rpx 0 0;
   font-size: 24rpx;
 }
 
@@ -135,7 +147,7 @@ page {
 }
 
 .wrap{
-  margin: 150rpx 0 0;
+  // margin: 150rpx 0 0;
   background: #f5f5f5;
   overflow: hidden;
 }
@@ -144,6 +156,11 @@ page {
   margin: 10rpx 0;
   padding: 26rpx 15rpx 37rpx;
   background: #fff;
+  .business_name, .business_address{
+    height: 38rpx;
+    line-height: 38rpx;
+    overflow: hidden;
+  }
   .business_level{
     display: flex;
     .number{
@@ -155,6 +172,13 @@ page {
     height: 306rpx;
     margin: 20rpx 0 37rpx;
     background: #ccc;
+  }
+  .business_address_wrap{
+    display: flex;
+    align-items: center;
+    .business_address{
+      flex-grow: 1;
+    }
   }
   .business_time{
     margin: 25rpx 0 0;
@@ -195,11 +219,17 @@ page {
     background: #ccc;
   }
   .comment_info{
-    flex-grow: 1;
+    width: 500rpx;
     margin-left: 54rpx;
     .row{
       display: flex;
       justify-content: space-between;
+    }
+    .user_name{
+      width: 250rpx;
+      height: 38rpx;
+      line-height: 38rpx;
+      overflow: hidden;
     }
     .comment_content{
       white-space: nowrap;

@@ -1,12 +1,12 @@
 <template>
-  <view class="contianer">
+  <view class="container">
     <topBar :config='config'></topBar>
 
     <view class='wrap'>
       <view class='business'>
-        <view class='business_name'>小麻巷（江汉北路店）</view>
+        <view class='business_name'>小麻巷ahsfdif世界佛教四大佛教科技发达sjfiojsdfj（江汉北路店）</view>
         <image class='business_img' src='' />
-        <view class='goods_name'>情侣价值100元套餐</view>
+        <view class='goods_name'>情侣价值100元套餐士大夫艰苦福克斯麻烦时间咖啡的苦涩JFKsf</view>
         <view class='goods_price'>
           <text class='price'>¥19</text>
           <text class='origin'>¥100</text>
@@ -120,7 +120,7 @@ page {
 }
 
 .wrap{
-  margin: 150rpx 0 0;
+  // margin: 150rpx 0 0;
   font: 30rpx 'RTWSYueGoTrial-Regular';
   color: #000;
   background: #f5f5f5;
@@ -132,9 +132,11 @@ page {
   padding: 0 15rpx 37rpx;
   background: #fff;
   .business_name{
+    height: 87rpx;
     line-height: 87rpx;
     font-size: 36rpx;
     text-align: center;
+    overflow: hidden;
   }
   .business_img{
     width: 100%;
@@ -143,7 +145,10 @@ page {
   }
   .goods_name{
     margin: 20rpx 0 0;
+    height: 40rpx;
+    line-height: 40rpx;
     font-size: 36rpx;
+    overflow: hidden;
   }
   .goods_price{
     margin: 37rpx 0 0;
@@ -157,7 +162,7 @@ page {
     }
   }
   .goods_row{
-    margin: 80rpx 0 0;
+    margin: 43rpx 0 0;
     display: flex;
     justify-content: space-between;
     font-size: 24rpx;
@@ -213,6 +218,7 @@ page {
   bottom: 0;
   width: 100%;
   display: flex;
+  background: #fff;
   .operate{
     flex-grow: 1;
     display: flex;
@@ -221,6 +227,7 @@ page {
     .item{
       color: #787878;
       font-size: 22rpx;
+      text-align: center;
       image{
         width: 50rpx;
         height: 45rpx;

@@ -5,7 +5,7 @@
 
             <navigator class="item" wx:for="{{list}}" wx:key="item" url="/pages/food/goodsDetail?id={{item.id}}" >
                 <!-- <view class='image_wrap'> -->
-                    <image class="item_img" src="{{item.img}}" /> <!-- style="width:{{item.imgWidth}}px;height:{{item.imgHeight}}px" -->
+                    <image class="item_img" src="{{item.img}}" mode='aspectFill' /> <!-- style="width:{{item.imgWidth}}px;height:{{item.imgHeight}}px" -->
                 <!-- </view> -->
                 <view class='item_info'>
                   <view class="info">
@@ -141,6 +141,7 @@ export default class Discover extends wepy.component {
         .item_name{
           width: 178rpx;
           margin-right: 30rpx;
+          text-overflow: ellipsis;
           overflow: hidden;
         }
         .item_price{

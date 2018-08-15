@@ -3,7 +3,9 @@
     <topBar :config='config'></topBar>
 
     <view class='wrap'>
-      
+
+        <!-- <address></address> -->
+
         <view class='goods'>
           <image class='goods_img' src='' />
           <view class='goods_info'>
@@ -40,6 +42,7 @@
 import wepy from 'wepy';
 import topBar from '../../components/topBar';
 import add from '../../components/number';
+import address from '../../components/address';
 
 export default class submitOrder extends wepy.page {
   config = {
@@ -50,6 +53,7 @@ export default class submitOrder extends wepy.page {
   components = {
     topBar,
     add,
+    address,
   }
 
   data = {

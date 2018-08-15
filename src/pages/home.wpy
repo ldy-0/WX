@@ -27,10 +27,10 @@
 
     <view class='classify_list'>
       <repeat for='{{classifyList}}' item='item'>
-        <view class='classify_item'>
+        <navigator class='classify_item' url='/pages/food/classifyList?name={{item.name}}'>
           <image class='classify_img' src='{{item.img}}' />
           <view class='classify_name'>{{item.name}}</view>
-        </view>
+        </navigator>
       </repeat>
     </view>
 
@@ -362,7 +362,7 @@ export default class Home extends wepy.page {
 }
 
 .secKill{
-  margin: 0rpx 38rpx;
+  margin: 0rpx 38rpx 25rpx;
   .secKill_title{
     font-size: 48rpx;
   }

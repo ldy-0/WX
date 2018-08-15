@@ -24,10 +24,12 @@ export default class extends wepy.app {
       'pages/food/goodsDetail',
       'pages/food/submitOrder',
       'pages/food/payed',
+      'pages/food/classifyList',
       'pages/my/buyMember',
       'pages/my/orderList',
       'pages/my/orderDetail',
       'pages/my/assess',
+      'pages/my/assessList',
     ],
     window: {
       backgroundTextStyle: 'dark',
@@ -56,7 +58,7 @@ export default class extends wepy.app {
       },
         {
         "pagePath": "pages/play",
-        "text": "玩乐",
+        "text": "购物车",
         "iconPath": "images/toolBar/shoppingCart.png",
         "selectedIconPath": "images/toolBar/sel_shoppingCart.png"
       }, {

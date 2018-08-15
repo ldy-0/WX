@@ -1,12 +1,22 @@
 <template>
-  <view class="contianer">
+  <view class="container">
     <topBar :config='config'></topBar>
-
     <view class='wrap'>
-      <view>goods-info</view>
+      <view class='goods_list'>
+        <repeat for='{{goodsList}}' item='item'>
+          <view class='goods_item'>
+            <image class='goods_img' src='' />
+            <view class='goods_info'>
+              <view class='goods_name'>{{item.name}}</view>
+              <view class='goods_time'></view>
+              <view class='goods_price'>123.13</view>
+            </view>
+          </view>
+        </repeat>
+      </view>
 
       <view class='order'>
-        <view class='order_title'>订单信息</view>
+        <view class='order_title'>订单信息<text class='s-1' style='float: right;' wx:if='{{true}}'>已失效</text></view>
 
         <view class='order_content'>
           <view class='order_item'>
@@ -21,21 +31,47 @@
             <view>下单时间</view>
             <view>2018-07-19    15:20</view>
           </view>
-          <view class='order_item'>
+          <view class='order_item' wx:if='{{false}}'>
             <view>数量：</view>
             <view></view>
           </view>
-          <view class='order_item'>
+          <view class='order_item' wx:else>
+            <view style='text-decoration: line-through;'>券码：4894151651513512</view>
+          </view>
+          <view class='order_item' wx:if='{{false}}'>
             <view>总价：</view>
             <view></view>
           </view>
-          
+          <view class='order_item' wx:else>
+            <view>消费金额：</view>
+            <view>¥:12.1</view>
+          </view>
+          <view class='' wx:if='{{true}}'>
+            <view class='assess_btn_wrap'><view class='assess_btn' @tap='goAssess'>去评价</view></view>
+            <view class='assess_desc'>评价有助于商家完善其服务，你也可以取得更好的服务！</view>
+            <view class='phone'>客服电话：10107888</view>
+          </view>
+
         </view>
       </view>
-      
-      <view class='countDown'>距离支付失效：<text>15:00</text></view>
 
-      <view class='btn'>立即付款</view>
+      <view class='other_wrap' wx:if='{{false}}'> 
+        <view class='countDown s-1'>
+          <view wx:if='{{true}}'>距离支付失效：15:00</view>
+        </view>
+
+        <view class='btn'>立即付款</view>
+      </view>
+      <view class='coupon_info' wx:if='{{true}}'>
+        <view class='coupon'>
+          <view class=''>我的券码</view>
+          <view class=''>券码：4894151651513512</view>
+          <image class='qr_img' src='' />
+        </view>
+
+        <view class='phone'>客服电话：10107888</view>  
+      </view>
+
     </view>
   </view>
 </template>
@@ -46,7 +82,7 @@ import topBar from '../../components/topBar';
 export default class Authorize extends wepy.page {
   config = {
     enablePullDownRefresh: false,
-    disableScroll: true,
+    // disableScroll: true,
   }
 
   components = {
@@ -60,6 +96,7 @@ export default class Authorize extends wepy.page {
       canBack: true,
     },
     order: null,
+    goodsList: [ { name: '的是佛教房东房客上课了吗首付贷款买房昆明昆明dfsfk',  } ],
   }
 
   onLoad() {
@@ -71,7 +108,13 @@ export default class Authorize extends wepy.page {
   }
 
   methods = {
+    goAssess(){
 
+      wx.navigateTo({
+        url: '/pages/my/assess?order=' + encodeURIComponent(JSON.stringify(this.order)),
+      });
+
+    },
   }
   
   modifyPhone(phone){
@@ -87,33 +130,125 @@ page {
   height: 100%;
 }
 
+.container{
+  background: #f5f5f5;
+}
+
 .wrap{
-  margin: 150rpx 0 0;
-  font-family: Arial;
-  color: #101010;
+  padding: 0 10rpx;
+  font: 30rpx 'RTWSYueGoTrial-Regular';
+  color: #000;
+}
+
+.goods_list{
+  background: #fff;
+  .goods_item{
+    padding: 15rpx 25rpx;
+    display: flex;
+    .goods_img{
+      width: 215rpx;
+      height: 215rpx;
+      background: #ccc;
+    }
+    .goods_info{
+      width: 210rpx;
+      margin-left: 168rpx;
+      padding: 20rpx 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      .goods_name{
+        height: 38rpx;
+        line-height: 38rpx;
+        overflow: hidden;
+      }
+    }
+  }
 }
 
 .order{
+  margin: 10rpx 0 0;
+  padding: 30rpx 40rpx 60rpx 38rpx;
+  background: #fff;
   .order_title{
     text-align: center;
   }
   .order_content{
-    padding: 0rpx 20rpx;
     font-size: 28rpx;
     .order_item{
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin: 36rpx 0 0;
+    }
+    .assess_btn_wrap{
+      overflow: hidden;
+    }
+    .assess_btn{
+      float: right;
+      width: 158rpx;
+      height: 58rpx;
+      line-height: 58rpx;
+      margin: 90rpx 0 0;
+      border: 1rpx solid #ff5f00;
+      text-align: center;
+    }
+    .assess_desc{
+      margin: 225rpx 0 0;
+      font-size: 24rpx;
+      text-align: center;
+    }
+    .phone{
+      margin: 100rpx 0 0;
+      font-size: 24rpx;
+      text-align: right; 
     }
   }
 }
 
-.btn{
-  width: 150rpx;
-  line-height: 100rpx;
+
+.other_wrap{
+  width: 658rpx;
   margin: 0 auto;
-  border: 1rpx solid #000;
-  border-radius: 4rpx;
-  text-align: center;
+  .countDown{
+    height: 30rpx;
+    margin: 27rpx 0 30rpx;
+    text-align: right;
+  }
+  .btn{
+    width: 658rpx;
+    height: 60rpx;
+    line-height: 60rpx;
+    border: 1rpx solid #000;
+    border-radius: 10rpx;
+    text-align: center;
+  }
+  .canBuy{
+    border: 1rpx solid #ff5f00;
+    color: #ff5f00;
+  }
+}
+
+.coupon_info{
+  margin: 10rpx 0 0;
+  padding: 39rpx 57rpx;
+  background: #fff;
+  .coupon{
+    text-align: center;
+    image{
+      width: 277rpx;
+      height: 279rpx;
+      margin: 60rpx 0 0;
+      background: #ccc;
+    }
+  }
+  .phone{
+    margin: 105rpx 0 0;
+    text-align: right;
+  }
+}
+
+.s-1{
+  color: #ff5f00;
 }
 </style>

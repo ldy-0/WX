@@ -2,18 +2,23 @@
     <view class="container info"> <!-- {{isIos ? 'ios_container' : ''}} -->
         <topBar :config='config'></topBar>
 
-        <view class="header {{isIos ? '' : 'wrap'}}">
+        <view class="header"> <!-- {{isIos ? '' : 'wrap'}} -->
             <image class='bg' src="../images/my/bg.png"></image>
             <view class="header_content">
-                <image class="avatarUrl" src="{{avatarUrl}}"></image>
-                <view class="nickName">
-                    <view>会员ID{{customerNumber}}</view>
-                    <view>{{nickName}}</view>
+                <image class="user_img" src="{{avatarUrl}}"></image>
+                <view class="user_info">
+                    <view class='row'>
+                        <view class='user_name'>会员IDsdfskfjk时间佛山金佛isdfk</view>
+                        <image class='member_img' src='' />
+                        <view class='member_desc'>付费会员</view>
+                    </view>
+                    <view class='more_info'>个人信息 ></view>
                 </view>
             </view>
+            <image class='setting' />
         </view>
         
-        <view class="info_block">
+        <!--<view class="info_block">
             <navigator class="item" url="./my/orderList">
                 <view class="item_content">
                     <image class="item_img orderImg" src="../images/my/order.png"></image>
@@ -60,14 +65,32 @@
                     </navigator>
                 </view>
             </navigator>
-        </view>
+        </view> -->
         <view class="info_block">
             <navigator class="item" url="/pages/addressList">
                 <view class="item_content">
                     <view class='box'>
                         <image class="item_img address_img" src='../images/my/address.png'></image>
                     </view>
-                    <view class="text">地址管理</view>
+                    <view class="text">优惠劵</view>
+                </view>
+                <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
+            </navigator>
+            <navigator class="item" url="/pages/my/orderList">
+                <view class="item_content">
+                    <view class='box'>
+                        <image class="item_img address_img" src='../images/my/address.png'></image>
+                    </view>
+                    <view class="text">我的订单</view>
+                </view>
+                <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
+            </navigator>
+            <navigator class="item" url="/pages/my/assessList">
+                <view class="item_content">
+                    <view class='box'>
+                        <image class="item_img achievement_img" src="../images/my/achievement.png"></image>
+                    </view>
+                    <view class="text">我的评价</view>
                 </view>
                 <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
             </navigator>
@@ -80,21 +103,12 @@
                 </view>
                 <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
             </navigator>
-            <navigator class="item" url="/pages/my/achievement" wx:if="{{getUser}}">
-                <view class="item_content">
-                    <view class='box'>
-                        <image class="item_img achievement_img" src="../images/my/achievement.png"></image>
-                    </view>
-                    <view class="text">我的业绩</view>
-                </view>
-                <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
-            </navigator>
             <navigator class="item no_border" url="/pages/my/help">
                 <view class="item_content">
                     <view class='box'>
                         <image class="item_img help_img" src="../images/my/help.png"></image>
                     </view>
-                    <view class="text">帮助中心</view>
+                    <view class="text">帮助与反馈</view>
                 </view>
                 <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
             </navigator>
@@ -125,9 +139,9 @@
 
         data = {
             config: {
-                name: '我的',
+                name: '我的主页',
                 canBack: false,
-                bg: '#f5f5f5',
+                bg: '#fff',
             },
             detail: {},
             avatarUrl: "",
@@ -252,49 +266,79 @@
 </script>
 <style lang="less">
     .container{
+        font: 30rpx 'RTWSYueGoTrial-Regular';
+        color: #000;
         background: #fff;
-    }
-
-    .wrap{
-        margin: 50rpx 0 0;
     }
 
     .header{
-        box-sizing: border-box;
-        padding: 30rpx 34rpx 0;
-        background: #fff;
+        position: relative;
         .bg{
-            width: 678rpx;
-            height: 273rpx;
+            width: 100%;
+            height: 311rpx;
+            background: #ccc;
         }
     }
 
     .header_content {
         position: absolute;
-        top: 220rpx;
+        top: 27rpx;
+        left: 63rpx;
         display: flex;
         align-items: center;
-        .avatarUrl {
-            width: 122rpx;
-            height: 122rpx;
-            margin: 0 30rpx;
+        .user_img{
+            width: 150rpx;
+            height: 150rpx;
+            margin-right: 40rpx;
             border-radius: 50%;
+            background: #ccc;
         }
-        .nickName {
-            view{
-                font-size: 36rpx;
+        .user_info{
+            .row{
+                display: flex;
+                align-items: center;
+            }
+            .user_name{
+                width: 150rpx;
+                height: 38rpx;
+                line-height: 38rpx;
+                color: #fff;
+                overflow: hidden;
+            }
+            .member_img{
+                width: 32rpx;
+                height: 27rpx;
+                margin-right: 10rpx;
+                background: #ccc;
+            }
+            .member_desc{
+                font-size: 24rpx;
+                color: #ff5f00;
+            }
+            .more_info{
+                margin: 10rpx 0 0;
+                font-size: 24rpx;
                 color: #fff;
             }
         }
     }
 
+    .setting{
+        position: absolute;
+        top: 17rpx;
+        right: 22rpx;
+        width: 35rpx;
+        height: 35rpx;
+        background: #ccc;
+    }
+
     .info_block {
+        margin: 10rpx 0 0;
         background: #fff;
         .item {
             border-bottom: 1rpx solid rgba(216, 216, 216, 0.3);
             background: #fff;
-            margin: 0 30rpx;
-            padding: 30rpx 28rpx;
+            padding: 30rpx 28rpx 30rpx 39rpx;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -318,13 +362,12 @@
                 font-size: 28rpx;
                 color: #808080;
             }
-            
         }
         .img-box{
             width:auto;
             height:71rpx;
-            text-align:center;
             line-height:71rpx;
+            text-align:center;
         }
         .achievement_img,.icon_img{
             width: 35rpx;

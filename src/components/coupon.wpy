@@ -91,13 +91,13 @@ export default class Coupon extends wepy.component {
   border-radius: 10rpx;
   background: #ccc;
 }
-.coupon_info .info{
-  width: 182rpx;
-}
-
 .coupon_title{
   margin-bottom: 40rpx;
+  width: 372rpx;
+  height: 40rpx;
+  line-height: 40rpx;
   font-size: 34rpx;
+  overflow: hidden;
 }
 
 .coupon_price{

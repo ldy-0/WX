@@ -1,7 +1,7 @@
 <template>
   <view class="authorize-contianer">
     <topBar :config='config'></topBar>
-    <image class='bg' src='../images/authorize_bg_629.png' mode='aspectFit' />
+    <image class='bg' src='' mode='aspectFit' /> <!-- '../images/authorize_bg_629.png' -->
     <view class='btn_wrap'>
       <view class='btn'>
         <button open-type="getUserInfo" plain=true lang="zh_CN" bindgetuserinfo="onGotUserInfo">
@@ -42,7 +42,7 @@ export default class Authorize extends wepy.page {
 
   data = {
     config: {
-      isLeft: true,
+      isLeft: false,
       name: '电小乐',
       canBack: false,
     },
@@ -130,7 +130,8 @@ page {
   .bg {
     width: 100%;
     height: 100%;
-    background: linear-gradient(#e73921, #eb551d); //#e6002d #e8441e #fc4f20
+    background: #ff5f00;
+    // background: linear-gradient(#e73921, #eb551d); //#e6002d #e8441e #fc4f20
   }
   .btn_wrap {
     position: absolute;
@@ -160,8 +161,8 @@ page {
           height: 49rpx;
           margin-right: 26rpx;
         }
-        view{
-          color: #fc4f20;
+        .text{
+          color: #ff5f00;
         }
       }
     }
