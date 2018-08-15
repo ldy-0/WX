@@ -3,10 +3,11 @@ import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 // import { MessageBox } from 'element-ui'
-
+console.log("request")
 // create an axios instance
 const service = axios.create({
   // withCredentials:true,
+  // baseURL: window.api, // api的base_url
   baseURL: process.env.BASE_API, // api的base_url
   // baseURL: 'https://www.njjncm.com/', // api的base_url
   // baseURL: 'http://203.195.203.67/', // api的base_url
