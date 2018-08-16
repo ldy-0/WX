@@ -1,8 +1,14 @@
 <template>
   <view class='star'>
       <repeat for='{{5}}' index='index'>
-          <image style='width: {{size}}rpx; height: {{size}}rpx;' src='../../images/normal.png' @tap="click({{canModify ? index : -1}})" wx:if='{{!onlySel && index + 1 > level}}' />
-          <image style='width: {{size}}rpx; height: {{size}}rpx;' class='star_img' src='../../images/selected.png' @tap="click({{canModify ? index : -1}})" wx:if='{{index + 1 <= level}}' />
+          <image style='width: {{size || config.size}}rpx; height: {{size || config.size}}rpx;' 
+		 src='../../images/normal.png' 
+		 @tap="click({{config.canModify ? index : -1}})" 
+		 wx:if='{{!config.onlySel && index + 1 > (level || config.level)}}' />
+          <image style='width: {{size || config.size}}rpx; height: {{size || config.size}}rpx;' class='star_img' 
+		 src='../../images/selected.png' 
+		 @tap="click({{config.canModify ? index : -1}})" 
+		 wx:if='{{index + 1 <= (level || config.level)}}' />
           <!-- <text>{{showAll}}</text> -->
       </repeat>
   </view>
@@ -12,6 +18,7 @@ import wepy from 'wepy';
 
 export default class StarLevel extends wepy.component {
   props = {
+    config: Object,
     level: Number,
     size: Number,
     canModify: Boolean,

@@ -131,6 +131,7 @@
     export default class Index extends wepy.page {
         config = {
             enablePullDownRefresh: false,
+            disableScroll: true,
         }
 
         components = {

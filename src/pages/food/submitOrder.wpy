@@ -9,15 +9,15 @@
         <view class='goods'>
           <image class='goods_img' src='' />
           <view class='goods_info'>
-            <view class='goods_name'>单人套餐优惠券</view>
+            <view class='goods_name'>单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券</view>
             <view class='s-1'>¥21.7</view>
           </view>
         </view>
 
         <view class='row'>
           <view class='number_wrap'>
-            <view>数量</view>
-            <add :number.sync='number' @change.user='changeNumber'></add>
+            <view style='margin-right: 25rpx;'>数量</view>
+            <add :config.sync='numberConfig' @change.user='changeNumber'></add>
           </view>
           <view class='sum_wrap'>
             <text class='sum_title'>总价</text>
@@ -62,17 +62,22 @@ export default class submitOrder extends wepy.page {
       name: '提交订单',
       canBack: true,
     },
-    number: null, // number
-    max: 1, // number
+    numberConfig: {
+      number: 1,
+      max: 1,
+      hasBorder: true,
+    },
   }
 
   onLoad() {
-    this.number = 1;
+    this.numberConfig.number = 1;
   }
 
   methods = {
     changeNumber(){
-      console.log('-----change Number----', this.number);
+      let number = this.numberConfig.number;
+
+      console.log('-----change Number----', number, this.numberConfig.number);
       
     },
     submitOrder(){
@@ -119,6 +124,12 @@ page {
     justify-content: space-between;
     width: 427rpx;
     margin-left: 24rpx;
+    .goods_name{
+      width: 300rpx;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
   }
 }
 
@@ -147,8 +158,10 @@ page {
   align-items: center;
   .buy_btn{
     width: 159rpx;
+    height: 58rpx;
     line-height: 58rpx;
     border: 1rpx solid #cdcdcd;
+    border-radius: 10rpx;
     text-align: center;
   }
 }

@@ -5,7 +5,7 @@
     <view class='wrap '>
       <view class='assess'>
         <view class='level'>
-          <star :size='starSize' :level.sync='level' :canModify='canModify'></star>
+          <star :level.sync='level' :config.sync='starConfig'></star>
           <text class='level_desc'>{{level}}</text>
         </view>
 
@@ -49,9 +49,12 @@ export default class Authorize extends wepy.page {
       name: '',
       canBack: true,
     },
+    starConfig: {
+      level: 0,
+      size: 48,
+      canModify: true,
+    },
     level: 0,
-    starSize: 48,
-    canModify: true,
   }
 
   onLoad(params) {

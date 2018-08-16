@@ -7,8 +7,9 @@
         <view class='business_name'>小麻巷（江汉北路店）小麻巷（江汉北路店）小麻巷（江汉北路店）小麻巷（江汉北路店）小麻巷（江汉北路店）</view>
         <view class='between'>
           <view class='business_level'>
-            <businessLevel :size='businessStarSize' :level='businessLevel'></businessLevel>
-            <text class='number'>{{businessLevel}}</text>
+            <text class='number'>人气{{businessLevelConfig.level}}</text>
+            <businessLevel :config.sync='businessLevelConfig'></businessLevel>
+            <!-- <text class='number'>{{businessLevelConfig.level}}</text> -->
           </view>
           <view class='linkPhone'>联系电话：027-61811671</view>
         </view>
@@ -96,8 +97,10 @@ export default class businessDetail extends wepy.page {
       canBack: true,
     },
     business: {},
-    businessLevel: 4,
-    businessStarSize: 36,
+    businessLevelConfig: {
+      level: 4,
+      size: 36,
+    },
     markers: [],
     tab: [{ name: '优惠劵', img: '../../images/icon_classify.png', selImg: '' }, 
           { name: '商品评价', img: '../../images/icon_alert.png', selImg: '' }, 
@@ -113,6 +116,7 @@ export default class businessDetail extends wepy.page {
   onLoad(param){
     console.log(param.id);
     this.business = { name: '', level: 4, };
+    this.businessLevelConfig.level = 3;
     this.markers = [{"id":0,"latitude":30.58145,"longitude":114.21498,"address":"湖北省武汉市硚口区沿河大道518号","desc":"硚口区政府内,武汉市硚口区安监局南107米","business":"韩家墩,宗关,古田","alpha":1}]
   }
 
@@ -163,8 +167,10 @@ page {
   }
   .business_level{
     display: flex;
+    align-items: center;
     .number{
-      margin-left: 20rpx;
+      // margin-left: 20rpx;
+      color: #ff5f00;
     } 
   }
   .business_img{
@@ -237,6 +243,7 @@ page {
       overflow: hidden;
     }
     .comment_img{
+      margin: 20rpx 0 0;
       display: flex;
       justify-content: space-between;
       image{

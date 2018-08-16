@@ -23,7 +23,7 @@ export default class Payed extends wepy.page {
     config: {
       isLeft: true,
       name: '提交订单',
-      canBack: false,
+      canBack: true,
     },
   }
 
@@ -44,10 +44,17 @@ page, .container{
   height: 100%;
 }
 
+.container{
+  font: 30rpx 'RTWSYueGoTrial-Regular';
+}
 
 .wrap{
-  margin: 50% 0;
-  font: 30rpx 'RTWSYueGoTrial-Regular';
+  // margin: 50% 0;
+  width: 100%;
+  height: 100%;
+  margin: 10rpx 0 0;
+  padding-top: 400rpx;
+  background: #fff;
   text-align: center;
 }
 </style>
