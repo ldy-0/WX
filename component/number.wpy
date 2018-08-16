@@ -1,8 +1,12 @@
 <template>
     <view class='number_wrap'>
-      <view class='minus' @tap='minus'>-<image class='icon_minus' src='' /></view>
-      <view class='number'>{{number}}</view>
-      <view class='add' @tap='add'>+<image class='icon_add' src='' /></view>
+      <view class="minus {{config.hasBorder ? 'minus_border' : ''}}" @tap='minus'>-
+        <!-- <image class='icon_minus' src='' /> -->
+      </view>
+      <view class="number {{config.hasBorder ? 'number_border' : ''}}">{{config.number}}</view>
+      <view class="add {{config.hasBorder ? 'add_border' : ''}}" @tap='add'>+
+        <!-- <image class='icon_add' src='' /> -->
+      </view>
     </view>
 </template>
 <script>
@@ -10,8 +14,10 @@ import wepy from 'wepy';
 
 export default class Number extends wepy.component {
   props = {
+    config: Object,
     number: Number,
     max: Number,
+    hasBorder: Boolean,
   }
 
   components = {
@@ -29,13 +35,13 @@ export default class Number extends wepy.component {
     minus(){
       const parent = this.$parent;
 
-      parent.number <= 1 ? wx.showModal({ title: '提示', content: '数量最小为1', showCancel: false, }) : parent.number--;
+      parent.numberConfig.number <= 1 ? wx.showModal({ title: '提示', content: '数量最小为1', showCancel: false, }) : parent.numberConfig.number--;
       parent.$apply();
 
       this.$emit('change');
     },
     add(){
-      this.$parent.number++;
+      this.$parent.numberConfig.number++;
       this.$parent.$apply();
 
       this.$emit('change');
@@ -50,12 +56,41 @@ export default class Number extends wepy.component {
   display: flex;
   line-height: 50rpx;
   text-align: center;
+  background: #fff;
+  text-align: center;
 }
 .minus, .add{
   margin: 0 18rpx;
   font-size: 48rpx;
+  font-weight: bold;
   color: #959595;
 }
+.number{
+  padding: 7rpx 21rpx;
+  color: #333;
+}
+.minus_border, .add_border{
+  width: 60rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  margin: 0;
+  border: 1rpx solid #cdcdcd;
+}
+.minus_border{
+  border-radius: 10rpx 0 0 10rpx; 
+}
+.add_border{
+  border-radius: 0rpx 10rpx 10rpx 0rpx; 
+}
+.number_border{
+  width: 100rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  padding: 0;
+  border-top: 1rpx solid #cdcdcd; 
+  border-bottom: 1rpx solid #cdcdcd;
+}
+
 .icon_minus{
   width: 19rpx;
   height: 2rpx;
@@ -63,11 +98,5 @@ export default class Number extends wepy.component {
 .icon_add{
   width: 20rpx;
   height: 20rpx;
-}
-.number{
-  margin: 0 8rpx;
-  padding: 7rpx 21rpx;
-  color: #333;
-  background: #E5E5E5;
 }
 </style>

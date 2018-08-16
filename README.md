@@ -15,6 +15,8 @@
   `level`: Number 评价等级
   `canModify`: Boolean 是否可以修改
   `onlySel`: Boolean 是否只显示评价等级对应的星
+config：Object 配置对象
+level为0时，需要设置config.level也为0.
   + number
 
 ## 获取/Get 
