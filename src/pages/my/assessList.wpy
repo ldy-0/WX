@@ -1,0 +1,126 @@
+<template>
+  <view class="container">
+    <topBar :config='config'></topBar>
+
+    <view class='wrap assess'>
+
+      <repeat for='{{commentList}}' item='item'>
+        <view class='comment_item'>
+          <image class='user_img' src='' />
+          
+          <view class='comment_info'>
+            <view class='row'>
+              <view class='user_name'>{{item.name}}</view>
+              <view class='user_time'>{{item.level}}</view>
+            </view>
+            <view style='display: flex;'>
+              <star :size='36' :level='item.level'></star><text class='s-1' style='margin-left: 20rpx;'>{{item.level}}</text>
+            </view>
+            <view class='comment_content'>味道很正宗，服务态度不错，地好找...</view>
+            <view class='comment_img'>
+              <repeat for='{{3}}' item='item'>
+                <image src='' />
+              </repeat>
+            </view>
+          </view>
+          
+
+        </view>
+      </repeat>
+      
+
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import topBar from '../../components/topBar';
+import star from '../../components/star';
+
+export default class Authorize extends wepy.page {
+  config = {
+    enablePullDownRefresh: false,
+    // disableScroll: true,
+  }
+
+  components = {
+    topBar,
+    star,
+  }
+
+  data = {
+    config: {
+      isLeft: true,
+      name: '商品评价',
+      canBack: true,
+    },
+    commentList: [  { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 3, }, { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, }],
+  }
+
+  onLoad() {
+    
+  }
+
+  methods = {
+
+  }
+  
+}
+
+</script>
+<style lang="less">
+page {
+  width: 100%;
+  height: 100%;
+}
+
+.container{
+  background: #f5f5f5;
+}
+
+.s-1{
+  color: #ff5c00;
+}
+
+.comment_item{
+  margin: 6rpx 0;
+  padding: 26rpx 18rpx 55rpx 35rpx;
+  display: flex;
+  justify-content: space-between;
+  background: #fff;
+  .user_img{
+    width: 177rpx;
+    height: 177rpx;
+    background: #ccc;
+  }
+  .comment_info{
+    width: 500rpx;
+    margin-left: 54rpx;
+    .row{
+      display: flex;
+      justify-content: space-between;
+    }
+    .user_name{
+      width: 250rpx;
+      height: 38rpx;
+      line-height: 38rpx;
+      overflow: hidden;
+    }
+    .comment_content{
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    .comment_img{
+      margin: 20rpx 0 0;
+      display: flex;
+      justify-content: space-between;
+      image{
+        width: 152rpx;
+        height: 105rpx;
+        background: #ccc;
+      }
+    }
+  }
+}
+</style>

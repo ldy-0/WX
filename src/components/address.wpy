@@ -1,0 +1,57 @@
+<template>
+    <view class='address_info'>
+      <view class='address_row'>
+        <view class='user_name'>ajsdfjkdsmkmf可是对方开始疯狂的疯狂时代可适当放宽麻烦vsf</view>
+        <view class='user_phone'>12938548</view>
+      </view>
+      <view class='address_detail'>ajsdfjjkdsmfk是肯定没法肯定是免费v肯定是免费v看完可是每当非常陌生地方什么地方sdf</view>
+    </view>
+</template>
+<script>
+import wepy from 'wepy';
+
+export default class Number extends wepy.component {
+  props = {
+    number: Number,
+    max: Number,
+  }
+
+  components = {
+  }
+
+  data = {
+
+  }
+
+  onLoad() {
+  
+  }
+
+  methods = {
+
+  }
+  
+}
+
+</script>
+<style lang="css">
+.address_info{
+  padding: 30rpx;    
+}
+
+.address_row{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user_name, .address_detail{
+  height: 38rpx;
+  line-height: 38rpx;
+  overflow: hidden;
+}
+
+.address_detail{
+  margin: 30rpx 0 0;
+}
+</style>

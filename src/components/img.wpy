@@ -1,0 +1,91 @@
+<template>
+    <view class='img_wrap'>
+        <repeat for='{{size || 3}}' item='item' index='index'>
+            <image class='box' src='{{imgList[index]}}' @tap='chooseImg({{index}})' wx:if='{{imgList[index]}}' />
+            <view class='box' @tap='chooseImg({{index}})' wx:else>+</view>
+        </repeat>
+    </view>
+</template>
+<script>
+import wepy from 'wepy';
+
+export default class Img extends wepy.component {
+  props = {
+    size: Number,
+  }
+
+  components = {
+  }
+
+  data = {
+    imgList: [],
+    uploadNumber: 0, // 上传数量
+  }
+
+  onLoad() {
+  
+  }
+
+  methods = {
+    chooseImg(index){
+      
+      wx.chooseImage({
+        count: 1, 
+        sizeType: ['original', 'compressed'], 
+        sourceType: ['album', 'camera'],
+        success:res => {
+          let tempPath = res.tempFilePaths[0];
+          this.imgList[index] = tempPath;
+          this.$apply();
+
+          // this.uploadImg('https://www.hi-zhan.com', {
+          //   filePath: tempPath,
+          // });
+        }
+
+      });
+
+    },
+
+  }
+
+  async uploadImg(url, params){
+
+    return new Promise((resolve, reject) => {
+      let option = {
+        url,
+        filePath: params.filePath,
+        name: 'img', 
+        success(res){
+          console.log(res);
+          resolve(res);
+        },
+        fail(err){
+          wx.showModal({ title: JSON.Stringify(err), });
+        },
+      };
+
+      wx.uploadFile(option);
+    });
+  }
+  
+}
+
+</script>
+<style lang="css">
+  .img_wrap{
+    display: flex;
+    align-items: center;
+  }
+
+  .box{
+    width: 200rpx;
+    height: 200rpx;
+    line-height: 200rpx;
+    margin-right: 20rpx;
+    border: 1rpx solid #000;
+    font-size: 48rpx;
+    font-weight: bold;
+    text-align: center;
+  }
+</style>

@@ -1,0 +1,34 @@
+<template>
+    <view class='number_wrap'>
+    </view>
+</template>
+<script>
+import wepy from 'wepy';
+
+export default class Number extends wepy.component {
+  props = {
+    number: Number,
+    max: Number,
+  }
+
+  components = {
+  }
+
+  data = {
+
+  }
+
+  onLoad() {
+  
+  }
+
+  methods = {
+    
+  }
+  
+}
+
+</script>
+<style lang="css">
+
+</style>

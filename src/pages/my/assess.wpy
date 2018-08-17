@@ -9,11 +9,12 @@
           <text class='level_desc'>{{level}}</text>
         </view>
 
-        <view class='imgs_wrap'>
+        <img :size='imgNumber'></img>
+        <!-- <view class='imgs_wrap'>
           <repeat for='{{3}}' item='item'>
             <image src='' />
           </repeat>
-        </view>
+        </view> -->
 
         <view class='assess_info'>
           <textarea maxlength='50'></textarea>
@@ -31,6 +32,7 @@
 import wepy from 'wepy';
 import topBar from '../../components/topBar';
 import star from '../../components/star';
+import img from '../../components/img';
 
 export default class Authorize extends wepy.page {
   config = {
@@ -41,6 +43,7 @@ export default class Authorize extends wepy.page {
   components = {
     topBar,
     star,
+    img,
   }
 
   data = {
@@ -55,6 +58,7 @@ export default class Authorize extends wepy.page {
       canModify: true,
     },
     level: 0,
+    imgNumber: 2,
   }
 
   onLoad(params) {

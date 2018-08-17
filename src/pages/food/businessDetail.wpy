@@ -57,8 +57,8 @@
               </view>
               <view class='comment_content'>味道很正宗，服务态度不错，地好找...</view>
               <view class='comment_img'>
-                <repeat for='{{3}}' item='item'>
-                  <image src='' />
+                <repeat for='{{item.imgs}}' item='item'>
+                  <image src='{{item}}' @tap='previewImg({{item}})' />
                 </repeat>
               </view>
             </view>
@@ -76,6 +76,7 @@ import wepy from 'wepy';
 import topBar from '../../components/topBar';
 import coupon from '../../components/coupon';
 import starLevel from '../../components/star';
+import comment from '../../components/comment_item';
 
 export default class businessDetail extends wepy.page {
   config = {
@@ -88,6 +89,7 @@ export default class businessDetail extends wepy.page {
     coupon,
     businessLevel: starLevel,
     starLevel,
+    comment,
   }
 
   data = {
@@ -110,7 +112,7 @@ export default class businessDetail extends wepy.page {
       { id: '123', name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', price: 10, }
     ],
     canRedirect: true,
-    commentList: [ { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, } ],
+    commentList: [ { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, imgs: [ 'http://qiniures.51shop.mobi/FmwPMX290iYB6zh97InanSKkFzzh?imageView2/2/w/640/q/100/@w/$w$@/@h/$h$@', ], } ],
   }
 
   onLoad(param){
@@ -122,6 +124,16 @@ export default class businessDetail extends wepy.page {
 
   methods = {
     changeStatus: index => this.status = this.tab[index].name,
+    previewImg(url){
+
+      wx.previewImage({
+        current: url,
+        urls: [url],
+        success: () => console.log('success'),
+        fail: () => console.log('fail') 
+      });
+
+    },
   }
   
 }
