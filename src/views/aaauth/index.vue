@@ -90,14 +90,14 @@
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
-      <el-table-column 
+      <!-- <el-table-column 
         label="代理"
         >
         <template slot-scope="scope">
           <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('agent')!==-1)" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column 
         label="权限管理"
         >
@@ -181,10 +181,10 @@ export default {
             label:'manage',
             text:'运营管理'
           },
-          {
-            label:'agent',
-            text:'代理'
-          },
+          // {
+          //   label:'agent',
+          //   text:'代理'
+          // },
           {
             label:'auth',
             text:'授权管理'
