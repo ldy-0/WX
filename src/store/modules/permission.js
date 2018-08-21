@@ -48,7 +48,20 @@ const permission = {
         const { roles } = data
         let accessedRouters = []
         //平台管理员
-        if (roles.indexOf('admin') >= 0) {
+        if (roles.indexOf('agentAdmin') >= 0) {
+          let tempIndex = -1
+          asyncRouterMapAdmin.forEach(function(item,index){
+            if(item.path==="/agent"){
+              tempIndex = index
+              return false
+            }
+          })
+          if(tempIndex>-1){
+            asyncRouterMapAdmin.splice(tempIndex,1)
+          }
+          accessedRouters = asyncRouterMapAdmin
+        } 
+        else if (roles.indexOf('admin') >= 0) {
           accessedRouters = asyncRouterMapAdmin
         } 
         else if(roles.indexOf('admin2') >= 0){

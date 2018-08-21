@@ -108,6 +108,18 @@ export let asyncRouterMapAdmin = [
     ]
   },
   {
+    path: '/agent',
+    component: Layout,
+    redirect: '/agent/index',
+    meta: { roles:['agent']},
+    children: [{
+      path: 'index',
+      component: () => import('@/views/aaagent/index'),
+      name: 'agent',
+      meta: { title: 'agent', icon: 'notice' ,roles:['agent']}
+    }]
+  },
+  {
     path: '/auth',
     component: Layout,
     redirect: '/auth/index',

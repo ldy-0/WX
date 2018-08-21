@@ -13,13 +13,16 @@
 <template>
 <div>
 <el-dialog
-  :title="isAddItem?'新增管理员':'编辑管理员'"
+  :title="isAddItem?'新增代理':'编辑代理'"
   :visible.sync="addNewShow"
   width="30%"
   >
   <el-form :model="formForNotive"  ref="ruleForm" :rules="rules" >
     <el-form-item label="姓名" :label-width="formLabelWidth"  prop="username">
       <el-input v-model="formForNotive.username" auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="手机号" :label-width="formLabelWidth"  prop="tel">
+      <el-input v-model="formForNotive.tel" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item label="账号" :label-width="formLabelWidth" prop="account">
       <el-input v-model="formForNotive.account" 
@@ -29,11 +32,7 @@
       <el-input v-model="formForNotive.password" auto-complete="off" 
       :placeholder="(!isAddItem)&&'此处可修改密码'"></el-input>
     </el-form-item>
-    <el-form-item label="授予权限" v-if="!isAddItem" :label-width="formLabelWidth" >
-      <el-checkbox-group v-model="formForNotive.checkboxGroup1">
-      <el-checkbox-button v-for="(item,index) of rolesList" :label="item.label" :key="index">{{item.text}}</el-checkbox-button>
-    </el-checkbox-group>
-    </el-form-item>
+    
   </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="addNewShow=false" >取消</el-button>
@@ -49,7 +48,7 @@
 <el-header class="header">
 <el-form :inline="true" :model="formInline" class="form">
   <el-form-item>
-    <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增管理员</el-button>
+    <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增代理</el-button>
   </el-form-item>
 </el-form>       
 </el-header>
@@ -65,46 +64,10 @@
         >
       </el-table-column>
       <!-- icon测试 -->
-      
       <el-table-column 
-        label="公告"
+        label="手机号" 
+        prop="tel"
         >
-        <template slot-scope="scope">
-          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('affiche')!==-1)" class="el-icon-check big-icon"></i>
-          <i v-else class="el-icon-close big-icon-no"></i>
-        </template>
-      </el-table-column>
-      <el-table-column 
-        label="店铺管理"
-        >
-        <template slot-scope="scope">
-          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('store')!==-1)" class="el-icon-check big-icon"></i>
-          <i v-else class="el-icon-close big-icon-no"></i>
-        </template>
-      </el-table-column>
-      <el-table-column 
-        label="运营管理"
-        >
-        <template slot-scope="scope">
-          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('manage')!==-1)" class="el-icon-check big-icon"></i>
-          <i v-else class="el-icon-close big-icon-no"></i>
-        </template>
-      </el-table-column>
-      <el-table-column 
-        label="代理"
-        >
-        <template slot-scope="scope">
-          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('agent')!==-1)" class="el-icon-check big-icon"></i>
-          <i v-else class="el-icon-close big-icon-no"></i>
-        </template>
-      </el-table-column>
-      <el-table-column 
-        label="权限管理"
-        >
-        <template slot-scope="scope">
-          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('auth')!==-1)" class="el-icon-check big-icon"></i>
-          <i v-else class="el-icon-close big-icon-no"></i>
-        </template>
       </el-table-column>
       <el-table-column 
         label="账号" 
@@ -112,11 +75,11 @@
         >
       </el-table-column>
       <el-table-column 
-        label="超级管理员" 
+        label="是否禁用" 
         prop="super"
         >
         <template slot-scope="scope">
-          <el-tag size="medium" :type="scope.row.super?'':'info'">{{ scope.row.super?'是':'否'}}</el-tag>
+          <el-tag size="medium" :type="scope.row.super?'warning':'info'">{{ scope.row.super?'是':'否'}}</el-tag>
         </template>
       </el-table-column>
       <!-- <el-table-column 
@@ -130,8 +93,9 @@
         <template slot-scope="scope">
         <el-button
           size="mini" 
-          type="primary" 
-          @click="editItem(scope.$index, scope.row)">编辑</el-button>
+          :type="scope.row.super?'':'warning'" 
+          @click="editItem(scope.$index, scope.row)">
+          {{ scope.row.super?'解禁':'禁用'}}</el-button>
         <el-button
           size="mini" 
           type="danger" 
@@ -149,18 +113,32 @@
 </template>
 <script>
 
-import {getAuthList_api,deleteAuth_api,addAuth_api,editAuth_api} from '@/api/admin' 
+import {getAgentList_api,addAgent_api,editAgent_api,deleteAgent_api} from '@/api/admin' 
 const formForNotive = { //此页面 静态数据
   username:"",
   account:"",
   password:"",
-  checkboxGroup1:[]
+  tel:""
 }
 export default {
   created(){
     this.getList()
   },
   data() {
+    var checkTel = (rule, value, callback) => {
+        if (!value) {
+          return callback(new Error('电话不能为空'));
+        }
+        if (!Number.isInteger(Number(value))) {
+          callback(new Error('请输入数字值'));
+        } else {
+          if (value.length===11&&/(1[0-9][0-9]{9})/.test(value)) {
+            callback();
+          } else {
+            callback(new Error('请输入正确的手机号码'));
+          }
+        }
+    };
     return {
       //out
         //状态层
@@ -182,10 +160,6 @@ export default {
             text:'运营管理'
           },
           {
-            label:'agent',
-            text:'代理'
-          },
-          {
             label:'auth',
             text:'授权管理'
           },
@@ -196,15 +170,17 @@ export default {
           username: [
               { required: true, message: '请输入昵称', trigger: 'blur',min: 1 }
           ],
+          tel: [
+              { required: true, validator:checkTel}
+          ],
           account: [
-              { required: true, message: '请输入账号，长度至少5位', trigger: 'blur',min: 5 }
+              { required: true, message: '账号名称必须是6~15位', trigger: 'blur',min: 6,max:15 }
           ],
           password: [
               { required: true, message: '请输入密码，长度至少6位', trigger: 'blur',min: 6 }
           ]
       },
       //body
-        
         tableData: [{
             // username: '黄邦胜',
             // account:'huang',
@@ -272,9 +248,10 @@ export default {
           admin_nick:this.formForNotive.username,
           admin_name:this.formForNotive.account,
           admin_password:this.formForNotive.password,
+          agent_telephone:this.formForNotive.tel,
           admin_gid:0,
         }
-        addAuth_api(sendData).then(data=>{
+        addAgent_api(sendData).then(data=>{
           this.waitAddNotice = false
           this.addNewShow = false
           if(data.status===0){
@@ -303,34 +280,13 @@ export default {
         this.addNewShow = true
         this.formForNotive = Object.assign({},formForNotive)
       },
-      async editAuth(formName){
-        let res = await new Promise((res,rej)=>{
-        this.$refs[formName].validate((valid) => {
-            if (valid) {
-              // alert('submit!');
-              res(true)
-            } else {
-              res(false)
-              // console.log('error submit!!');
-              // return false;
-            }
-          })
-        })
-        if(!res){
-          return 
-        }
-        this.waitAddNotice = true
+      async editAuth(id,lockTarget){
         let sendData = {
           // 后端生成
-          admin_id:this.formForNotive.id,
-          // 前段统一
-          admin_nick:this.formForNotive.username,
-          // admin_name:this.formForNotive.account,
-          admin_password:this.formForNotive.password,
-          admin_limits:this.formForNotive.checkboxGroup1,
-          admin_gid:0,
+          admin_id:id,
+          lock_state:lockTarget
         }
-        editAuth_api(sendData).then(data=>{
+        editAgent_api(sendData).then(data=>{
           this.waitAddNotice = false
           this.addNewShow = false
           if(data.status===0){
@@ -353,18 +309,27 @@ export default {
           console.error('editAuth_api 接口错误')
         })
       },
-      editItem(index,rowData){
-        console.log(rowData)
-        // this.editLoading = true
-        this.formForNotive = Object.assign({},rowData)
-        this.isAddItem = false
-        this.addNewShow = true
+      editItem(index,row){
+        let id = row.id
+        let lockTarget = row.lock===0?1:row.lock===1?0:''
+        this.$confirm(`禁用代理，使其无法登陆后台, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.editAuth(id,lockTarget)
+        }).catch(()=>{
+          this.$notify.info({
+            title: '消息',
+            message: '已取消'
+          });
+        })
       },
     // body
       getList() { //获取列表
         this.listLoading = true
         let sendData = Object.assign({},this.listQuery)
-        getAuthList_api(sendData).then(response => {
+        getAgentList_api(sendData).then(response => {
           if(response&&response.status==0){
             let result = response.data
             let tempTableData = []
@@ -373,12 +338,12 @@ export default {
                 //后端生成
                 id:aData.admin_id,
                 //前后统一
+                tel:aData.agent_telephone,
                 username:aData.admin_nick,
                 password:aData.admin_password,
                 account:aData.admin_name,
                 //
-                checkboxGroup1:aData.admin_limits,
-                super:aData.is_admin
+                lock:aData.lock_state
               })
             })
             this.tableData = tempTableData
@@ -409,7 +374,7 @@ export default {
         let sendData = {
           admin_id:id,
         }
-        deleteAuth_api(sendData).then(res=>{
+        deleteAgent_api(sendData).then(res=>{
           if(res&&res.status===0){
               this.$notify({
               title: '成功',

@@ -33,7 +33,7 @@ export default {
     manageSevice: '运营管理',
     shopServer:'店铺运营',
     industryList:'行业列表',
-
+    agent:"代理",
     auth: '授权管理',
     dashboard: '面板',
     introduction: '简述',
@@ -103,7 +103,7 @@ export default {
   },
   login: {
     title: '平台登录',
-    title2: '商家登录',
+    title2: '代理登录',
     logIn: '登录',
     username: '账号',
     password: '密码',

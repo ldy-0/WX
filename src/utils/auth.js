@@ -3,6 +3,8 @@ import Cookies from 'js-cookie'
 const TokenKey = 'Admin-Token'
 const RolesKey = 'Admin-Roles'
 const StateKey = 'Admin-State'
+
+const AgentKey = 'Admin-Agent'
 //token or cookie
 export function getToken() {
   return Cookies.get(TokenKey)
@@ -28,8 +30,17 @@ export function getState() {
 export function setState(State) {
   return Cookies.set(StateKey, State)
 }
+//Agent
+export function getAgent() {
+  return Cookies.get(AgentKey)
+}
+
+export function setAgent(Agent) {
+  return Cookies.set(AgentKey, Agent)
+}
 export function removeToken() {
   Cookies.remove(RolesKey)
   Cookies.remove(StateKey)
+  Cookies.remove(AgentKey)
   return Cookies.remove(TokenKey)
 }

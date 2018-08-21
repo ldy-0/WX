@@ -39,15 +39,15 @@
           <svg-icon icon-class="eye" />
         </span>
       </el-form-item>
-      <!-- <el-switch
+      <el-switch
         class="hbs-login-switch"
         style="display: block;"
         v-model="isAdmin" 
         active-color="#E6A23C"
         inactive-color="#13ce66"
         active-text="我是平台"
-        inactive-text="我是商家">
-      </el-switch> -->
+        inactive-text="我是代理">
+      </el-switch>
       <el-button type="primary" style="width:100%;margin-bottom:30px;" :loading="loading" @click.native.prevent="handleLogin">{{$t('login.logIn')}}</el-button>
 
       <!-- <div class="tips">
@@ -87,14 +87,14 @@ export default {
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!isvalidUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error('请输入账号'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('密码不少于6位'))
       } else {
         callback()
       }
@@ -105,8 +105,8 @@ export default {
       tabRole: '',
       // -------------
       loginForm: {
-        username: 'admin',
-        password: '1111111'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -133,17 +133,32 @@ export default {
           this.loading = true
           //对 平台 和 卖家 做区分
           let loginPromise
+          // if(this.isAdmin){
+          //   loginPromise = this.$store.dispatch('LoginByAdminname', {
+          //     admin_name:this.loginForm.username,
+          //     admin_password:this.loginForm.password,
+          //     captcha:1234
+          //   })
+          // }else{
+          //   loginPromise= this.$store.dispatch('LoginByUsername',{
+          //     seller_name:this.loginForm.username,
+          //     member_password:this.loginForm.password,
+          //     captcha:1234
+          //   })
+          // }
           if(this.isAdmin){
             loginPromise = this.$store.dispatch('LoginByAdminname', {
               admin_name:this.loginForm.username,
               admin_password:this.loginForm.password,
-              captcha:1234
+              captcha:1234,
+              is_agent:0
             })
           }else{
-            loginPromise= this.$store.dispatch('LoginByUsername',{
-              seller_name:this.loginForm.username,
-              member_password:this.loginForm.password,
-              captcha:1234
+            loginPromise = this.$store.dispatch('LoginByAdminname', {
+              admin_name:this.loginForm.username,
+              admin_password:this.loginForm.password,
+              captcha:1234,
+              is_agent:1
             })
           }
 

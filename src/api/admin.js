@@ -124,14 +124,43 @@ export function test(data) {
   //     params:data
   //   })
   // }
-// auth
-  export function getAuthList_api(data) {
+// agent
+  export function getAgentList_api(data) {
     return request({
-      url: '/api/v1/admin/admin',
+      url: '/api/v1/admin/agent',
       method: 'get',
       params: data
     })
   }
+  export function addAgent_api(data) {
+    return request({
+      url: '/api/v1/admin/agent',
+      method: 'post',
+      data: data
+    })
+  }
+  export function editAgent_api(data) {
+    return request({
+      url: '/api/v1/admin/agent',
+      method: 'put',
+      data: data
+    })
+  }
+  export function deleteAgent_api(data) {
+    return request({
+      url: '/api/v1/admin/agent',
+      method: 'delete',
+      data: data
+    })
+  }
+// auth
+export function getAuthList_api(data) {
+  return request({
+    url: '/api/v1/admin/admin',
+    method: 'get',
+    params: data
+  })
+}
   export function deleteAuth_api(data) {
     return request({
       url: '/api/v1/admin/admin',
