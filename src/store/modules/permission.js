@@ -49,6 +49,7 @@ const permission = {
         let accessedRouters = []
         //平台管理员
         if (roles.indexOf('agentAdmin') >= 0) {
+          console.log(roles)
           let tempIndex = -1
           asyncRouterMapAdmin.forEach(function(item,index){
             if(item.path==="/agent"){

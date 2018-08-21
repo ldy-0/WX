@@ -93,9 +93,9 @@ const user = {
               roles.push('admin2')
             }
             //如果是代理
-            if(data.data.agent_id||data.data.agent_id===0){
+            if(data.data.agent_id){
               roles.push('agentAdmin')
-              setAgent(true)
+              setAgent("agentAdmin")
             }
             setRoles(JSON.stringify(roles))
             resolve()

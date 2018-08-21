@@ -1,5 +1,5 @@
 <template>
-    <h1>欢迎 {{role==="agent"?"代理":"平台"}}管理员 登录</h1>
+    <h1>欢迎 {{role==="agentAdmin"?"代理":"平台"}}管理员 登录</h1>
 </template>
 <script>
 import { getAgent } from '@/utils/auth' // getToken from cookie
@@ -12,8 +12,9 @@ export default {
       }
   },
   created() {
-    if(getAgent()){
-        this.role = "agent"
+      console.log(getAgent(),!!getAgent())
+    if(getAgent()==="agentAdmin"){
+        this.role = "agentAdmin"
     }else{
         this.role = "admin"
     }
