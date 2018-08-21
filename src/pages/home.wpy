@@ -2,20 +2,7 @@
   <view class="container bc">
     <topBar :config='config'></topBar>
 
-    <swiper class="swiper" 
-            indicator-active-color="{{swiperConfig.indicatorActiveColor}}"  
-            indicator-dots="{{swiperConfig.indicatorDots}}"
-            autoplay="{{swiperConfig.autoplay}}" 
-            interval="{{swiperConfig.interval}}" 
-            duration="{{swiperConfig.duration}}"  
-            circular="true">
-      <block wx:for="{{adList}}" wx:key='key'>
-        <swiper-item>
-          <image src="{{item.imgUrl}}" class="slide_image" @tap="goToAdvert({{item}})" mode='aspectFill' />
-        </swiper-item>
-      </block>
-    </swiper>
-
+    <swiper :config.sync='swiperConfig' @click.user='goGoodsDetail'></swiper> 
     <!-- <view class="pos {{isIos ? 'ios_pos' : ''}}">
       <view class="search_read_only">
         <navigator class="search_content" open-type="navigate" url="/pages/search">
@@ -36,7 +23,8 @@
 
     <view class='secKill'>
       <view class='secKill_title'>
-        <view class='title'>秒杀商品</view>
+        <!-- <view>秒杀商品</view> -->
+        <image class='' style='width: 188rpx; height: 44rpx;' src='../images/home/seckill_text.png' />
       </view>
     </view>
 
@@ -57,6 +45,7 @@ import Discover from '@/components/discover';
 import BottomLoadMore from "../components/common/bottomLoadMore";
 import Placeholder from "../components/common/placeholder";
 import topBar from "../components/topBar";
+import swiper from "../components/swiper";
 import request from '../utils/request.js';
 
 export default class Home extends wepy.page {
@@ -68,6 +57,7 @@ export default class Home extends wepy.page {
     bottomLoadMore: BottomLoadMore,
     placeholder: Placeholder,
     topBar,
+    swiper,
   };
   data = {
     config: {
@@ -82,7 +72,6 @@ export default class Home extends wepy.page {
       interval: 3000,
       duration: 1000,
     },
-    adList: [], //广告列表
     classifyList: [
       { name: '上新', img: '../images/home/new.png' },
       { name: '热卖', img: '../images/home/hot.png' },
@@ -163,7 +152,7 @@ export default class Home extends wepy.page {
       return wx.showToast({ title: res.moreInfo, icon: 'none', duration: 2000, });
     }
     
-    this.adList = imgs;
+    this.swiperConfig.adList = imgs;
     this.$apply();
 
   }
@@ -198,12 +187,12 @@ export default class Home extends wepy.page {
   }
 
   methods = {
-    goToAdvert(item) {
-
+    goGoodsDetail(item) {
+      console.log('click', item);
       if(true){
         
         return wx.navigateTo({
-          url: '/pages/foods/goodsDetail?id=' + item.id,
+          url: '/pages/food/goodsDetail?id=' + item.id,
         });
 
       }
@@ -212,22 +201,6 @@ export default class Home extends wepy.page {
         url: "/pages/web_view?url=" + encodeURIComponent(item.targetUrl)
       });
       
-      // if (item.targetType == "PRODUCT") {
-
-      //   if (item.target.length == 0) {
-      //     return;
-      //   }
-
-      //   wepy.navigateTo({
-      //     url: "/pages/goods_detail?id=" + item.target,
-      //   });
-        
-      // }else if(item.targetType=="CUSTOMIZED"){
-      //   // wepy.navigateTo({
-      //   //   url: "/pages/web_view?url=" + encodeURIComponent(item.targetUrl)
-      //   // });
-        
-      // }
 
     },
     goVivi(){
@@ -275,14 +248,6 @@ export default class Home extends wepy.page {
   background: #fff;
 }
 
-.swiper {
-  height: 476rpx;
-  background: #ccc;
-  .swiper_item{
-    display: flex;
-    align-items: center;
-  }
-}
 .ios_swiper{
   // margin: 0;
 }

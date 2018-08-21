@@ -1,14 +1,28 @@
 <template>
     <view class='number_wrap'>
+
+      <swiper class="swiper" 
+            indicator-active-color="{{config.indicatorActiveColor}}"  
+            indicator-dots="{{config.indicatorDots}}"
+            autoplay="{{config.autoplay}}" 
+            interval="{{config.interval}}" 
+            duration="{{config.duration}}"  
+            circular="true">
+        <block wx:for="{{config.adList}}" wx:key='key'>
+          <swiper-item>
+            <image src="{{item.imgUrl}}" class="slide_image" @tap="click({{item}})" mode='aspectFill' />
+          </swiper-item>
+        </block>
+      </swiper>
+      
     </view>
 </template>
 <script>
 import wepy from 'wepy';
 
-export default class Number extends wepy.component {
+export default class Swiper extends wepy.component {
   props = {
-    number: Number,
-    max: Number,
+    config: Object,
   }
 
   components = {
@@ -23,12 +37,23 @@ export default class Number extends wepy.component {
   }
 
   methods = {
-    
+    click(item){
+      this.$emit('click', item);
+      console.log('emit click event');
+    },  
   }
   
 }
 
 </script>
 <style lang="css">
+.swiper {
+  height: 476rpx;
+  background: #ccc;
+}
 
+.swiper_item{
+    display: flex;
+    align-items: center;
+}
 </style>

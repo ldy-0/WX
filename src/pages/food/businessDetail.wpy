@@ -16,7 +16,7 @@
         <image class='business_img' src='' />
         
         <view class='business_address_wrap'>
-          <image style='width: 24rpx; height: 30rpx; margin-right: 15rpx; background: #ccc;' src='' />
+          <image style='width: 24rpx; height: 30rpx; margin-right: 15rpx; ' src='../../images/icon/latlon.png' />
           <view class='business_address'>国际企业峰汇A3座（民航大酒店）国际企业峰汇A3座（民航大酒店）国际企业峰汇A3座（民航大酒店）国际企业峰汇A3座（民航大酒店）</view>
         </view>
         
@@ -36,7 +36,7 @@
       <view class='coupon_list' wx:if="{{status === tab[0].name}}">
         
           <repeat for='{{couponList}}' item='item'>
-            <coupon :coupon.sync='item' :canRedirect.sync='canRedirect'></coupon>
+            <coupon :coupon.sync='item' :canRedirect='true'></coupon>
           </repeat>
 
       </view>
@@ -53,7 +53,8 @@
                 <view class='user_time'>{{item.level}}</view>
               </view>
               <view style='display: flex;'>
-                <starLevel :size='36' :level='item.level'></starLevel><text class='s-1' style='margin-left: 20rpx;'>{{item.level}}</text>
+                <starLevel :size='36' :level='item.level' :src='starConfig.src' :sel_src='starConfig.sel_src'></starLevel>
+                <text class='s-1' style='margin-left: 20rpx;'>{{item.level}}</text>
               </view>
               <view class='comment_content'>味道很正宗，服务态度不错，地好找...</view>
               <view class='comment_img'>
@@ -101,17 +102,24 @@ export default class businessDetail extends wepy.page {
     business: {},
     businessLevelConfig: {
       level: 4,
-      size: 36,
+      size: 25,
+      interval: 8,
+      src: '../../images/icon/huoyan.png',
+      sel_src: '../../images/icon/huoyan_sel.png',
+    },
+    starConfig: {
+      src: "../../images/icon/star.png",
+      sel_src: "../../images/icon/star_sel.png",
     },
     markers: [],
-    tab: [{ name: '优惠劵', img: '../../images/icon_classify.png', selImg: '' }, 
-          { name: '商品评价', img: '../../images/icon_alert.png', selImg: '' }, 
+    tab: [{ name: '优惠劵', img: '../../images/icon/coupon.png', selImg: '../../images/icon/coupon_sel.png' }, 
+          { name: '商品评价', img: '../../images/icon/edit.png', selImg: '../../images/icon/edit_sel.png' }, 
     ],
     status: '优惠劵',
     couponList: [
+      { id: '123', name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', price: 10, },
       { id: '123', name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', price: 10, }
     ],
-    canRedirect: true,
     commentList: [ { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, imgs: [ 'http://qiniures.51shop.mobi/FmwPMX290iYB6zh97InanSKkFzzh?imageView2/2/w/640/q/100/@w/$w$@/@h/$h$@', ], } ],
   }
 
@@ -173,9 +181,11 @@ page {
   padding: 26rpx 15rpx 37rpx;
   background: #fff;
   .business_name, .business_address{
+    white-space: nowrap;
     height: 38rpx;
     line-height: 38rpx;
     overflow: hidden;
+    text-overflow: ellipsis;
   }
   .business_level{
     display: flex;
@@ -194,8 +204,12 @@ page {
   .business_address_wrap{
     display: flex;
     align-items: center;
+    image{
+      flex-shrink: 0;
+    }
     .business_address{
       flex-grow: 1;
+      // width: 0;
     }
   }
   .business_time{

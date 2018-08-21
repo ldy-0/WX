@@ -9,7 +9,8 @@
           <image class='business_img' src='' />
           
           <view class='business_level'>
-            <star :size='36' :level='item.level'></star><text class='s-1' style='margin-left: 20rpx;'>{{item.level}}</text>
+            <star :size='36' :level='item.level' :src='starConfig.src' :sel_src='starConfig.sel_src'></star>
+            <text class='s-1' style='margin-left: 20rpx;'>{{item.level}}</text>
           </view>
           
           <view class='business_name'>点十分慷慨大方莫斯科麻烦可斯洛伐克蛮舒服的科目史可法马克思麻烦fdjksmkffsdfkj</view>
@@ -47,6 +48,10 @@ export default class Authorize extends wepy.page {
       isLeft: true,
       name: '商品评价',
       canBack: true,
+    },
+    starConfig: {
+      src: "../../images/icon/star.png",
+      sel_src: "../../images/icon/star_sel.png",
     },
     businessList: [  { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 3, }, { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, }],
   }

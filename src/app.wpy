@@ -17,7 +17,7 @@ export default class extends wepy.app {
     pages: [
       'pages/home',
       'pages/food',
-      'pages/play',
+      'pages/shoppingCart',
       'pages/my',
       'pages/authorize',
       'pages/food/businessDetail',
@@ -30,6 +30,7 @@ export default class extends wepy.app {
       'pages/my/orderDetail',
       'pages/my/assess',
       'pages/my/assessList',
+      'pages/my/couponList',
     ],
     window: {
       backgroundTextStyle: 'dark',
@@ -49,23 +50,23 @@ export default class extends wepy.app {
         "pagePath": "pages/home",
         "text": "首页",
         "iconPath": "images/toolBar/home.png",
-        "selectedIconPath": "images/toolBar/sel_home.png"
+        "selectedIconPath": "images/toolBar/home_sel.png"
       }, {
         "pagePath": "pages/food",
         "text": "美食",
-        "iconPath": "images/toolBar/classify.png",
-        "selectedIconPath": "images/toolBar/sel_classify.png"
+        "iconPath": "images/toolBar/food.png",
+        "selectedIconPath": "images/toolBar/food_sel.png"
       },
         {
-        "pagePath": "pages/play",
+        "pagePath": "pages/shoppingCart",
         "text": "购物车",
         "iconPath": "images/toolBar/shoppingCart.png",
-        "selectedIconPath": "images/toolBar/sel_shoppingCart.png"
+        "selectedIconPath": "images/toolBar/shoppingCart_sel.png"
       }, {
         "pagePath": "pages/my",
         "text": "我的",
         "iconPath": "images/toolBar/my.png",
-        "selectedIconPath": "images/toolBar/sel_my.png"
+        "selectedIconPath": "images/toolBar/my_sel.png"
       }]
     }
   }

@@ -14,7 +14,8 @@
               <view class='user_time'>{{item.level}}</view>
             </view>
             <view style='display: flex;'>
-              <star :size='36' :level='item.level'></star><text class='s-1' style='margin-left: 20rpx;'>{{item.level}}</text>
+              <star :size='36' :level='item.level' :src='starConfig.src' :sel_src='starConfig.sel_src'></star>
+              <text class='s-1' style='margin-left: 20rpx;'>{{item.level}}</text>
             </view>
             <view class='comment_content'>味道很正宗，服务态度不错，地好找...</view>
             <view class='comment_img'>
@@ -53,6 +54,10 @@ export default class Authorize extends wepy.page {
       isLeft: true,
       name: '商品评价',
       canBack: true,
+    },
+    starConfig: {
+      src: "../../images/icon/star.png",
+      sel_src: "../../images/icon/star_sel.png",
     },
     commentList: [  { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 3, }, { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, }],
   }

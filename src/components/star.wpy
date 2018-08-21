@@ -1,15 +1,16 @@
 <template>
   <view class='star'>
       <repeat for='{{5}}' index='index'>
-          <image style='width: {{size || config.size}}rpx; height: {{size || config.size}}rpx;' 
-		 src='../../images/normal.png' 
-		 @tap="click({{config.canModify ? index : -1}})" 
-		 wx:if='{{!config.onlySel && index + 1 > (level || config.level)}}' />
-          <image style='width: {{size || config.size}}rpx; height: {{size || config.size}}rpx;' class='star_img' 
-		 src='../../images/selected.png' 
-		 @tap="click({{config.canModify ? index : -1}})" 
-		 wx:if='{{index + 1 <= (level || config.level)}}' />
-          <!-- <text>{{showAll}}</text> -->
+
+          <image style='width: {{size || config.size}}rpx; height: {{size || config.size}}rpx; margin-right: {{interval || config.interval}}rpx;' 
+		             src='{{src || config.src}}' 
+		             @tap="click({{config.canModify ? index : -1}})" 
+		             wx:if='{{!config.onlySel && index + 1 > (level || config.level)}}' />
+          <image style='width: {{size || config.size}}rpx; height: {{size || config.size}}rpx; margin-right: {{interval || config.interval}}rpx;' 
+		             src='{{sel_src || config.sel_src}}' 
+		             @tap="click({{config.canModify ? index : -1}})" 
+		             wx:if='{{index + 1 <= (level || config.level)}}' />
+                 
       </repeat>
   </view>
 </template>
@@ -23,6 +24,9 @@ export default class StarLevel extends wepy.component {
     size: Number,
     canModify: Boolean,
     onlySel: Boolean,
+    src: String,
+    sel_src: String,
+    interval: Number,
   }
 
   components = {

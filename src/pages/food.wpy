@@ -25,7 +25,6 @@
         .address_img{
           width: 24rpx;
           height: 30rpx;
-          background: #ccc;
         }
         .address{
           width: 244rpx;
@@ -39,7 +38,6 @@
       .search_img{
         width: 26rpx;
         height: 26rpx;
-        background: #ccc;
       }
     }
     .sel{
@@ -54,7 +52,14 @@
     justify-content: space-around;
     margin: 30rpx 0 0;
     .tab_item{
-
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 230rpx;
+      height: 50rpx;
+      padding: 0 10rpx;
+      border: 1rpx solid #dadada;
+      border-radius: 10rpx;
     }
   }
   
@@ -179,12 +184,13 @@
             
             <view class='class_row'>
               <view class='address_wrap'>
-                <image class='address_img' src='' />
+                <image class='address_img' src='../images/icon/latlon.png' />
                 <view class='address'>{{address}}</view>
+                <image style='width: 18rpx; height: 18rpx;' src='../images/icon/toBottom.png' />
               </view>
 
               <view class="search_content" >
-                <image class='search_img' /> 
+                <image class='search_img' src='../images/search.png' /> 
                 <!-- <input class="search_input" type='text' bindinput='search' placeholder='请输入搜索'></input> -->
               </view>
             </view>
@@ -192,7 +198,10 @@
               <view class='tab'>
                 <repeat for="{{classList}}" index="index" item="item">
                     <!-- <view class="class_item {{ checkedList[index] ? 'sel' : '' }}" @tap="getTwo({{index,item.isleaf,item.id}})">{{item.name}}</view> -->
-                    <view class="tab_item {{ checkedList[index] ? 'sel' : '' }}" @tap="">{{item}}</view>
+                    <view class="tab_item {{ checkedList[index] ? 'sel' : '' }}" @tap="">
+                      <view>{{item}}</view>
+                      <image style='width: 18rpx; height: 18rpx;' src='../images/icon/toBottom.png' />
+                    </view>
                 
                 </repeat>
               </view>
@@ -213,7 +222,7 @@
                                 </view>
                                 <view class='item_row'>
                                   <view class='item_level'>
-                                    <starLevel :size='36' :level='item.level'></starLevel>
+                                    <starLevel :size='36' :level='item.level' :src='"../images/icon/star.png"' :sel_src='"../images/icon/star_sel.png"'></starLevel>
                                     <text class='number'>{{item.level}}</text>
                                   </view>
                                   <view>距您：1.8km</view>

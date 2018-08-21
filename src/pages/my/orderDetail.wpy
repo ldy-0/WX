@@ -55,9 +55,9 @@
         </view>
       </view>
 
-      <view class='other_wrap' wx:if='{{false}}'> 
+      <view class='other_wrap' wx:if='{{true}}'> 
         <view class='countDown s-1'>
-          <view wx:if='{{true}}'>距离支付失效：15:00</view>
+          <view wx:if='{{true}}'>距离支付失效：{{countDown.day}}:{{countDown.hour}}:{{countDown.minute}}:{{countDown.second}}</view>
         </view>
 
         <view class='btn'>立即付款</view>
@@ -97,6 +97,13 @@ export default class Authorize extends wepy.page {
     },
     order: null,
     goodsList: [ { name: '的是佛教房东房客上课了吗首付贷款买房昆明昆明dfsfk',  } ],
+    countDown: {
+      day: null,
+      hour: null,
+      minute: null,
+      second: null,
+    }, 
+    interval: null,
   }
 
   onLoad() {
@@ -105,6 +112,11 @@ export default class Authorize extends wepy.page {
      phone:  15012349627,
     };
     this.order.phone = this.modifyPhone(this.order.phone);
+    this.setTime();
+  }
+
+  onUnload(){
+    clearInterval(this.interval);
   }
 
   methods = {
@@ -119,6 +131,39 @@ export default class Authorize extends wepy.page {
   
   modifyPhone(phone){
     return phone.toString().replace(/\d{4}(?=\d{4}$)/, '****');
+  }
+
+  setTime(data){
+   
+    let _this = this,
+        _second = 360006;
+
+    this.interval = setInterval(function(){
+
+      if(data <= 0){
+        return ;
+      }
+
+      let _minute = _second / 60,
+          _hour = _minute / 60,
+          second = parseInt(_second) % 60,
+          minute = parseInt(_minute) % 60,
+          hour = parseInt(_hour) % 24,
+          day = parseInt(_hour / 24),
+          countDown = _this.countDown;
+
+      console.log(day, hour, minute, second, _second);
+      
+      countDown.day = day;
+      countDown.hour = hour;
+      countDown.minute = minute;
+      countDown.second = second;
+      _this.$apply();
+      
+      _second--;
+
+    }, 1000);
+
   }
 
 }

@@ -1,0 +1,628 @@
+<style lang="less">
+
+.container{
+  width: 100%;
+  height: 100%;
+  font: 30rpx MicrosoftYaHei;
+}
+
+.empty_cart {
+  width: 100%;
+  height: 100%;
+  padding: 400rpx 0 0;
+  background: #F4F4F4;
+}
+.empty_cart_img {
+  width: 203rpx;
+  height: 203rpx;
+  display: block;
+  margin: 0 auto;
+}
+.empty_cart_text {
+  font-size: 32rpx;
+  color: #999;
+  margin-top: 20rpx;
+  text-align: center;
+}
+.cartlist_wrap{
+  position:relative;
+  bottom:100rpx;
+  top:15rpx;
+
+}
+.list{
+  margin: 150rpx 0 0;// 100rpx 0 0;
+  padding-bottom:100rpx;
+
+}
+.ios_list{
+  margin: 100rpx 0 0;
+}
+
+.topBar2{
+  position: fixed;
+  top: 100rpx;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  line-height: 100rpx;
+  padding: 0 30rpx 0;
+  font-weight: bold;
+  color: #333;
+  background: #FFFFFF;
+  z-index: 1000;
+  box-sizing: border-box;
+  .topBar2_left{
+    flex-grow: 1;
+  }
+}
+.ios_topBar2{
+  top: 150rpx;
+}
+  
+.goods-info {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    position: relative;
+    height: 300rpx;
+    margin-bottom: 20rpx;
+    background: #fff;
+    .check_wrap{
+      width: 40rpx;
+    }
+    .img {
+      width: 210rpx;
+      height: 210rpx;
+      margin-right: 20rpx;
+    }
+    .text-box{
+      margin-top: -10rpx;
+    }
+    .text-box .goods_title {
+      width: 400rpx;
+      padding: 0 20rpx 5rpx 0;
+      color: #000;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      .name{
+        width: 385rpx;
+        min-height: 32rpx;
+        max-height: 91rpx;
+        line-height: 32rpx;
+        margin-bottom: 16rpx;
+        word-break:break-all;
+        white-space:normal;
+      }
+      .sku{
+        font-size: 24rpx;
+        color: #999;
+        margin-top: -4rpx;
+      }
+      text{
+        font-size: 25rpx;
+      }
+      .discount{
+        display: flex;
+        align-items: center;
+        view{
+          font-size: 25rpx;
+          color: rgb(232,56,32);
+        }
+        image{
+          width: 21rpx;
+          height: 19rpx;
+          margin-left: 20rpx;
+        }
+      }
+      .white_person{
+        height: 25rpx;
+      }
+    }
+    .text-box .buy-num {
+      width: 198rpx;
+      height: 54rpx;
+      line-height: 54rpx;
+      position: absolute;
+      right: 30rpx;
+      bottom: 15rpx;
+      display: flex;
+      font-size: 34rpx;
+      text-align: center
+    }
+    .jian, .jia {
+      width: 54rpx;
+      height: 100%;
+      border: 1rpx solid #999;
+    }
+    .jian{
+      border-left: none;
+      border-bottom-left-radius: 6rpx;
+      border-top-left-radius: 6rpx;
+    }
+    .jian.disabled {
+      background-color: #f5f5f9;
+      border-left: 1rpx solid #eee;
+      border-bottom: 1rpx solid #eee;
+      border-top: 1rpx solid #eee;
+      color: #ccc;
+    }
+    .jia {
+      border-right: none;
+      border-bottom-right-radius: 6rpx;
+      border-top-right-radius: 6rpx;
+    }
+    .jia.disabled {
+      background-color: #f5f5f9;
+      border-right: 1rpx solid #eee;
+      border-bottom: 1rpx solid #eee;
+      border-top: 1rpx solid #eee;
+      color: #ccc;
+    }
+    .number {
+      width: 89rpx;
+      height: 100%;
+      font-size: 34rpx;
+      color: #333;
+      text-align: center;
+      border: 1rpx solid #999;
+    }
+  }
+
+.fullSelect{
+  display: flex;
+  align-items: center;
+  .fullSelect_text{
+    font-size: 28rpx;
+    color: #68696a;
+  }
+}
+.big_circle{
+  width: 40rpx;
+  height: 40rpx;
+  border: 1rpx solid #666;
+  border-radius: 50%;
+  // box-sizing: border-box;
+}
+.icon_check {
+  margin: 0 14rpx;
+}
+
+.bottomBar{
+  position: fixed;
+  bottom: 0rpx;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100rpx;
+  font-size: 28rpx;
+  color: #333;
+  background: #fff;
+  .sum{
+    flex-grow: 1;
+    padding: 0 25rpx;
+    color: #333;
+    text-align: right;
+    text{
+      color: #e6002d;
+    }
+  }
+  .btn{
+    width: 277rpx;
+    line-height: 100rpx;
+    color: #fff;
+    background: linear-gradient(#e6002d, #e8441e);
+    text-align: center;
+  }
+  .del{
+    position: absolute;
+    right: 100rpx;
+  }
+    
+}
+  
+</style>
+
+<template>
+  <view class="container {{isIos ? 'ios_container' : ''}}">
+      <topBar :config.sync='config' @ed.user='edit' @do.user='done'></topBar>
+      
+      <view class="empty_cart" wx:if="{{cartList.length==0}}">
+        <image src="../images/empty.png" class="empty_cart_img"></image>
+        <view class="empty_cart_text">购物车是空的~</view>
+      </view>
+      <view class='cartlist_wrap' wx:else>
+          <view class="topBar2 ios_topBar2"> <!-- {{isIos ? 'ios_topBar2' : ''}} -->
+              <view class='topBar2_left'></view>
+              <view @tap='done' wx:if='{{isEdit}}'>完成</view>
+              <view @tap='edit' wx:else>编辑</view>
+          </view>
+          <scroll-view class="list {{isIos ? 'ios_list' : ''}}" scroll-y='true' >
+
+              <repeat for='{{cartList}}' index='index' item='item'>
+
+                  <view class="goods-info">
+                      <view class='check_wrap icon_check'>
+                        <icon class="" wx:if='{{checkedList[index]}}' type="success" color="red" @tap='check({{index}})' data-index="{{index}}" data-id="{{item.id}}" size="19" />
+                        <view class='big_circle' @tap='check({{index}})' wx:else></view>
+                      </view>
+                      <view class="img-box">
+                          <image src="{{item.product.imgUrl}}" class="img" />
+                      </view>
+                      <view class="text-box">
+                          <navigator class="goods_title" url="/pages/goods_detail?id={{item.productId}}">
+                              <view class='name'>{{item.title}}</view>
+                              <view class='sku'>规格：{{item.sku.spec}}</view>
+                              <view class='goods_originPrice'>¥ {{item.sku.price}}</view>
+                              <view style='margin-top: -3rpx; '>兑换价：¥{{item.duiPrice}}+{{item.sku.deductionDPoint}}德分</view>
+                              <view class='discount' wx:if="{{wx.getStorageSync('userInfo').hasIdentity}}">
+                                  <view>省 ¥ {{item.sku.point}}</view>
+                                  <image src='../images/member.png' />
+                              </view>
+                              <view class='white_person' wx:else></view>
+                          </navigator>
+                          <view class="buy-num">
+                              <view class="jia {{item.num == 1? 'disabled' : ''}}" @tap='minus({{index}})' data-index="{{index}}" data-id="{{item.id}}">-</view>
+                              <view class='number'>{{size[index]}}</view>
+                              <view class="jian {{item.num == 100? 'disabled' : ''}}" @tap='add({{index}})' data-index="{{index}}" data-id="{{item.id}}">+</view>
+                          </view>
+                      </view>
+                  </view>
+
+              </repeat>
+
+          </scroll-view>
+
+          <view class='bottomBar' wx:if='{{isEdit}}'>
+              <view class='fullSelect'>
+                  <icon class="icon_check" @tap='checkAll' wx:if='{{checkedAll}}' type="success" color="red" data-index="{{index}}" data-id="{{item.id}}" size="19" />
+                  <view class='big_circle icon_check' @tap='checkAll' wx:else></view>
+                  <view class='fullSelect_text'>全选</view>
+              </view>
+              <view class='sum'>您已选择{{getCount}}件商品</view>
+              <view class='btn' @tap='delete'>删除</view>
+          </view>
+          <view class='bottomBar' wx:else>
+              <view class='fullSelect'>
+                  <icon class="icon_check" @tap='checkAll' wx:if='{{checkedAll}}' type="success" color="red" data-index="{{index}}" data-id="{{item.id}}" size="19" />
+                  <view class='big_circle icon_check' @tap='checkAll' wx:else></view>
+                  <view class='fullSelect_text'>全选</view>
+              </view>
+              <view class='sum'>合计：<text>¥{{getPrice}}</text></view>
+              <view class='btn' @tap='goFirmOrder'>立刻结算({{getCount}})</view>
+          </view>
+         
+      </view> 
+
+  </view>
+</template>
+
+<script>
+import wepy from "wepy";
+import cartApi from '../api/cartApi.js';
+import topBar from '../components/topBar';
+
+
+export default class ShoppingCart extends wepy.page {
+  config = {
+    navigationBarTitleText: '购物车',
+  }
+
+  data = {
+    config: {
+              tabPage: true,
+              name: '购物车',
+              edit: { isEdit: false, },
+              //share: { name: '商品详情', path: '/pages/comfire_order', },
+            },
+    editable: false, //
+    count: 0, // 总量
+    price: 0, // 总价
+    isCheckedAll: false, //
+    checkedList: [],
+    // 商品数量列表
+    size: [],
+    // 商品列表
+    cartList: [],
+    cart: {
+      goodsFee: null,
+      totalFee: null, // 总价
+      count: null,    // 总数量
+    },
+    isIos: null,
+    isFirst: true, // 是否为第一次结算
+  };
+
+  computed = {
+    isEdit(){ return this.data.editable; },
+    checkedAll(){
+      return this.data.isCheckedAll ? 'fill_circle' : '';
+    },
+    getCount: () => this.data.count,
+    getPrice: () => this.data.price,
+  };
+
+  components = {
+    topBar,
+  };
+  
+  methods = {
+    edit(){
+      this.config.edit.isEdit = this.editable = true;
+      console.log(`-=-=shoppingcart edit-=-=`);
+    },
+    done(){
+      this.config.edit.isEdit = this.editable = false;
+      console.log('-- shoppingCart- done ');
+    },
+    checkAll(){
+      if(this.data.isCheckedAll){
+        this.data.checkedList.forEach((v, i) => this.data.checkedList[i] = false);
+        this.data.isCheckedAll = false;
+        this.data.count = 0;
+        return this.data.price = 0;
+      }
+
+      this.data.checkedList.forEach((v, i) => this.data.checkedList[i] = true);
+      this.data.isCheckedAll = true;
+
+      this.cartPricing();
+    },
+    check(index){
+      this.data.checkedList[index] = this.data.checkedList[index] ? false : true; 
+
+      this.cartPricing();
+    },
+    async minus(index){
+      if(this.data.size[index] <= 1){
+        return ;
+      }
+
+      this.data.size[index]--;
+
+      if(await this.updateCartInfo(index, this.data.size[index]) === 'no'){
+        this.data.size[index]++;
+        return wx.showToast({ title: '商品加入购物车中的数量应该为一个正整数', icon: 'none', duration: 2000, });
+
+      };
+
+    },
+    async add(index){
+
+      if(await this.updateCartInfo(index, this.data.size[index] + 1) === 'no'){
+
+        return wx.showToast({ title: '商品已经下架或售完， 不能购买', icon: 'none', duration: 2000, });
+        
+      };
+
+      this.data.size[index]++;
+      
+    },
+    goFirmOrder(){
+      if(!this.isFirst){
+        return ;
+      }
+
+      this.isFirst = false;
+      this.goFirmOrder();
+
+      // if(this.data.count === 0){
+      //   return wx.showToast({ title: '还没有选中任何商品！', icon: 'none', duration: 2000, });
+      // }
+
+      // let goodsList = [],
+      //     checkeds = this.data.checkedList,
+      //     carts = this.data.cartList;
+
+      // for(let i = 0, len = checkeds.length; i < len; i++){
+        
+      //   if(checkeds[i]){
+      //     goodsList.push({
+      //       id: carts[i].productId,
+      //       name: carts[i].title,
+      //       img: carts[i].product.imgUrl,
+      //       price: carts[i].sku.price,
+      //       standard: carts[i].sku,
+      //       nubs: carts[i].amount,
+      //     });
+
+      //   }
+        
+      // }
+      // //console.log(JSON.stringify(goodsList));
+      // wx.navigateTo({
+      //   url: '/pages/comfire_order?cart='+JSON.stringify(this.cart)+'&goodsList='+encodeURIComponent(JSON.stringify(goodsList)), // {price: this.data.price, count: this.data.count}
+      // });
+
+    },
+    async delete(){
+      let checkedList = this.data.checkedList,
+          cartList = this.data.cartList,
+          list = [];
+
+      for(let i = checkedList.length-1; i >= 0; i--){
+        if(checkedList[i]){
+          let res = await cartApi.deleteCartItem({
+                params: { id: this.data.cartList[i].id }
+              });
+
+          if(!res){
+            return wx.showToast({ title: '删除失败', icon: 'none', duration: 2000, });
+          };
+
+          this.data.checkedList.splice(i, 1);
+          this.data.size.splice(i, 1);
+          this.data.cartList.splice(i, 1);
+          this.data.isCheckedAll = false;
+          this.$apply();
+
+        }
+
+      }
+
+      this.data.price = 0;
+      this.data.count = 0;
+      this.$apply();
+    }
+  }
+
+  onShow(){
+    this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
+    this.isCheckedAll = false;
+    this.editable = false;
+    this.price = 0;
+    this.count = 0;
+    this.isFirst = true;
+    // this.getCartList();
+    
+  }
+
+  onPullDownRefresh(){
+    
+    wx.redirectTo({
+      url: '/pages/shoppingCart',
+    });
+
+  }
+
+  edit(){
+      console.log('pages --------- edit');
+      this.data.editable = true;
+  }
+
+  async goFirmOrder(){
+
+    if(this.data.count === 0){
+      return wx.showToast({ title: '还没有选中任何商品！', icon: 'none', duration: 2000, });
+    }
+
+    let goodsList = [],
+        checkeds = this.data.checkedList,
+        carts = this.data.cartList;
+
+    for(let i = 0, len = checkeds.length; i < len; i++){
+      
+      if(checkeds[i]){
+        goodsList.push({
+          id: carts[i].productId,
+          name: carts[i].title,
+          img: carts[i].product.imgUrl,
+          price: carts[i].sku.price,
+          standard: carts[i].sku,
+          nubs: carts[i].amount,
+        });
+
+      }
+      
+    }
+    //console.log(JSON.stringify(goodsList));
+    wx.navigateTo({
+      url: '/pages/comfire_order?cart='+JSON.stringify(this.cart)+'&goodsList='+encodeURIComponent(JSON.stringify(goodsList)), // {price: this.data.price, count: this.data.count}
+    });
+
+  }
+  
+  async getCartList(){
+    wx.showLoading({ title: 'Loading...', });
+
+    while(this.data.cartList[0]){
+      this.data.cartList.pop();
+      this.data.size.pop();
+      this.data.checkedList.pop();
+    }
+
+    const result = await cartApi.getCartInfo({});
+
+    if(!result){
+      return wx.showToast({ title: '获取购物车信息失败!', icon: 'none', duration: 2000, });
+    }
+    
+    for(let i = 0, len = result.cartItems.length; i < len; i++){
+      let item = result.cartItems[i];
+
+      item.duiPrice = this.add_minus(item.sku.originalPrice, -item.sku.deductionDPoint/10);
+      this.data.cartList[i] = item;
+      this.data.size[i] = item.amount;
+      this.data.checkedList[i] = false;
+    }
+    this.$apply();
+
+    wx.hideLoading();
+  }
+
+  async updateCartInfo(index, amount){
+    let result = await cartApi.updateCartInfo({
+          params: {
+            id: this.data.cartList[index].skuId,
+            amount,
+          }
+        });
+    
+    if(!result){
+      return 'no';
+    }
+    
+    this.cartList[index].amount = amount;
+    this.cartPricing();
+      
+  }
+
+  async cartPricing(){
+
+    let skuMaps = {},
+        chooseList = [],
+        count = 0, // 购物车中选中的个数
+        checkedList = this.data.checkedList,
+        cartList = this.data.cartList;
+    
+    this.data.count = 0;
+
+    for(let i = 0, len = checkedList.length; i < len; i++){
+    
+      if(checkedList[i]){
+        chooseList.push(cartList[i].sku.id); // chooseList.push(cartList[i].skuId);
+        this.data.count += cartList[i].amount;
+        count++;
+      }  
+      
+    }
+    // 判断是否全选
+    this.data.isCheckedAll = count === checkedList.length ? true : false;
+
+    for(let i = 0, len = chooseList.length; i < len; i++){
+      skuMaps["skuIds[" + i + "]"] = chooseList[i];
+    }
+
+    let result = await cartApi.cartPricing({
+      params: skuMaps
+    });
+
+    if(!result){
+      this.data.price = 0;
+      return this.$apply();
+    }
+
+    this.data.price =  result.totalPricingResult.totalFee;
+
+    this.cart.totalFee = result.totalPricingResult.totalFee;
+    this.cart.goodsFee = result.totalPricingResult.goodsFee;
+    this.cart.logisticsFee = result.totalPricingResult.logisticsFee;
+    this.cart.count = this.count;
+    this.$apply();
+  }
+
+  add_minus(nub1, nub2){
+	  let len1, len2, m;
+	 
+    try{len1 = nub1.toString().split('.')[1].length;}catch(e){len1 = 0;}
+    try{len2 = nub2.toString().split('.')[1].length;}catch(e){len2 = 0;}
+	  m = 10**Math.max(len1, len2);
+	 
+	  return (nub1*m+nub2*m)/m;
+  }
+
+
+}
+</script>
+

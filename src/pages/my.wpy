@@ -9,13 +9,16 @@
                 <view class="user_info">
                     <view class='row'>
                         <view class='user_name'>会员IDsdfskfjk时间佛山金佛isdfk</view>
-                        <image class='member_img' src='' />
+                        <image class='member_img' src='../images/my/no_vip.png' />
                         <view class='member_desc'>付费会员</view>
                     </view>
-                    <view class='more_info'>个人信息 ></view>
+                    <view class='more_info'>
+                        <view>个人信息</view>
+                        <image style='width: 18rpx; height: 22rpx; margin-left: 10rpx;' src='../images/my/right_arraw.png' />
+                    </view>
                 </view>
             </view>
-            <image class='setting' />
+            <image class='setting' src='../images/my/setting.png' />
         </view>
         
         <!--<view class="info_block">
@@ -67,34 +70,34 @@
             </navigator>
         </view> -->
         <view class="info_block">
-            <navigator class="item" url="/pages/addressList">
+            <navigator class="item" url="/pages/my/couponList">
                 <view class="item_content">
                     <view class='box'>
-                        <image class="item_img address_img" src='../images/my/address.png'></image>
+                        <image class="item_img address_img" src='../images/my/coupon.png'></image>
                     </view>
                     <view class="text">优惠劵</view>
                 </view>
-                <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
+                <image class='right_arrow' src='../images/my/rightArraw.png' />
             </navigator>
             <navigator class="item" url="/pages/my/orderList">
                 <view class="item_content">
                     <view class='box'>
-                        <image class="item_img address_img" src='../images/my/address.png'></image>
+                        <image class="item_img address_img" src='../images/my/order.png'></image>
                     </view>
                     <view class="text">我的订单</view>
                 </view>
-                <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
+                <image class='right_arrow' src='../images/my/rightArraw.png' />
             </navigator>
             <navigator class="item" url="/pages/my/assessList">
                 <view class="item_content">
                     <view class='box'>
-                        <image class="item_img achievement_img" src="../images/my/achievement.png"></image>
+                        <image class="item_img achievement_img" src="../images/my/assess.png" />
                     </view>
                     <view class="text">我的评价</view>
                 </view>
-                <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
+                <image class='right_arrow' src='../images/my/rightArraw.png' />
             </navigator>
-            <navigator class="item" url="/pages/collection">
+            <!-- <navigator class="item" url="/pages/collection">
                 <view class="item_content">
                     <view class='box'>
                         <image class="item_img collection_img" src="../images/my/collection.png"></image>
@@ -111,7 +114,7 @@
                     <view class="text">帮助与反馈</view>
                 </view>
                 <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
-            </navigator>
+            </navigator> -->
         </view>
         <!-- <navigator class='btn_wrap' url='./logistics'>
             <view class='btn'>退出登录</view>
@@ -300,7 +303,7 @@
                 align-items: center;
             }
             .user_name{
-                width: 150rpx;
+                max-width: 150rpx;
                 height: 38rpx;
                 line-height: 38rpx;
                 color: #fff;
@@ -310,13 +313,14 @@
                 width: 32rpx;
                 height: 27rpx;
                 margin-right: 10rpx;
-                background: #ccc;
             }
             .member_desc{
                 font-size: 24rpx;
                 color: #ff5f00;
             }
             .more_info{
+                display: flex;
+                align-items: center;
                 margin: 10rpx 0 0;
                 font-size: 24rpx;
                 color: #fff;
@@ -330,7 +334,6 @@
         right: 22rpx;
         width: 35rpx;
         height: 35rpx;
-        background: #ccc;
     }
 
     .info_block {
