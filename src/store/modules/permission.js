@@ -48,62 +48,50 @@ const permission = {
         const { roles } = data
         let accessedRouters = []
         //平台管理员
+         
+        if (roles.indexOf('admin') >= 0) {
+          accessedRouters = asyncRouterMapAdmin
+        } 
+        else if(roles.indexOf('admin2') >= 0){
+          console.log('---------------',roles)
+          accessedRouters = filterAsyncRouter(asyncRouterMapAdmin,roles)
+        }
+        //商家
+        // else if (roles.indexOf('seller') >= 0) {
+        //   accessedRouters = asyncRouterMapSeller
+        // } 
+        // else if(roles.indexOf('seller2') >= 0){
+        //   console.log('---------------',roles)
+        //     accessedRouters = filterAsyncRouter(asyncRouterMapSeller,roles)
+        //     //   let authIndex = -1
+        //     // for(let i=0,len=asyncRouterMapSeller.length;i<len;i++){
+        //     // hbs:make some diff
+        //     // try{
+        //     //   if(asyncRouterMapAdmin[i].path=='/sellerAuth'){
+        //     //     authIndex = i
+        //     //     asyncRouterMapAdmin.splice(authIndex,1)
+        //     //     accessedRouters = asyncRouterMapAdmin
+        //     //   }
+        //     // }catch(e){
+        //     //   console.error(i,e,'GenerateRoutes')
+        //     // }
+            
+        //     // }
+        // }
+        // accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
         if (roles.indexOf('agentAdmin') >= 0) {
           console.log(roles)
           let tempIndex = -1
-          asyncRouterMapAdmin.forEach(function(item,index){
+          accessedRouters.forEach(function(item,index){
             if(item.path==="/agent"){
               tempIndex = index
               return false
             }
           })
           if(tempIndex>-1){
-            asyncRouterMapAdmin.splice(tempIndex,1)
+            accessedRouters.splice(tempIndex,1)
           }
-          accessedRouters = asyncRouterMapAdmin
-        } 
-        else if (roles.indexOf('admin') >= 0) {
-          accessedRouters = asyncRouterMapAdmin
-        } 
-        else if(roles.indexOf('admin2') >= 0){
-          console.log('---------------',roles)
-          accessedRouters = filterAsyncRouter(asyncRouterMapAdmin,roles)
-          // let authIndex = -1
-          // for(let i=0,len=asyncRouterMapAdmin.length;i<len;i++){
-          //   try{
-          //     if(asyncRouterMapAdmin[i].path=='/auth'){
-          //       authIndex = i
-          //       asyncRouterMapAdmin.splice(authIndex,1)
-          //       accessedRouters = asyncRouterMapAdmin
-          //     }
-          //   }catch(e){
-          //     console.error(i,e,'GenerateRoutes')
-          //   }
-          // }
         }
-        //商家
-        else if (roles.indexOf('seller') >= 0) {
-          accessedRouters = asyncRouterMapSeller
-        } 
-        else if(roles.indexOf('seller2') >= 0){
-          console.log('---------------',roles)
-            accessedRouters = filterAsyncRouter(asyncRouterMapSeller,roles)
-            //   let authIndex = -1
-            // for(let i=0,len=asyncRouterMapSeller.length;i<len;i++){
-            // hbs:make some diff
-            // try{
-            //   if(asyncRouterMapAdmin[i].path=='/sellerAuth'){
-            //     authIndex = i
-            //     asyncRouterMapAdmin.splice(authIndex,1)
-            //     accessedRouters = asyncRouterMapAdmin
-            //   }
-            // }catch(e){
-            //   console.error(i,e,'GenerateRoutes')
-            // }
-            
-            // }
-        }
-        // accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
         console.log('accessedRouters---------------',accessedRouters)
         commit('SET_ROUTERS', accessedRouters)
         resolve()
