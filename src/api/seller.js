@@ -46,7 +46,7 @@ import request from '@/utils/request'
       params: data
     })
   }
-  export function getSchoolList_api(data) { //获取校区列表
+  export function getSchoolList_api(data) { //获取门店列表
     console.log('inner getPostionList_api')
     return request({
       url: '/api/v1/seller/school',
@@ -85,6 +85,29 @@ import request from '@/utils/request'
       params: data
     })
   }
+
+// order => VOrder
+  export function changeVOrder_api(data) {
+    return request({
+      url: '/api/v1/seller/vrorder?order_id='+data.order_id,
+      method: 'put',
+      data
+    })
+  }
+  export function getVOrderList_api(data) {
+    return request({
+      url: '/api/v1/seller/vrorder',
+      method: 'get',
+      params: data
+    })
+  }
+  export function getVOrder_api(data) {
+    return request({
+      url: '/api/v1/seller/vrorder',
+      method: 'get',
+      params: data
+    })
+  }
   
 // appointment
   export function getAppointmentList_api(data) {
@@ -94,7 +117,14 @@ import request from '@/utils/request'
       params: data
     })
   }
-
+  export function changeAppointmentList_api(data) {
+    return request({
+      url: '/api/v1/seller/appointment',
+      method: 'put',
+      params: data,
+      data
+    })
+  }
 // Coupon
   export function getCouponList_api(data) {
     return request({
@@ -283,6 +313,60 @@ import request from '@/utils/request'
       params:data
     })
   }
+// server => glow
+  export function getFlowList_api(data){
+    return request({
+      url:'/api/v1/seller/flowpackage',
+      method:'get',
+      params:data
+    })
+  }
+  export function buyFlow_api(data){
+    return request({
+      url:'/api/v1/seller/floworder',
+      method:'post',
+      params:data,
+      data
+    })
+  }
+  export function buyFlowState_api(data){
+    return request({
+      url:'/api/v1/seller/floworder',
+      method:'get',
+      params:data
+    })
+  }
+// server => allBuy
+export function getAllBuyList_api(data){
+  return request({
+    url:'/api/v1/seller/groupbuying',
+    method:'get',
+    params:data
+  })
+}
+export function addAllBuy_api(data){
+  return request({
+    url:'/api/v1/seller/groupbuying',
+    method:'get',
+    params:data
+  })
+}
+export function deleteAllBuy_api(data){
+  return request({
+    url:'/api/v1/seller/groupbuying',
+    method:'get',
+    params:data
+  })
+}
+export function editAllBuy_api(data){
+  return request({
+    url:'/api/v1/seller/groupbuying',
+    method:'post',
+    params:data,
+    data
+  })
+}
+
 // auth
   export function getAuthList_api(data) {
     return request({

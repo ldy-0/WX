@@ -125,7 +125,7 @@
         prop="paydateTXT"
         >
       </el-table-column>
-      <!-- 预约校区 -->
+      <!-- 预约门店 -->
       <el-table-column
         label="预约店铺" 
         prop="school"
@@ -138,11 +138,23 @@
         >
       </el-table-column>
       <el-table-column
+        label="状态" 
+        prop="statusTXT"
+        >
+        <template slot-scope="scope">
+          <el-tag size="medium" :type="getTableTagType(scope.row.status)">{{ scope.row.statusTXT }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
         label="操作" 
         min-width='300px'
         >
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="lookItem(scope.$index, scope.row)">查看</el-button>
+          <span v-if="scope.row.status==='success'" style="padding-left:20px;display:inline-block">
+            <el-button size="mini" type="success" @click="changeItem(scope.$index, scope.row,1)">确认</el-button>
+            <el-button size="mini" type="info" @click="changeItem(scope.$index, scope.row,0)">取消</el-button>
+          </span>
         </template>
       </el-table-column>
     </el-table>
@@ -155,7 +167,7 @@
 </div>
 </template>
 <script>
-import {getAppointmentList_api} from '@/api/seller'
+import {getAppointmentList_api,changeAppointmentList_api} from '@/api/seller'
 
 export default {
   created(){
@@ -233,6 +245,57 @@ export default {
         this.getList()
       },
     //body
+      changeNewNotice(isOk,id){
+        let sendData = {
+          appointment_id:id,
+          appointment_state:isOk?'comfirm':'fail'
+        }
+        changeAppointmentList_api(sendData).then(res=>{
+          if(res&&res.status===0){
+              this.$notify({
+              title: '成功',
+              message: '操作成功',
+              type:'success'
+            });
+            this.getList()
+          }else{
+            this.$notify({
+              title: '错误',
+              message: '操作失败',
+              type:'error'
+            });
+          }
+        }).catch(err=>{
+          console.error('deleteAdmin_api')
+        })
+      },
+      changeItem(index,row,isOk){
+        let id = row.id
+        this.$confirm(`此操作将${isOk?'确认':'取消'}该预约, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.changeNewNotice(isOk,id)
+        }).catch(()=>{
+          this.$notify.info({
+            title: '消息',
+            message: '已取消'
+          });
+        })
+      },
+      getTableTagType(typeid){
+        switch(typeid){
+          case 'success' :
+          return ''
+          case 'fail' :
+          return 'info'
+          case 'comfirm' :
+          return 'success'
+          default :
+          return 'fail'
+        }
+      },
       lookItem(index) { //查看某条详情
         this.detailForm = this.tableData[index]
         this.detailShow = true
@@ -260,11 +323,12 @@ export default {
         // sendData.appointment_status = status?status:
         await getAppointmentList_api(sendData).then(response => {
           // 这里由于结构做了调整，导致编辑页面需要的数据无法从列表获取，这里只需要给tableData额外传一个id
-          if(response&&response.status==0){
+          if(response&&response.status===0){
             // 将flag 状态变为true 表明获取接口成功
             flag = true
             let result = response.data
             let tempTableData = []
+            
             result.forEach((aData)=>{
               tempTableData.push({
                 //后端生成
@@ -282,7 +346,8 @@ export default {
 
                 school:aData.appointment_address,
                 class:aData.goods_name,
-                status:aData.appointment_status
+                status:aData.appointment_status.toLocaleLowerCase(),
+                statusTXT:aData.appointment_status.toLocaleLowerCase() === 'success'?'预约中':aData.appointment_status.toLocaleLowerCase()==='comfirm'?'已确认':'已取消'
               })
             })
             if(all){
@@ -290,7 +355,7 @@ export default {
             }else{
               this.tableData = tempTableData
             }
-            this.total = response.pagination&&response.pagination.total?response.pagination.total:1
+            this.total = response.pagination&&response.pagination.total?response.pagination.total:0
           }else{
 
           }

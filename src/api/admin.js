@@ -84,12 +84,43 @@ export function test(data) {
       params: data
     })
   }
+
 // manageSevice=>shopServer
   // 获取访问量列表 
-  
   export function changeShopServer_api(data) {
     return request({
       url: '/api/v1/admin/storeview',
+      method: 'put',
+      data
+    })
+  }
+
+// manageSevice=>flowPackages
+  export function getFlowPackageList_api(data) {
+    return request({
+      url: '/api/v1/admin/flowpackage',
+      method: 'get',
+      data
+    })
+  }
+  export function deleteFlowPackage_api(data) {
+    return request({
+      url: '/api/v1/admin/flowpackage',
+      method: 'delete',
+      data,
+      params:data
+    })
+  }
+  export function addFlowPackage_api(data) {
+    return request({
+      url: '/api/v1/admin/flowpackage',
+      method: 'post',
+      data
+    })
+  }
+  export function editFlowPackage_api(data) {
+    return request({
+      url: '/api/v1/admin/flowpackage',
       method: 'put',
       data
     })

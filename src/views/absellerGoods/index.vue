@@ -74,8 +74,8 @@
     <el-form-item label="商品编号" :label-width="formLabelWidth" prop="goodsNum">
       <el-input v-model="formForNotive.goodsNum" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="校区" :label-width="formLabelWidth" prop="school">
-      <el-select v-model="formForNotive.school" placeholder="请选择校区">
+    <el-form-item label="门店" :label-width="formLabelWidth" prop="school">
+      <el-select  v-model="formForNotive.school" placeholder="请选择门店">
         <el-option
           v-for="item in schoolList"
           :key="item.value"
@@ -121,8 +121,11 @@
             <el-tab-pane label="统一规格" name="one" 
               :disabled="!isAddItem&&formForNotive.size!=='one'" >
               <el-form :model="formForNotiveChild1" :inline="true"   ref="ruleFormChild1" :rules="rulesChild1" class="margin-btm20">
-                <el-form-item label="价格" prop="price">
+                <el-form-item label="现价" prop="price">
                   <el-input v-model.number="formForNotiveChild1.price" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="原价" prop="marketprice">
+                  <el-input v-model.number="formForNotiveChild1.marketprice" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="库存" prop="count">
                   <el-input v-model.number="formForNotiveChild1.count" auto-complete="off"></el-input>
@@ -137,8 +140,11 @@
                   <el-form-item label="名称"  prop="name">
                     <el-input v-model="formItem.name" auto-complete="off" ></el-input>
                   </el-form-item>
-                  <el-form-item label="价格"  prop="price">
+                  <el-form-item label="现价"  prop="price">
                     <el-input v-model.number="formItem.price" auto-complete="off"></el-input>
+                  </el-form-item>
+                  <el-form-item label="原价"  prop="price">
+                    <el-input v-model.number="formItem.marketprice" auto-complete="off"></el-input>
                   </el-form-item>
                   <el-form-item label="库存"  prop="count">
                     <el-input v-model.number="formItem.count" auto-complete="off"></el-input>
@@ -333,7 +339,7 @@ export default {
         dialogImageUrl: '',
         dialogVisible: false,
         is_virtualList:[{label:'虚拟商品',value:1},{label:'实物商品',value:0},],
-        schoolList:[{label:'校区1',value:1},{label:'校区2',value:2},],
+        schoolList:[{label:'门店1',value:1},{label:'门店2',value:2},],
         goodsTypehbsList:[
           {
             value:0,
@@ -360,7 +366,7 @@ export default {
               { type:"string",required: true, message: '请输入商品编号', trigger: 'blur',min: 1},
           ],
           school: [
-              { type:"number",required: true, message: '请输入校区，如果没有校区请先添加校区(运营=>校区)', trigger: 'blur'},
+              { type:"number",required: true, message: '请输入门店，如果没有门店请先添加门店(运营=>门店)', trigger: 'blur'},
           ],
           // goodsTotal: [
           //     { type:"string",required: true, message: '请输入库存', trigger: 'blur',min: 1},
@@ -399,6 +405,9 @@ export default {
           price: [
               { required: true, message: '请输入商品价格,不少于0', trigger: 'blur' , min: 0,type:'number'},
           ],
+          marketprice: [
+              { required: true, message: '请输入参考价格,不少于0', trigger: 'blur' , min: 0,type:'number'},
+          ],
           count: [
               { required: true, message: '请输入商品库存,不少于0的整数', trigger: 'blur' , min: 0,type:'integer'},
           ]
@@ -410,6 +419,9 @@ export default {
           ],
           price: [
               { required: true, message: '请输入商品价格,不少于0', trigger: 'blur' , min: 0,type:'number'},
+          ],
+          marketprice: [
+              { required: true, message: '请输入参考价格,不少于0', trigger: 'blur' , min: 0,type:'number'},
           ],
           count: [
               { required: true, message: '请输入商品库存,不少于0', trigger: 'blur' , min: 0,type:'number'},
@@ -743,21 +755,21 @@ export default {
         //商品价格
         if(this.formForNotive.size === 'one'){
           sendData.goods_price= this.formForNotiveChild1.price
-          sendData.goods_marketprice = this.formForNotiveChild1.price
+          sendData.goods_marketprice = this.formForNotiveChild1.marketprice
           sendData.goods_costprice = this.formForNotiveChild1.price
         }else{
           // 类型转换
           let temp = this.formForNotiveChild2List[0].price?Number(this.formForNotiveChild2List[0].price):0
           sendData.goods_price= temp
-          sendData.goods_marketprice = temp
+          sendData.goods_marketprice = this.formForNotiveChild2List[0].marketprice
           sendData.goods_costprice = temp
         }
         // 商品编号
         sendData.goods_serial= this.formForNotive.goodsNum
-        // 校区
+        // 门店
         sendData.school_id= this.formForNotive.school
         for(let i=0,len=this.schoolList.length;i<len;i++){
-          //获取校区名
+          //获取门店名
           if(this.schoolList[i].value===this.formForNotive.school){
             sendData.school_name = this.schoolList[i].label
             break
@@ -939,21 +951,21 @@ export default {
         //商品价格
         if(this.formForNotive.size === 'one'){
           sendData.goods_price= this.formForNotiveChild1.price
-          sendData.goods_marketprice = this.formForNotiveChild1.price
+          sendData.goods_marketprice = this.formForNotiveChild1.marketprice
           sendData.goods_costprice = this.formForNotiveChild1.price
         }else{
           // 类型转换
           let temp = this.formForNotiveChild2List[0].price?Number(this.formForNotiveChild2List[0].price):0
           sendData.goods_price= temp
-          sendData.goods_marketprice = temp
+          sendData.goods_marketprice = this.formForNotiveChild2List[0].marketprice
           sendData.goods_costprice = temp
         }
         // 商品编号
         sendData.goods_serial= this.formForNotive.goodsNum
-        // 校区
+        // 门店
         sendData.school_id= this.formForNotive.school
         for(let i=0,len=this.schoolList.length;i<len;i++){
-          //获取校区名
+          //获取门店名
           if(this.schoolList[i].value===this.formForNotive.school){
             sendData.school_name = this.schoolList[i].label
             break
@@ -1113,6 +1125,7 @@ export default {
                 for(let i = 0 ,len = data.SKUList.length;i<len;i++){
                   tempForm3.push({
                     price:Number(data.SKUList[i].goods_price),
+                    marketprice:Number(data.SKUList[i].goods_marketprice),
                     name:data.SKUList[i].goods_spec,
                     count:Number(data.SKUList[i].goods_storage),
                   })
@@ -1121,6 +1134,7 @@ export default {
             }else{
               tempForm2 = {
                 price:Number(data.goods_price),
+                marketprice:Number(data.goods_marketprice),
                 count:Number(data.SKUList[0].goods_storage)
               }
               this.formForNotiveChild1 = tempForm2

@@ -346,6 +346,7 @@ export default {
         this.listLoading = true
         let sendData = Object.assign({},this.listQuery)
         getCouponList_api(sendData).then(response => {
+          this.listLoading = false
           if(response&&response.status==0){
             let result = response.data
             let tempTableData = []
@@ -362,9 +363,10 @@ export default {
             this.tableData = tempTableData
             this.total = response.pagination&&response.pagination.total?response.pagination.total:1
           }else{
+            this.listLoading = false
           }
-          console.log("getList",response)
-          // this.list = response
+        }).catch(e=>{
+          console.log(e)
           this.listLoading = false
         })
       }, 

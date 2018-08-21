@@ -100,6 +100,11 @@ export let asyncRouterMapAdmin = [
         name: 'shopServer',
         meta: { title: 'shopServer', noCache: true }
       },{
+        path: 'flowPackages', 
+        component: () => import('@/views/aamanageSevice/flowPackages'),
+        name: 'flowPackages',
+        meta: { title: 'flowPackages', noCache: true }
+      },{
         path: 'industryList', 
         component: () => import('@/views/aamanageSevice/industryList'),
         name: 'industryList',

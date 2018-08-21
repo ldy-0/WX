@@ -16,7 +16,7 @@ export default {
     serverShop:'店铺介绍',
     serverAllbuy:'团购',
     serverKill:'砍价',
-    serverSchool:'校区',
+    serverSchool:'门店',
     serverGetFlow:'流量充值',
     serverActivity:'活动',
     distribution:'分销',
@@ -29,9 +29,10 @@ export default {
     goods: '商品',
     notice: '公告',
     manageShop: '店铺管理',
-
+    
     manageSevice: '运营管理',
     shopServer:'店铺运营',
+    flowPackages:'流量套餐',
     industryList:'行业列表',
     agent:"代理",
     auth: '授权管理',
