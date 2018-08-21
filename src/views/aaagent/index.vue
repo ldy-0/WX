@@ -76,10 +76,10 @@
       </el-table-column>
       <el-table-column 
         label="是否禁用" 
-        prop="super"
+        prop="lock"
         >
         <template slot-scope="scope">
-          <el-tag size="medium" :type="scope.row.super?'warning':'info'">{{ scope.row.super?'是':'否'}}</el-tag>
+          <el-tag size="medium" :type="scope.row.lock?'warning':'info'">{{ scope.row.lock?'是':'否'}}</el-tag>
         </template>
       </el-table-column>
       <!-- <el-table-column 
@@ -93,9 +93,9 @@
         <template slot-scope="scope">
         <el-button
           size="mini" 
-          :type="scope.row.super?'':'warning'" 
+          :type="scope.row.lock?'':'warning'" 
           @click="editItem(scope.$index, scope.row)">
-          {{ scope.row.super?'解禁':'禁用'}}</el-button>
+          {{ scope.row.lock?'解禁':'禁用'}}</el-button>
         <el-button
           size="mini" 
           type="danger" 
