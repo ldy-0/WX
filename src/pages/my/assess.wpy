@@ -94,6 +94,7 @@ page {
 
 .level{
   display: flex;
+  align-items: center;
   padding: 30rpx 0 40rpx;
   background: #fff;
   .level_desc{

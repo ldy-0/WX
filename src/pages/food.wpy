@@ -109,6 +109,7 @@
         }
         .item_level{
           display: flex;
+          align-items: center;
           .number{
             margin-left: 20rpx;
             color: #ff5c00;
@@ -222,7 +223,7 @@
                                 </view>
                                 <view class='item_row'>
                                   <view class='item_level'>
-                                    <starLevel :size='36' :level='item.level' :src='"../images/icon/star.png"' :sel_src='"../images/icon/star_sel.png"'></starLevel>
+                                    <starLevel :config.sync='starConfig' :level='item.level'></starLevel>
                                     <text class='number'>{{item.level}}</text>
                                   </view>
                                   <view>距您：1.8km</view>
@@ -254,6 +255,11 @@ export default class Classify extends wepy.page {
               canBack: false,
               search: true,
               //share: { name: '商品详情', path: '/pages/comfire_order', },
+    },
+    starConfig: {
+      size: 36, 
+      src: "../images/icon/star.png",
+      sel_src: "../images/icon/star_sel.png",
     },
     // 一级列表
     classList: ['全部', '距离', '销量排序'],
@@ -400,7 +406,7 @@ export default class Classify extends wepy.page {
 
     bmap.regeocoding({
       success: res => {
-        // console.log(JSON.stringify(res.wxMarkerData));
+        console.log(JSON.stringify(res.wxMarkerData));
         this.address = res.wxMarkerData[0].address;
         this.$apply();
       },

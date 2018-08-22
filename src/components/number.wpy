@@ -1,10 +1,10 @@
 <template>
     <view class='number_wrap'>
-      <view class="minus {{config.hasBorder ? 'minus_border' : ''}}" @tap='minus'>-
+      <view class="minus {{config.hasBorder ? 'minus_border' : ''}}" @tap='minus({{number || config.number}})'>-
         <!-- <image class='icon_minus' src='' /> -->
       </view>
-      <view class="number {{config.hasBorder ? 'number_border' : ''}}">{{config.number}}</view>
-      <view class="add {{config.hasBorder ? 'add_border' : ''}}" @tap='add'>+
+      <view class="number {{config.hasBorder ? 'number_border' : ''}}">{{number || config.number}}</view>
+      <view class="add {{config.hasBorder ? 'add_border' : ''}}" @tap='add({{number || config.number}})'>+
         <!-- <image class='icon_add' src='' /> -->
       </view>
     </view>
@@ -15,7 +15,10 @@ import wepy from 'wepy';
 export default class Number extends wepy.component {
   props = {
     config: Object,
-    number: Number,
+    number: {
+      type: Number,
+      twoWay: true,
+    },
     max: Number,
     hasBorder: Boolean,
   }
@@ -24,11 +27,10 @@ export default class Number extends wepy.component {
   }
 
   data = {
-
+    isFirst: true,
   }
 
   onLoad() {
-  
   }
 
   methods = {
@@ -40,7 +42,7 @@ export default class Number extends wepy.component {
 
       this.$emit('change');
     },
-    add(){
+    add(number){
       this.$parent.numberConfig.number++;
       this.$parent.$apply();
 

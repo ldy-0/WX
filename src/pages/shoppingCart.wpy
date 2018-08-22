@@ -60,115 +60,79 @@
   top: 150rpx;
 }
   
-.goods-info {
-    box-sizing: border-box;
+.cart_goods{
     display: flex;
     align-items: center;
     position: relative;
-    height: 300rpx;
     margin-bottom: 20rpx;
     background: #fff;
     .check_wrap{
       width: 40rpx;
     }
-    .img {
+    .cart_goods_img {
       width: 210rpx;
       height: 210rpx;
       margin-right: 20rpx;
+      background: #ccc;
     }
-    .text-box{
-      margin-top: -10rpx;
-    }
-    .text-box .goods_title {
-      width: 400rpx;
-      padding: 0 20rpx 5rpx 0;
-      color: #000;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-      .name{
-        width: 385rpx;
-        min-height: 32rpx;
-        max-height: 91rpx;
-        line-height: 32rpx;
-        margin-bottom: 16rpx;
-        word-break:break-all;
-        white-space:normal;
-      }
-      .sku{
-        font-size: 24rpx;
-        color: #999;
-        margin-top: -4rpx;
-      }
-      text{
-        font-size: 25rpx;
-      }
-      .discount{
-        display: flex;
-        align-items: center;
-        view{
-          font-size: 25rpx;
-          color: rgb(232,56,32);
+    .goods_info{
+      .goods_title{
+        width: 400rpx;
+        color: #000;
+        .goods_name{
+          line-height: 38rpx;
+          margin-bottom: 16rpx;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
-        image{
-          width: 21rpx;
-          height: 19rpx;
-          margin-left: 20rpx;
+        .sku{
+          font-size: 24rpx;
+          color: #999;
+          margin-top: -4rpx;
         }
       }
-      .white_person{
-        height: 25rpx;
-      }
     }
-    .text-box .buy-num {
-      width: 198rpx;
-      height: 54rpx;
-      line-height: 54rpx;
-      position: absolute;
-      right: 30rpx;
-      bottom: 15rpx;
-      display: flex;
-      font-size: 34rpx;
-      text-align: center
-    }
-    .jian, .jia {
-      width: 54rpx;
-      height: 100%;
-      border: 1rpx solid #999;
-    }
-    .jian{
-      border-left: none;
-      border-bottom-left-radius: 6rpx;
-      border-top-left-radius: 6rpx;
-    }
-    .jian.disabled {
-      background-color: #f5f5f9;
-      border-left: 1rpx solid #eee;
-      border-bottom: 1rpx solid #eee;
-      border-top: 1rpx solid #eee;
-      color: #ccc;
-    }
-    .jia {
-      border-right: none;
-      border-bottom-right-radius: 6rpx;
-      border-top-right-radius: 6rpx;
-    }
-    .jia.disabled {
-      background-color: #f5f5f9;
-      border-right: 1rpx solid #eee;
-      border-bottom: 1rpx solid #eee;
-      border-top: 1rpx solid #eee;
-      color: #ccc;
-    }
-    .number {
-      width: 89rpx;
-      height: 100%;
-      font-size: 34rpx;
-      color: #333;
-      text-align: center;
-      border: 1rpx solid #999;
-    }
+    
+    
   }
+
+.buy_num {
+  width: 198rpx;
+  height: 54rpx;
+  line-height: 54rpx;
+  position: absolute;
+  right: 30rpx;
+  bottom: 15rpx;
+  display: flex;
+  font-size: 34rpx;
+  text-align: center;
+  .add, .minus{
+    width: 54rpx;
+    height: 100%;
+    border: 1rpx solid #999;
+  }
+  .add{
+    border-bottom-left-radius: 6rpx;
+    border-top-left-radius: 6rpx;
+  }
+  .add.disabled, .minus.disabled {
+    background-color: #f5f5f9;
+    border-left: 1rpx solid #eee;
+    border-bottom: 1rpx solid #eee;
+    border-top: 1rpx solid #eee;
+    color: #ccc;
+  }
+  .number {
+    width: 89rpx;
+    height: 100%;
+    color: #333;
+    text-align: center;
+    border-top: 1rpx solid #999;
+    border-bottom: 1rpx solid #999;
+  }
+}
+  
 
 .fullSelect{
   display: flex;
@@ -242,30 +206,25 @@
 
               <repeat for='{{cartList}}' index='index' item='item'>
 
-                  <view class="goods-info">
+                  <view class="cart_goods">
                       <view class='check_wrap icon_check'>
-                        <icon class="" wx:if='{{checkedList[index]}}' type="success" color="red" @tap='check({{index}})' data-index="{{index}}" data-id="{{item.id}}" size="19" />
+                        <icon class="" wx:if='{{checkedList[index]}}' type="success" color="#ff5f00" @tap='check({{index}})' data-index="{{index}}" data-id="{{item.id}}" size="19" />
                         <view class='big_circle' @tap='check({{index}})' wx:else></view>
                       </view>
-                      <view class="img-box">
-                          <image src="{{item.product.imgUrl}}" class="img" />
-                      </view>
-                      <view class="text-box">
+
+                      <image src="{{item.product.imgUrl}}" class="cart_goods_img" />
+
+                      <view class="goods_info">
                           <navigator class="goods_title" url="/pages/goods_detail?id={{item.productId}}">
-                              <view class='name'>{{item.title}}</view>
-                              <view class='sku'>规格：{{item.sku.spec}}</view>
-                              <view class='goods_originPrice'>¥ {{item.sku.price}}</view>
-                              <view style='margin-top: -3rpx; '>兑换价：¥{{item.duiPrice}}+{{item.sku.deductionDPoint}}德分</view>
-                              <view class='discount' wx:if="{{wx.getStorageSync('userInfo').hasIdentity}}">
-                                  <view>省 ¥ {{item.sku.point}}</view>
-                                  <image src='../images/member.png' />
-                              </view>
-                              <view class='white_person' wx:else></view>
+                              <view class='goods_name'>{{item.title}}</view>
+                              <view class='sku'>数量：{{item.qty}}</view>
+                              <view class='goods_originPrice'>¥ {{item.price}}</view>
                           </navigator>
-                          <view class="buy-num">
-                              <view class="jia {{item.num == 1? 'disabled' : ''}}" @tap='minus({{index}})' data-index="{{index}}" data-id="{{item.id}}">-</view>
-                              <view class='number'>{{size[index]}}</view>
-                              <view class="jian {{item.num == 100? 'disabled' : ''}}" @tap='add({{index}})' data-index="{{index}}" data-id="{{item.id}}">+</view>
+                          <!-- <number :config='numberConfig' :number.sync='item.qty' @change.user='change'></number> -->
+                          <view class="buy_num">
+                              <view class="add {{item.num == 1? 'disabled' : ''}}" @tap='minus({{index}})'>-</view> <!-- data-index="{{index}}" data-id="{{item.id}}" -->
+                              <view class='number'>{{item.qty}}</view>
+                              <view class="minus {{item.num == 100? 'disabled' : ''}}" @tap='add({{index}})'>+</view>
                           </view>
                       </view>
                   </view>
@@ -276,7 +235,7 @@
 
           <view class='bottomBar' wx:if='{{isEdit}}'>
               <view class='fullSelect'>
-                  <icon class="icon_check" @tap='checkAll' wx:if='{{checkedAll}}' type="success" color="red" data-index="{{index}}" data-id="{{item.id}}" size="19" />
+                  <icon class="icon_check" @tap='checkAll' wx:if='{{isCheckedAll}}' type="success" color="#ff5f00" data-index="{{index}}" data-id="{{item.id}}" size="19" />
                   <view class='big_circle icon_check' @tap='checkAll' wx:else></view>
                   <view class='fullSelect_text'>全选</view>
               </view>
@@ -285,7 +244,7 @@
           </view>
           <view class='bottomBar' wx:else>
               <view class='fullSelect'>
-                  <icon class="icon_check" @tap='checkAll' wx:if='{{checkedAll}}' type="success" color="red" data-index="{{index}}" data-id="{{item.id}}" size="19" />
+                  <icon class="icon_check" @tap='checkAll' wx:if='{{isCheckedAll}}' type="success" color="#ff5f00" data-index="{{index}}" data-id="{{item.id}}" size="19" />
                   <view class='big_circle icon_check' @tap='checkAll' wx:else></view>
                   <view class='fullSelect_text'>全选</view>
               </view>
@@ -302,6 +261,7 @@
 import wepy from "wepy";
 import cartApi from '../api/cartApi.js';
 import topBar from '../components/topBar';
+// import number from '../components/number';
 
 
 export default class ShoppingCart extends wepy.page {
@@ -316,15 +276,15 @@ export default class ShoppingCart extends wepy.page {
               edit: { isEdit: false, },
               //share: { name: '商品详情', path: '/pages/comfire_order', },
             },
+    numberConfig: {
+      hasBorder: true,
+    },
     editable: false, //
     count: 0, // 总量
     price: 0, // 总价
     isCheckedAll: false, //
     checkedList: [],
-    // 商品数量列表
-    size: [],
-    // 商品列表
-    cartList: [],
+    cartList: [], // 商品列表
     cart: {
       goodsFee: null,
       totalFee: null, // 总价
@@ -335,16 +295,14 @@ export default class ShoppingCart extends wepy.page {
   };
 
   computed = {
-    isEdit(){ return this.data.editable; },
-    checkedAll(){
-      return this.data.isCheckedAll ? 'fill_circle' : '';
-    },
+    isEdit(){ return this.editable; },
     getCount: () => this.data.count,
     getPrice: () => this.data.price,
   };
 
   components = {
     topBar,
+    // number,
   };
   
   methods = {
@@ -356,48 +314,61 @@ export default class ShoppingCart extends wepy.page {
       this.config.edit.isEdit = this.editable = false;
       console.log('-- shoppingCart- done ');
     },
+    change(e){
+      console.log(e);
+      // flex container,下所有直接子代为flex item, main axis direction依次 order, if item width > container width, 按比例 适应container width
+      // default main axis direction flex-direction flex-wrap item width > container width, flex-flow
+      // justify-content item main axis direction or 剩余空间怎么分配, flex-start flex-end center space-between(item 相邻项间距相等，间距和) space-around(每个项两侧间距都相等)
+      // align-content cross axis direction, item 所在行, align-items 
+      // flex-grow flex-shrink width*q+
+      // flex-basis iteml initial value only set min/max-width
+      // min/max 1. flex-basis < min or flex-basis > max 2. grow < max or shrink < min 3. container < min
+    },
     checkAll(){
-      if(this.data.isCheckedAll){
-        this.data.checkedList.forEach((v, i) => this.data.checkedList[i] = false);
-        this.data.isCheckedAll = false;
-        this.data.count = 0;
-        return this.data.price = 0;
+      if(this.isCheckedAll){
+        this.checkedList.forEach((v, i) => this.checkedList[i] = false);
+        this.isCheckedAll = false;
+        this.count = 0;
+        return this.price = 0;
       }
 
-      this.data.checkedList.forEach((v, i) => this.data.checkedList[i] = true);
-      this.data.isCheckedAll = true;
+      this.checkedList.forEach((v, i) => this.checkedList[i] = true);
+      this.isCheckedAll = true;
 
-      this.cartPricing();
+      // this.cartPricing();
     },
     check(index){
-      this.data.checkedList[index] = this.data.checkedList[index] ? false : true; 
+      this.checkedList[index] = this.checkedList[index] ? false : true;
+      this.isCheckedAll = this.checkedList.every(v => v);
 
-      this.cartPricing();
+      // this.cartPricing();
     },
     async minus(index){
-      if(this.data.size[index] <= 1){
+      let item = this.cartList[index],
+          qty = item.qty;
+
+      console.log(qty);
+      if(qty <= 1){
+        return wx.showModal({ title: '提示', content: '商品数量不能小于1', showCancel: false, });
+      }
+
+      // await qty--
+      if(false){
         return ;
       }
 
-      this.data.size[index]--;
-
-      if(await this.updateCartInfo(index, this.data.size[index]) === 'no'){
-        this.data.size[index]++;
-        return wx.showToast({ title: '商品加入购物车中的数量应该为一个正整数', icon: 'none', duration: 2000, });
-
-      };
+      item.qty--;
 
     },
     async add(index){
+      let item = this.cartList[index];
 
-      if(await this.updateCartInfo(index, this.data.size[index] + 1) === 'no'){
-
-        return wx.showToast({ title: '商品已经下架或售完， 不能购买', icon: 'none', duration: 2000, });
+      if(item.qty){
         
-      };
+      }
 
-      this.data.size[index]++;
-      
+      item.qty++;
+     
     },
     goFirmOrder(){
       if(!this.isFirst){
@@ -406,34 +377,6 @@ export default class ShoppingCart extends wepy.page {
 
       this.isFirst = false;
       this.goFirmOrder();
-
-      // if(this.data.count === 0){
-      //   return wx.showToast({ title: '还没有选中任何商品！', icon: 'none', duration: 2000, });
-      // }
-
-      // let goodsList = [],
-      //     checkeds = this.data.checkedList,
-      //     carts = this.data.cartList;
-
-      // for(let i = 0, len = checkeds.length; i < len; i++){
-        
-      //   if(checkeds[i]){
-      //     goodsList.push({
-      //       id: carts[i].productId,
-      //       name: carts[i].title,
-      //       img: carts[i].product.imgUrl,
-      //       price: carts[i].sku.price,
-      //       standard: carts[i].sku,
-      //       nubs: carts[i].amount,
-      //     });
-
-      //   }
-        
-      // }
-      // //console.log(JSON.stringify(goodsList));
-      // wx.navigateTo({
-      //   url: '/pages/comfire_order?cart='+JSON.stringify(this.cart)+'&goodsList='+encodeURIComponent(JSON.stringify(goodsList)), // {price: this.data.price, count: this.data.count}
-      // });
 
     },
     async delete(){
@@ -452,7 +395,6 @@ export default class ShoppingCart extends wepy.page {
           };
 
           this.data.checkedList.splice(i, 1);
-          this.data.size.splice(i, 1);
           this.data.cartList.splice(i, 1);
           this.data.isCheckedAll = false;
           this.$apply();
@@ -475,7 +417,12 @@ export default class ShoppingCart extends wepy.page {
     this.count = 0;
     this.isFirst = true;
     // this.getCartList();
-    
+    this.cartList = [
+      { title: 'askjdfk受到父母双方都没士大夫什么地方开幕式的父母反对是aa', price: 123, qty: 1, },
+      { title: 'bbb', price: 123, qty: 2, },
+    ];
+    this.checkedList = [ false, false ];
+     
   }
 
   onPullDownRefresh(){
@@ -488,7 +435,7 @@ export default class ShoppingCart extends wepy.page {
 
   edit(){
       console.log('pages --------- edit');
-      this.data.editable = true;
+      this.editable = true;
   }
 
   async goFirmOrder(){
@@ -528,7 +475,6 @@ export default class ShoppingCart extends wepy.page {
 
     while(this.data.cartList[0]){
       this.data.cartList.pop();
-      this.data.size.pop();
       this.data.checkedList.pop();
     }
 
@@ -543,7 +489,6 @@ export default class ShoppingCart extends wepy.page {
 
       item.duiPrice = this.add_minus(item.sku.originalPrice, -item.sku.deductionDPoint/10);
       this.data.cartList[i] = item;
-      this.data.size[i] = item.amount;
       this.data.checkedList[i] = false;
     }
     this.$apply();

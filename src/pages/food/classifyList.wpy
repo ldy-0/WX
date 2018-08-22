@@ -105,6 +105,7 @@ page {
     top: 8rpx;
     left: 22rpx;
     display: flex;
+    align-items: cener;
     background: #000;
     opacity: 0.45;
     filter: alpha(opacity=45);
