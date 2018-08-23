@@ -20,7 +20,7 @@
         </navigator>
       </repeat>
     </view>
-
+      
     <view class='secKill'>
       <view class='secKill_title'>
         <!-- <view>秒杀商品</view> -->
@@ -71,6 +71,7 @@ export default class Home extends wepy.page {
       autoplay: true,
       interval: 3000,
       duration: 1000,
+      urls: [],
     },
     classifyList: [
       { name: '上新', img: '../images/home/new.png' },
@@ -152,7 +153,7 @@ export default class Home extends wepy.page {
       return wx.showToast({ title: res.moreInfo, icon: 'none', duration: 2000, });
     }
     
-    this.swiperConfig.adList = imgs;
+    this.swiperConfig.urls = imgs.map(v => v.imgUrl);
     this.$apply();
 
   }

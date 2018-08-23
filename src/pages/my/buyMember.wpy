@@ -1,8 +1,13 @@
 <template>
-  <view class="contianer">
+  <view class="container">
     <topBar :config='config'></topBar>
 
-    <view>购买</view>
+    <view>
+      <view>
+        <image src='../../images/authorize_bg.png' mode='aspectFill' />
+      </view>
+      <view class='btn' @tap='buy'>购买</view>
+    </view>
   </view>
 </template>
 <script>
@@ -22,8 +27,8 @@ export default class Authorize extends wepy.page {
   data = {
     config: {
       isLeft: true,
-      name: '',
-      canBack: false,
+      name: '会员付费',
+      canBack: true,
     },
   }
 
@@ -32,7 +37,9 @@ export default class Authorize extends wepy.page {
   }
 
   methods = {
+    buy(){
 
+    },
   }
   
 }
@@ -44,4 +51,16 @@ page {
   height: 100%;
 }
 
+.container{
+}
+
+.btn{
+  width: 600rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  margin: 0 auto;
+  border: 1rpx solid #000;
+  border-radius: 10rpx;
+  text-align: center;
+}
 </style>

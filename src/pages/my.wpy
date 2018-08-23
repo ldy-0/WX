@@ -13,12 +13,12 @@
                         <view class='member_desc'>付费会员</view>
                     </view>
                     <view class='more_info'>
-                        <view>个人信息</view>
+                        <navigator url='/pages/my/buyMember'>购买</navigator>
                         <image style='width: 18rpx; height: 22rpx; margin-left: 10rpx;' src='../images/my/right_arraw.png' />
                     </view>
                 </view>
             </view>
-            <image class='setting' src='../images/my/setting.png' />
+            <!-- <image class='setting' src='../images/my/setting.png' /> -->
         </view>
         
         <!--<view class="info_block">
@@ -70,7 +70,7 @@
             </navigator>
         </view> -->
         <view class="info_block">
-            <navigator class="item" url="/pages/my/couponList">
+            <!-- <navigator class="item" url="/pages/my/couponList">
                 <view class="item_content">
                     <view class='box'>
                         <image class="item_img address_img" src='../images/my/coupon.png'></image>
@@ -78,7 +78,7 @@
                     <view class="text">优惠劵</view>
                 </view>
                 <image class='right_arrow' src='../images/my/rightArraw.png' />
-            </navigator>
+            </navigator> -->
             <navigator class="item" url="/pages/my/orderList">
                 <view class="item_content">
                     <view class='box'>

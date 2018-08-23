@@ -8,17 +8,19 @@
         <view class='business_item' @tap='goBusiness({{item}})'>
           <image class='business_img' src='' />
           
-          <view class='business_level'>
+          <!-- <view class='business_level'>
             <star :size='36' :level='item.level' :src='starConfig.src' :sel_src='starConfig.sel_src'></star>
             <text class='s-1' style='margin-left: 20rpx;'>{{item.level}}</text>
-          </view>
+          </view> -->
           
           <view class='business_name'>点十分慷慨大方莫斯科麻烦可斯洛伐克蛮舒服的科目史可法马克思麻烦fdjksmkffsdfkj</view>
-          <view class='business_price'>
-            <view class='average'><text class='s-1'>¥ 22.5</text> /人</view>
-            <view class='price'>¥ 45</view>
+          <view style='display: flex; justify-content: space-between; align-items: center; margin: 28rpx 0 0;'>
+            <view class='business_price'>
+              <view class='price'><text class='s-1'>¥ 22.5</text></view>
+              <view class='origin_price'>¥ 45</view>
+            </view>
+            <view>销量：1000</view>
           </view>
-          
 
         </view>
       </repeat>
@@ -64,7 +66,7 @@ export default class Authorize extends wepy.page {
     goBusiness(item){
 
       wx.navigateTo({
-        url: '/pages/food/businessDetail?id=' + item,
+        url: '/pages/food/goodsDetail?id=' + item,
       });
 
     },
@@ -120,9 +122,12 @@ page {
   .business_price{
     display: flex;
     align-items: center;
-    margin: 28rpx 0 0;
     .price{
+
+    }
+    .origin_price{
       margin-left: 40rpx; 
+      text-decoration: line-through;
     }
   }
 }

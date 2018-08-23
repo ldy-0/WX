@@ -220,9 +220,8 @@
                               <view class='sku'>数量：{{item.qty}}</view>
                               <view class='goods_originPrice'>¥ {{item.price}}</view>
                           </navigator>
-                          <!-- <number :config='numberConfig' :number.sync='item.qty' @change.user='change'></number> -->
                           <view class="buy_num">
-                              <view class="add {{item.num == 1? 'disabled' : ''}}" @tap='minus({{index}})'>-</view> <!-- data-index="{{index}}" data-id="{{item.id}}" -->
+                              <view class="add {{item.num == 1? 'disabled' : ''}}" @tap='minus({{index}})'>-</view> 
                               <view class='number'>{{item.qty}}</view>
                               <view class="minus {{item.num == 100? 'disabled' : ''}}" @tap='add({{index}})'>+</view>
                           </view>
@@ -261,7 +260,7 @@
 import wepy from "wepy";
 import cartApi from '../api/cartApi.js';
 import topBar from '../components/topBar';
-// import number from '../components/number';
+// import number from '../components/number1';
 
 
 export default class ShoppingCart extends wepy.page {
@@ -278,7 +277,9 @@ export default class ShoppingCart extends wepy.page {
             },
     numberConfig: {
       hasBorder: true,
+      qty: [ 11 ],
     },
+    qty: 0,
     editable: false, //
     count: 0, // 总量
     price: 0, // 总价
@@ -316,13 +317,6 @@ export default class ShoppingCart extends wepy.page {
     },
     change(e){
       console.log(e);
-      // flex container,下所有直接子代为flex item, main axis direction依次 order, if item width > container width, 按比例 适应container width
-      // default main axis direction flex-direction flex-wrap item width > container width, flex-flow
-      // justify-content item main axis direction or 剩余空间怎么分配, flex-start flex-end center space-between(item 相邻项间距相等，间距和) space-around(每个项两侧间距都相等)
-      // align-content cross axis direction, item 所在行, align-items 
-      // flex-grow flex-shrink width*q+
-      // flex-basis iteml initial value only set min/max-width
-      // min/max 1. flex-basis < min or flex-basis > max 2. grow < max or shrink < min 3. container < min
     },
     checkAll(){
       if(this.isCheckedAll){
