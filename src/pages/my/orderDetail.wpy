@@ -1,14 +1,16 @@
 <template>
   <view class="container">
     <topBar :config='config'></topBar>
+
     <view class='wrap'>
+      
       <view class='goods_list'>
         <repeat for='{{goodsList}}' item='item'>
           <view class='goods_item'>
             <image class='goods_img' src='' />
             <view class='goods_info'>
               <view class='goods_name'>{{item.name}}</view>
-              <view class='goods_time'></view>
+              <view class='goods_time'>{{item.name}}</view>
               <view class='goods_price'>123.13</view>
             </view>
           </view>
@@ -16,7 +18,7 @@
       </view>
 
       <view class='order'>
-        <view class='order_title'>订单信息<text class='s-1' style='float: right;' wx:if='{{true}}'>已失效</text></view>
+        <view class='order_title'>订单信息<text class='s-1' style='float: right;' wx:if="{{status === 'expire'}}">已失效</text></view>
 
         <view class='order_content'>
           <view class='order_item'>
@@ -31,14 +33,14 @@
             <view>下单时间</view>
             <view>2018-07-19    15:20</view>
           </view>
-          <view class='order_item' wx:if='{{false}}'>
+          <view class='order_item' wx:if="{{status !== 'used'}}">
             <view>数量：</view>
             <view></view>
           </view>
           <view class='order_item' wx:else>
             <view style='text-decoration: line-through;'>券码：4894151651513512</view>
           </view>
-          <view class='order_item' wx:if='{{false}}'>
+          <view class='order_item' wx:if="{{status !== 'used'}}">
             <view>总价：</view>
             <view></view>
           </view>
@@ -46,7 +48,7 @@
             <view>消费金额：</view>
             <view>¥:12.1</view>
           </view>
-          <view class='' wx:if='{{true}}'>
+          <view class='' wx:if="{{status === 'used'}}">
             <view class='assess_btn_wrap'><view class='assess_btn' @tap='goAssess'>去评价</view></view>
             <view class='assess_desc'>评价有助于商家完善其服务，你也可以取得更好的服务！</view>
             <view class='phone'>客服电话：10107888</view>
@@ -55,14 +57,15 @@
         </view>
       </view>
 
-      <view class='other_wrap' wx:if='{{true}}'> 
+      <view class='other_wrap' wx:if="{{status !== 'used' || status !== 'payed'}}"> 
         <view class='countDown s-1'>
-          <view wx:if='{{true}}'>距离支付失效：{{countDown.day}}:{{countDown.hour}}:{{countDown.minute}}:{{countDown.second}}</view>
+          <view wx:if="{{status !== 'expire'}}">距离支付失效：{{countDown.day}}:{{countDown.hour}}:{{countDown.minute}}:{{countDown.second}}</view>
         </view>
 
-        <view class='btn'>立即付款</view>
+        <view class="btn {{status === 'expire' ? 'expire' : ''}}" @tap='pay'>立即付款</view>
       </view>
-      <view class='coupon_info' wx:if='{{true}}'>
+
+      <view class='coupon_info' wx:if="{{status === 'payed'}}">
         <view class='coupon'>
           <view class=''>我的券码</view>
           <view class=''>券码：4894151651513512</view>
@@ -79,7 +82,7 @@
 import wepy from 'wepy';
 import topBar from '../../components/topBar';
 
-export default class Authorize extends wepy.page {
+export default class OrderDetail extends wepy.page {
   config = {
     enablePullDownRefresh: false,
     // disableScroll: true,
@@ -104,9 +107,13 @@ export default class Authorize extends wepy.page {
       second: null,
     }, 
     interval: null,
+    expire: false,
+    payed: false,
+    status: 'expire',
   }
 
-  onLoad() {
+  onLoad(params) {
+    console.log(params.id);
     this.order = {
      orderNo: 4527280854,
      phone:  15012349627,
@@ -119,6 +126,10 @@ export default class Authorize extends wepy.page {
     clearInterval(this.interval);
   }
 
+  onHide(){
+    clearInterval(this.interval);
+  }
+
   methods = {
     goAssess(){
 
@@ -127,6 +138,11 @@ export default class Authorize extends wepy.page {
       });
 
     },
+    pay(){
+
+      console.log('pay');
+
+    }
   }
   
   modifyPhone(phone){
@@ -202,10 +218,12 @@ page {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      .goods_name{
+      .goods_name, .goods_time{
         height: 38rpx;
         line-height: 38rpx;
         overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
   }
@@ -264,9 +282,14 @@ page {
     width: 658rpx;
     height: 60rpx;
     line-height: 60rpx;
-    border: 1rpx solid #000;
+    border: 1rpx solid #ff5f00;
     border-radius: 10rpx;
+    color: #ff5f00;
     text-align: center;
+  }
+  .expire{
+    border: 1rpx solid #000;
+    color: #000;
   }
   .canBuy{
     border: 1rpx solid #ff5f00;
@@ -296,4 +319,6 @@ page {
 .s-1{
   color: #ff5f00;
 }
+
+
 </style>

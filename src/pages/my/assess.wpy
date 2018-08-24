@@ -9,7 +9,7 @@
           <text class='level_desc'>{{level}}</text>
         </view>
 
-        <img :size='imgNumber'></img>
+        <img :size='imgNumber' :activeSize.sync='activeSize'></img>
         <!-- <view class='imgs_wrap'>
           <repeat for='{{3}}' item='item'>
             <image src='' />
@@ -17,12 +17,12 @@
         </view> -->
 
         <view class='assess_info'>
-          <textarea maxlength='50'></textarea>
+          <textarea maxlength='50' value='{{content}}' placeholder='图片最多上传三张' placeholder-style='color: #c0c0c0;'></textarea>
           <view class='desc'>最多输入50个字</view>
         </view>
       </view>
 
-      <view class='btn'>去评价</view>
+      <view class='btn' @tap='submit'>去评价</view>
 
       <view class='desc'>评价有助于商家完善其服务，您也可以取得更好的服务！</view>
     </view>
@@ -60,7 +60,9 @@ export default class Authorize extends wepy.page {
       sel_src: '../../images/icon/star_sel.png',
     },
     level: 0,
-    imgNumber: 2,
+    imgNumber: 3,
+    activeSize: 0,
+    content: null,
   }
 
   onLoad(params) {
@@ -69,7 +71,13 @@ export default class Authorize extends wepy.page {
   }
 
   methods = {
+    submit(){
+      
+      if(this.content !== ''){
+        return wx.showModal({ title: '提示', content: '评价内容不能为空!', showCancel: false, });
+      }
 
+    },
   }
   
 }
@@ -117,9 +125,11 @@ page {
 .assess_info{
   position: relative;
   textarea{
+    box-sizing: border-box;
     width: 100%;
     height: 340rpx;
     margin: 80rpx 0 0;
+    padding: 20rpx 0 0 20rpx;
     border: 1rpx solid #000;
   }
   .desc{

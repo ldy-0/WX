@@ -65,6 +65,7 @@
     align-items: center;
     position: relative;
     margin-bottom: 20rpx;
+    padding: 20rpx 0;
     background: #fff;
     .check_wrap{
       width: 40rpx;
@@ -238,7 +239,7 @@
                   <view class='big_circle icon_check' @tap='checkAll' wx:else></view>
                   <view class='fullSelect_text'>全选</view>
               </view>
-              <view class='sum'>您已选择{{getCount}}件商品</view>
+              <view class='sum'>您已选择{{count}}件商品</view>
               <view class='btn' @tap='delete'>删除</view>
           </view>
           <view class='bottomBar' wx:else>
@@ -248,7 +249,7 @@
                   <view class='fullSelect_text'>全选</view>
               </view>
               <view class='sum'>合计：<text>¥{{getPrice}}</text></view>
-              <view class='btn' @tap='goFirmOrder'>立刻结算({{getCount}})</view>
+              <view class='btn' @tap='goFirmOrder'>立刻结算({{count}})</view>
           </view>
          
       </view> 
@@ -270,16 +271,15 @@ export default class ShoppingCart extends wepy.page {
 
   data = {
     config: {
-              tabPage: true,
-              name: '购物车',
-              edit: { isEdit: false, },
-              //share: { name: '商品详情', path: '/pages/comfire_order', },
-            },
-    numberConfig: {
-      hasBorder: true,
-      qty: [ 11 ],
+      tabPage: true,
+      name: '购物车',
+      edit: { isEdit: false, },
+      //share: { name: '商品详情', path: '/pages/comfire_order', },
     },
-    qty: 0,
+    // numberConfig: {
+    //   hasBorder: true,
+    //   qty: [ 11 ],
+    // },
     editable: false, //
     count: 0, // 总量
     price: 0, // 总价
@@ -297,8 +297,8 @@ export default class ShoppingCart extends wepy.page {
 
   computed = {
     isEdit(){ return this.editable; },
-    getCount: () => this.data.count,
-    getPrice: () => this.data.price,
+    getCount: () => this.count,
+    getPrice: () => this.price,
   };
 
   components = {
@@ -329,12 +329,14 @@ export default class ShoppingCart extends wepy.page {
       this.checkedList.forEach((v, i) => this.checkedList[i] = true);
       this.isCheckedAll = true;
 
+      this.compute();
       // this.cartPricing();
     },
     check(index){
       this.checkedList[index] = this.checkedList[index] ? false : true;
       this.isCheckedAll = this.checkedList.every(v => v);
 
+      this.compute();
       // this.cartPricing();
     },
     async minus(index){
@@ -346,23 +348,28 @@ export default class ShoppingCart extends wepy.page {
         return wx.showModal({ title: '提示', content: '商品数量不能小于1', showCancel: false, });
       }
 
-      // await qty--
-      if(false){
+      let res = await 0;
+      
+      if(res){
         return ;
       }
 
       item.qty--;
+      this.compute();
 
     },
     async add(index){
       let item = this.cartList[index];
 
-      if(item.qty){
-        
+      let res = await 0;
+
+      if(res){
+        return ;
       }
 
       item.qty++;
-     
+      this.compute();
+
     },
     goFirmOrder(){
       if(!this.isFirst){
@@ -475,13 +482,12 @@ export default class ShoppingCart extends wepy.page {
     const result = await cartApi.getCartInfo({});
 
     if(!result){
-      return wx.showToast({ title: '获取购物车信息失败!', icon: 'none', duration: 2000, });
+      return wx.showModal({ title: '提示', content: '获取购物车信息失败!', });
     }
     
     for(let i = 0, len = result.cartItems.length; i < len; i++){
       let item = result.cartItems[i];
 
-      item.duiPrice = this.add_minus(item.sku.originalPrice, -item.sku.deductionDPoint/10);
       this.data.cartList[i] = item;
       this.data.checkedList[i] = false;
     }
@@ -507,47 +513,55 @@ export default class ShoppingCart extends wepy.page {
       
   }
 
-  async cartPricing(){
+  async compute(){
 
-    let skuMaps = {},
+    let _this = this,
+        skuMaps = {},
         chooseList = [],
-        count = 0, // 购物车中选中的个数
-        checkedList = this.data.checkedList,
-        cartList = this.data.cartList;
+        count = 0,
+        checkedList = this.checkedList,
+        cartList = this.cartList;
     
-    this.data.count = 0;
+    this.count = 0;
+    checkedList.forEach(function(v, i){
 
-    for(let i = 0, len = checkedList.length; i < len; i++){
-    
-      if(checkedList[i]){
-        chooseList.push(cartList[i].sku.id); // chooseList.push(cartList[i].skuId);
-        this.data.count += cartList[i].amount;
+      if(v){
+        _this.count += cartList[i].qty;
         count++;
-      }  
-      
-    }
-    // 判断是否全选
-    this.data.isCheckedAll = count === checkedList.length ? true : false;
+      } 
 
-    for(let i = 0, len = chooseList.length; i < len; i++){
-      skuMaps["skuIds[" + i + "]"] = chooseList[i];
-    }
-
-    let result = await cartApi.cartPricing({
-      params: skuMaps
     });
+    // for(let i = 0, len = checkedList.length; i < len; i++){
+    
+    //   if(checkedList[i]){
+    //     chooseList.push(cartList[i].sku.id); // chooseList.push(cartList[i].skuId);
+    //     this.data.count += cartList[i].amount;
+    //     count++;
+    //   }  
+      
+    // }
+    // 判断是否全选
+    this.isCheckedAll = count === checkedList.length ? true : false;
 
-    if(!result){
-      this.data.price = 0;
-      return this.$apply();
-    }
+    // for(let i = 0, len = chooseList.length; i < len; i++){
+    //   skuMaps["skuIds[" + i + "]"] = chooseList[i];
+    // }
 
-    this.data.price =  result.totalPricingResult.totalFee;
+    // let result = await cartApi.cartPricing({
+    //   params: skuMaps
+    // });
 
-    this.cart.totalFee = result.totalPricingResult.totalFee;
-    this.cart.goodsFee = result.totalPricingResult.goodsFee;
-    this.cart.logisticsFee = result.totalPricingResult.logisticsFee;
-    this.cart.count = this.count;
+    // if(!result){
+    //   this.data.price = 0;
+    //   return this.$apply();
+    // }
+
+    // this.data.price =  result.totalPricingResult.totalFee;
+
+    // this.cart.totalFee = result.totalPricingResult.totalFee;
+    // this.cart.goodsFee = result.totalPricingResult.goodsFee;
+    // this.cart.logisticsFee = result.totalPricingResult.logisticsFee;
+    // this.cart.count = this.count;
     this.$apply();
   }
 

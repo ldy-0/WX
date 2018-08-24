@@ -13,7 +13,7 @@
                       <view class='item_price'>¥{{item.price}} </view>
                       <view class='origin_price'>¥{{item.originPrice}}</view>
                   </view>
-                  <view class='btn'>马上抢</view>
+                  <view class='btn' catchtap='goGoodsDetail({{item.id}})' hover-class='none' hover-stop-propagation='{{true}}'>马上抢</view>
                 </view>
             </navigator>
             
@@ -38,7 +38,16 @@ export default class Discover extends wepy.component {
       return wx.getStorageSync("userInfo").hasIdentity;
     }
   };
-  methods = {};
+
+  methods = {
+    goGoodsDetail(id){
+      
+      wx.navigateTo({
+        url: '/pages/food/goodsDetail?id=' + id,
+      });
+
+    },
+  };
 }
 </script>
 <style lang="less">

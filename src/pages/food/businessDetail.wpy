@@ -46,6 +46,7 @@
       <view class='comment' wx:if="{{status === tab[1].name}}">
         
         <repeat for='{{commentList}}' item='item'>
+
           <view class='comment_item'>
             <image class='user_img' src='' />
             
@@ -58,16 +59,16 @@
                 <starLevel :size='36' :level='item.level' :src='starConfig.src' :sel_src='starConfig.sel_src'></starLevel>
                 <text class='s-1' style='margin-left: 20rpx;'>{{item.level}}</text>
               </view>
-              <view class='comment_content'>味道很正宗，服务态度不错，地好找...</view>
+              <view class='comment_content'>{{item.content}}</view>
               <view class='comment_img'>
                 <repeat for='{{item.imgs}}' item='item'>
                   <image src='{{item}}' @tap='previewImg({{item}})' />
                 </repeat>
               </view>
             </view>
-            
 
           </view>
+        
         </repeat>
 
       </view>
@@ -113,8 +114,8 @@ export default class businessDetail extends wepy.page {
       sel_src: '../../images/icon/huoyan_sel.png',
     },
     starConfig: {
-      src: "../../images/icon/star.png",
-      sel_src: "../../images/icon/star_sel.png",
+      src: "/images/icon/star.png",
+      sel_src: "/images/icon/star_sel.png",
     },
     markers: [],
     tab: [{ name: '优惠劵', img: '../../images/icon/coupon.png', selImg: '../../images/icon/coupon_sel.png' }, 
@@ -125,7 +126,10 @@ export default class businessDetail extends wepy.page {
       { id: '123', name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', price: 10, },
       { id: '123', name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', price: 10, }
     ],
-    commentList: [ { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, imgs: [ 'http://qiniures.51shop.mobi/FmwPMX290iYB6zh97InanSKkFzzh?imageView2/2/w/640/q/100/@w/$w$@/@h/$h$@', ], } ],
+    commentList: [ 
+      { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, imgs: [ 'http://qiniures.51shop.mobi/FmwPMX290iYB6zh97InanSKkFzzh?imageView2/2/w/640/q/100/@w/$w$@/@h/$h$@', ], content: '味道很正宗，服务态度不错，地好找...', }, 
+      { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, imgs: [ 'http://qiniures.51shop.mobi/FmwPMX290iYB6zh97InanSKkFzzh?imageView2/2/w/640/q/100/@w/$w$@/@h/$h$@', ], content: '味道很正宗，服务态度不错，地好找...', } 
+    ],
   }
 
   onLoad(param){
@@ -261,6 +265,7 @@ page, .container {
     .row{
       display: flex;
       justify-content: space-between;
+      align-items: center;
     }
     .user_name{
       width: 250rpx;

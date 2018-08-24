@@ -17,6 +17,7 @@
     background: #fff;
     .class_row{
       display: flex;
+      justify-content: space-between;
       align-items: center;
       padding: 30rpx 0 0;
       .address_wrap{

@@ -17,7 +17,7 @@
               <star :size='36' :level='item.level' :src='starConfig.src' :sel_src='starConfig.sel_src'></star>
               <text class='s-1' style='margin-left: 20rpx;'>{{item.level}}</text>
             </view>
-            <view class='comment_content'>味道很正宗，服务态度不错，地好找...</view>
+            <view class='comment_content'>{{item.content}}</view>
             <view class='comment_img'>
               <repeat for='{{3}}' item='item'>
                 <image src='' />
@@ -59,7 +59,8 @@ export default class Authorize extends wepy.page {
       src: "../../images/icon/star.png",
       sel_src: "../../images/icon/star_sel.png",
     },
-    commentList: [  { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 3, }, { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, }],
+    commentList: [  { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 3, content: '味道很正宗，服务态度不错，地好找...' }, 
+                    { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, }],
   }
 
   onLoad() {

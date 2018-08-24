@@ -12,6 +12,10 @@ import wepy from 'wepy';
 export default class Img extends wepy.component {
   props = {
     size: Number,
+    activeSize: {
+      type: Number,
+      twoWay: true,
+    },
   }
 
   components = {
@@ -36,8 +40,9 @@ export default class Img extends wepy.component {
         success:res => {
           let tempPath = res.tempFilePaths[0];
           this.imgList[index] = tempPath;
+          this.activeSize = this.imgList.filter(v => v).length; 
           this.$apply();
-
+          
           // this.uploadImg('https://www.hi-zhan.com', {
           //   filePath: tempPath,
           // });

@@ -1,25 +1,28 @@
 <template>
+
     <view class='comment_item'>
-      <image class='user_img' src='' />
-      
-      <view class='comment_info'>
-        <view class='row'>
-          <view class='user_name'>{{item.name}}</view>
-          <view class='user_time'>{{item.level}}</view>
+        <image class='user_img' src='' />
+        
+        <view class='comment_info'>
+          <view class='row'>
+            <view class='user_name'>{{item.name}}</view>
+            <view class='user_time'>{{item.level}}</view>
+          </view>
+          <view style='display: flex; align-items: center;'>
+            <!-- <star :size='36' :level='item.level' :src='starConfig.src' :sel_src='starConfig.sel_src'></star> -->
+            <slot></slot>
+            <text class='s-1' style='margin-left: 20rpx;'>{{item.level}}</text>
+          </view>
+          <view class='comment_content'>{{item.content}}</view>
+          <view class='comment_img'>
+            <repeat for='{{item.imgs}}' item='item'>
+              <image src='{{item}}' @tap='previewImg({{item}})' />
+            </repeat>
+          </view>
         </view>
-        <view style='display: flex;'>
-          <star :size='size' :level='level'></star><text class='s-1' style='margin-left: 20rpx;'>{{item.level}}</text>
-        </view>
-        <view class='comment_content'>味道很正宗，服务态度不错，地好找...</view>
-        <view class='comment_img'>
-          <repeat for='{{3}}' item='item'>
-            <image src='' />
-          </repeat>
-        </view>
-      </view>
-      
 
     </view>
+    
 </template>
 <script>
 import wepy from 'wepy';
@@ -37,6 +40,10 @@ export default class Number extends wepy.component {
   data = {
     size: 36,
     level: 1,
+    starConfig: {
+      src: "../../images/icon/star.png",
+      sel_src: "../../images/icon/star_sel.png",
+    },
   }
 
   onLoad() {

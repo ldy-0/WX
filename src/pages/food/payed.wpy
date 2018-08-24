@@ -2,7 +2,7 @@
   <view class="container">
     <topBar :config='config'></topBar>
 
-    <view class='wrap'>微信返回支付完成状态后，跳转去订单详情页</view>
+    <view class='wrap' @tap='goOrderDetail'>微信返回支付完成状态后，跳转去订单详情页</view>
   </view>
 </template>
 <script>
@@ -25,14 +25,23 @@ export default class Payed extends wepy.page {
       name: '提交订单',
       canBack: true,
     },
+    orderId: null,
   }
 
-  onLoad() {
-  
+  onLoad(params) {
+    
+    this.orderId = params.id;
+
   }
 
   methods = {
+    goOrderDetail(){
 
+      wx.redirectTo({
+        url: '/pages/my/orderDetail?id=' + this.orderId,
+      });
+      
+    },
   }
   
 }

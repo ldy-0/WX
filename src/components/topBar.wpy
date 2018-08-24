@@ -8,9 +8,6 @@
   height: 150rpx;//200rpx;
   background: #fff;
 }
-.bg{
-  background: #f5f5f5;
-}
   
 .topBar{
   display: flex;
@@ -68,81 +65,58 @@
   top: 50rpx;//100rpx;
 }
 
-.navigation-logo{
-  display: flex;
-  margin: 0 20rpx;
-  border-radius: 10rpx;
-  image{
-    width: 60rpx;
-    height: 60rpx;
-  }
-}
-  
 .name{
-  font: bold 30rpx 'RTWSYueGoTrial-Regular';
+  font: bold 36rpx 'RTWSYueGoTrial-Regular';
   color: #333;
   overflow: hidden;
 }
   
-.strong-font{
-  // font-weight: 500;
-}
-
 .only_left_wrap{
   position: absolute;
   top: 60rpx;
   width: 100%;
   height: 90rpx;
-  .only_left{
-    display: flex;
-    align-items: center;
-    height: 100%;
-    .back{
-      width: 40rpx;
-      height: 45rpx;
-      margin: 0 20rpx;
-    }
-    .name{
-      width: 350rpx;
-      height: 38rpx;
-      line-height: 38rpx;
-      font: 30rpx 'RTWSYueGoTrial-Regular';
-      font-weight: bold;
-      color: #333;
-      overflow: hidden;
-    }
+  display: flex;
+  align-items: center;
+  .back{
+    width: 40rpx;
+    height: 45rpx;
+    margin: 0 20rpx;
+  }
+  .name{
+    width: 350rpx;
+    height: 40rpx;
+    line-height: 40rpx;
   }
 }
   
 </style>
 <template>
   <view class="topBar_wrap" style='background: {{config.bg}};'> <!-- {{isIOS?'ios_height':''}} -->
+
     <view class="only_left_wrap" wx:if='{{config.isLeft}}'> <!-- {{isIOS?'box-height':''}} -->
 
-        <view class='only_left'>
             <image class="back" 
-                  src="../images/return.png"
+                  src="/images/icon/return_black.png"
                   catchtap="navigateBack" 
                   wx:if="{{config.canBack}}"
                   mode="aspectFit" />
             <view class='name'>{{config.name}}</view>
-        </view>
 
     </view>
     <view class="topBar box-height" wx:else> <!-- {{isIOS?'box-height':''}} -->
 
         <view class='left'>
             <image class="back" 
-                  src="../images/return.png"
+                  src="/images/icon/return_black.png"
                   catchtap="navigateBack" 
                   wx:if="{{config.canBack}}"
                   mode="aspectFit" />
         </view>
         
-        <!-- <view class="navigation-logo">
-          <image src="../images/logo.png" mode="aspectFit" />
-        </view> -->
-        <view class="name {{isIOS?'strong-font':''}}">{{config.name}}</view>
+        <view class='center'>
+          <view class="name {{isIOS?'strong-font':''}}">{{config.name}}</view>
+        </view>
         
         <view class='right'>
           <view class='goRight' @tap='share' wx:if="{{config.share && config.share.name}}"> <!-- open-type='share' -->
@@ -170,9 +144,6 @@ export default class TopBar extends wepy.component {
   };
 
   data = {
-    name: "",
-    company: {},
-    //navigationStyle: "",
     isIOS: false
   };
 
@@ -206,11 +177,9 @@ export default class TopBar extends wepy.component {
     this.company = this.$parent.$parent.globalData.company;
     this.init();
     // console.log(this.topBar.share);
-    //const style = this.navigationOption.style;
-    //this.navigationStyle = `background: linear-gradient(0, ${style.gradientLight}, ${style.gradientDark});` + `color:${style.color};`;
   }
   
-  /*onShareAppMessage: function(res){
+  /*onShareAppMessage(res){
 
     return {
       title: '汉薇商城',

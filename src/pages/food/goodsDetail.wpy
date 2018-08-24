@@ -7,9 +7,19 @@
         <view class='business_name'>{{goods.business}}</view>
         <swiper :config.sync='swiperConfig'></swiper>
         <view class='goods_name'>{{goods.name}}</view>
-        <view class='goods_price'>
-          <text class='price'>¥{{goods.price}}</text>
-          <text class='origin'>¥{{goods.origin_price}}</text>
+        <view style='display: flex; justify-content: space-between; align-items: center; margin: 37rpx 0 0;'>
+          <view class='goods_price'>
+              <text class='price'>¥{{goods.price}}</text>
+            <text class='origin'>¥{{goods.origin_price}}</text>
+          </view>
+          <button class='goods_share' open-type='share' plain='true' style='line-height: 1.2; margin: 0; padding: 0; border: 0;'>
+            <image src='../../images/icon/share.png' mode='aspectFill' />
+            <view>分享</view>
+          </button>
+          <!-- <view class='goods_share' @tap='share'>
+            <image src='../../images/icon/share.png' mode='aspectFill' />
+            <view>分享</view>
+          </view> -->
         </view>
         <view class='goods_row'>
           <!-- <view>到店使用</view> -->
@@ -64,13 +74,15 @@
             <view class=''>客服</view>
           </button>
         </view>
-        <view class='btn s-1'>加入购物车</view>
+        <view class='btn s-1' @tap='addCart'>加入购物车</view>
         <view class='btn s-2' @tap='goSubmitOrder'>立即购买</view>
       </view>
       
-      <model :isShow='isShow' :center='isShow' :canCancel='canCancel' :config='modelConfig'>
-        <view class='phone_desc'>* 需要微信授权</view>
-        <button class='phone_btn' open-type='getPhoneNumber' bindgetphonenumber='getPhone'>授权获取手机号</button>
+      <model :isShow.sync='isShow' :canCancel.sync='canCancel' :config.sync='modelConfig'>
+        <view slot='center'>
+          <view class='phone_desc'>* 需要微信授权</view>
+          <button class='phone_btn' open-type='getPhoneNumber' bindgetphonenumber='getPhone'>授权获取手机号</button>
+        </view>
       </model> 
 
     </view>
@@ -105,7 +117,8 @@ export default class goodsDetail extends wepy.page {
     },
     modelConfig: {
       width: 400, 
-      height: 200,
+      height: 250,
+      center: true,
     },
     swiperConfig: {
       indicatorActiveColor: "#fff",
@@ -116,10 +129,8 @@ export default class goodsDetail extends wepy.page {
       height: 360,
       urls: [ '../../images/background_info.@3x.png', '../../images/authorize_bg_629.png' ],
     },
-    canCancel: false, // 弹窗是否可以取消
     // coupon: {},
     // canRedirect: false,
-    canBuy: true,
     goods: {
       business: '小麻巷ahsfdif世界佛教四大佛教科技发达sjfiojsdfj（江汉北路店）',
       name: '情侣价值100元套餐士大夫艰苦福克斯麻烦时间咖啡的苦涩JFKsf',
@@ -130,45 +141,92 @@ export default class goodsDetail extends wepy.page {
       imgs: [ '../../images/authorize_bg.png', '../../images/background_info.@3x.png' ],
     },
     index: 0, // 使用方式的索引
-    isShow: false,
+    isShow: true,
+    canCancel: false, // 弹窗是否可以取消
+    params: {},
+    canBuy: true,
+    canAdd: true,
   }
 
-  onLoad(param){
+  async onLoad(param){
+    if(true){ // 是否绑定手机号
+      let res = await wepy.login();
+      console.log(res);
+    }
+
     console.log(param.id);
   }
 
   async onShow(){
-    if(true){
-      let res = await wepy.login();
-      console.log(res);
-    }
+    
   }
 
   methods = {
-    goSubmitOrder(){
+    goHome: () => wx.reLaunch({ url: '/pages/home' }),
+    async addCart(){
+      
+      if(!this.canAdd){
+        return ;
+      }
+
+      this.canAdd = false;
+
+      if(false){
+        let res = await wepy.login();
+        this.params.code = res.code;
+        this.isShow = true;
+        return this.$apply();
+      }
+
+      this.addShoppingCart();
+    },
+    async goSubmitOrder(){
+      if(!this.canBuy){
+        return ;
+      }
+
+      this.canBuy = false;
+       
+      if(false){
+        let res = await wepy.login();
+        this.params.code = res.code;
+        this.isShow = true;
+        return this.$apply();
+      }
 
       return wx.navigateTo({
         url: '/pages/food/submitOrder',
       });
 
     },
-    goHome: () => wx.reLaunch({ url: '/pages/home' }),
     getPhone(e){
-      let res = e.detail,
-          params = {};
+      let res = e.detail;
 
       if(res){
-        params.encryptedData = res.encryptedData;
-        params.iv = res.iv;
+        this.params.encryptedData = res.encryptedData;
+        this.params.iv = res.iv;
       }
+
+      this.isShow = false;       
+      console.log(this.isShow);
 
     },
     setMethod(e){
       console.log(e.detail.value);
       this.index = e.detail.value;
     },
+    share(){
+      console.log('share');
+    }
+  }
+
+  async addShoppingCart(){
+    console.log('add cart');
   }
   
+  onShareAppMessage(){
+
+  } 
   
 }
 
@@ -180,7 +238,6 @@ page {
 }
 
 .wrap{
-  // margin: 150rpx 0 0;
   font: 30rpx 'RTWSYueGoTrial-Regular';
   color: #000;
   background: #f5f5f5;
@@ -197,6 +254,8 @@ page {
     font-size: 36rpx;
     text-align: center;
     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .goods_name{
     margin: 20rpx 0 0;
@@ -204,9 +263,10 @@ page {
     line-height: 40rpx;
     font-size: 36rpx;
     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .goods_price{
-    margin: 37rpx 0 0;
     font-size: 48rpx;
     .price{
       color: #ff5c00;
@@ -214,6 +274,15 @@ page {
     .origin{
       margin-left: 54rpx;
       text-decoration: line-through;
+    }
+  }
+  .goods_share{
+    image{
+      width: 40rpx;
+      height: 40rpx;
+    }
+    view{
+      font-size: 24rpx;
     }
   }
   .goods_row{

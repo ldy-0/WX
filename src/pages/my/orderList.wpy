@@ -164,7 +164,7 @@
                                     </view>
                                     <view class='other'>
                                       <view class='order_status'>待付款</view>
-                                      <view class='btn' wx:if='{{1}}'>付款</view>
+                                      <view class='btn' wx:if='{{!item.payed}}' catchtap='pay({{index}})' hover-class='none' hover-stop-propagation='{{true}}'>付款</view>
                                     </view>
                                 </navigator>
                             </repeat>
@@ -225,8 +225,6 @@ export default class OrderList extends wepy.page {
       isLeft: false,
       canBack: true,
     },
-    // 订单是否为空
-    isNullList: [true, true, true, true, true],
     //
     checkedList: [true, false, false, false, false],
     // 订单状态
@@ -259,8 +257,9 @@ export default class OrderList extends wepy.page {
 
     },
     //支付
-    payMoney(idx) {
-      this.pay(idx);
+    pay(idx) {
+      console.log('pay');
+      // this.pay(idx);
     },
     //切换
     click(status) {
@@ -386,7 +385,8 @@ export default class OrderList extends wepy.page {
 
     // this.getOrderList(0);
     this.orderList = [
-      { orderItems: [ { title: 'sf', id: 1, }, ], },
+      { orderItems: [ { title: 'sf', id: 1, payed: true, }, ], },
+      { orderItems: [ { title: 'sf', id: 1, payed: false, }, ], },
     ];
     this.isNull = false;
   }
