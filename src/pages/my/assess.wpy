@@ -60,7 +60,7 @@ export default class Authorize extends wepy.page {
       sel_src: '../../images/icon/star_sel.png',
     },
     level: 0,
-    imgNumber: 3,
+    imgNumber: 2,
     activeSize: 0,
     content: null,
   }

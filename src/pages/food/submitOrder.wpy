@@ -3,8 +3,19 @@
     <topBar :config='config'></topBar>
 
     <view class='wrap'>
+        
+        <view style='display: flex; align-items: center; margin-bottom: 10rpx; padding: 10rpx 0; background: #fff;'>
 
-        <!-- <address></address> -->
+          <repeat for='{{sendMethods}}' index='index' item='item'>
+            <view style='display: flex; align-items: center; margin-right: 30rpx;'>
+              <icon type='success' size='20' color="{{ item.isChecked ? '#ff5f00' : 'gray'}}" @tap='changeMethods({{index}})'></icon>
+              <view style='margin-left: 20rpx;'>{{item.title}}</view>
+            </view>
+          </repeat>
+
+        </view>
+
+        <address :address.sync='address' @changeAddress.user='changeAddress' wx:if='{{sendMethods[1].isChecked}}'></address>
 
         <repeat for='{{goodsList}}' item='item'>
           <view class='goods'>
@@ -16,7 +27,7 @@
           </view>
         </repeat>
 
-        <view class='row'>
+        <view class='row' wx:if='{{isSingle}}'>
           <view class='number_wrap'>
             <view style='margin-right: 25rpx;'>数量</view>
             <add :config.sync='numberConfig' @change.user='changeNumber'></add>
@@ -69,6 +80,12 @@ export default class submitOrder extends wepy.page {
       max: 1,
       hasBorder: true,
     },
+    sendMethods: [ { title: '到店使用', isChecked: true, }, { title: '快递邮寄', isChecked: false, } ],
+    address: {
+      name: 'ajsdfjkdsmkmf可是对方开始疯狂的疯狂时代可适当放宽麻烦vsf',
+      phone: 12938548,
+      address: 'ajsdfjjkdsmfk是肯定没法肯定是免费v肯定是免费v看完可是每当非常陌生地方什么地方sdf',
+    },
     goodsList: [ 
       { name: '单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券', price: 21.2,  },
       { name: '单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券', price: 21.2,  },
@@ -77,14 +94,30 @@ export default class submitOrder extends wepy.page {
       { name: '单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券', price: 21.2,  },
       { name: '单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券', price: 21.2,  }
     ],
+    isSingle: true, // true 表示单个商品, false: 表示购物车
     canSubmit: true,
   }
 
-  onLoad() {
+  onLoad(params) {
+
     this.numberConfig.number = 1;
+
+    if(params.goodsList){
+      this.isSingle = false;
+      return this.goodsList = JSON.parse(decodeURIComponent(params.goodsList));    
+    }
+
+    this.goodsList = [ JSON.parse(decodeURIComponent(params.goods)) ];
+
   }
 
   methods = {
+    changeMethods(index){
+      this.sendMethods.forEach((v, i) => this.sendMethods[i].isChecked = i === index ? true : false);
+    },
+    changeAddress(){
+      console.log('submit', this.address);
+    },
     changeNumber(){
       let number = this.numberConfig.number;
 

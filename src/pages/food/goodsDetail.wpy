@@ -195,7 +195,7 @@ export default class goodsDetail extends wepy.page {
       }
 
       return wx.navigateTo({
-        url: '/pages/food/submitOrder',
+        url: '/pages/food/submitOrder?goods=' + encodeURIComponent(JSON.stringify(this.goods)),
       });
 
     },

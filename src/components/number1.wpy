@@ -1,56 +1,61 @@
 <template>
     <view class='number_wrap'>
 
-      <view class="minus {{config.hasBorder ? 'minus_border' : ''}}" @tap='minus({{number}})'>-
+      <view class="minus {{config.hasBorder ? 'minus_border' : ''}}" @tap='minus'>-
       </view>
 
-      <view class="number {{config.hasBorder ? 'number_border' : ''}}">{{number}}</view>
+      <view class="number {{config.hasBorder ? 'number_border' : ''}}">{{item.qty}}</view>
 
-      <view class="add {{config.hasBorder ? 'add_border' : ''}}" @tap='add({{number}})'>+
+      <view class="add {{config.hasBorder ? 'add_border' : ''}}" @tap='add'>+
       </view>
     </view>
 </template>
 <script>
 import wepy from 'wepy';
 
-export default class Number extends wepy.component {
+export default class number extends wepy.component {
   props = {
-    config: Object,
-    number: {
-      type: Number,
+    config: {
+      type: Object,
       twoWay: true,
     },
+    item: { // 必须有qty参数
+      type: Object,
+      twoWay: true,
+    },
+    index: Number,
     max: Number,
-    hasBorder: Boolean,
+    hasborder: Boolean,
   }
 
   components = {
   }
 
   data = {
-    isFirst: true,
+
   }
 
-  onLoad() {
+  onload() {
   }
 
   methods = {
     minus(){
-      
       const parent = this.$parent;
+      
+      this.item.qty--;
+      // parent.numberConfig.number <= 1 ? wx.showModal({ title: '提示', content: '数量最小为1', showCancel: false, }) : parent.numberConfig.number--;
+      // parent.$apply();
 
-      parent.numberConfig.number <= 1 ? wx.showModal({ title: '提示', content: '数量最小为1', showCancel: false, }) : parent.numberConfig.number--;
-      parent.$apply();
-
-      this.$emit('change');
+      this.$emit('change', this.index);
     },
-    add(number){
-      console.log(this.number, this.$parent);
-      this.number++;
-      this.$parent.numberConfig.number++;
-      this.$parent.$apply();
+    add(){
 
-      this.$emit('change');
+console.log(this.item.qty);
+      this.item.qty++;
+      // this.$parent.numberConfig.number++;
+      // this.$parent.$apply();
+
+      this.$emit('change', this.index);
     },
   }
   

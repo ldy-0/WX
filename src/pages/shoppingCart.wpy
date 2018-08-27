@@ -198,18 +198,20 @@
         <view class="empty_cart_text">购物车是空的~</view>
       </view>
       <view class='cartlist_wrap' wx:else>
+
           <view class="topBar2 ios_topBar2"> <!-- {{isIos ? 'ios_topBar2' : ''}} -->
               <view class='topBar2_left'></view>
-              <view @tap='done' wx:if='{{isEdit}}'>完成</view>
+              <view @tap='done' wx:if='{{editable}}'>完成</view>
               <view @tap='edit' wx:else>编辑</view>
           </view>
+
           <scroll-view class="list {{isIos ? 'ios_list' : ''}}" scroll-y='true' >
 
               <repeat for='{{cartList}}' index='index' item='item'>
 
                   <view class="cart_goods">
                       <view class='check_wrap icon_check'>
-                        <icon class="" wx:if='{{checkedList[index]}}' type="success" color="#ff5f00" @tap='check({{index}})' data-index="{{index}}" data-id="{{item.id}}" size="19" />
+                        <icon class="" wx:if='{{item.isChecked}}' type="success" color="#ff5f00" @tap='check({{index}})' size="19" />
                         <view class='big_circle' @tap='check({{index}})' wx:else></view>
                       </view>
 
@@ -221,6 +223,7 @@
                               <view class='sku'>数量：{{item.qty}}</view>
                               <view class='goods_originPrice'>¥ {{item.price}}</view>
                           </navigator>
+                          <!-- <number :config.sync='NumberConfig' :index.sync='index' :item.sync='item' @change.user='changeNumber'></number> -->
                           <view class="buy_num">
                               <view class="add {{item.num == 1? 'disabled' : ''}}" @tap='minus({{index}})'>-</view> 
                               <view class='number'>{{item.qty}}</view>
@@ -233,7 +236,7 @@
 
           </scroll-view>
 
-          <view class='bottomBar' wx:if='{{isEdit}}'>
+          <view class='bottomBar' wx:if='{{editable}}'>
               <view class='fullSelect'>
                   <icon class="icon_check" @tap='checkAll' wx:if='{{isCheckedAll}}' type="success" color="#ff5f00" data-index="{{index}}" data-id="{{item.id}}" size="19" />
                   <view class='big_circle icon_check' @tap='checkAll' wx:else></view>
@@ -296,8 +299,6 @@ export default class ShoppingCart extends wepy.page {
   };
 
   computed = {
-    isEdit(){ return this.editable; },
-    getCount: () => this.count,
     getPrice: () => this.price,
   };
 
@@ -319,25 +320,25 @@ export default class ShoppingCart extends wepy.page {
       console.log(e);
     },
     checkAll(){
+
       if(this.isCheckedAll){
-        this.checkedList.forEach((v, i) => this.checkedList[i] = false);
+        this.cartList.forEach((v, i) => this.cartList[i].isChecked = false);
         this.isCheckedAll = false;
         this.count = 0;
         return this.price = 0;
       }
 
-      this.checkedList.forEach((v, i) => this.checkedList[i] = true);
-      this.isCheckedAll = true;
+      this.cartList.forEach((v, i) => this.cartList[i].isChecked = true);
+      this.isCheckedAll = !this.isCheckedAll;
 
       this.compute();
-      // this.cartPricing();
     },
     check(index){
-      this.checkedList[index] = this.checkedList[index] ? false : true;
-      this.isCheckedAll = this.checkedList.every(v => v);
+
+      this.cartList[index].isChecked = !this.cartList[index].isChecked;
+      this.isCheckedAll = this.cartList.every(v => v.isChecked);
 
       this.compute();
-      // this.cartPricing();
     },
     async minus(index){
       let item = this.cartList[index],
@@ -375,6 +376,10 @@ export default class ShoppingCart extends wepy.page {
       if(!this.isFirst){
         return ;
       }
+      
+      if(this.count === 0){
+        return wx.showModal({ title: '提示', content: '还没有选中任何商品！', showCancel: false, });
+      }
 
       this.isFirst = false;
       this.goFirmOrder();
@@ -382,48 +387,44 @@ export default class ShoppingCart extends wepy.page {
     },
     async delete(){
       let checkedList = this.data.checkedList,
-          cartList = this.data.cartList,
+          cartList = this.cartList,
           list = [];
 
-      for(let i = checkedList.length-1; i >= 0; i--){
-        if(checkedList[i]){
-          let res = await cartApi.deleteCartItem({
-                params: { id: this.data.cartList[i].id }
-              });
+      for(let i = cartList.length-1; i >= 0; i--){
+        if(cartList[i].isChecked){
+          // let res = await cartApi.deleteCartItem({
+          //       params: { id: this.data.cartList[i].id }
+          //     });
+          let res = true;
 
           if(!res){
             return wx.showToast({ title: '删除失败', icon: 'none', duration: 2000, });
           };
 
-          this.data.checkedList.splice(i, 1);
-          this.data.cartList.splice(i, 1);
-          this.data.isCheckedAll = false;
+          this.cartList.splice(i, 1);
           this.$apply();
 
         }
 
       }
 
-      this.data.price = 0;
-      this.data.count = 0;
+      this.isCheckedAll = false;
+      this.price = 0;
+      this.count = 0;
       this.$apply();
     }
   }
 
   onShow(){
     this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
+    this.isFirst = true;
     this.isCheckedAll = false;
     this.editable = false;
     this.price = 0;
     this.count = 0;
-    this.isFirst = true;
-    // this.getCartList();
-    this.cartList = [
-      { title: 'askjdfk受到父母双方都没士大夫什么地方开幕式的父母反对是aa', price: 123, qty: 1, },
-      { title: 'bbb', price: 123, qty: 2, },
-    ];
-    this.checkedList = [ false, false ];
-     
+
+    this.getCartList();
+    
   }
 
   onPullDownRefresh(){
@@ -434,31 +435,24 @@ export default class ShoppingCart extends wepy.page {
 
   }
 
-  edit(){
-      console.log('pages --------- edit');
-      this.editable = true;
-  }
 
   async goFirmOrder(){
-
-    if(this.data.count === 0){
-      return wx.showToast({ title: '还没有选中任何商品！', icon: 'none', duration: 2000, });
-    }
 
     let goodsList = [],
         checkeds = this.data.checkedList,
         carts = this.data.cartList;
 
-    for(let i = 0, len = checkeds.length; i < len; i++){
+    // for(let i = 0, len = checkeds.length; i < len; i++){
+    for(let i = 0, len = carts.length; i < len; i++){
       
-      if(checkeds[i]){
+      if(carts[i].isChecked){
         goodsList.push({
-          id: carts[i].productId,
-          name: carts[i].title,
-          img: carts[i].product.imgUrl,
-          price: carts[i].sku.price,
-          standard: carts[i].sku,
-          nubs: carts[i].amount,
+          // id: carts[i].productId,
+          name: carts[i].name,
+          // img: carts[i].imgUrl,
+          price: carts[i].price,
+          // standard: carts[i].sku,
+          nubs: carts[i].qty,
         });
 
       }
@@ -466,7 +460,7 @@ export default class ShoppingCart extends wepy.page {
     }
     //console.log(JSON.stringify(goodsList));
     wx.navigateTo({
-      url: '/pages/comfire_order?cart='+JSON.stringify(this.cart)+'&goodsList='+encodeURIComponent(JSON.stringify(goodsList)), // {price: this.data.price, count: this.data.count}
+      url: '/pages/food/submitOrder?cart='+JSON.stringify(this.cart)+'&goodsList='+encodeURIComponent(JSON.stringify(goodsList)), // {price: this.data.price, count: this.data.count}
     });
 
   }
@@ -474,22 +468,24 @@ export default class ShoppingCart extends wepy.page {
   async getCartList(){
     wx.showLoading({ title: 'Loading...', });
 
-    while(this.data.cartList[0]){
-      this.data.cartList.pop();
-      this.data.checkedList.pop();
-    }
-
-    const result = await cartApi.getCartInfo({});
+    // const result = await cartApi.getCartInfo({});
+    let result = [
+      { title: 'askjdfk受到父母双方都没士大夫什么地方开幕式的父母反对是aa', price: 123, qty: 1, },
+      { title: 'askjdfk受到KJDfkjskfkjsfdk', price: 123, qty: 1, },
+      { title: 'bbb', price: 123, qty: 2, },
+    ];
 
     if(!result){
-      return wx.showModal({ title: '提示', content: '获取购物车信息失败!', });
+      return wx.showModal({ title: '提示', content: '获取购物车信息失败!', showCancel: false, });
     }
     
-    for(let i = 0, len = result.cartItems.length; i < len; i++){
-      let item = result.cartItems[i];
+    // for(let i = 0, len = result.cartItems.length; i < len; i++){
+    for(let i = 0, len = result.length; i < len; i++){
+      let item = result[i];
 
-      this.data.cartList[i] = item;
-      this.data.checkedList[i] = false;
+      this.cartList[i] = item;
+      this.cartList[i].isChecked = false;
+      // this.data.checkedList[i] = false;
     }
     this.$apply();
 
@@ -497,19 +493,19 @@ export default class ShoppingCart extends wepy.page {
   }
 
   async updateCartInfo(index, amount){
-    let result = await cartApi.updateCartInfo({
-          params: {
-            id: this.data.cartList[index].skuId,
-            amount,
-          }
-        });
+    // let result = await cartApi.updateCartInfo({
+    //       params: {
+    //         id: this.data.cartList[index].skuId,
+    //         amount,
+    //       }
+    //     });
     
-    if(!result){
-      return 'no';
-    }
+    // if(!result){
+    //   return 'no';
+    // }
     
-    this.cartList[index].amount = amount;
-    this.cartPricing();
+    // this.cartList[index].amount = amount;
+    // this.cartPricing();
       
   }
 
@@ -518,14 +514,14 @@ export default class ShoppingCart extends wepy.page {
     let _this = this,
         skuMaps = {},
         chooseList = [],
-        count = 0,
+        count = 0, // 选中个数
         checkedList = this.checkedList,
         cartList = this.cartList;
     
     this.count = 0;
-    checkedList.forEach(function(v, i){
+    this.cartList.forEach(function(v, i){
 
-      if(v){
+      if(v.isChecked){
         _this.count += cartList[i].qty;
         count++;
       } 
@@ -541,7 +537,7 @@ export default class ShoppingCart extends wepy.page {
       
     // }
     // 判断是否全选
-    this.isCheckedAll = count === checkedList.length ? true : false;
+    this.isCheckedAll = count === cartList.length ? true : false;
 
     // for(let i = 0, len = chooseList.length; i < len; i++){
     //   skuMaps["skuIds[" + i + "]"] = chooseList[i];

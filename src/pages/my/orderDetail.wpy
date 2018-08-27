@@ -109,7 +109,7 @@ export default class OrderDetail extends wepy.page {
     interval: null,
     expire: false,
     payed: false,
-    status: 'expire',
+    status: 'used',
   }
 
   onLoad(params) {
