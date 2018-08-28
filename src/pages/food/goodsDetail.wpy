@@ -4,9 +4,13 @@
 
     <view class='wrap'>
       <view class='business'>
+
         <view class='business_name'>{{goods.business}}</view>
-        <swiper :config.sync='swiperConfig'></swiper>
+
+        <slider :config.sync='swiperConfig'></slider>
+
         <view class='goods_name'>{{goods.name}}</view>
+
         <view style='display: flex; justify-content: space-between; align-items: center; margin: 37rpx 0 0;'>
           <view class='goods_price'>
               <text class='price'>¥{{goods.price}}</text>
@@ -78,6 +82,7 @@
         <view class='btn s-2' @tap='goSubmitOrder'>立即购买</view>
       </view>
       
+      <!-- 获取手机号 -->
       <model :isShow.sync='isShow' :canCancel.sync='canCancel' :config.sync='modelConfig'>
         <view slot='center'>
           <view class='phone_desc'>* 需要微信授权</view>
@@ -94,7 +99,7 @@ import wepy from 'wepy';
 import topBar from '../../components/topBar';
 import coupon from '../../components/coupon';
 import model from '../../components/model';
-import swiper from '../../components/swiper';
+import swiper from '../../components/slider';
 
 export default class goodsDetail extends wepy.page {
   config = {
@@ -106,7 +111,7 @@ export default class goodsDetail extends wepy.page {
     topBar,
     coupon,
     model,
-    swiper,
+    slider: swiper,
   }
 
   data = {

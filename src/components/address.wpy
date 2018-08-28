@@ -32,7 +32,7 @@ export default class Address extends wepy.component {
   methods = {
     goAddressList(){
       // this.address.name = 'aaaa';
-      this.$emit('changeAddress');
+      this.$emit('change');
     }
 
   }

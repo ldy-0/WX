@@ -15,7 +15,7 @@
 
         </view>
 
-        <address :address.sync='address' @changeAddress.user='changeAddress' wx:if='{{sendMethods[1].isChecked}}'></address>
+        <address :address.sync='address' @change.user='changeAddress' wx:if='{{sendMethods[1].isChecked}}'></address>
 
         <repeat for='{{goodsList}}' item='item'>
           <view class='goods'>
@@ -82,6 +82,7 @@ export default class submitOrder extends wepy.page {
     },
     sendMethods: [ { title: '到店使用', isChecked: true, }, { title: '快递邮寄', isChecked: false, } ],
     address: {
+      id: 121,
       name: 'ajsdfjkdsmkmf可是对方开始疯狂的疯狂时代可适当放宽麻烦vsf',
       phone: 12938548,
       address: 'ajsdfjjkdsmfk是肯定没法肯定是免费v肯定是免费v看完可是每当非常陌生地方什么地方sdf',

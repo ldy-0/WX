@@ -269,7 +269,7 @@ import topBar from '../components/topBar';
 
 export default class ShoppingCart extends wepy.page {
   config = {
-    navigationBarTitleText: '购物车',
+    // navigationBarTitleText: '购物车',
   }
 
   data = {
@@ -277,7 +277,6 @@ export default class ShoppingCart extends wepy.page {
       tabPage: true,
       name: '购物车',
       edit: { isEdit: false, },
-      //share: { name: '商品详情', path: '/pages/comfire_order', },
     },
     // numberConfig: {
     //   hasBorder: true,
@@ -287,7 +286,6 @@ export default class ShoppingCart extends wepy.page {
     count: 0, // 总量
     price: 0, // 总价
     isCheckedAll: false, //
-    checkedList: [],
     cartList: [], // 商品列表
     cart: {
       goodsFee: null,
@@ -295,7 +293,7 @@ export default class ShoppingCart extends wepy.page {
       count: null,    // 总数量
     },
     isIos: null,
-    isFirst: true, // 是否为第一次结算
+    canSubmit: true, // 是否为第一次结算
   };
 
   computed = {
@@ -316,16 +314,11 @@ export default class ShoppingCart extends wepy.page {
       this.config.edit.isEdit = this.editable = false;
       console.log('-- shoppingCart- done ');
     },
-    change(e){
-      console.log(e);
-    },
+    
     checkAll(){
 
       if(this.isCheckedAll){
-        this.cartList.forEach((v, i) => this.cartList[i].isChecked = false);
-        this.isCheckedAll = false;
-        this.count = 0;
-        return this.price = 0;
+        return this.clear(); 
       }
 
       this.cartList.forEach((v, i) => this.cartList[i].isChecked = true);
@@ -341,11 +334,9 @@ export default class ShoppingCart extends wepy.page {
       this.compute();
     },
     async minus(index){
-      let item = this.cartList[index],
-          qty = item.qty;
+      let item = this.cartList[index];
 
-      console.log(qty);
-      if(qty <= 1){
+      if(item.qty <= 1){
         return wx.showModal({ title: '提示', content: '商品数量不能小于1', showCancel: false, });
       }
 
@@ -373,7 +364,7 @@ export default class ShoppingCart extends wepy.page {
 
     },
     goFirmOrder(){
-      if(!this.isFirst){
+      if(!this.canSubmit){
         return ;
       }
       
@@ -381,13 +372,12 @@ export default class ShoppingCart extends wepy.page {
         return wx.showModal({ title: '提示', content: '还没有选中任何商品！', showCancel: false, });
       }
 
-      this.isFirst = false;
+      this.canSubmit = false;
       this.goFirmOrder();
 
     },
     async delete(){
-      let checkedList = this.data.checkedList,
-          cartList = this.cartList,
+      let cartList = this.cartList,
           list = [];
 
       for(let i = cartList.length-1; i >= 0; i--){
@@ -408,20 +398,17 @@ export default class ShoppingCart extends wepy.page {
 
       }
 
-      this.isCheckedAll = false;
-      this.price = 0;
-      this.count = 0;
+      this.clear();
       this.$apply();
     }
   }
 
   onShow(){
     this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
-    this.isFirst = true;
-    this.isCheckedAll = false;
+    this.canSubmit = true;
     this.editable = false;
-    this.price = 0;
-    this.count = 0;
+
+    this.clear();
 
     this.getCartList();
     
@@ -439,10 +426,8 @@ export default class ShoppingCart extends wepy.page {
   async goFirmOrder(){
 
     let goodsList = [],
-        checkeds = this.data.checkedList,
-        carts = this.data.cartList;
+        carts = this.cartList;
 
-    // for(let i = 0, len = checkeds.length; i < len; i++){
     for(let i = 0, len = carts.length; i < len; i++){
       
       if(carts[i].isChecked){
@@ -479,86 +464,53 @@ export default class ShoppingCart extends wepy.page {
       return wx.showModal({ title: '提示', content: '获取购物车信息失败!', showCancel: false, });
     }
     
-    // for(let i = 0, len = result.cartItems.length; i < len; i++){
-    for(let i = 0, len = result.length; i < len; i++){
-      let item = result[i];
+    resulte.forEach(function(v, i){
 
-      this.cartList[i] = item;
-      this.cartList[i].isChecked = false;
-      // this.data.checkedList[i] = false;
-    }
+      v.isChecked = false;
+      this.cartList[i] = v;
+
+    });  
+
+      
     this.$apply();
 
     wx.hideLoading();
   }
 
   async updateCartInfo(index, amount){
-    // let result = await cartApi.updateCartInfo({
-    //       params: {
-    //         id: this.data.cartList[index].skuId,
-    //         amount,
-    //       }
-    //     });
-    
-    // if(!result){
-    //   return 'no';
-    // }
-    
-    // this.cartList[index].amount = amount;
-    // this.cartPricing();
       
   }
 
   async compute(){
 
     let _this = this,
-        skuMaps = {},
-        chooseList = [],
         count = 0, // 选中个数
-        checkedList = this.checkedList,
         cartList = this.cartList;
     
     this.count = 0;
     this.cartList.forEach(function(v, i){
 
       if(v.isChecked){
+
         _this.count += cartList[i].qty;
         count++;
+
       } 
 
     });
-    // for(let i = 0, len = checkedList.length; i < len; i++){
-    
-    //   if(checkedList[i]){
-    //     chooseList.push(cartList[i].sku.id); // chooseList.push(cartList[i].skuId);
-    //     this.data.count += cartList[i].amount;
-    //     count++;
-    //   }  
-      
-    // }
     // 判断是否全选
     this.isCheckedAll = count === cartList.length ? true : false;
 
-    // for(let i = 0, len = chooseList.length; i < len; i++){
-    //   skuMaps["skuIds[" + i + "]"] = chooseList[i];
-    // }
-
-    // let result = await cartApi.cartPricing({
-    //   params: skuMaps
-    // });
-
-    // if(!result){
-    //   this.data.price = 0;
-    //   return this.$apply();
-    // }
-
-    // this.data.price =  result.totalPricingResult.totalFee;
-
-    // this.cart.totalFee = result.totalPricingResult.totalFee;
-    // this.cart.goodsFee = result.totalPricingResult.goodsFee;
-    // this.cart.logisticsFee = result.totalPricingResult.logisticsFee;
-    // this.cart.count = this.count;
     this.$apply();
+  }
+  
+  clear(){
+
+    this.cartList.forEach((v, i) => this.cartList[i].isChecked = false);
+
+    this.isCheckedAll = false;
+    this.count = this.price = 0;
+
   }
 
   add_minus(nub1, nub2){

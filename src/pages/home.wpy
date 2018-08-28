@@ -2,7 +2,7 @@
   <view class="container bc">
     <topBar :config='config'></topBar>
 
-    <swiper :config.sync='swiperConfig' @click.user='goGoodsDetail'></swiper> 
+    <slider :config.sync='swiperConfig' @click.user='goGoodsDetail'></slider>
     <!-- <view class="pos {{isIos ? 'ios_pos' : ''}}">
       <view class="search_read_only">
         <navigator class="search_content" open-type="navigate" url="/pages/search">
@@ -22,13 +22,10 @@
     </view>
       
     <view class='secKill'>
-      <view class='secKill_title'>
-        <!-- <view>秒杀商品</view> -->
-        <image class='' style='width: 188rpx; height: 44rpx;' src='../images/home/seckill_text.png' />
-      </view>
+      <image class='' style='width: 188rpx; height: 44rpx;' src='../images/home/seckill_text.png' />
     </view>
 
-    <!--  -->
+    <!-- 商品列表  -->
     <discover :list.sync="discoverList"></discover>
     <!-- 加载更多 -->
     <bottomLoadMore :show.sync="showLoading" message="正在加载"></bottomLoadMore>
@@ -45,33 +42,27 @@ import Discover from '@/components/discover';
 import BottomLoadMore from "../components/common/bottomLoadMore";
 import Placeholder from "../components/common/placeholder";
 import topBar from "../components/topBar";
-import swiper from "../components/swiper";
+import swiper from "../components/slider";
 import request from '../utils/request.js';
 
 export default class Home extends wepy.page {
   config = {
-    // navigationBarTitleText: '汉薇商城',
+    // navigationBarTitleText: '',
   }
   components = {
     discover: Discover,
     bottomLoadMore: BottomLoadMore,
     placeholder: Placeholder,
     topBar,
-    swiper,
+    slider : swiper,
   };
   data = {
     config: {
       name: '电小乐',
       canBack: false,
     },
-    currentType:'',
     swiperConfig: {
-      indicatorActiveColor: "#fff",
-      indicatorDots: true,
-      autoplay: true,
-      interval: 3000,
-      duration: 1000,
-      urls: [],
+      data: [],
     },
     classifyList: [
       { name: '上新', img: '../images/home/new.png' },
@@ -79,21 +70,62 @@ export default class Home extends wepy.page {
       { name: '蛋糕', img: '../images/home/cart.png' },
       { name: '排行榜', img: '../images/home/paihang.png' },
     ],
+    currentType:'',
     discoverList: [],
-    hasHotList: false, // 是否有热门商品
-    hotList:[],        
-    //是否有数据
-    is_empty: false,
-    //当前页面
-    currentPage: 0,
+    is_empty: false,//是否有数据
+    currentPage: 0,//当前页面
     isEnd: false, // 是否最后一页
     //总页数
     page_total: 0,
     //是否显示 底部loading
     showLoading: false,
+    canLoad: true,
     isIos: null,
   }
+  async onShow(){
+    if(!wx.getStorageSync('sessionId')){
+      let res = await wepy.login();
+    
+      if(res.errMsg === 'login:ok'){
+        wx.setStorageSync('code', res.code);
+      }
 
+      // return wx.redirectTo({ url:'/pages/authorize' });
+    }
+
+    this.getAdList();
+
+    this.getDiscoverList();
+  }
+
+  onLoad(params) {
+
+    this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
+
+  }
+
+  onPullDownRefresh(){
+    
+    wx.reLaunch({
+      url: '/pages/home',
+    });
+
+  }
+
+  //加载更多
+  onReachBottom(){
+
+    if(!this.canLoad){
+      return ;
+    }
+
+    this.canLoad = false;
+    this.showLoading = true;
+    console.log(this.page_total + "=loading=" + this.currentPage + this.currentType);
+    this.currentPage++;
+    this.getDiscoverList(this.currentPage);
+
+  };
 
   // 获取某类商品列表
   async getDiscoverList(page){
@@ -103,41 +135,33 @@ export default class Home extends wepy.page {
       return wx.showToast({ title: '已经是最后一页了!', icon: 'none', duration: 1000, });
     }
 
-    let id = this.currentType // event.target.dataset.id
+    // let id = this.currentType 
 
-    let data = await shopApi.getGoodsList({
-            type: 'NORMAL',
-            params: {
-              categoryId: id == undefined ? '' : id,
-              keys: '',
-              page: Number(page),
-              size: 10,
-            },
-        });
+    let res = [
+      { name: 'sfiisfdjijfsodisfdjijfsodisfdjijfsodisfdjijfsodsfdjijfsod', img: '../images/background_info.@3x.png', price: '10', originPrice: 120.1 },
+      { name: 'sfisfdjijfsod', img: '../images/background_info.@3x.png', price: '10' },
+      { name: 'sfisfdjijfsod', img: '../images/background_info.@3x.png', price: '10' },
+    ];
 
-    if(!data){
+    if(!res){
       return wx.showToast({ title: '获取商品列表失败', icon: 'none', duration: 2000, });
     }
 
-    if(data.list && data.list.length === 0 && this.discoverList.length === 0){
+    if(res && res.length === 0 && this.discoverList.length === 0){
       this.showLoading = false;
       this.is_empty = true;
       return this.$apply();
-    }else if(data.list.length === 1 || data.list.length < 10){ //total
+    }else if(res.length === 1 || res.length < 10){ //total
       this.isEnd = true;
       this.is_empty = false;
     }
 
-    this.currentType = id;
+    // this.currentType = id;
     this.currentPage = Number(page);
-    
-    data.list.forEach((v, i) => {
 
-      v.duiPrice = this.add_minus(v.price, -v.deductionDPoint/10); 
-      this.discoverList.push(v);
-
-    });
-
+    this.discoverList = this.discoverList.concat(res);
+   
+    this.canLoad = true;
     this.showLoading = false;
     this.$apply();
   }
@@ -153,37 +177,8 @@ export default class Home extends wepy.page {
       return wx.showToast({ title: res.moreInfo, icon: 'none', duration: 2000, });
     }
     
-    this.swiperConfig.urls = imgs.map(v => v.imgUrl);
+    this.swiperConfig.data = imgs;
     this.$apply();
-
-  }
-
-  async onShow(){
-    if(!wx.getStorageSync('sessionId')){
-      let res = await wepy.login();
-    
-      if(res.errMsg === 'login:ok'){
-        wx.setStorageSync('code', res.code);
-      }
-
-      // return wx.redirectTo({ url:'/pages/authorize' });
-    }
-
-    this.getAdList();
-    this.discoverList = [
-  { name: 'sfiisfdjijfsodisfdjijfsodisfdjijfsodisfdjijfsodsfdjijfsod', img: '../images/background_info.@3x.png', price: '10', originPrice: 120.1 },
-      { name: 'sfisfdjijfsod', img: '../images/background_info.@3x.png', price: '10' },
-      { name: 'sfisfdjijfsod', img: '../images/background_info.@3x.png', price: '10' },
-];return this.$apply();
-  }
-
-  onLoad(params) {
-
-    this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
-    
-  }
-
-  computed = {
 
   }
 
@@ -210,24 +205,6 @@ export default class Home extends wepy.page {
       });
     },
   }
-  events = {};
-
-  onPullDownRefresh(){
-    
-    wx.reLaunch({
-      url: '/pages/home',
-    });
-
-  }
-
-  //加载更多
-  onReachBottom() {
-    this.showLoading = true;
-    console.log(this.page_total + "=loading=" + this.currentPage + this.currentType);
-    this.currentPage = this.currentPage + 1;
-    this.getDiscoverList(this.currentPage);
-
-  };
 
   add_minus(nub1, nub2){
 	  let len1, len2, m;
@@ -329,10 +306,7 @@ export default class Home extends wepy.page {
 
 .secKill{
   margin: 0rpx 38rpx 25rpx;
-  .secKill_title{
-    font-size: 48rpx;
-  }
-  
+  font-size: 48rpx;
 }
 
 .bar{
