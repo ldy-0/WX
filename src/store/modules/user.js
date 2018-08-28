@@ -92,7 +92,7 @@ const user = {
             }else{
               roles.push('admin2')
             }
-            //如果是代理
+            //如果是分公司
             if(data.data.agent_id){
               roles.push('agentAdmin')
               setAgent("agentAdmin")

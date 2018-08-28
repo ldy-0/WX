@@ -91,7 +91,7 @@
         </template>
       </el-table-column>
       <!-- <el-table-column 
-        label="代理"
+        label="分公司"
         >
         <template slot-scope="scope">
           <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('agent')!==-1)" class="el-icon-check big-icon"></i>
@@ -183,7 +183,7 @@ export default {
           },
           // {
           //   label:'agent',
-          //   text:'代理'
+          //   text:'分公司'
           // },
           {
             label:'auth',

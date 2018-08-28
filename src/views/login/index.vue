@@ -46,7 +46,7 @@
         active-color="#E6A23C"
         inactive-color="#13ce66"
         active-text="我是平台"
-        inactive-text="我是代理">
+        inactive-text="我是分公司">
       </el-switch>
       <el-button type="primary" style="width:100%;margin-bottom:30px;" :loading="loading" @click.native.prevent="handleLogin">{{$t('login.logIn')}}</el-button>
 

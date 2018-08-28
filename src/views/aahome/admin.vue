@@ -1,5 +1,5 @@
 <template>
-    <h1>欢迎 {{role==="agentAdmin"?"代理":"平台"}}管理员 登录</h1>
+    <h1>欢迎 {{role==="agentAdmin"?"分公司":"平台"}}管理员 登录</h1>
 </template>
 <script>
 import { getAgent } from '@/utils/auth' // getToken from cookie

@@ -34,7 +34,7 @@ export default {
     shopServer:'店铺运营',
     flowPackages:'流量套餐',
     industryList:'行业列表',
-    agent:"代理",
+    agent:"分公司",
     auth: '授权管理',
     dashboard: '面板',
     introduction: '简述',
@@ -104,7 +104,7 @@ export default {
   },
   login: {
     title: '平台登录',
-    title2: '代理登录',
+    title2: '分公司登录',
     logIn: '登录',
     username: '账号',
     password: '密码',

@@ -13,7 +13,7 @@
 <template>
 <div>
 <el-dialog
-  :title="isAddItem?'新增代理':'编辑代理'"
+  :title="isAddItem?'新增分公司':'编辑分公司'"
   :visible.sync="addNewShow"
   width="30%"
   >
@@ -48,7 +48,7 @@
 <el-header class="header">
 <el-form :inline="true" :model="formInline" class="form">
   <el-form-item>
-    <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增代理</el-button>
+    <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增分公司</el-button>
   </el-form-item>
 </el-form>       
 </el-header>
@@ -312,7 +312,7 @@ export default {
       editItem(index,row){
         let id = row.id
         let lockTarget = row.lock===0?1:row.lock===1?0:''
-        this.$confirm(`禁用代理，使其无法登陆后台, 是否继续?`, '提示', {
+        this.$confirm(`禁用分公司，使其无法登陆后台, 是否继续?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
