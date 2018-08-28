@@ -1,19 +1,21 @@
 <template>
-    <view class='address_info'>
+    <view class='address_info' @tap='goAddressList'>
       <view class='address_row'>
-        <view class='user_name'>ajsdfjkdsmkmf可是对方开始疯狂的疯狂时代可适当放宽麻烦vsf</view>
-        <view class='user_phone'>12938548</view>
+        <view class='user_name'>{{address.name}}</view>
+        <view class='user_phone'>{{address.phone}}</view>
       </view>
-      <view class='address_detail'>ajsdfjjkdsmfk是肯定没法肯定是免费v肯定是免费v看完可是每当非常陌生地方什么地方sdf</view>
+      <view class='address_detail'>{{address.address}}</view>
     </view>
 </template>
 <script>
 import wepy from 'wepy';
 
-export default class Number extends wepy.component {
+export default class Address extends wepy.component {
   props = {
-    number: Number,
-    max: Number,
+    address: {
+      type: Object,
+      twoWay: true,
+    },
   }
 
   components = {
@@ -28,6 +30,10 @@ export default class Number extends wepy.component {
   }
 
   methods = {
+    goAddressList(){
+      // this.address.name = 'aaaa';
+      this.$emit('change');
+    }
 
   }
   
@@ -36,7 +42,9 @@ export default class Number extends wepy.component {
 </script>
 <style lang="css">
 .address_info{
+  margin: 0 0 10rpx 0;
   padding: 30rpx;    
+  background: #fff;
 }
 
 .address_row{
@@ -49,6 +57,8 @@ export default class Number extends wepy.component {
   height: 38rpx;
   line-height: 38rpx;
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .address_detail{
