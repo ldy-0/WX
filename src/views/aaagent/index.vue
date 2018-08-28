@@ -12,6 +12,7 @@
 
 <template>
 <div>
+  <!-- 新增 -->
 <el-dialog
   :title="isAddItem?'新增分公司':'编辑分公司'"
   :visible.sync="addNewShow"
@@ -44,70 +45,186 @@
     :loading="waitAddNotice">确认修改</el-button>
   </span>
 </el-dialog>
-<el-container class="notice">
-<el-header class="header">
-<el-form :inline="true" :model="formInline" class="form">
-  <el-form-item>
-    <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增分公司</el-button>
-  </el-form-item>
-</el-form>       
-</el-header>
-<el-main>
+
+  <!-- 分公司下属公司 -->
+<el-dialog
+  title="下属店铺"
+  :visible.sync="addNewShow2"
+  width="70%"
+  >
     <el-table
-      :data="tableData"
+      :data="tableData2"
+      stripe 
+      v-loading="listLoading" element-loading-text="给我一点时间"
+      style="width: 100%" 
+      >
+      <el-table-column
+        label="店铺ID"
+        prop="id"
+        >
+      </el-table-column>
+      <el-table-column
+        label="店主姓名"
+        prop="username"
+        >
+      </el-table-column>
+      <el-table-column
+        label="联系方式" 
+        prop="phone"
+        >
+      </el-table-column>
+      <el-table-column
+        label="店名" 
+        prop="title"
+        >
+      </el-table-column>
+      <el-table-column
+        label="行业" 
+        prop="industryName"
+        >
+      </el-table-column>
+      <el-table-column
+        label="剩余访问量" 
+        prop="lastvisit"
+        >
+
+      </el-table-column>
+      <el-table-column
+        label="独立小程序" 
+        prop="hasPayDataTXT"
+        >
+      </el-table-column>
+      <el-table-column
+        label="操作" 
+        min-width='200px'
+        >
+        <template slot-scope="scope">
+            <el-button size="mini" type="info" @click="lookShop(scope.$index, scope.row)">查看订单</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-footer>
+      <el-pagination background @size-change="handleSizeChange2" @current-change="handleCurrentChange2" :current-page="listQuery2.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery2.limit" layout="total, sizes, prev, pager, next" :total="total2">
+      </el-pagination>
+    </el-footer>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="addNewShow2=false" >取消</el-button>
+  </span>
+</el-dialog>
+  <!-- 分公司下属公司 订单-->
+<el-dialog
+  title="订单"
+  :visible.sync="addNewShow3"
+  width="60%"
+  >
+    <el-table
+      :data="tableData3"
       stripe 
       v-loading="listLoading" element-loading-text="给我一点时间"
       style="width: 100%" >
       <el-table-column
-        label="姓名" 
-        prop="username"
+        label="订单号" 
+        prop="order_sn"
         >
       </el-table-column>
-      <!-- icon测试 -->
-      <el-table-column 
-        label="手机号" 
-        prop="tel"
-        >
-      </el-table-column>
-      <el-table-column 
-        label="账号" 
-        prop="account"
-        >
-      </el-table-column>
-      <el-table-column 
-        label="是否禁用" 
-        prop="lock"
-        >
-        <template slot-scope="scope">
-          <el-tag size="medium" :type="scope.row.lock?'warning':'info'">{{ scope.row.lock?'是':'否'}}</el-tag>
-        </template>
-      </el-table-column>
-      <!-- <el-table-column 
-        label="密码" 
-        prop="password"
-        >
-      </el-table-column> -->
       <el-table-column
-        label="操作"
+        label="订单价格" 
+        prop="order_amount"
         >
-        <template slot-scope="scope">
-        <el-button
-          size="mini" 
-          :type="scope.row.lock?'':'warning'" 
-          @click="editItem(scope.$index, scope.row)">
-          {{ scope.row.lock?'解禁':'禁用'}}</el-button>
-        <el-button
-          size="mini" 
-          type="danger" 
-          @click="deleteItem(scope.$index, scope.row)">删除</el-button>
-        </template>
+      </el-table-column>
+      <el-table-column
+        label="运费" 
+        prop="shipp_fee"
+        >
+      </el-table-column>
+      <el-table-column
+        label="下单时间" 
+        prop="add_time"
+        >
+      </el-table-column>
+      <el-table-column
+        label="状态" 
+        prop="order_state"
+        >
       </el-table-column>
     </el-table>
-</el-main>
-<el-footer>
-  <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
-  </el-pagination>
-</el-footer>
+    <el-footer>
+      <el-pagination background @size-change="handleSizeChange3" @current-change="handleCurrentChange3" :current-page="listQuery3.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery3.limit" layout="total, sizes, prev, pager, next" :total="total3">
+      </el-pagination>
+    </el-footer>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="addNewShow3=false" >取消</el-button>
+  </span>
+</el-dialog>
+
+<el-container class="notice">
+  <el-header class="header">
+  <el-form :inline="true" :model="formInline" class="form">
+    <el-form-item>
+      <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增分公司</el-button>
+    </el-form-item>
+  </el-form>       
+  </el-header>
+  <el-main>
+      <el-table
+        :data="tableData"
+        stripe 
+        v-loading="listLoading" element-loading-text="给我一点时间"
+        style="width: 100%" >
+        <el-table-column
+          label="姓名" 
+          prop="username"
+          >
+        </el-table-column>
+        <!-- icon测试 -->
+        <el-table-column 
+          label="手机号" 
+          prop="tel"
+          >
+        </el-table-column>
+        <el-table-column 
+          label="账号" 
+          prop="account"
+          >
+        </el-table-column>
+        <el-table-column 
+          label="是否禁用" 
+          prop="lock"
+          >
+          <template slot-scope="scope">
+            <el-tag size="medium" :type="scope.row.lock?'warning':'info'">{{ scope.row.lock?'是':'否'}}</el-tag>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column 
+          label="密码" 
+          prop="password"
+          >
+        </el-table-column> -->
+        <el-table-column
+          label="操作"
+          >
+          <template slot-scope="scope">
+          <el-button
+            size="mini" 
+            :type="scope.row.lock?'':'warning'" 
+            @click="editItem(scope.$index, scope.row)">
+            {{ scope.row.lock?'解禁':'禁用'}}</el-button>
+          <el-button
+            size="mini" 
+            type="danger" 
+            @click="deleteItem(scope.$index, scope.row)">删除</el-button>
+          <el-button
+            size="mini" 
+            type="primary" 
+            @click="lookItem(scope.$index, scope.row)">查看</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+  </el-main>
+  <el-footer>
+    <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
+    </el-pagination>
+  </el-footer>
 </el-container>
 </div>
 </template>
@@ -140,31 +257,21 @@ export default {
         }
     };
     return {
+      //导出
+        tableDataAll:'',
+        autoWidth:true,
+        filename:'店铺管理Excel',
+        exportExcelStatus:'导出',
+        downloadLoading:false,
       //out
-        //状态层
+        shopId:'',
+        companyId:'',
         waitAddNotice:false,
         addNewShow:false,
+        addNewShow2:false,
+        addNewShow3:false,
         isAddItem:true,
-        // rolesList:['manage','auth','store','affiche'],
-        rolesList:[
-          {
-            label:'affiche',
-            text:'公告'
-          },
-          {
-            label:'store',
-            text:'店铺管理'
-          },
-          {
-            label:'manage',
-            text:'运营管理'
-          },
-          {
-            label:'auth',
-            text:'授权管理'
-          },
-        ],
-        formLabelWidth:'140px',//弹框1 左侧文字默认宽度
+        formLabelWidth:'140px',
         formForNotive:Object.assign({},formForNotive),
         rules: {
           username: [
@@ -179,54 +286,76 @@ export default {
           password: [
               { required: true, message: '请输入密码，长度至少6位', trigger: 'blur',min: 6 }
           ]
-      },
-      //body
-        tableData: [{
-            // username: '黄邦胜',
-            // account:'huang',
-            // password:'123456',
-              // goods: '1',
-              // notice: '1',
-              // manageShop: '1',
-              // manageSevice: '1',
-        }],
-      // -------------------------
-      
-      // ----------------------
-      //out
-      waitAddNotice:false,
-      formForNotive:{
-        name:'',
-        account:'',
-        password:'',
-      },
-      addNewShow:false,
-      formLabelWidth:'80px',
-      //header
-      industry:'',
-      industryList: [{
-          value: 'edu',
-          label: '教育'
-        }, {
-          value: 'others',
-          label: '其他'
-        }],
-      formInline: {},
-      // body
-      listLoading: false,
-      
-      // footer
-      listQuery: {
-        page: 1,
-        limit: 20,
-        search:"",
-        time:""
-      },
-      total:1,
+        },
+        tableData: [],
+        tableData2: [],
+        tableData3: [],
+        formInline: {},
+        listLoading: false,
+        // footer
+        listQuery: {
+          page: 1,
+          limit: 20,
+          search:"",
+          time:""
+        },
+        total:1,
+        listQuery2: {
+          page: 1,
+          limit: 20,
+          search:"",
+          time:""
+        },
+        total2:1,
+        listQuery3: {
+          page: 1,
+          limit: 20,
+          search:"",
+          time:""
+        },
+        total3:1,
     }
   },
   methods: {
-    // out
+      formatJson(filterVal, jsonData) {
+        return jsonData.map(v => filterVal.map(j => {
+          if (j === 'timestamp') {
+            return parseTime(v[j])
+          } else {
+            return v[j]
+          }
+        }))
+      },
+      async handleDownload() {
+        this.downloadLoading = true
+        let allRes = await this.getList3(true,this.shopId).catch(e=>{
+          this.$notify({
+              title: '失败',
+              message: '操作失败:'+e.toString(),
+              type: 'error'
+            })
+          return 0
+        })
+        console.log('allRes',allRes)
+        if(!allRes){
+          this.downloadLoading = false
+          return console.log('获取数据失败:handleDownload')
+        }
+        import('@/vendor/Export2Excel').then(excel => {
+          const tHeader = ['店铺ID', '店主姓名', '联系方式', '店名', '行业','剩余访问量','独立小程序','上架状态']
+          const filterVal = ['id', 'username', 'phone', 'title', 'industryName','lastvisit','hasPayDataTXT','isUpTXT']
+          const tableDataAll = this.tableDataAll
+          const data = this.formatJson(filterVal, tableDataAll)
+          excel.export_json_to_excel({
+            header: tHeader,
+            data,
+            filename: this.filename,
+            autoWidth: this.autoWidth
+          })
+          this.downloadLoading = false
+        })
+      },
+    // out-------------------------------------------------
       async addAuth(formName){
         let res = await new Promise((res,rej)=>{
         this.$refs[formName].validate((valid) => {
@@ -325,7 +454,7 @@ export default {
           });
         })
       },
-    // body
+    // body-------------------------------------------------
       getList() { //获取列表
         this.listLoading = true
         let sendData = Object.assign({},this.listQuery)
@@ -355,6 +484,87 @@ export default {
           this.listLoading = false
         })
       },
+      lookItem(index,row){
+        this.listLoading = true
+        this.companyId = row.id
+        this.addNewShow2 = true
+        this.getList2(row.id)
+      },
+      getList2(id){
+        let sendData = Object.assign({},this.listQuery)
+        sendData.id = id
+        getAgentList_api(sendData).then(response => {
+          if(response&&response.status==0){
+            let result = response.data
+            let tempTableData = []
+            result.forEach((aData)=>{
+              tempTableData.push({
+                //后端生成
+                id:aData.admin_id,
+                //前后统一
+                tel:aData.agent_telephone,
+                username:aData.admin_nick,
+                password:aData.admin_password,
+                account:aData.admin_name,
+                //
+                lock:aData.lock_state
+              })
+            })
+            this.tableData2 = tempTableData
+            this.total2 = response.pagination.total?response.pagination.total:1
+          }else{
+          }
+          console.log("getList",response)
+          // this.list = response
+          this.listLoading = false
+        })
+      },
+      lookShop(index,row){
+        this.listLoading = true
+        this.shopId = row.id
+        this.addNewShow3 = true
+        this.getList3(row.id)
+      },
+      getList3(all,id){
+        let flag = false
+
+        let sendData = Object.assign({},this.listQuery)
+        if(all){
+          sendData.limit = 0
+        }
+        sendData.id = id
+        getAgentList_api(sendData).then(response => {
+          if(response&&response.status==0){
+             flag = true
+
+            let result = response.data
+            let tempTableData = []
+            result.forEach((aData)=>{
+              tempTableData.push({
+                //后端生成
+                id:aData.admin_id,
+                //前后统一
+                tel:aData.agent_telephone,
+                username:aData.admin_nick,
+                password:aData.admin_password,
+                account:aData.admin_name,
+                //
+                lock:aData.lock_state
+              })
+            })
+              if(all){
+                  this.tableDataAll = tempTableData
+              }else{
+                  this.tableData3 = tempTableData
+                  this.total3 = response.pagination&&response.pagination.total?response.pagination.total:1
+              }
+          }
+          this.listLoading = false
+        })
+        return flag
+      },
+
+      //----------------------------------------------------
       deleteItem(index,row){
         let id = row.id
         this.$confirm(`此操作将删除该条目, 是否继续?`, '提示', {
@@ -393,46 +603,9 @@ export default {
           console.error('deleteAdmin_api')
         })
       },
-    // ----------------------
-    //body
+
       
-    //bdoy
-      
-      
-      
-    // 0-----------------------
     //out
-    addNewNotice(){
-      this.waitAddNotice = true
-      setTimeout(()=>{
-        //发送成功该做的事情
-        this.waitAddNotice = false
-        this.addNewShow = false
-        this.form = {}
-        this.$notify({
-          title: '发送成功',
-          message: '这是一条成功的提示消息',
-          type: 'success'
-        })
-        //如果失败
-        // this.waitAddNotice = false
-      },2000)
-    },
-    lookDetail() {
-      console.log(arguments)
-    },
-    searchByDate(){
-      if(!this.dataRange||!this.dataRange.length||this.dataRange.length!==2){
-        return console.log("日期错误")
-      }
-      let dateS = this.dataRange[0]
-      let dateE = this.dataRange[1]
-      let Sstr = dateS.getFullYear()+'-'+(dateS.getMonth()+1>9?(dateS.getMonth()+1):('0'+dateS.getMonth()))+'-'+(dateS.getDate()+1>9?(dateS.getDate()+1):('0'+dateS.getDate()))
-      let Estr = dateE.getFullYear()+'-'+(dateE.getMonth()+1>9?(dateE.getMonth()+1):('0'+dateE.getMonth()))+'-'+(dateE.getDate()+1>9?(dateE.getDate()+1):('0'+dateE.getDate()))
-      this.listQuery.time = Sstr+','+Estr
-      this.listQuery.page = 1
-      this.getList()
-    },
     handleSizeChange(val) {
       this.listQuery.limit = val
       this.getList()
@@ -440,6 +613,22 @@ export default {
     handleCurrentChange(val) {
       this.listQuery.page = val
       this.getList()
+    },
+    handleSizeChange2(val) {
+      this.listQuery2.limit = val
+      this.getList(this.companyId)
+    },
+    handleCurrentChange2(val) {
+      this.listQuery2.page = val
+      this.getList(this.companyId)
+    },
+    handleSizeChange3(val) {
+      this.listQuery3.limit = val
+      this.getList(this.shopId) 
+    },
+    handleCurrentChange3(val) {
+      this.listQuery3.page = val
+      this.getList(this.shopId)
     },
     
   }
