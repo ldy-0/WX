@@ -1,10 +1,15 @@
 <template>
     <view class='address_info' @tap='goAddressList'>
+
       <view class='address_row'>
         <view class='user_name'>{{address.name}}</view>
         <view class='user_phone'>{{address.phone}}</view>
       </view>
+
       <view class='address_detail'>{{address.address}}</view>
+
+      <slot></slot>
+
     </view>
 </template>
 <script>

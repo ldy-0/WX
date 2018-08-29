@@ -464,13 +464,8 @@ export default class ShoppingCart extends wepy.page {
       return wx.showModal({ title: '提示', content: '获取购物车信息失败!', showCancel: false, });
     }
     
-    resulte.forEach(function(v, i){
-
-      v.isChecked = false;
-      this.cartList[i] = v;
-
-    });  
-
+    result.forEach(v => v.isChecked = false);  
+    this.cartList = result;
       
     this.$apply();
 

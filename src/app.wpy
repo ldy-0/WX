@@ -30,7 +30,9 @@ export default class extends wepy.app {
       'pages/my/orderDetail',
       'pages/my/assess',
       'pages/my/assessList',
-      'pages/my/couponList',
+      'pages/my/addressList',
+      'pages/my/addAddress',
+      // 'pages/my/couponList',
     ],
     window: {
       backgroundTextStyle: 'dark',

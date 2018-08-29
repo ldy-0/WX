@@ -97,16 +97,16 @@
                 </view>
                 <image class='right_arrow' src='../images/my/rightArraw.png' />
             </navigator>
-            <!-- <navigator class="item" url="/pages/collection">
+            <navigator class="item" url="/pages/my/addressList">
                 <view class="item_content">
                     <view class='box'>
-                        <image class="item_img collection_img" src="../images/my/collection.png"></image>
+                        <image class="item_img address_img" src="../images/my/address.png" />
                     </view>
-                    <view class="text">我的收藏</view>
+                    <view class="text">我的地址</view>
                 </view>
-                <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
+                <image class='right_arrow' src='../images/my/rightArraw.png' />
             </navigator>
-            <navigator class="item no_border" url="/pages/my/help">
+            <!-- <navigator class="item no_border" url="/pages/my/help">
                 <view class="item_content">
                     <view class='box'>
                         <image class="item_img help_img" src="../images/my/help.png"></image>

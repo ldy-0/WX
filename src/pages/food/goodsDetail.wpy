@@ -132,7 +132,10 @@ export default class goodsDetail extends wepy.page {
       interval: 3000,
       duration: 1000,
       height: 360,
-      urls: [ '../../images/background_info.@3x.png', '../../images/authorize_bg_629.png' ],
+      data: [ 
+        { imgUrl: '../../images/background_info.@3x.png', },
+        { imgUrl: '../../images/authorize_bg_629.png', }
+      ],
     },
     // coupon: {},
     // canRedirect: false,
