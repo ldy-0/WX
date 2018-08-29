@@ -1,0 +1,372 @@
+<style lang='less'>
+
+.container{
+  height: 100%;
+  font-size: 28rpx;
+  color: #333;
+  background: #f5f5f5;
+}
+
+.wrap{
+  margin: 50rpx 0 0;
+}
+.ios_wrap{
+  margin: 0;
+}
+  
+.flex{
+  display: flex;
+  align-items: center;
+}
+
+.left_arrow{
+  width: 13rpx;
+  height: 24rpx;
+  margin-left: 10rpx;
+}
+
+// .row
+//   line-height: 101rpx
+//   margin-bottom: 1rpx
+//   padding-left: 23rpx
+//   background: $BG_WHITE
+//   .info
+//     color: #333
+
+.toBottom{
+  margin: 0 25rpx 0 54rpx; 
+  font-size: 36rpx;
+  transform: rotate(90deg);
+}
+  
+
+.setting{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100rpx;
+  padding: 0 23rpx;
+  background: #fff;
+  .title{
+    font-size: 28rpx;
+    font-weight: bold;
+    color: #333;
+  }
+}
+.comment{
+  margin: 22rpx 0 0;
+  font-size: 26rpx;
+  color: #999;
+}
+  
+
+.row_flex{
+  display: flex;
+  align-items: center;
+  height: 100rpx;
+  margin-bottom: 1rpx;
+  padding-left: 23rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  background: #fff;
+}
+
+.row_between{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100rpx;
+  padding: 0 20rpx;
+  background: #fff;
+  .title{
+    font-size: 28rpx;
+    font-weight: bold;
+    color: #333;
+  }
+}
+
+.save_wrap{
+  display: flex;
+  justify-content: center;
+  .save{
+    position: absolute;
+    bottom: 30rpx;
+    width: 690rpx;
+    line-height: 90rpx;
+    margin: 0 auto;
+    font-size: 30rpx;
+    color: #fff;
+    background: linear-gradient(#e6002d, #e8441e);
+    text-align: center;
+  }
+}
+
+.fc_gray{
+  color: #999;
+}
+
+.textarea{
+  padding: 50rpx 0 0;
+  margin-bottom: 20rpx;
+  padding-left: 23rpx;
+  background: #fff;
+  textarea{
+    height: 200rpx;
+    font-size: 28rpx;
+    color: #999;
+  }
+}
+
+.space{
+  margin-bottom: 10rpx;
+}
+  
+.inline{
+  display: inline-block;
+  flex-grow: 1;
+  height: 101rpx; 
+  color: #333;
+}
+  
+</style>
+
+<template>
+  <view class="container {{ isIos ? 'ios_container' : ''}}">
+      <topBar :config='config'></topBar>
+
+      <view class="wrap {{isIos ? 'ios_wrap' : ''}}">
+        <form bindsubmit='submit'>
+
+            <view class='row_flex space'>收件人： <input type='text' name='name' class='inline' bindinput='setConsignee' value='{{address.consignee}}' /></view>
+
+            <view class='row_flex'>联系方式：<input type='text' name='phone' class='inline' bindinput='setPhone' value='{{address.phone}}' /></view>
+
+            <view class="row_between">
+                <view class='title'>所在地区：</view>
+                <view class='flex' @tap="openAddressPicker">
+                    <view class='flex'>
+                      <view class='fc_gray'>{{baseAddress}}</view>
+                      <image class='left_arrow' src='../../images/my/rightarraw.png' />
+                    </view>
+                    
+                    <!-- <view class='flex'>
+                        <view>{{province ? province.name : '省'}}</view>
+                        <view class='toBottom'>></view>
+                    </view>
+                    <view class='flex'>
+                        <view>{{city ? city.name : '市' }}</view>
+                        <view class='toBottom'>></view>
+                    </view>
+                    <view class='flex'>
+                        <view>{{area ? area.name : '区' }}</view>
+                        <view class='toBottom'>></view>
+                    </view> -->
+                </view>
+                <areaPicker @areaArray.user="areaChange"></areaPicker>
+            </view>
+
+            <view class='textarea'>
+              <textarea type='text' name='detail' bindinput='setStreet' value='{{address.street}}' placeholder='请输入详细地址' />
+            </view>
+
+            <view class='setting'>
+                <view class='title'>
+                    <view>设为默认地址</view>
+                    <!-- <view class='comment'>注：每次下单时会使用该地址</view> -->
+                </view>
+                <switch name='isDefault' checked='{{address.isDefault}}'></switch>
+            </view>
+
+            <view class='save_wrap'><button class='save' formType='submit'>保存</button></view>
+        </form>
+
+      </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import topBar from '../../components/topBar';
+  // import addressApi from '../../api/addressApi.js';
+  import areaPicker from '../../components/common/wepy-area-picker';
+  
+  export default class AddAddress extends wepy.page {
+    config = {
+      enablePullDownRefresh: false,
+      disableScroll: true,
+    }
+
+    data = {
+      config: {
+        name: "添加新地址",
+        canBack: true,
+      },
+      baseAddress: '请选择',
+      province: '',
+      city: '',
+      area: '',
+      //
+      address: {  id: '',
+                  consignee: '', 
+                  phone: '',
+                  provinceId: '',
+                  cityId: '',
+                  zoneId: '',
+                  //detail: '',
+                  street: '',
+                  isDefault: '', },
+      // 是否是第一个地址
+      isFirst: null,
+      isIos: null,
+    };
+    
+    components = {
+      topBar,
+      areaPicker: areaPicker
+    };
+    
+    methods = {
+      setConsignee(e){
+        if(e.detail.value.length >= 15){
+          wx.showToast({ title: '输入名字不能超过15个字符!', icon: 'none', duration: 2000, });
+          return this.address.consignee;
+        }
+        
+        this.data.address.consignee = e.detail.value;
+      },
+      setPhone: e => this.data.address.phone = e.detail.value,
+      setStreet: e => this.data.address.street = e.detail.value,
+      submit(e){
+
+        let v = e.detail.value,
+            phone = /^((13[0-9])|(14[5|7|9])|(15([0-3]|[5-9]))|(17[0,1,3,5,6,7,8])|(18[0-9]))\d{8}$/;
+
+        if(v.name === ''){
+
+          return wx.showToast({ title: '姓名不能为空!', icon: 'none', duration: 1000, });
+
+        }else if(v.phone === '' || !phone.test(v.phone)){
+
+          return wx.showToast({ title: '手机号码填写有误!', icon: 'none', duration: 1000, });
+
+        }else if(this.baseAddress === '请选择'){
+
+          return wx.showToast({ title: '未选择省市区!', icon: 'none', duration: 1000, });
+
+        }else if(v.detail === ''){
+          return wx.showToast({
+            title: '详细地址不能为空!',
+            icon: 'none',
+            duration: 1000,
+          });
+        }
+        console.log(v);
+        this.data.address.id ? this.modifyAddress(this.data.address.id, v) : this.saveAddress(v);
+
+        // this.data.isFirst ? wx.navigateBack({ delta: 2 }) : wx.navigateBack({});
+        // if(this.data.isFirst){
+        //   return wx.navigateBack({ delta: 2 });
+        // }
+      },
+      // picker
+      openAddressPicker(){
+        console.log('--openAddressPicker--');
+        this.$invoke("areaPicker", "openAddressPicker");
+      },
+      areaChange(province, city, area){
+        this.province = province;
+        this.city = city;
+        this.area = area;
+        
+        let str = /北京|上海|天津|重庆/.test(province.name) ? '市' : '省'; 
+        
+        this.baseAddress = province.name + str + ' ' + city.name + '市 ' + area.name;
+        this.data.address.provinceId = province.id//province.code;
+        this.data.address.cityId = city.id//city.code;
+        this.data.address.zoneId = area.id//area.code;
+        this.$apply();
+        // console.log(this.address.consignee);
+      }
+    };
+
+    onLoad(opt){
+      this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
+      // 地址列表是否为空
+      if(opt.isNull === 'true'){
+        this.data.isFirst = true;
+      }
+
+      if(!opt.address){
+        return ;
+      }
+
+      let data = JSON.parse(decodeURIComponent(opt.address));
+      
+      this.address = data;
+
+      // this.province = data.zones[1];
+      // this.city = data.zones[2];
+      // this.area = data.zones[3];
+
+      this.baseAddress = data.systemRegions[0].name + ' ' + data.systemRegions[1].name + ' ' + data.systemRegions[2].name;
+    }
+
+    async saveAddress(address){
+      
+      try{
+        var res = await addressApi.saveAddress({
+          params: {
+            consignee: address.name,       // 收件人
+            phone: address.phone,          // 手机号 
+            provinceId: this.data.address.provinceId, // 省code
+            cityId: this.data.address.cityId,   // 市code
+            zoneId: this.data.address.zoneId,  // 区域code
+            street: address.detail,        // 详细地址
+            isDefault: this.data.isFirst ? true : address.isDefault,  // 是否为默认
+          },
+        });
+
+        if(res){
+          wx.showToast({ title: '添加成功!', icon: 'none', duration: 2000, });
+          return wx.navigateBack({});
+        }
+
+      }catch(e){
+        return wx.showToast({ title: 'error: --'+JSON.stringify(e), icon: 'none', duration: 2000, });
+      }
+      
+      return wx.showToast({ title: '添加失败', icon: 'none', duration: 2000, });
+      
+    }
+    
+    async modifyAddress(id, address){
+      let res = await addressApi.updateAddress({
+        params: {
+          id: id,
+          consignee: address.name,      
+          phone: address.phone,         
+          provinceId: this.data.address.provinceId,
+          cityId: this.data.address.cityId,
+          zoneId: this.data.address.zoneId,               
+          street: address.detail,       
+          isDefault: address.isDefault,  
+          certificateId: null,
+        }
+      });
+      
+      if(address){
+      
+        wx.showModal({
+          content: "修改成功",
+          showCancel: false
+        });
+        
+        return wx.navigateBack({});
+      }
+      
+    }
+
+  }
+  
+</script>

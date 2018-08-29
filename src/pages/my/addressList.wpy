@@ -1,0 +1,255 @@
+<style lang='less'>
+
+.container{
+  height: 100%;
+  background: #f5f5f5;
+  font: 30rpx MicrosoftYaHei;
+}
+
+
+.ios_wrap{
+  margin: 0;
+}
+
+.empty{
+  margin: 200rpx 0 0;
+  .empty_info{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  image{
+    width: 203rpx;
+    height: 203rpx;
+    margin-bottom: 60rpx;
+  }
+}
+  
+.other_info{
+  margin: 20rpx 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.operate_info{
+  display: flex;
+  justify-content: flex-end;
+  font-size: 24rpx;
+  font-weight: bold;
+  color: #333;
+  .operate_btn{
+    display: flex;
+    align-items: center;
+    margin-left: 48rpx;
+    image{
+      width: 34rpx;
+      height: 34rpx;
+      margin-right: 20rpx;
+    }   
+  }
+}
+.default{
+  font-size: 22rpx;
+}
+
+.inline{
+  display: inline-block;
+  margin-left: 50rpx;
+}
+
+.add_wrap{
+  position: fixed;
+  bottom: 0rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 244rpx;
+  background: #fff;
+  .add_btn{
+    width: 690rpx;
+    height: 90rpx;
+    line-height: 90rpx;
+    margin: 0 auto;
+    font-size: 30rpx;
+    color: #fff;
+    background: linear-gradient(#e6002d, #e8441e);
+    text-align: center;
+  }
+}
+
+.bottom_space{
+  margin: 0 0 244rpx 0;
+}
+    
+</style>
+
+<template>
+  <view class="container {{isIos ? 'ios_container' : ''}}" catchtouchmove='preventScroll'>
+      <topBar :config.sync='config'></topBar>
+
+      <view class="wrap {{ isIos ? 'ios_wrap' : '' }}">
+
+        <view wx:if='{{addressList.length !== 0}}'>
+            <scroll-view class='bottom_space' scroll-y='true' style='height: 100%;'>
+                <repeat for='{{addressList}}' index='index' item='item'>
+
+                    <address :address.sync='item'>
+                        <view class='other_info'>
+                          <view class='default' wx:if='{{item.isDefault}}'>[默认地址]</view>
+                          <view wx:else></view>
+                          <view class='operate_info'>
+                              <view class='operate_btn' @tap='modify({{index}})'>
+                                <image src='../../images/icon/edit.png' />
+                                <view>修改</view>
+                              </view>
+                              <view class='operate_btn' @tap='delete({{index}})'>
+                                <image src='../../images/del.png' />
+                                <view>删除</view>
+                              </view>
+                          </view>
+                        </view>
+                    </address>
+
+                </repeat> 
+            </scroll-view>
+
+            <view class=''></view>
+        </view>
+        <view class='empty'  wx:else>
+            <view class='empty_info'>
+                <!-- <image src='../images/my/address-3.png' /> -->
+                <view>您还没有收货地址呢！</view>
+            </view>
+        </view>
+
+        <view class='add_wrap'>
+          <view class='add_btn' @tap='add'>添加新地址</view>
+        </view>
+
+      </view>
+      
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  import topBar from '../../components/topBar';
+  import address from '../../components/address';
+  
+  export default class Address extends wepy.page {
+    config = {
+      enablePullDownRefresh: false,
+      // disableScroll: true,
+    }
+
+    data = {
+      config: {
+        name: "管理收货地址",
+        canBack: true,
+      },
+      addressList: [  ],//{consignee: 'akfd', phone: '11111111111', details: 'sjfd', street: 'skf',}
+      isIos: null,
+    };
+    
+    components = {
+      topBar,
+      address,
+    };
+    
+    methods = {
+      preventScroll(){
+        console.log('touch move');
+        return this.addressList.length;
+      },
+      add(){
+
+        wx.navigateTo({
+          url: './addAddress?isNull='+!Boolean(this.addressList.length),
+        });
+
+      },
+      modify(index){
+        let address = JSON.stringify(this.addressList[index]);
+        
+        wx.navigateTo({
+          url: './addAddress?address='+encodeURIComponent(address),
+        });
+      },
+      delete(index){
+        let id = this.addressList[index].id;
+
+        wx.showModal({
+          content:'确认删除该地址吗？',
+          success: res => {
+            if(res.confirm){
+              this.delete(id, index);
+            }
+          }
+        });
+      }
+    };
+    
+    async onShow(options){
+
+      this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
+
+      this.getAddressList();
+      
+    }
+
+    onPullDownRefresh(){
+    
+      wx.redirectTo({
+        url: '/pages/addressList',
+      });
+
+    }
+    
+    async delete(id, index){
+      let result = await addressApi.deleteAddress({ id, });
+
+      if(result){
+
+        this.addressList.splice(index, 1);
+        this.$apply();
+        return wx.showModal({ content:'删除成功', showCancel:false });
+
+      }
+      
+      wx.showModal({ content:'删除失败', showCancel: false});
+
+    }
+
+    async getAddressList(){
+      wx.showLoading({ title: 'Loading...', });
+
+      let addressList = this.data.addressList,
+          // res = await addressApi.getAddressList({});
+          res = [
+            {name: 'akfd', phone: '11111111111', address: 'skfjkj时刻提防监考老师封口费老是犯困犯困大家设计开发但是科夫斯克sfsjfd', street: 'skf',},
+            {name: 'askdfjkj是看风景十分艰苦撒旦解放快速减肥的肯定是skfjskfjdkkfd', phone: '11111111111', address: 'sjfd', street: 'skf',},
+            {name: 'akfd', phone: '11111111111', address: 'skfjkj时刻提防监考老师封口费老是犯困犯困大家设计开发但是科夫斯克sfsjfd', street: 'skf',},
+            {name: 'akfd', phone: '11111111111', address: 'skfjkj时刻提防监考老师封口费老是犯困犯困大家设计开发但是科夫斯克sfsjfd', street: 'skf',},
+            {name: 'askdfjkj是看风景十分艰苦撒旦解放快速减肥的肯定是skfjskfjdkkfd', phone: '11111111111', address: 'sjfd', street: 'skf',},
+            {name: 'askdfjkj是看风景十分艰苦撒旦解放快速减肥的肯定是skfjskfjdkkfd', phone: '11111111111', address: 'sjfd', street: 'skf',},
+          ];
+      console.log(res);
+
+      if(!res){
+        return wx.showToast({ title: '获取地址信息失败', icon: 'none', duration: 2000, });
+      }
+
+      this.addressList = res;
+      this.$apply();
+
+      wx.hideLoading();
+    }
+    
+    
+  }
+  
+</script>
