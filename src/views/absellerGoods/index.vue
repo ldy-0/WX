@@ -44,7 +44,7 @@
     </el-form-item>
     <p class="hbs-margin-left140">最多可选择6张图,建议像素 ：宽750*高750</p>
     <!-- 虚拟 -->
-    <el-form-item label="商品属性" :label-width="formLabelWidth" prop="school">
+    <el-form-item label="商品属性" :label-width="formLabelWidth" prop="is_virtual">
       <el-select v-model="formForNotive.is_virtual" placeholder="请选择" @change="formForNotiveIs_virtual_fn">
         <el-option
           v-for="item in is_virtualList"
@@ -54,6 +54,7 @@
         </el-option>
       </el-select>
     </el-form-item>
+    {{formForNotive.is_virtual}}
     <!-- 普通、预售 -->
     <el-form-item label="商品类型" :label-width="formLabelWidth" prop="goodsType">
       <el-select v-model="formForNotive.goodsType" placeholder="请选择">
@@ -75,14 +76,17 @@
       <el-input v-model="formForNotive.goodsNum" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item label="门店" :label-width="formLabelWidth" prop="school">
-      <el-select  v-model="formForNotive.school" placeholder="请选择门店">
+      <!-- <el-select  v-model="formForNotive.school" placeholder="请选择门店">
         <el-option
           v-for="item in schoolList"
           :key="item.value"
           :label="item.label"
           :value="item.value">
         </el-option>
-      </el-select>
+      </el-select> -->
+    <el-checkbox-group v-model="formForNotive.school">
+      <el-checkbox-button v-for="item in schoolList" :label="item.value" :key="item.value">{{item.label}}</el-checkbox-button>
+    </el-checkbox-group>
     </el-form-item>
     <!-- <el-form-item label="商品库存" :label-width="formLabelWidth" prop="goodsTotal">
       <el-input v-model="formForNotive.goodsTotal" auto-complete="off"></el-input>
@@ -329,13 +333,13 @@ import uploadFn from '@/utils/aahbs'
 const formForNotive = {
         fileList1:[],
         goodsType:0,
-        goodsName:'奥术大师',
+        goodsName:'',
         // goodsPrice:'100',
-        goodsNum:'100',
-        school:'',
+        goodsNum:'',
+        school:[],
         // goodsTotal:'100',
         industry:'',
-        goodsDescribe:'暂无描述',
+        goodsDescribe:'',
         goodsTrans:0,
         size:'one',
         fileList2:[],
@@ -388,7 +392,7 @@ export default {
               { type:"string",required: true, message: '请输入商品编号', trigger: 'blur',min: 1},
           ],
           school: [
-              { type:"number",required: true, message: '请输入门店，如果没有门店请先添加门店(运营=>门店)', trigger: 'blur'},
+              { type:"array",required: true, message: '请输入门店，如果没有门店请先添加门店(运营=>门店)', trigger: 'blur'},
           ],
           // goodsTotal: [
           //     { type:"string",required: true, message: '请输入库存', trigger: 'blur',min: 1},
@@ -396,8 +400,8 @@ export default {
           industry: [
               { type:"number",required: true, message: '请输入行业', trigger: 'blur'},
           ],
-          goodsElement: [
-              { type:"number",required: true, message: '请输入商品属性', trigger: 'blur',min: 1},
+          is_virtual: [
+              { type:"number",required: true, message: '请输入商品属性', trigger: 'blur'},
           ],
           goodsDescribe: [
               { type:"string",required: true, message: '请输入描述', trigger: 'blur',min: 1},
@@ -507,28 +511,7 @@ export default {
       // body
       listLoading: false,
       tableData: [
-        {
-          goodsImage:'https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=3942989250,3371488751&fm=27&gp=0.jpg',
-          goodsName: '老北京鸡肉卷',
-          goodsType: '炸鸡',
-          goodsNum: '123987',
-          goodsState: '在售',
-          goodsPrice: '321',
-          goodsTotal: '321',
-          goodsSell: '321',
-        //   opera: '查看123'
-        },
-        {
-          goodsImage:'https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=4005596794,992112216&fm=27&gp=0.jpg',
-          goodsName: '香辣鸡腿堡',
-          goodsType: '炸鸡',
-          goodsNum: '1223987',
-          goodsState: '在售',
-          goodsPrice: '3221',
-          goodsTotal: '3221',
-          goodsSell: '3212',
-        //   opera: '查看123'
-        }
+
       ],
       // footer
       listQuery: {
@@ -792,15 +775,19 @@ export default {
         // 商品编号
         sendData.goods_serial= this.formForNotive.goodsNum
         // 门店
-        sendData.school_id= this.formForNotive.school
+        sendData.school_id= 0
+        let tempArray = []
         for(let i=0,len=this.schoolList.length;i<len;i++){
           //获取门店名
-          if(this.schoolList[i].value===this.formForNotive.school){
-            sendData.school_name = this.schoolList[i].label
-            break
+          if(this.formForNotive.school.indexOf(this.schoolList[i].value)>=0){
+              tempArray.push({id:this.schoolList[i].value,name:this.schoolList[i].label})
           }
+          // if(this.schoolList[i].value===this.formForNotive.school){
+          //   sendData.school_name = this.schoolList[i].label
+          //   break
+          // }
         }
-        
+        sendData.school_name = JSON.stringify(tempArray)
         //库存 放在规格里 sendData.goodsTotal= this.formForNotive.goodsTotal
 
         //分类
@@ -988,14 +975,19 @@ export default {
         // 商品编号
         sendData.goods_serial= this.formForNotive.goodsNum
         // 门店
-        sendData.school_id= this.formForNotive.school
+        sendData.school_id= 0
+        let tempArray = []
         for(let i=0,len=this.schoolList.length;i<len;i++){
           //获取门店名
-          if(this.schoolList[i].value===this.formForNotive.school){
-            sendData.school_name = this.schoolList[i].label
-            break
+          if(this.formForNotive.school.indexOf(this.schoolList[i].value)>=0){
+              tempArray.push({id:this.schoolList[i].value,name:this.schoolList[i].label})
           }
+          // if(this.schoolList[i].value===this.formForNotive.school){
+          //   sendData.school_name = this.schoolList[i].label
+          //   break
+          // }
         }
+        sendData.school_name = JSON.stringify(tempArray)
         
         //库存 放在规格里 sendData.goodsTotal= this.formForNotive.goodsTotal
 
@@ -1125,11 +1117,27 @@ export default {
               tempForm.fileList0 = []
             }
             //虚拟 
+
+              let tempSchool = []
+            try{
+              let Tempschool = JSON.parse(data.school_name)
+              if(Tempschool instanceof Array){
+                Tempschool.forEach(item=>{
+                  tempSchool.push(item.id)
+                })
+              }
+            }catch(err){
+                tempSchool.push(data.school_id)
+                console.log('111111111111',err)
+            }
+
             tempForm.is_virtual = data.is_virtual
             tempForm.goodsType = data.is_appoint 
             tempForm.goodsName = data.goods_name
             tempForm.goodsNum = data.goods_serial
-            tempForm.school = data.school_id
+            console.log(tempSchool);
+            tempForm.school = tempSchool
+
             tempForm.industry = Number(data.goods_stcids)
             tempForm.goodsDescribe = data.goods_advword
             tempForm.size = data.spec_value?'mutil':'one'
