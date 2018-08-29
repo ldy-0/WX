@@ -31,18 +31,37 @@
   
   + swiper
     > 轮播图
-    #### 配置项
-   
-    |属性名|类型|描述|
-    |------|-----|-------|
-    | `height` | Number | 高度 |
-    | `indicatorDots` | Boolean | 是否显示面板指示点 |
-    | `indicatorActiveColor` | String | 当前选中的指示点颜色 |
-    | `autoplay` | Boolean | 是否自动切换 |
-    | `interval` | Number | 自动切换时间间隔 |
-    | `duration` | Number | 滑动动画时长 |
-    | `circular` | Boolean | 是否循环 |
-    | `config` | Object | 配置对象 |
+    ### 参数 
+      - config : Object  
+      
+        #### 配置属性 
+      
+          |属性名|类型|默认|描述|
+          |------|-----|------|-------|
+          | `height` | Number | 476 | 高度 |
+          | `indicatorDots` | Boolean | true | 是否显示面板指示点 |
+          | `indicatorActiveColor` | String | '#fff' | 当前选中的指示点颜色 |
+          | `autoplay` | Boolean | true | 是否自动切换 |
+          | `interval` | Number | 3000 | 自动切换时间间隔 |
+          | `duration` | Number | 1000 | 滑动动画时长 |
+          | `circular` | Boolean | true | 是否循环 |
+          | `data` | Array | - | 数据(数组中每项为一个对象，对象必须有imgUrl属性) |
+
+      - click : [Function] 
+        > 点击回调函数
+
+
+    #### 例子 
+    ```js
+    <!--  -->
+    <slider :config.sync='swiperConfig' @click.user='goGoodsDetail'></slider>
+    <!-- 配置对象 -->
+    swiperConfig: {
+      data: [
+        { imgUrl: '', }
+      ],
+    },
+    ```
  
 ## 获取/Get 
 `git clone https://github.com/person-0/wx.git`
