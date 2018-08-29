@@ -254,3 +254,27 @@ export function updateArticle(data) {
     data
   })
 }
+
+
+//------------------------------------
+export function getAgentShop_api(data) {
+  return request({
+    url: '/api/v1/admin/store',
+    method: 'get',
+    params: data
+  })
+}
+export function getShopOrderList_api(data) {
+  return request({
+    url: '/api/v1/admin/order',
+    method: 'get',
+    params: data
+  })
+}
+export function getShopOrderList_api2(data) {
+  return request({
+    url: '/api/v1/admin/vrorder',
+    method: 'get',
+    params: data
+  })
+}
