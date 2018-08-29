@@ -544,7 +544,7 @@ export default {
             result.forEach((aData)=>{
               tempTableData.push({
                 //后端生成
-                id:aData.admin_id,
+                id:aData.agent_id,
                 //前后统一
                 tel:aData.agent_telephone,
                 username:aData.admin_nick,
@@ -570,7 +570,7 @@ export default {
       },
       getList2(id){
         let sendData = Object.assign({},this.listQuery2)
-        sendData.id = id
+        sendData.agent_id = id
         getAgentShop_api(sendData).then(response => {
           if(response&&response.status==0){
             let result = response.data
