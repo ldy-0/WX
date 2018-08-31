@@ -86,7 +86,7 @@
   }
 }
 
-.center{
+.save_wrap{
   display: flex;
   justify-content: center;
   .save{
@@ -133,9 +133,10 @@
 
 <template>
   <view class="container {{ isIos ? 'ios_container' : ''}}">
+      <topBar :config='config'></topBar>
+
       <view class="wrap {{isIos ? 'ios_wrap' : ''}}">
         <form bindsubmit='submit'>
-            <topBar :topBar='topBar'></topBar>
 
             <view class='row_flex space'>收件人： <input type='text' name='name' class='inline' bindinput='setConsignee' value='{{address.consignee}}' /></view>
 
@@ -146,7 +147,7 @@
                 <view class='flex' @tap="openAddressPicker">
                     <view class='flex'>
                       <view class='fc_gray'>{{baseAddress}}</view>
-                      <image class='left_arrow' src='../images/order/icon_zuojiantou@2x.png' />
+                      <image class='left_arrow' src='../../images/my/rightarraw.png' />
                     </view>
                     
                     <!-- <view class='flex'>
@@ -177,7 +178,7 @@
                 <switch name='isDefault' checked='{{address.isDefault}}'></switch>
             </view>
 
-            <view class='center'><button class='save' formType='submit'>保存</button></view>
+            <view class='save_wrap'><button class='save' formType='submit'>保存</button></view>
         </form>
 
       </view>
@@ -186,18 +187,22 @@
 
 <script>
   import wepy from 'wepy';
-  import topBar from '../components/navigation';
-  import addressApi from '../api/addressApi.js';
-  import areaPicker from '../components/common/wepy-area-picker';
+  import topBar from '../../components/topBar';
+  // import addressApi from '../../api/addressApi.js';
+  import areaPicker from '../../components/common/wepy-area-picker';
   
   export default class AddAddress extends wepy.page {
+    config = {
+      enablePullDownRefresh: false,
+      disableScroll: true,
+    }
+
     data = {
-      topBar: {
+      config: {
         name: "添加新地址",
-        tabPage: false,
+        canBack: true,
       },
       baseAddress: '请选择',
-      //
       province: '',
       city: '',
       area: '',
@@ -217,7 +222,7 @@
     };
     
     components = {
-      topBar: topBar,
+      topBar,
       areaPicker: areaPicker
     };
     
@@ -235,26 +240,20 @@
       submit(e){
 
         let v = e.detail.value,
-            phone = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/;
+            phone = /^((13[0-9])|(14[5|7|9])|(15([0-3]|[5-9]))|(17[0,1,3,5,6,7,8])|(18[0-9]))\d{8}$/;
 
         if(v.name === ''){
-          return wx.showToast({
-            title: '姓名不能为空!',
-            icon: 'none',
-            duration: 1000,
-          });
+
+          return wx.showToast({ title: '姓名不能为空!', icon: 'none', duration: 1000, });
+
         }else if(v.phone === '' || !phone.test(v.phone)){
-          return wx.showToast({
-            title: '手机号码填写有误!',
-            icon: 'none',
-            duration: 1000,
-          });
+
+          return wx.showToast({ title: '手机号码填写有误!', icon: 'none', duration: 1000, });
+
         }else if(this.baseAddress === '请选择'){
-          return wx.showToast({
-            title: '未选择省市区!',
-            icon: 'none',
-            duration: 1000,
-          });
+
+          return wx.showToast({ title: '未选择省市区!', icon: 'none', duration: 1000, });
+
         }else if(v.detail === ''){
           return wx.showToast({
             title: '详细地址不能为空!',
@@ -291,7 +290,7 @@
       }
     };
 
-    async onLoad(opt){
+    onLoad(opt){
       this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
       // 地址列表是否为空
       if(opt.isNull === 'true'){
@@ -302,24 +301,15 @@
         return ;
       }
 
-      let data = JSON.parse(decodeURIComponent(opt.address)),
-          address = this.data.address;
-          // zone = await addressApi.getAddressDetail({
-          //   id: data.id,
-          // })
+      let data = JSON.parse(decodeURIComponent(opt.address));
       
-      for(let key in address){
-        if(address.hasOwnProperty(key)){
-          address[key] = data[key];
-        }
-      }
+      this.address = data;
 
       // this.province = data.zones[1];
       // this.city = data.zones[2];
       // this.area = data.zones[3];
 
       this.baseAddress = data.systemRegions[0].name + ' ' + data.systemRegions[1].name + ' ' + data.systemRegions[2].name;
-      this.$apply();
     }
 
     async saveAddress(address){
@@ -334,7 +324,6 @@
             zoneId: this.data.address.zoneId,  // 区域code
             street: address.detail,        // 详细地址
             isDefault: this.data.isFirst ? true : address.isDefault,  // 是否为默认
-            // certificateId: null,
           },
         });
 
@@ -347,7 +336,6 @@
         return wx.showToast({ title: 'error: --'+JSON.stringify(e), icon: 'none', duration: 2000, });
       }
       
-      // console.log(`添加失败--${res}`);
       return wx.showToast({ title: '添加失败', icon: 'none', duration: 2000, });
       
     }
