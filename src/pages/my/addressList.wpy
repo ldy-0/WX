@@ -99,7 +99,7 @@
 
                     <address :address.sync='item'>
                         <view class='other_info'>
-                          <view class='default' wx:if='{{item.isDefault}}'>[默认地址]</view>
+                          <view class='default' wx:if="{{item.address_is_default === '1'}}">[默认地址]</view>
                           <view wx:else></view>
                           <view class='operate_info'>
                               <view class='operate_btn' @tap='modify({{index}})'>
@@ -139,6 +139,7 @@
   import wepy from 'wepy';
   import topBar from '../../components/topBar';
   import address from '../../components/address';
+  import api from '../../utils/api';
   
   export default class Address extends wepy.page {
     config = {
@@ -153,11 +154,16 @@
       },
       addressList: [  ],//{consignee: 'akfd', phone: '11111111111', details: 'sjfd', street: 'skf',}
       isIos: null,
+      page: 0,
     };
     
     components = {
       topBar,
       address,
+    };
+
+    computed = {
+
     };
     
     methods = {
@@ -174,13 +180,13 @@
       },
       modify(index){
         let address = JSON.stringify(this.addressList[index]);
-        
+
         wx.navigateTo({
           url: './addAddress?address='+encodeURIComponent(address),
         });
       },
       delete(index){
-        let id = this.addressList[index].id;
+        let id = this.addressList[index].address_id;
 
         wx.showModal({
           content:'确认删除该地址吗？',
@@ -210,7 +216,7 @@
     }
     
     async delete(id, index){
-      let result = await addressApi.deleteAddress({ id, });
+      let result = await api.deleteAddress(id);
 
       if(result){
 
@@ -228,16 +234,18 @@
       wx.showLoading({ title: 'Loading...', });
 
       let addressList = this.data.addressList,
-          // res = await addressApi.getAddressList({});
-          res = [
-            {name: 'akfd', phone: '11111111111', address: 'skfjkj时刻提防监考老师封口费老是犯困犯困大家设计开发但是科夫斯克sfsjfd', street: 'skf',},
-            {name: 'askdfjkj是看风景十分艰苦撒旦解放快速减肥的肯定是skfjskfjdkkfd', phone: '11111111111', address: 'sjfd', street: 'skf',},
-            {name: 'akfd', phone: '11111111111', address: 'skfjkj时刻提防监考老师封口费老是犯困犯困大家设计开发但是科夫斯克sfsjfd', street: 'skf',},
-            {name: 'akfd', phone: '11111111111', address: 'skfjkj时刻提防监考老师封口费老是犯困犯困大家设计开发但是科夫斯克sfsjfd', street: 'skf',},
-            {name: 'askdfjkj是看风景十分艰苦撒旦解放快速减肥的肯定是skfjskfjdkkfd', phone: '11111111111', address: 'sjfd', street: 'skf',},
-            {name: 'askdfjkj是看风景十分艰苦撒旦解放快速减肥的肯定是skfjskfjdkkfd', phone: '11111111111', address: 'sjfd', street: 'skf',},
-          ];
-      console.log(res);
+          res = await api.getAddressList({
+            page: this.page,
+            limit: 100,
+          });
+          // res = [
+          //   {name: 'akfd', phone: '11111111111', address: 'skfjkj时刻提防监考老师封口费老是犯困犯困大家设计开发但是科夫斯克sfsjfd', street: 'skf',},
+          //   {name: 'askdfjkj是看风景十分艰苦撒旦解放快速减肥的肯定是skfjskfjdkkfd', phone: '11111111111', address: 'sjfd', street: 'skf',},
+          //   {name: 'akfd', phone: '11111111111', address: 'skfjkj时刻提防监考老师封口费老是犯困犯困大家设计开发但是科夫斯克sfsjfd', street: 'skf',},
+          //   {name: 'akfd', phone: '11111111111', address: 'skfjkj时刻提防监考老师封口费老是犯困犯困大家设计开发但是科夫斯克sfsjfd', street: 'skf',},
+          //   {name: 'askdfjkj是看风景十分艰苦撒旦解放快速减肥的肯定是skfjskfjdkkfd', phone: '11111111111', address: 'sjfd', street: 'skf',},
+          //   {name: 'askdfjkj是看风景十分艰苦撒旦解放快速减肥的肯定是skfjskfjdkkfd', phone: '11111111111', address: 'sjfd', street: 'skf',},
+          // ];
 
       if(!res){
         return wx.showToast({ title: '获取地址信息失败', icon: 'none', duration: 2000, });

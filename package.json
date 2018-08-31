@@ -9,7 +9,7 @@
     "build": "cross-env NODE_ENV=production wepy build --no-cache",
     "dev:web": "wepy build --output web",
     "clean": "find ./dist -maxdepth 1 -not -name 'project.config.json' -not -name 'dist' | xargs rm -rf",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha & echo \"Error: no test specified\" && exit 0"
   },
   "wepy": {
     "module-a": false
@@ -28,6 +28,7 @@
     "babel-preset-env": "^1.6.1",
     "cross-env": "^5.1.3",
     "eslint": "^3.18.0",
+    "mocha": "^5.2.0",
     "wepy-compiler-babel": "^1.5.1",
     "wepy-compiler-less": "^1.3.12",
     "wepy-eslint": "^1.5.3",

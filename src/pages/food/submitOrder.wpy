@@ -56,6 +56,7 @@ import wepy from 'wepy';
 import topBar from '../../components/topBar';
 import add from '../../components/number';
 import address from '../../components/address';
+import api from '../../utils/api';
 
 export default class submitOrder extends wepy.page {
   config = {

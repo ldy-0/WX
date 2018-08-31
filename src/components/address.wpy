@@ -2,11 +2,11 @@
     <view class='address_info' @tap='goAddressList'>
 
       <view class='address_row'>
-        <view class='user_name'>{{address.name}}</view>
-        <view class='user_phone'>{{address.phone}}</view>
+        <view class='user_name'>{{address.address_realname}}</view>
+        <view class='user_phone'>{{address.address_mob_phone}}</view>
       </view>
 
-      <view class='address_detail'>{{address.address}}</view>
+      <view class='address_detail'>{{address.area_info}}{{address.address_detail}}</view>
 
       <slot></slot>
 

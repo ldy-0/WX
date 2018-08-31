@@ -11,6 +11,7 @@
         </navigator>
       </view>
     </view> -->
+    <!-- <canvas canvas-id='canvas'></canvas> -->
 
     <view class='classify_list'>
       <repeat for='{{classifyList}}' item='item'>
@@ -44,6 +45,8 @@ import Placeholder from "../components/common/placeholder";
 import topBar from "../components/topBar";
 import swiper from "../components/slider";
 import request from '../utils/request.js';
+import api from '../utils/api.js';
+import qrcode from '../utils/qrcode.js';
 
 export default class Home extends wepy.page {
   config = {
@@ -83,19 +86,25 @@ export default class Home extends wepy.page {
     isIos: null,
   }
   async onShow(){
-    if(!wx.getStorageSync('sessionId')){
+    if(!wx.getStorageSync('userInfo')){
       let res = await wepy.login();
     
       if(res.errMsg === 'login:ok'){
         wx.setStorageSync('code', res.code);
+
+        let data = await api.getToken(res.code); 
+        console.log(data);
+        
       }
 
-      // return wx.redirectTo({ url:'/pages/authorize' });
+      return wx.redirectTo({ url:'/pages/authorize?referer=/pages/home' });
     }
 
+    // qrcode.api.draw('sjkf', 'canvas', 100, 100, this);
+    
     this.getAdList();
 
-    this.getDiscoverList();
+    this.getDiscoverList(this.currentPage);
   }
 
   onLoad(params) {
@@ -122,8 +131,7 @@ export default class Home extends wepy.page {
     this.canLoad = false;
     this.showLoading = true;
     console.log(this.page_total + "=loading=" + this.currentPage + this.currentType);
-    this.currentPage++;
-    this.getDiscoverList(this.currentPage);
+    this.getDiscoverList(++this.currentPage);
 
   };
 
@@ -135,31 +143,31 @@ export default class Home extends wepy.page {
       return wx.showToast({ title: '已经是最后一页了!', icon: 'none', duration: 1000, });
     }
 
-    // let id = this.currentType 
-
-    let res = [
-      { name: 'sfiisfdjijfsodisfdjijfsodisfdjijfsodisfdjijfsodsfdjijfsod', img: '../images/background_info.@3x.png', price: '10', originPrice: 120.1 },
-      { name: 'sfisfdjijfsod', img: '../images/background_info.@3x.png', price: '10' },
-      { name: 'sfisfdjijfsod', img: '../images/background_info.@3x.png', price: '10' },
-    ];
-
-    if(!res){
-      return wx.showToast({ title: '获取商品列表失败', icon: 'none', duration: 2000, });
-    }
+    let res = await api.getSeckill({
+      page,
+      limit: 10,
+    });
+    // let res = [
+    //   { name: 'sfiisfdjijfsodisfdjijfsodisfdjijfsodisfdjijfsodsfdjijfsod', img: '../images/background_info.@3x.png', price: '10', originPrice: 120.1 },
+    //   { name: 'sfisfdjijfsod', img: '../images/background_info.@3x.png', price: '10' },
+    //   { name: 'sfisfdjijfsod', img: '../images/background_info.@3x.png', price: '10' },
+    // ];
 
     if(res && res.length === 0 && this.discoverList.length === 0){
+
       this.showLoading = false;
       this.is_empty = true;
       return this.$apply();
+      
     }else if(res.length === 1 || res.length < 10){ //total
+
       this.isEnd = true;
       this.is_empty = false;
     }
 
-    // this.currentType = id;
-    this.currentPage = Number(page);
-
+    // res.forEach((v, i) => res[i].goods_image = 'http://121.42.184.125:88/' + v.goods_image );
     this.discoverList = this.discoverList.concat(res);
+    console.log(this.discoverList);
    
     this.canLoad = true;
     this.showLoading = false;
@@ -168,16 +176,13 @@ export default class Home extends wepy.page {
   //轮播图
   async getAdList() {
 
-    const sessionId = wx.getStorageSync('sessionId'),
-          res = await request.get('v2/openapi/home/carousels'),
-          // res = await shttp.get('/v2/openapi/home/carousels', sessionId).end(),
-          imgs = res.data ? res.data.images : null;
+    const res = await api.getBanner();
 
-    if(!imgs){
+    if(!res){
       return wx.showToast({ title: res.moreInfo, icon: 'none', duration: 2000, });
     }
     
-    this.swiperConfig.data = imgs;
+    this.swiperConfig.data = res.slice(0, 5).map(v => { return { id: v.store_id, imgUrl: v.banner_pic }; });
     this.$apply();
 
   }
@@ -221,7 +226,7 @@ export default class Home extends wepy.page {
 </script>
 <style lang="less">
 .container {
-  font-family: 'RTWSYueGoTrial-Regular';
+  font: 30rpx 'RTWSYueGoTrial-Regular';
   color: #000;
   background: #fff;
 }

@@ -130,10 +130,6 @@
         background: #fff;
         margin: 0 0 15rpx 15rpx;
         padding-bottom: 15rpx;
-        .item_img{
-          .discover_img {
-          }
-        }
         .info {
           .name{
             width: 450rpx;
@@ -187,7 +183,7 @@
             <view class='class_row'>
               <view class='address_wrap'>
                 <image class='address_img' src='../images/icon/latlon.png' />
-                <view class='address'>{{address}}</view>
+                <view class='address'>{{address.address}}</view>
                 <image style='width: 18rpx; height: 18rpx;' src='../images/icon/toBottom.png' />
               </view>
 
@@ -200,10 +196,14 @@
               <view class='tab'>
                 <repeat for="{{classList}}" index="index" item="item">
                     <!-- <view class="class_item {{ checkedList[index] ? 'sel' : '' }}" @tap="getTwo({{index,item.isleaf,item.id}})">{{item.name}}</view> -->
-                    <view class="tab_item {{ checkedList[index] ? 'sel' : '' }}" @tap="">
-                      <view>{{item}}</view>
-                      <image style='width: 18rpx; height: 18rpx;' src='../images/icon/toBottom.png' />
-                    </view>
+                      <picker value='{{ sortList[index] }}' range='{{ classDetailList[index] }}' bindchange='setSortMethod({{index}})'>
+                        <view class="tab_item {{ checkedList[index] ? 'sel' : '' }}" @tap="">
+                          <view>{{ classDetailList[index][sortList[index]] }}</view>
+                          <image style='width: 18rpx; height: 18rpx;' src='../images/icon/toBottom.png' />
+                        </view>
+                      </picker>
+                        <!-- <view>{{item}}</view> -->
+                    
                 
                 </repeat>
               </view>
@@ -213,14 +213,14 @@
 
               <!-- <repeat for="{{goodsList}}" item="items">
                   <view class="row {{checkedList[0] ? 'bg' : ''}}"> -->
-                      <repeat for="{{goodsList}}" item='item'>
+                      <repeat for="{{storeList}}" item='item'>
                         
-                          <navigator class="item" open-type="navigate" url='/pages/food/businessDetail?id={{item.name}}'>
-                              <image class="item_img" src="{{item.imgUrl}}" mode='widthFix' />
+                          <navigator class="item" open-type="navigate" url='/pages/food/businessDetail?id={{item.store_id}}'>
+                              <image class="item_img" src="{{item.store_avatar}}" mode='aspectFill' />
                               <view class="info">
                                 <view class='item_row'>
-                                  <view class='item_name'>{{item.name}}</view>
-                                  <view class='origin_price'>月售：{{item.price}}</view>
+                                  <view class='item_name'>{{item.store_name}}</view>
+                                  <view class='origin_price'>月售：{{item.store_sales}}</view>
                                 </view>
                                 <view class='item_row'>
                                   <view class='item_level'>
@@ -247,6 +247,7 @@ import shopApi from "../api/shopApi.js";
 import topBar from '../components/topBar';
 import starLevel from '../components/star';
 import bd from '../utils/bmap-wx.min.js';
+import api from '../utils/api.js';
 
 export default class Classify extends wepy.page {
 
@@ -264,9 +265,12 @@ export default class Classify extends wepy.page {
     },
     // 一级列表
     classList: ['全部', '距离', '销量排序'],
+    classDetailList: [ [ '全部' ], ['距离', '从近到远', '从远到近'], ['销量排序', '从高到低', '从低到高'] ],
+    sortList: [0, 0, 0],
     //
     checkedList: [],
     title: "",
+    storeList: null,
     goodsList: [
       { name: '12sfjdkfkfknvcmnmvnz-3or-0o3-20-3r90rdsojfkgjrhgnfjdn343', price: '1432', imgUrl: '../images/background_info.@3x.png', level: 2 },
       { name: '12343', price: '1432', imgUrl: '../images/background_info.@3x.png', level: 4 },
@@ -293,6 +297,12 @@ export default class Classify extends wepy.page {
   methods = {
     search(e){
       console.log(e.detail.value);
+    },
+    setSortMethod(index, e){
+      let val = e.detail.value;
+
+      this.sortList[index] = val;
+      console.log(index, this.sortList);
     },
     goBusinessDetail(id){
       
@@ -330,10 +340,19 @@ export default class Classify extends wepy.page {
 
  };
 
- onShow(){
-  
-  this.setAddress();
- }
+  async onShow(){
+
+    this.getStoreClass();
+    
+    let res = await this.setAddress();
+
+    if(res !== 'ok'){
+      return wx.showModal({ title: '提示', content: res.errMsg, showCancel: false, });
+    }
+
+    this.getStoreList();
+
+  }
 
   onLoad(){
 
@@ -358,36 +377,27 @@ export default class Classify extends wepy.page {
 
   };
 
-  async getGoodsList(page){
+  async getStoreClass(){
+    
+    let res = await api.getStoreClass();
+
+    // this.classDetailList[0] = this.classDetailList.concat(res);
+    console.log(res);
+  }
+
+  async getStoreList(page){
     wx.showLoading({ title: 'Loading...', });
 
-    let res = await shopApi.getGoodsList({
-        type: 'NORMAL', //全部商品
-        params: {
-          categoryId: this.currentType == undefined ? '' : this.currentType,
-          keys: '',
-          page: Number(page),
-          size: 10,
-          // order:'price',
-          // direction:'desc',
-          // pageable: true,
-        }
-      });
-
-    if(res.count <= 0){
-
-      wx.showToast({ title: '暂无相关商品', icon: 'none', duration: 2000, });
-      
-    };
-
-    this.total = res.count;
-    this.events.arr2(res.list).forEach(v => {
-      // v[0].duiPrice = this.add_minus(v[0].price, - v[0].deductionDPoint/10);
-      // v[1].duiPrice = this.add_minus(v[1].price, - v[1].deductionDPoint/10);
-      this.goodsList.push(v);
+    let res = await api.getStoreList({
+      latitude: this.address.latitude,
+      longitude: this.address.longitude,
+      storeclass_id: 0,
+      page,
+      limit: 10,
     });
-    console.log('-=-===-=-=-=-==');
-    console.log(this.goodsList);
+
+    this.storeList = res; 
+    console.log(this.storeList);
     this.$apply();
     wx.hideLoading();
   }
@@ -403,15 +413,27 @@ export default class Classify extends wepy.page {
   }
 
   setAddress(){
-    const bmap = new bd.BMapWX({ ak: 'AawWMRmcrLeHbsvEdbl4yf72kzZhYmxg', });
+    const _this = this,
+          bmap = new bd.BMapWX({ ak: 'AawWMRmcrLeHbsvEdbl4yf72kzZhYmxg', });
 
-    bmap.regeocoding({
-      success: res => {
-        console.log(JSON.stringify(res.wxMarkerData));
-        this.address = res.wxMarkerData[0].address;
-        this.$apply();
-      },
-    }); 
+    return new Promise(function(resolve, reject){
+
+      bmap.regeocoding({
+        success: res => {
+          console.log(JSON.stringify(res.wxMarkerData));
+          _this.address = res.wxMarkerData[0];
+          _this.$apply();
+          
+          resolve('ok');
+        },
+        fail: res => {
+          console.log(res);
+          reject(res);
+        }
+      }); 
+
+    }).catch(e => e);
+
   }
 }
 </script>

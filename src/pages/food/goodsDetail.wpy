@@ -100,6 +100,7 @@ import topBar from '../../components/topBar';
 import coupon from '../../components/coupon';
 import model from '../../components/model';
 import swiper from '../../components/slider';
+import api from '../../utils/api';
 
 export default class goodsDetail extends wepy.page {
   config = {
@@ -149,7 +150,7 @@ export default class goodsDetail extends wepy.page {
       imgs: [ '../../images/authorize_bg.png', '../../images/background_info.@3x.png' ],
     },
     index: 0, // 使用方式的索引
-    isShow: true,
+    isShow: false,
     canCancel: false, // 弹窗是否可以取消
     params: {},
     canBuy: true,
@@ -157,16 +158,14 @@ export default class goodsDetail extends wepy.page {
   }
 
   async onLoad(param){
-    if(true){ // 是否绑定手机号
+    if(!wx.getStorageSync('userInfo').phone){ // 绑定手机号
       let res = await wepy.login();
-      console.log(res);
+      this.params.code = res.code;
+      this.isShow = true;
+      this.$apply();
     }
-
-    console.log(param.id);
-  }
-
-  async onShow(){
-    
+console.log(param.id);
+    this.getGoods(param.id);
   }
 
   methods = {
@@ -207,16 +206,28 @@ export default class goodsDetail extends wepy.page {
       });
 
     },
-    getPhone(e){
+    async getPhone(e){
       let res = e.detail;
 
-      if(res){
-        this.params.encryptedData = res.encryptedData;
-        this.params.iv = res.iv;
+      if(res.errMsg !== 'getPhoneNumber:ok'){
+        return ;
       }
 
-      this.isShow = false;       
-      console.log(this.isShow);
+      this.params.encryptedData = res.encryptedData;
+      this.params.iv = res.iv;
+
+      let data = await api.setPhone(this.params);
+
+      if(data){
+
+        let userInfo = wx.getStorageSync('userInfo');
+        userInfo.phone = data;
+        wx.setStorageSync('userInfo', userInfo);
+
+        this.isShow = false;       
+        this.$apply();
+
+      }
 
     },
     setMethod(e){
@@ -235,6 +246,16 @@ export default class goodsDetail extends wepy.page {
   onShareAppMessage(){
 
   } 
+
+  async getGoods(id){
+
+    let res = await api.getGoods({
+      store_id: id,
+    });
+
+    this.geoods = res;
+
+  }
   
 }
 

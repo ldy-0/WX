@@ -5,13 +5,13 @@
 
             <navigator class="item" wx:for="{{list}}" wx:key="item" url="/pages/food/goodsDetail?id={{item.id}}" >
                 <!-- <view class='image_wrap'> -->
-                    <image class="item_img" src="{{item.img}}" mode='aspectFill' /> <!-- style="width:{{item.imgWidth}}px;height:{{item.imgHeight}}px" -->
+                    <image class="item_img" src="{{item.goods_image}}" mode='aspectFill' /> <!-- style="width:{{item.imgWidth}}px;height:{{item.imgHeight}}px" -->
                 <!-- </view> -->
                 <view class='item_info'>
                   <view class="info">
-                      <view class='item_name'>{{item.name}}</view>
-                      <view class='item_price'>¥{{item.price}} </view>
-                      <view class='origin_price'>¥{{item.originPrice}}</view>
+                      <view class='item_name'>{{item.store_name}}</view>
+                      <view class='item_price'>¥{{item.goods_price}} </view>
+                      <view class='origin_price'>¥{{item.goods_marketprice}}</view>
                   </view>
                   <view class='btn' catchtap='goGoodsDetail({{item.id}})' hover-class='none' hover-stop-propagation="{{'true'}}">马上抢</view>
                 </view>
@@ -34,9 +34,7 @@ export default class Discover extends wepy.component {
   }
 
   computed = {
-    getIdentity() {
-      return wx.getStorageSync("userInfo").hasIdentity;
-    }
+    
   };
 
   methods = {
@@ -139,7 +137,6 @@ export default class Discover extends wepy.component {
     .item_img{
       width: 680rpx;
       height: 318rpx;
-      background: #ccc;
     }
     .item_info{
       display: flex;
@@ -152,6 +149,7 @@ export default class Discover extends wepy.component {
           margin-right: 30rpx;
           text-overflow: ellipsis;
           overflow: hidden;
+          white-space: nowrap;
         }
         .item_price{
           color: #ff5f00;

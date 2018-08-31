@@ -5,10 +5,10 @@
         <view class="header"> <!-- {{isIos ? '' : 'wrap'}} -->
             <image class='bg' src="../images/my/bg.png"></image>
             <view class="header_content">
-                <image class="user_img" src="{{avatarUrl}}"></image>
+                <image class="user_img" src="{{userInfo.avatarUrl}}"></image>
                 <view class="user_info">
                     <view class='row'>
-                        <view class='user_name'>会员IDsdfskfjk时间佛山金佛isdfk</view>
+                        <view class='user_name'>{{userInfo.nickName}}</view>
                         <image class='member_img' src='../images/my/no_vip.png' />
                         <view class='member_desc'>付费会员</view>
                     </view>
@@ -148,8 +148,7 @@
                 bg: '#fff',
             },
             detail: {},
-            avatarUrl: "",
-            nickName: "",
+            userInfo: {},
             submittedCount: '', //待付款
             paidCount: '',    //待发货
             shippedCount: '', //待收货
@@ -166,10 +165,8 @@
             let that = this;
             this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
             that.detail = {};
-            let userInfo = wepy.getStorageSync(USER_INFO);
+            this.userInfo = wx.getStorageSync('userInfo');
             // console.log(userInfo);
-            this.avatarUrl = userInfo.avatar;
-            this.nickName = userInfo.name;
 
             wx.getSystemInfo({
                 success: res => {
@@ -306,6 +303,7 @@
                 max-width: 150rpx;
                 height: 38rpx;
                 line-height: 38rpx;
+                margin-right: 20rpx;
                 color: #fff;
                 overflow: hidden;
             }

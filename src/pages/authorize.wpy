@@ -1,10 +1,12 @@
 <template>
   <view class="authorize-contianer">
     <topBar :config='config'></topBar>
+
     <image class='bg' src='' mode='aspectFit' /> <!-- '../images/authorize_bg_629.png' -->
+    
     <view class='btn_wrap'>
       <view class='btn'>
-        <button open-type="getUserInfo" plain=true lang="zh_CN" bindgetuserinfo="onGotUserInfo">
+        <button open-type="getUserInfo" plain='true' lang="zh_CN" bindgetuserinfo="onGotUserInfo">
           <image class='login' src='../images/authorize_icon.png' />
           <view class='text'>进入授权</view>
         </button>
@@ -23,15 +25,12 @@
 import wepy from 'wepy';
 import topBar from '../components/topBar';
 import userApi from '../api/userApi.js';
-import {
-  SYSTEM_INFO,
-  USER_SPECICAL_INFO,
-  USER_INFO
-} from '@/utils/constant';
+import { SYSTEM_INFO, USER_SPECICAL_INFO, USER_INFO } from '@/utils/constant';
+import request from '../utils/request.js';
+import api from '../utils/api.js';
 
 export default class Authorize extends wepy.page {
   config = {
-    // navigationBarTitleText: '电小乐',
     enablePullDownRefresh: false,
     disableScroll: true,
   }
@@ -49,61 +48,48 @@ export default class Authorize extends wepy.page {
     userinfo: null,
   }
 
-  async onLoad() {
+  onLoad(params) {
+
+    if(params.referer){
+      this.referer = params.referer;
+    }
     // this.userinfo = await wepy.login();
   }
+
   async onGotUserInfo(e) {
-    let error,
-        code = wx.getStorageSync('code'); // this.userinfo.code;
+    let code = wx.getStorageSync('code'); // this.userinfo.code;
     
     if(e.detail.errMsg === 'getUserInfo:ok'){
 
       wx.showLoading({ title: 'Loading...' });
       
-        let params = {};
+      let params = {};
 
-        if(!code){
-          return ;
-        }
+      if(!code){
+        return ;
+      }
 
-        params.code = code; // res.code;
-        params.encryptedData = e.detail.encryptedData;
-        params.iv = e.detail.iv;
+      params.code = code; // res.code;
+      params.encryptedData = e.detail.encryptedData;
+      params.iv = e.detail.iv;
 
-        // wepy.setStorageSync(USER_INFO, e.detail.userInfo);
-        wepy.setStorageSync('params', params);
-        
-        wx.switchTab({
-          url: '/pages/home',
+      wx.setStorageSync('userInfo', e.detail.userInfo);
+      wx.setStorageSync('params', params);
+
+      let user = await api.setUserInfo({
+          wx_name: wx.getStorageSync('userInfo').nickName,
+          wx_avatar: wx.getStorageSync('userInfo').avatarUrl,
         });
-        // userApi.login({
-        //     params,
-        //     handleErr(e){
-        //       console.log('handleErr : -=-= '+JSON.stringify(e));
-        //       error = JSON.stringify(e);
-        //     }
-        // }).then(res => {
-        //   console.log(`----授权时 ${JSON.stringify(res)} ----`);
-        //   if(!res.user){
-        //     return ;
-        //   }
+      
+      console.log('setUser', user);
+      if(!user){
+        wx.reLaunch({ url: this.referer });
+      }
+      
+      // strict equal, no strict equal, same-val equal
+      // type equal value equal NaN no equal NaN 0 equal -0, type format object-object object-pri, ,
 
-        //   wx.setStorageSync("userInfo", res.user);
-        //   wx.setStorageSync("sessionId", res.sessionId);
-
-        //   wx.hideLoading();
-
-        //   wx.reLaunch({
-        //     url: '/pages/home',
-        //   });
-          
-        // }).catch(err => {
-        //   wx.hideLoading();
-          
-        //   wx.showToast({title: '登陆失败,请退出重新登陆'+JSON.stringify(error), icon: 'none'});
-        //   this.$parent.globalData.isFirst = true; 
-          
-        // });
+      wx.hideLoading();
 
     }
 
