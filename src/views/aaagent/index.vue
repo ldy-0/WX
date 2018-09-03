@@ -544,7 +544,8 @@ export default {
             result.forEach((aData)=>{
               tempTableData.push({
                 //后端生成
-                id:aData.agent_id,
+                idA:aData.agent_id,
+                id:aData.admin_id,
                 //前后统一
                 tel:aData.agent_telephone,
                 username:aData.admin_nick,

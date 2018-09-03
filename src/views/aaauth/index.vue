@@ -82,14 +82,14 @@
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
-      <el-table-column 
+      <!-- <el-table-column 
         label="运营管理"
         >
         <template slot-scope="scope">
           <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('manage')!==-1)" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <!-- <el-table-column 
         label="分公司"
         >
@@ -177,10 +177,10 @@ export default {
             label:'store',
             text:'店铺管理'
           },
-          {
-            label:'manage',
-            text:'运营管理'
-          },
+          // {
+          //   label:'manage',
+          //   text:'运营管理'
+          // },
           // {
           //   label:'agent',
           //   text:'分公司'

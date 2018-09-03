@@ -82,10 +82,18 @@ const permission = {
         if (roles.indexOf('agentAdmin') >= 0) {
           console.log(roles)
           let tempIndex = -1
+
           accessedRouters.forEach(function(item,index){
             if(item.path==="/agent"){
               tempIndex = index
-              return false
+            }
+          })
+          if(tempIndex>-1){
+            accessedRouters.splice(tempIndex,1)
+          }
+          accessedRouters.forEach(function(item,index){
+            if(item.path==="/manageSevice"){
+              tempIndex = index
             }
           })
           if(tempIndex>-1){
