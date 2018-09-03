@@ -218,10 +218,10 @@
                       <image src="{{item.product.imgUrl}}" class="cart_goods_img" />
 
                       <view class="goods_info">
-                          <navigator class="goods_title" url="/pages/goods_detail?id={{item.productId}}">
-                              <view class='goods_name'>{{item.title}}</view>
+                          <navigator class="goods_title" url="/pages/food/goodsDetail?id={{item.goods_id}}">
+                              <view class='goods_name'>{{item.goods_name}}</view>
                               <view class='sku'>数量：{{item.qty}}</view>
-                              <view class='goods_originPrice'>¥ {{item.price}}</view>
+                              <view class='goods_originPrice'>¥ {{item.goods_price}}</view>
                           </navigator>
                           <!-- <number :config.sync='NumberConfig' :index.sync='index' :item.sync='item' @change.user='changeNumber'></number> -->
                           <view class="buy_num">
@@ -262,7 +262,7 @@
 
 <script>
 import wepy from "wepy";
-import cartApi from '../api/cartApi.js';
+import api from '../utils/api.js';
 import topBar from '../components/topBar';
 // import number from '../components/number1';
 
@@ -293,6 +293,7 @@ export default class ShoppingCart extends wepy.page {
       count: null,    // 总数量
     },
     isIos: null,
+    canUpdate: true,
     canSubmit: true, // 是否为第一次结算
   };
 
@@ -336,30 +337,54 @@ export default class ShoppingCart extends wepy.page {
     async minus(index){
       let item = this.cartList[index];
 
+      if(!this.canUpdate){
+        return wx.showModal({ title: '提示', content: '正在更新...', showCancel: false, });
+      }
+      this.canUpdate = false;
+
       if(item.qty <= 1){
         return wx.showModal({ title: '提示', content: '商品数量不能小于1', showCancel: false, });
       }
 
-      let res = await 0;
-      
-      if(res){
+      let res = await api.updateCart(item.cart_id, {
+        quantity: item.qty - 1,
+      });
+
+      if(!res){
         return ;
       }
 
       item.qty--;
+      this.canUpdate = true;
+      this.$apply();
+
+      this.updateList(res.store_cart_list);
+
       this.compute();
 
     },
     async add(index){
       let item = this.cartList[index];
+      
+      if(!this.canUpdate){
+        return wx.showModal({ title: '提示', content: '正在更新...', showCancel: false, });
+      }
+      this.canUpdate = false;
 
-      let res = await 0;
+      let res = await api.updateCart(item.cart_id, {
+        quantity: item.qty + 1,
+      });
 
-      if(res){
+      if(!res){
         return ;
       }
-
+      
       item.qty++;
+      this.canUpdate = true;
+      this.$apply();
+
+      this.updateList(res.store_cart_list);
+
       this.compute();
 
     },
@@ -382,10 +407,9 @@ export default class ShoppingCart extends wepy.page {
 
       for(let i = cartList.length-1; i >= 0; i--){
         if(cartList[i].isChecked){
-          // let res = await cartApi.deleteCartItem({
-          //       params: { id: this.data.cartList[i].id }
-          //     });
-          let res = true;
+          let res = await api.deleteCart(this.cartList[i].cart_id, {
+                cart_id: this.cartList[i].cart_id
+              });
 
           if(!res){
             return wx.showToast({ title: '删除失败', icon: 'none', duration: 2000, });
@@ -453,27 +477,24 @@ export default class ShoppingCart extends wepy.page {
   async getCartList(){
     wx.showLoading({ title: 'Loading...', });
 
-    // const result = await cartApi.getCartInfo({});
-    let result = [
-      { title: 'askjdfk受到父母双方都没士大夫什么地方开幕式的父母反对是aa', price: 123, qty: 1, },
-      { title: 'askjdfk受到KJDfkjskfkjsfdk', price: 123, qty: 1, },
-      { title: 'bbb', price: 123, qty: 2, },
-    ];
+    const result = await api.getCartList();
 
-    if(!result){
-      return wx.showModal({ title: '提示', content: '获取购物车信息失败!', showCancel: false, });
-    }
-    
-    result.forEach(v => v.isChecked = false);  
-    this.cartList = result;
-      
-    this.$apply();
+    this.updateList(result.store_cart_list); 
 
     wx.hideLoading();
   }
 
-  async updateCartInfo(index, amount){
+  updateList(cart){
+    let cartList = [];
+
+    for(let key in cart){
+      cartList = cartList.concat(cart[key]);
+    }
+
+    cartList.forEach((v, i) => { v.isChecked = this.cartList[i] ? this.cartList[i].isChecked : false; v.qty = v.goods_num; } );  
+    this.cartList = cartList;
       
+    this.$apply();
   }
 
   async compute(){
@@ -482,12 +503,13 @@ export default class ShoppingCart extends wepy.page {
         count = 0, // 选中个数
         cartList = this.cartList;
     
-    this.count = 0;
+    this.count = this.price = 0;
     this.cartList.forEach(function(v, i){
 
       if(v.isChecked){
 
         _this.count += cartList[i].qty;
+        _this.price = _this.add_minus(_this.price, cartList[i].goods_total);
         count++;
 
       } 

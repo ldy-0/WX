@@ -76,10 +76,10 @@ export default class Home extends wepy.page {
     currentType:'',
     discoverList: [],
     is_empty: false,//是否有数据
-    currentPage: 0,//当前页面
+    currentPage: 1,//当前页面
+    limit: 2,
     isEnd: false, // 是否最后一页
-    //总页数
-    page_total: 0,
+    page_total: 0,//总页数
     //是否显示 底部loading
     showLoading: false,
     canLoad: true,
@@ -103,6 +103,12 @@ export default class Home extends wepy.page {
     // qrcode.api.draw('sjkf', 'canvas', 100, 100, this);
     
     this.getAdList();
+
+    this.currentPage = 1;
+    this.discoverList = [];
+    this.canLoad = true;
+    this.isEnd = false;
+    this.$apply();
 
     this.getDiscoverList(this.currentPage);
   }
@@ -130,22 +136,23 @@ export default class Home extends wepy.page {
 
     this.canLoad = false;
     this.showLoading = true;
-    console.log(this.page_total + "=loading=" + this.currentPage + this.currentType);
-    this.getDiscoverList(++this.currentPage);
 
-  };
-
-  // 获取某类商品列表
-  async getDiscoverList(page){
     if(this.isEnd){
       this.showLoading = false;
       this.$apply()
       return wx.showToast({ title: '已经是最后一页了!', icon: 'none', duration: 1000, });
     }
 
+    this.getDiscoverList(++this.currentPage);
+
+  };
+
+  // 获取某类商品列表
+  async getDiscoverList(page){
+
     let res = await api.getSeckill({
       page,
-      limit: 10,
+      limit: this.limit,
     });
     // let res = [
     //   { name: 'sfiisfdjijfsodisfdjijfsodisfdjijfsodisfdjijfsodsfdjijfsod', img: '../images/background_info.@3x.png', price: '10', originPrice: 120.1 },
@@ -153,20 +160,20 @@ export default class Home extends wepy.page {
     //   { name: 'sfisfdjijfsod', img: '../images/background_info.@3x.png', price: '10' },
     // ];
 
-    if(res && res.length === 0 && this.discoverList.length === 0){
+    if(res.data && res.data.length === 0 && this.discoverList.length === 0){
 
       this.showLoading = false;
       this.is_empty = true;
       return this.$apply();
       
-    }else if(res.length === 1 || res.length < 10){ //total
+    }else if(res.pagination.total <= page * this.limit){ //total
 
       this.isEnd = true;
       this.is_empty = false;
     }
 
     // res.forEach((v, i) => res[i].goods_image = 'http://121.42.184.125:88/' + v.goods_image );
-    this.discoverList = this.discoverList.concat(res);
+    this.discoverList = this.discoverList.concat(res.data);
     console.log(this.discoverList);
    
     this.canLoad = true;

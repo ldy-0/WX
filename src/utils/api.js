@@ -134,12 +134,20 @@ async function getBanner(){
 
 }
 
+async function getActive(params){
+  let res = await request.get('/api/v2/member/activity', params, {
+      'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res;
+}
+
 async function getSeckill(params){
   let res = await request.get('/api/v2/member/seckill', params, {
       'token': wx.getStorageSync('token'),
   });
 
-  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res;
 }
 
 // food
@@ -158,13 +166,60 @@ async function getStoreList(params){
       'token': wx.getStorageSync('token'),
   });
 
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res;
+
+}
+
+async function getStore(id, params){
+
+  let res = await request.get(`/api/v2/member/storeinfo/${id}`, null, {
+      'token': wx.getStorageSync('token'),
+  });
+
   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
 
 }
 
 async function getGoods(params){
 
-  let res = await request.get('/api/v1/member/goodscommon', params, {
+  let res = await request.get(`/api/v2/member/goodscommon`, params, {
+      'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
+// shoppingCart
+async function addCart(params){
+
+  let res = await request.post('/api/v2/member/cart', params, {
+      'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
+async function getCartList(params){
+
+  let res = await request.get('/api/v2/member/cart', params, {
+      'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
+async function updateCart(id, params){
+  
+  let res = await request.put(`/api/v2/member/cart/${id}`, params, {
+      'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
+async function deleteCart(id, params){
+  
+  let res = await request.delete(`/api/v2/member/cart/${id}`, params, {
       'token': wx.getStorageSync('token'),
   });
 
@@ -181,8 +236,14 @@ export default {
   updateAddress,
   deleteAddress,
   getBanner, // home
+  getActive,
   getSeckill,
   getStoreList, // food
-  getGoods,
   getStoreClass,
+  getStore,
+  getGoods,
+  addCart, // shoppingCart
+  getCartList,
+  updateCart,
+  deleteCart,
 }

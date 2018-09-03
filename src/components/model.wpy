@@ -3,6 +3,7 @@
 
         <view class='model' wx:if='{{isShow}}' catchtouchmove='preventMove'>
           <view class='mask' @tap='hide'></view>
+
           <view class="content" 
                 style="top: calc(50% - {{config.height/2 || 150}}rpx); left: calc(50% - {{config.width/2 || 150}}rpx); width: {{config.width || 300}}rpx; height: {{config.height || 300}}rpx; "
                 wx:if='{{config.center}}'>
@@ -11,6 +12,7 @@
           <view class='content' wx:else>
             <slot name='bottom'></slot>
           </view>
+
         </view>
      
     </view>

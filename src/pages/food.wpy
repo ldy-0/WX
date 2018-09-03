@@ -65,7 +65,7 @@
   }
   
   .content_wrap{
-    padding: 0 22rpx;
+    padding: 0 22rpx 10rpx;
     background: #f5f5f5;
     overflow: hidden;
     .content_title{
@@ -195,17 +195,25 @@
 
               <view class='tab'>
                 <repeat for="{{classList}}" index="index" item="item">
-                    <!-- <view class="class_item {{ checkedList[index] ? 'sel' : '' }}" @tap="getTwo({{index,item.isleaf,item.id}})">{{item.name}}</view> -->
-                      <picker value='{{ sortList[index] }}' range='{{ classDetailList[index] }}' bindchange='setSortMethod({{index}})'>
-                        <view class="tab_item {{ checkedList[index] ? 'sel' : '' }}" @tap="">
-                          <view>{{ classDetailList[index][sortList[index]] }}</view>
+
+                      <picker value='{{ sortList[0] }}' range='{{ classDetailList[0] }}' range-key='storeclass_name' bindchange='setSortMethod({{index}})' wx:if='{{index === 0}}'>
+                        <view class="tab_item {{ checkedList[0] ? 'sel' : '' }}" @tap="">
+                          <view>{{ classDetailList[0][sortList[0]].storeclass_name }}</view>
                           <image style='width: 18rpx; height: 18rpx;' src='../images/icon/toBottom.png' />
                         </view>
                       </picker>
-                        <!-- <view>{{item}}</view> -->
+
+                      <picker value='{{ sortList[index] }}' range='{{ classDetailList[index] }}' bindchange='setSortMethod({{index}})' wx:else>
+                        <view class="tab_item {{ checkedList[index] ? 'sel' : '' }}" @tap="">
+                          <!-- <view>{{ classDetailList[index][sortList[index]] }}</view> -->
+                          <view>{{ classList[index] }}</view>
+                          <image style='width: 18rpx; height: 18rpx;' src='../images/icon/toBottom.png' />
+                        </view>
+                      </picker>
                     
                 
                 </repeat>
+
               </view>
           </view>
 
@@ -213,7 +221,7 @@
 
               <!-- <repeat for="{{goodsList}}" item="items">
                   <view class="row {{checkedList[0] ? 'bg' : ''}}"> -->
-                      <repeat for="{{storeList}}" item='item'>
+                      <repeat for="{{storeList}}" item='item' index='index'>
                         
                           <navigator class="item" open-type="navigate" url='/pages/food/businessDetail?id={{item.store_id}}'>
                               <image class="item_img" src="{{item.store_avatar}}" mode='aspectFill' />
@@ -227,7 +235,7 @@
                                     <starLevel :config.sync='starConfig' :level='item.level'></starLevel>
                                     <text class='number'>{{item.level}}</text>
                                   </view>
-                                  <view>距您：1.8km</view>
+                                  <view>距您：{{item.distance}} </view>
                                 </view>
                               </view>
                           </navigator>
@@ -265,21 +273,21 @@ export default class Classify extends wepy.page {
     },
     // 一级列表
     classList: ['全部', '距离', '销量排序'],
-    classDetailList: [ [ '全部' ], ['距离', '从近到远', '从远到近'], ['销量排序', '从高到低', '从低到高'] ],
-    sortList: [0, 0, 0],
+    classDetailList: [ [ { storeclass_id: 0, storeclass_name: '全部'} ], ['从近到远', '从远到近'], ['从低到高', '从高到低'] ],
+    sortList: [0, 0, -1],
     //
-    checkedList: [],
-    title: "",
-    storeList: null,
-    goodsList: [
-      { name: '12sfjdkfkfknvcmnmvnz-3or-0o3-20-3r90rdsojfkgjrhgnfjdn343', price: '1432', imgUrl: '../images/background_info.@3x.png', level: 2 },
-      { name: '12343', price: '1432', imgUrl: '../images/background_info.@3x.png', level: 4 },
-    ],
+    // checkedList: [],
+    storeList: [],
+    // goodsList: [
+    //   { name: '12sfjdkfkfknvcmnmvnz-3or-0o3-20-3r90rdsojfkgjrhgnfjdn343', price: '1432', imgUrl: '../images/background_info.@3x.png', level: 2 },
+    //   { name: '12343', price: '1432', imgUrl: '../images/background_info.@3x.png', level: 4 },
+    // ],
     currentType: null,
-    currentPage: 0,
+    currentPage: 1,
+    limit: 2,
     total: null,
     isIos: null,
-    page:0,
+    canLoad: true,
     address: null,
   };
   
@@ -301,8 +309,20 @@ export default class Classify extends wepy.page {
     setSortMethod(index, e){
       let val = e.detail.value;
 
+      if(index == 0){
+        this.sortList[1] = 0;
+        this.sortList[2] = -1;
+      }else if(index == 1){
+        this.sortList[2] = -1;
+      }else if(index == 2){
+        this.sortList[1] = -1;
+      }
+       
       this.sortList[index] = val;
       console.log(index, this.sortList);
+
+      this.flush();
+      this.getStoreList(this.currentPage);
     },
     goBusinessDetail(id){
       
@@ -350,7 +370,8 @@ export default class Classify extends wepy.page {
       return wx.showModal({ title: '提示', content: res.errMsg, showCancel: false, });
     }
 
-    this.getStoreList();
+    this.flush(); 
+    this.getStoreList(this.currentPage);
 
   }
 
@@ -361,19 +382,20 @@ export default class Classify extends wepy.page {
   }
 
   //加载更多
-  onReachBottom(tatal) {
-    let that = this;
-    that.showLoading = true;
+  onReachBottom() {
 
-    if(this.checkedList[0]){
+    if(!this.canLoad){
       return ;
     }
 
-    if(this.total < (this.currentPage + 1) * 10){
+    this.canLoad = false;
+    
+
+    if(this.total < (this.currentPage) * this.limit){
       return wx.showToast({ title: '已经是最后一页了!', icon: 'none', duration: 2000, });
     }
 
-    this.getGoodsList(++this.currentPage);
+    this.getStoreList(++this.currentPage);
 
   };
 
@@ -381,25 +403,52 @@ export default class Classify extends wepy.page {
     
     let res = await api.getStoreClass();
 
-    // this.classDetailList[0] = this.classDetailList.concat(res);
-    console.log(res);
+    this.classDetailList[0] = this.classDetailList[0].concat(res);
   }
 
   async getStoreList(page){
     wx.showLoading({ title: 'Loading...', });
 
-    let res = await api.getStoreList({
+    let params = {
       latitude: this.address.latitude,
       longitude: this.address.longitude,
-      storeclass_id: 0,
+      storeclass_id: 11,
       page,
-      limit: 10,
-    });
+      order_dis: 'asc',
+      limit: this.limit,
+    };
 
-    this.storeList = res; 
-    console.log(this.storeList);
+    if(this.sortList[1] == '1'){
+      params.order_dis = 'desc';
+    } 
+
+    if(this.sortList[2] == '0'){
+      delete params.order_dis;
+      params.order_sale = 'asc';
+    }else if(this.sortList[2] == '1'){
+      delete params.order_dis;
+      params.order_sale = 'desc';
+    } 
+
+    let res = await api.getStoreList(params);
+
+    res.data.forEach((v, i) => {
+      
+      res.data[i].distance = v.distance > 1000 ? (v.distance/1000).toFixed(2) + 'km' : v.distance.toFixed(2) + 'm';
+
+    }); 
+    this.storeList = this.storeList.concat(res.data); 
+    this.total = res.pagination.total;
+    this.canLoad = true;
     this.$apply();
+
     wx.hideLoading();
+  }
+
+  flush(){
+    this.currentPage = 1;
+    this.storeList = [];
+    this.canLoad = true;
   }
 
   add_minus(nub1, nub2){

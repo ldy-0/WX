@@ -5,25 +5,21 @@
     <view class='wrap'>
       <view class='business'>
 
-        <view class='business_name'>{{goods.business}}</view>
+        <view class='business_name'>{{goods.store_name}}</view>
 
         <slider :config.sync='swiperConfig'></slider>
 
-        <view class='goods_name'>{{goods.name}}</view>
+        <view class='goods_name'>{{goods.goods_name}}</view>
 
         <view style='display: flex; justify-content: space-between; align-items: center; margin: 37rpx 0 0;'>
           <view class='goods_price'>
-              <text class='price'>¥{{goods.price}}</text>
-            <text class='origin'>¥{{goods.origin_price}}</text>
+              <text class='price'>¥{{goods.SKUList[0].goods_price}}</text>
+            <text class='origin'>¥{{goods.SKUList[0].goods_marketprice}}</text>
           </view>
           <button class='goods_share' open-type='share' plain='true' style='line-height: 1.2; margin: 0; padding: 0; border: 0;'>
             <image src='../../images/icon/share.png' mode='aspectFill' />
             <view>分享</view>
           </button>
-          <!-- <view class='goods_share' @tap='share'>
-            <image src='../../images/icon/share.png' mode='aspectFill' />
-            <view>分享</view>
-          </view> -->
         </view>
         <view class='goods_row'>
           <!-- <view>到店使用</view> -->
@@ -59,7 +55,7 @@
       <view class='goods_detail'>
         <view class='detail_title'>商品详情</view>
         <view class='detail_img'>
-          <repeat for='{{goods.imgs}}' item='item'>
+          <repeat for='{{goods.goodsimagesList}}' item='item'>
             <image src='{{item}}' style='width: 100%;' mode='aspectFill' />
           </repeat>
         </view>
@@ -164,7 +160,7 @@ export default class goodsDetail extends wepy.page {
       this.isShow = true;
       this.$apply();
     }
-console.log(param.id);
+    
     this.getGoods(param.id);
   }
 
@@ -241,6 +237,15 @@ console.log(param.id);
 
   async addShoppingCart(){
     console.log('add cart');
+    let res = await api.addCart({
+      goods_id: this.goods.goods_commonid,
+      quantity: 1,
+    });
+
+    if(res.cart_num > 0){
+      this.canAdd = true;
+      wx.showModal({ title: '提示', content: '添加成功!', showCancel: false, });
+    }
   }
   
   onShareAppMessage(){
@@ -250,11 +255,11 @@ console.log(param.id);
   async getGoods(id){
 
     let res = await api.getGoods({
-      store_id: id,
+      goods_commonid: id,
     });
 
-    this.geoods = res;
-
+    this.goods = res;
+    this.$apply();
   }
   
 }
