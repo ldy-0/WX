@@ -34,6 +34,7 @@ import wepy from 'wepy';
 import topBar from '../../components/topBar';
 import star from '../../components/star';
 import api from '../../utils/api.js';
+import test from '../../utils/pagination.js';
 
 export default class classifyList extends wepy.page {
   config = {
@@ -90,6 +91,7 @@ export default class classifyList extends wepy.page {
       this.classId = 4;
     }
 
+    test.reset(this, 0);
     this.getActive(this.currentPage);
   }
 

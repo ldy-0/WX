@@ -203,15 +203,14 @@
                         </view>
                       </picker>
 
-                      <picker value='{{ sortList[index] }}' range='{{ classDetailList[index] }}' bindchange='setSortMethod({{index}})' wx:else>
+                      <picker value='{{ sortList[index] }}' range='{{ classDetailList[index] }}' range-key='name' bindchange='setSortMethod({{index}})' wx:else>
                         <view class="tab_item {{ checkedList[index] ? 'sel' : '' }}" @tap="">
                           <!-- <view>{{ classDetailList[index][sortList[index]] }}</view> -->
                           <view>{{ classList[index] }}</view>
                           <image style='width: 18rpx; height: 18rpx;' src='../images/icon/toBottom.png' />
                         </view>
                       </picker>
-                    
-                
+                                      
                 </repeat>
 
               </view>
@@ -273,9 +272,13 @@ export default class Classify extends wepy.page {
     },
     // 一级列表
     classList: ['全部', '距离', '销量排序'],
-    classDetailList: [ [ { storeclass_id: 0, storeclass_name: '全部'} ], ['从近到远', '从远到近'], ['从低到高', '从高到低'] ],
+    classDetailList: [ 
+      [ { storeclass_id: 0, storeclass_name: '全部'} ], 
+      [ { str: 'asc', name: '从近到远' }, { str: 'desc', name: '从远到近'}], 
+      [ { str: 'asc', name: '从低到高' }, { str: 'desc', name: '从高到低'}],
+    ],
     sortList: [0, 0, -1],
-    //
+    currentStatus: ['order_dis', 'asc'], // 排序方式
     // checkedList: [],
     storeList: [],
     // goodsList: [
@@ -309,17 +312,20 @@ export default class Classify extends wepy.page {
     setSortMethod(index, e){
       let val = e.detail.value;
 
+      this.sortList[index] = val;
+
       if(index == 0){
         this.sortList[1] = 0;
         this.sortList[2] = -1;
+        this.currentStatus = ['order_dis', 'asc'];
       }else if(index == 1){
         this.sortList[2] = -1;
+        this.currentStatus = ['order_dis', this.classDetailList[index][val].str ];
       }else if(index == 2){
         this.sortList[1] = -1;
+        this.currentStatus = ['order_sale', this.classDetailList[index][val].str ];
       }
-       
-      this.sortList[index] = val;
-      console.log(index, this.sortList);
+      console.log(index, this.sortList, this.currentStatus);
 
       this.flush();
       this.getStoreList(this.currentPage);
@@ -414,23 +420,28 @@ export default class Classify extends wepy.page {
       longitude: this.address.longitude,
       storeclass_id: 11,
       page,
-      order_dis: 'asc',
+      // order_dis: 'asc',
       limit: this.limit,
     };
 
-    if(this.sortList[1] == '1'){
-      params.order_dis = 'desc';
-    } 
+    // if(this.sortList[1] == '1'){
+    //   params.order_dis = 'desc';
+    // } 
 
-    if(this.sortList[2] == '0'){
-      delete params.order_dis;
-      params.order_sale = 'asc';
-    }else if(this.sortList[2] == '1'){
-      delete params.order_dis;
-      params.order_sale = 'desc';
-    } 
+    // if(this.sortList[2] == '0'){
+    //   delete params.order_dis;
+    //   params.order_sale = 'asc';
+    // }else if(this.sortList[2] == '1'){
+    //   delete params.order_dis;
+    //   params.order_sale = 'desc';
+    // } 
+    params[this.currentStatus[0]] = this.currentStatus[1]; 
 
     let res = await api.getStoreList(params);
+
+    if(!(this.currentStatus[0] in params) || this.currentStatus[1] !== params[this.currentStatus[0]] ){
+      return wx.hideLoading();
+    }
 
     res.data.forEach((v, i) => {
       

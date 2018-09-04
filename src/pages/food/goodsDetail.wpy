@@ -5,15 +5,15 @@
     <view class='wrap'>
       <view class='business'>
 
-        <view class='business_name'>{{goods.store_name}}</view>
+        <view class='business_name'>{{goods.SKUList[0].store_name}}</view>
 
         <slider :config.sync='swiperConfig'></slider>
 
-        <view class='goods_name'>{{goods.goods_name}}</view>
+        <view class='goods_name'>{{goods.SKUList[0].goods_name}}</view>
 
         <view style='display: flex; justify-content: space-between; align-items: center; margin: 37rpx 0 0;'>
           <view class='goods_price'>
-              <text class='price'>¥{{goods.SKUList[0].goods_price}}</text>
+            <text class='price'>¥{{goods.SKUList[0].goods_price}}</text>
             <text class='origin'>¥{{goods.SKUList[0].goods_marketprice}}</text>
           </view>
           <button class='goods_share' open-type='share' plain='true' style='line-height: 1.2; margin: 0; padding: 0; border: 0;'>
@@ -26,7 +26,7 @@
           <picker value='{{index}}' range='{{goods.methods}}' bindchange='setMethod'>
             <view>{{goods.methods[index]}}</view>
           </picker>
-          <view>销量{{goods.amount}}</view>
+          <view>销量{{goods.SKUList[0].goods_salenum}}</view>
         </view>
       </view>
 
@@ -56,7 +56,7 @@
         <view class='detail_title'>商品详情</view>
         <view class='detail_img'>
           <repeat for='{{goods.goodsimagesList}}' item='item'>
-            <image src='{{item}}' style='width: 100%;' mode='aspectFill' />
+            <image src='{{item.goodsimage_url}}' style='width: 100%;' mode='aspectFill' />
           </repeat>
         </view>
       </view>
@@ -154,6 +154,7 @@ export default class goodsDetail extends wepy.page {
   }
 
   async onLoad(param){
+
     if(!wx.getStorageSync('userInfo').phone){ // 绑定手机号
       let res = await wepy.login();
       this.params.code = res.code;
@@ -254,12 +255,14 @@ export default class goodsDetail extends wepy.page {
 
   async getGoods(id){
 
-    let res = await api.getGoods({
+    let res = await api.getGoods(id, {
       goods_commonid: id,
     });
 
     this.goods = res;
+    this.swiperConfig.data = [ res.SKUList[0].goods_image ];
     this.$apply();
+    let userInfo = await api.getPayMethod(this.goods.SKUList[0].store_id, {});
   }
   
 }

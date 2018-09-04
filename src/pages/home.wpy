@@ -17,7 +17,8 @@
       <repeat for='{{classifyList}}' item='item'>
         <navigator class='classify_item' url='/pages/food/classifyList?name={{item.name}}'>
           <image class='classify_img' src='{{item.img}}' />
-          <view class='classify_name'>{{item.name}}</view>
+          <image src='{{item.nameImg}}' style='display: block; width: 58rpx; height: 28rpx;' />
+          <!-- <view class='classify_name'>{{item.name}}</view> -->
         </navigator>
       </repeat>
     </view>
@@ -68,10 +69,10 @@ export default class Home extends wepy.page {
       data: [],
     },
     classifyList: [
-      { name: '上新', img: '../images/home/new.png' },
-      { name: '热卖', img: '../images/home/hot.png' },
-      { name: '蛋糕', img: '../images/home/cart.png' },
-      { name: '排行榜', img: '../images/home/paihang.png' },
+      { name: '上新', nameImg: '../images/home/new_text.png', img: '../images/home/new.png' },
+      { name: '热卖', nameImg: '../images/home/hot_text.png', img: '../images/home/hot.png' },
+      { name: '蛋糕', nameImg: '../images/home/cake_text.png', img: '../images/home/cake.png' },
+      { name: '排行榜', nameImg: '../images/home/paihang_text.png', img: '../images/home/paihang.png' },
     ],
     currentType:'',
     discoverList: [],
@@ -93,11 +94,19 @@ export default class Home extends wepy.page {
         wx.setStorageSync('code', res.code);
 
         let data = await api.getToken(res.code); 
-        console.log(data);
+
+        let userInfo = await api.getUserInfo();
+
+        if(userInfo){
+          wx.setStorageSync('userInfo', userInfo);
+        }else{
+          return wx.redirectTo({ url:'/pages/authorize?referer=/pages/home' });
+        }
         
+      }else{
+        return wx.showModal({ title: '提示', content: res.errMsg, showCancel: false, });
       }
 
-      return wx.redirectTo({ url:'/pages/authorize?referer=/pages/home' });
     }
 
     // qrcode.api.draw('sjkf', 'canvas', 100, 100, this);

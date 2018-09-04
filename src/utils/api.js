@@ -49,6 +49,15 @@ async function setPhone(params){
 
 }
 
+async function getUserInfo(params){
+  
+  let res = await request.get('/api/v2/member/memberinfo', params, {
+      'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
 // Address
 // 省市区数据
 async function getAddressInfo(params){
@@ -180,9 +189,18 @@ async function getStore(id, params){
 
 }
 
-async function getGoods(params){
+async function getGoods(id, params){
 
-  let res = await request.get(`/api/v2/member/goodscommon`, params, {
+  let res = await request.get(`/api/v2/member/goodscommon/${id}`, params, {
+      'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
+async function getPayMethod(id, params){
+
+  let res = await request.get(`/api/v2/member/payment/${id}`, params, {
       'token': wx.getStorageSync('token'),
   });
 
@@ -226,10 +244,40 @@ async function deleteCart(id, params){
   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
 }
 
+// my
+async function getOrderList(params){
+
+  let res = await request.get('', params, {
+    'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
+async function getOrderInfo(id, params){
+
+  let res = await request.get('', params, {
+    'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
+async function getCommentList(params){
+
+  let res = await request.get('', params, {
+    'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+
+}
+
 export default {
   getToken,
   setUserInfo,
   setPhone,
+  getUserInfo,
   getAddressInfo, // address
   setAddress,
   getAddressList,
@@ -242,8 +290,12 @@ export default {
   getStoreClass,
   getStore,
   getGoods,
+  getPayMethod,
   addCart, // shoppingCart
   getCartList,
   updateCart,
   deleteCart,
+  getOrderList,
+  getOrderInfo,
+  getCommentList,
 }
