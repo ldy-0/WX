@@ -383,7 +383,7 @@ export default {
           ],
           goodsName: [
               { required: true, message: '请输入商品名', trigger: 'blur' },
-              { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' }
+              { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
           ],
           // goodsPrice: [
           //     { type:"string",required: true, message: '请输入商品价格', trigger: 'blur',min: 1},
@@ -407,7 +407,7 @@ export default {
               { type:"string",required: true, message: '请输入描述', trigger: 'blur',min: 1},
           ],
           goodsTrans: [
-              { type:"number",required: true, message: '请输入运费', trigger: 'blur',min: 0},
+              { type:"number",required: true, message: '请输入运费', trigger: 'blur'},
           ],
           fileList1:[
             {
