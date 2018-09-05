@@ -189,6 +189,24 @@ async function getStore(id, params){
 
 }
 
+async function getBusinessCouponList(id, params){
+
+  let res = await request.get(`/api/v2/member/Coupon/${id}`, null, {
+    'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
+async function getBusinessCommnetList(params){
+
+  let res = await request.get('/api/v1/member/goodsevaluate', params, {
+    'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
 async function getGoods(id, params){
 
   let res = await request.get(`/api/v2/member/goodscommon/${id}`, params, {
@@ -244,6 +262,15 @@ async function deleteCart(id, params){
   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
 }
 
+async function checkout(params){
+
+  let res = await request.post('/api/v2/member/checkout', params, {
+      'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
 // my
 async function getOrderList(params){
 
@@ -289,12 +316,15 @@ export default {
   getStoreList, // food
   getStoreClass,
   getStore,
+  getBusinessCouponList,
+  getBusinessCommnetList,
   getGoods,
   getPayMethod,
   addCart, // shoppingCart
   getCartList,
   updateCart,
   deleteCart,
+  checkout,
   getOrderList,
   getOrderInfo,
   getCommentList,

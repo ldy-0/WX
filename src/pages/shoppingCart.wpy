@@ -74,7 +74,6 @@
       width: 210rpx;
       height: 210rpx;
       margin-right: 20rpx;
-      background: #ccc;
     }
     .goods_info{
       .goods_title{
@@ -215,7 +214,7 @@
                         <view class='big_circle' @tap='check({{index}})' wx:else></view>
                       </view>
 
-                      <image src="{{item.product.imgUrl}}" class="cart_goods_img" />
+                      <image src="{{item.goods_image}}" class="cart_goods_img" mode='aspectFill' />
 
                       <view class="goods_info">
                           <navigator class="goods_title" url="/pages/food/goodsDetail?id={{item.goods_id}}">

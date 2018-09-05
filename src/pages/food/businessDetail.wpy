@@ -4,26 +4,29 @@
 
     <view class='wrap'>
       <view class='business'>
-        <view class='business_name'>小麻巷（江汉北路店）小麻巷（江汉北路店）小麻巷（江汉北路店）小麻巷（江汉北路店）小麻巷（江汉北路店）</view>
+
+        <view class='business_name'>{{business.store_name}}</view>
+
         <view class='between'>
           <view class='business_level'>
             <text class='number'>人气{{businessLevelConfig.level}}</text>
             <businessLevel :config.sync='businessLevelConfig'></businessLevel>
             <!-- <text class='number'>{{businessLevelConfig.level}}</text> -->
           </view>
-          <view class='linkPhone' @tap='call'>联系电话：027-61811671</view>
+          <view class='linkPhone' @tap='call'>联系电话：{{business.store_phone}}</view>
         </view>
-        <image class='business_img' src='' />
+
+        <image class='business_img' src='{{business.store_avatar}}' />
         
         <view class='business_address_wrap'>
           <image style='width: 24rpx; height: 30rpx; margin-right: 15rpx; ' src='../../images/icon/latlon.png' />
-          <view class='business_address' @tap='showMap'>国际企业峰汇A3座（民航大酒店）国际企业峰汇A3座（民航大酒店）国际企业峰汇A3座（民航大酒店）国际企业峰汇A3座（民航大酒店）</view>
+          <view class='business_address' @tap='showMap'>{{business.store_address}}</view>
         </view>
         
-        <view class='business_time'>营业时间：09:00-21:00</view>
+        <view class='business_time'>营业时间：{{business.store_workingtime}}</view>
 
         <model :isShow.sync='isShow' :canCancel='isShow'>
-          <map class='map' slot='bottom' latitude='{{markers[0].latitude}}' longitude='{{markers[0].longitude}}' markers='{{markers}}' show-location='true' scale='18'></map> 
+          <map class='map' slot='bottom' latitude='{{markers[0].latitude}}' longitude='{{markers[0].longitude}}' markers='{{markers}}' show-location='{{true}}' scale='16'></map> 
         </model>
       </view>
 
@@ -127,8 +130,8 @@ export default class businessDetail extends wepy.page {
     ],
     status: '优惠劵',
     couponList: [
-      { id: '123', name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', price: 10, },
-      { id: '123', name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', price: 10, }
+      // { id: '123', name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', price: 10, },
+      // { id: '123', name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', price: 10, }
     ],
     commentList: [ 
       { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, imgs: [ 'http://qiniures.51shop.mobi/FmwPMX290iYB6zh97InanSKkFzzh?imageView2/2/w/640/q/100/@w/$w$@/@h/$h$@', ], content: '味道很正宗，服务态度不错，地好找...', }, 
@@ -140,18 +143,11 @@ export default class businessDetail extends wepy.page {
     console.log(param.id);
 
     this.getStore(param.id);
-    this.business = { name: '', level: 4, };
-    this.businessLevelConfig.level = 3;
-    this.markers = [{"id":0,"latitude":30.604778,"longitude":114.19426,"address":"湖北省武汉市硚口区沿河大道518号","desc":"硚口区政府内,武汉市硚口区安监局南107米","business":"韩家墩,宗关,古田","alpha":1}]
   }
 
   methods = {
     changeStatus: index => this.status = this.tab[index].name,
-    call(){
-      wx.makePhoneCall({
-        phoneNumber: '123345566t',
-      });
-    },
+    call(){ wx.makePhoneCall({ phoneNumber: this.bussiness.store_phone, }); },
     showMap: () => {
       this.isShow = true;
     },
@@ -168,9 +164,24 @@ export default class businessDetail extends wepy.page {
   }
 
   async getStore(id){
+    wx.showLoading({ title: 'Loading...', });
 
     let res = await api.getStore(id);
+   
+    if(res){
+      this.business = res;
+      this.businessLevelConfig.level = this.business.store_servicecredit;
+      this.markers = [ {id: 0, latitude: res.store_latitude, longitude: res.store_longitude, alpha: 1} ];
+      this.$apply();
     
+      let coupons = await api.getBusinessCouponList(res.store_id);
+      coupons ? this.couponList = coupons : void(0);
+
+      // let comments = await api.getBusinessCommentList({});
+
+    }
+
+    wx.hideLoading();
 
   }
   

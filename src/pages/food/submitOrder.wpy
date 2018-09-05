@@ -19,10 +19,10 @@
 
         <repeat for='{{goodsList}}' item='item'>
           <view class='goods'>
-            <image class='goods_img' src='{{item.img}}' />
+            <image class='goods_img' src='{{item.goods_image}}' />
             <view class='goods_info'>
-              <view class='goods_name'>{{item.name}}</view>
-              <view class='s-1'>¥{{item.price}}</view>
+              <view class='goods_name'>{{item.goods_name}}</view>
+              <view class='s-1'>¥{{item.goods_price}}</view>
             </view>
           </view>
         </repeat>
@@ -40,7 +40,7 @@
 
         <view class='row' style='margin-bottom: 117rpx;'>
           <view>绑定手机号</view>
-          <view>150****9627</view>
+          <view>{{getPhone}}</view>
         </view>
 
         <view class='bottom_bar'>
@@ -100,6 +100,12 @@ export default class submitOrder extends wepy.page {
     canSubmit: true,
   }
 
+  computed = {
+    getPhone(){
+      return wx.getStorageSync('userInfo').phone;
+    },
+  }
+
   onLoad(params) {
 
     this.numberConfig.number = 1;
@@ -110,6 +116,7 @@ export default class submitOrder extends wepy.page {
     }
 
     this.goodsList = [ JSON.parse(decodeURIComponent(params.goods)) ];
+    console.log(this.goodsList);
 
   }
 

@@ -199,7 +199,7 @@ export default class goodsDetail extends wepy.page {
       }
 
       return wx.navigateTo({
-        url: '/pages/food/submitOrder?goods=' + encodeURIComponent(JSON.stringify(this.goods)),
+        url: '/pages/food/submitOrder?goods=' + encodeURIComponent(JSON.stringify(this.goods.SKUList[0])),
       });
 
     },
@@ -239,7 +239,7 @@ export default class goodsDetail extends wepy.page {
   async addShoppingCart(){
     console.log('add cart');
     let res = await api.addCart({
-      goods_id: this.goods.goods_commonid,
+      goods_id: this.goods.SKUList[0].goods_commonid,
       quantity: 1,
     });
 
@@ -260,7 +260,7 @@ export default class goodsDetail extends wepy.page {
     });
 
     this.goods = res;
-    this.swiperConfig.data = [ res.SKUList[0].goods_image ];
+    this.swiperConfig.data = [ { imgUrl: res.SKUList[0].goods_image }];
     this.$apply();
     let userInfo = await api.getPayMethod(this.goods.SKUList[0].store_id, {});
   }
