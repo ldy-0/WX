@@ -1,0 +1,197 @@
+<style lang="less">
+
+.topBar_wrap{
+  position: fixed;
+  top: 0;//100rpx;
+  z-index: 10;
+  width: 100%;
+  height: 150rpx;//200rpx;
+  background: #fff;
+}
+  
+.topBar{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: absolute;
+  top: 0rpx; // 100rpx;
+  width: 100%;
+  height: 90rpx;
+  .left{
+    width: 60rpx;
+    .back{
+      position: absolute;
+      top: 24rpx;
+      left: 10rpx;
+      display: block;
+      width: 40rpx;
+      height: 45rpx;
+    }   
+  }
+  .right{
+    width: 60rpx;
+    height: 90rpx;
+    display: flex;
+    align-items: center;
+    .goRight{
+      position: absolute;
+      top: 28rpx;
+      right: 30rpx;
+      height: 40rpx;
+      line-height: 40rpx;
+      color: #333;
+    }
+    .leftMove{
+      right: 80rpx;
+    }
+    button{
+      margin: 0;
+      padding: 0;
+      border: none;
+      outline: none;
+      background: transparent;
+    }
+    image{
+      width: 40rpx;
+      height: 40rpx;
+    }
+  }
+}
+
+.ios_height{
+  height: 150rpx;
+}
+.box-height{
+  top: 50rpx;//100rpx;
+}
+
+.name{
+  font: bold 36rpx 'RTWSYueGoTrial-Regular';
+  color: #333;
+  overflow: hidden;
+}
+  
+.only_left_wrap{
+  position: absolute;
+  top: 60rpx;
+  width: 100%;
+  height: 90rpx;
+  display: flex;
+  align-items: center;
+  .back{
+    width: 40rpx;
+    height: 45rpx;
+    margin: 0 20rpx;
+  }
+  .name{
+    width: 350rpx;
+    height: 40rpx;
+    line-height: 40rpx;
+  }
+}
+  
+</style>
+<template>
+  <view class="topBar_wrap" style='background: {{config.bg}};'> <!-- {{isIOS?'ios_height':''}} -->
+
+    <view class="only_left_wrap" wx:if='{{config.isLeft}}'> <!-- {{isIOS?'box-height':''}} -->
+
+            <image class="back" 
+                  src="/images/icon/return_black.png"
+                  catchtap="navigateBack" 
+                  wx:if="{{config.canBack}}"
+                  mode="aspectFit" />
+            <view class='name' style='color: {{config.color}};'>{{config.name}}</view>
+
+    </view>
+    <view class="topBar box-height" wx:else> <!-- {{isIOS?'box-height':''}} -->
+
+        <view class='left'>
+            <image class="back" 
+                  src="/images/toolBar/return_white.png"
+                  catchtap="navigateBack" 
+                  wx:if="{{config.canBack}}"
+                  mode="aspectFit" />
+            <!-- <view class=''></view> -->
+        </view>
+        
+        <!-- <view class='center'> -->
+          <view class="center name {{isIOS?'strong-font':''}}" style='color: {{config.color}};'>{{config.name}}</view>
+        <!-- </view> -->
+        
+        <view class='right'>
+          <view class='goRight' @tap='share' wx:if="{{config.share && config.share.name}}"> <!-- open-type='share' -->
+            <!-- <image src='../images/goods/share.png'  /> -->
+          </view>
+          <view class='goRight leftMove' wx:if='{{config.edit}}'>
+            <!-- <view @tap='done' wx:if='{{config.edit.isEdit}}'>完成</view>
+            <view @tap="edit" wx:else>编辑</view> -->
+          </view>
+          <navigator class='search goRight' url='../pages/search' wx:if='{{config.search}}'>
+            <!-- <image src='../images/search.png' /> -->
+          </navigator>
+        </view>
+
+    </view>
+      
+  </view>
+</template>
+<script>
+import wepy from "wepy";
+
+export default class TopBar extends wepy.component {
+  props = {
+    config: Object
+  };
+
+  data = {
+    isIOS: false
+  };
+
+  methods = {
+    navigateBack: e => {
+      wx.navigateBack();
+    },
+    edit: e => {
+      console.log('navigation edit');
+      this.$emit('ed');
+    },
+    done: e => {
+      this.$emit('do'),
+      console.log('navigation done');
+    },  
+    share: e => {
+      this.$emit('share');
+      console.log('navigation share');
+    }
+  };
+
+  
+  init() {
+    this.company = this.$parent.$parent.globalData.company;
+    var str = wx.getSystemInfoSync().system;
+    var isSystem = new RegExp("iOS", "g");
+    this.isIOS = isSystem.test(str);
+    this.$apply();
+  }
+  onLoad() {
+    this.company = this.$parent.$parent.globalData.company;
+    this.init();
+    // console.log(this.topBar.share);
+  }
+  
+  /*onShareAppMessage(res){
+
+    return {
+      title: '汉薇商城',
+      path: '/pages/home',
+      success: function(res) {
+        // 转发成功
+      },
+      fail: function(res) {
+        // 转发失败
+      }
+    };
+  }*/
+}
+</script>

@@ -1,0 +1,72 @@
+<template>
+    <view class='address_info' @tap='goAddressList'>
+
+      <view class='address_row'>
+        <view class='user_name'>{{address.address_realname}}</view>
+        <view class='user_phone'>{{address.address_mob_phone}}</view>
+      </view>
+
+      <view class='address_detail'>{{address.area_info}}{{address.address_detail}}</view>
+
+      <slot></slot>
+
+    </view>
+</template>
+<script>
+import wepy from 'wepy';
+
+export default class Address extends wepy.component {
+  props = {
+    address: {
+      type: Object,
+      twoWay: true,
+    },
+  }
+
+  components = {
+  }
+
+  data = {
+
+  }
+
+  onLoad() {
+  
+  }
+
+  methods = {
+    goAddressList(){
+      // this.address.name = 'aaaa';
+      this.$emit('change', this.address.address_id);
+    }
+
+  }
+  
+}
+
+</script>
+<style lang="css">
+.address_info{
+  margin: 0 0 10rpx 0;
+  padding: 30rpx;    
+  background: #fff;
+}
+
+.address_row{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user_name, .address_detail{
+  height: 38rpx;
+  line-height: 38rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.address_detail{
+  margin: 30rpx 0 0;
+}
+</style>

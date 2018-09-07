@@ -1,0 +1,64 @@
+<template>
+        <view class="discover">
+            <view class="discover_title_doc">品牌区</view>
+        </view>
+        <view class="brand_list">
+            <navigator class="brand_item" wx:for="{{brandList}}" wx:key="key" open-type="navigate" url="/pages/sign_in">
+                <image src="{{item.picture}}" class="nav_icon"></image>
+            </navigator>
+        </view>
+</template>
+<script>
+import wepy from 'wepy';
+import api from '@/api/api';
+export default class Brand extends wepy.component{
+        props = {
+            list:[]
+        };
+        data = {
+            //品牌列表
+            brandList:[],
+        };
+        onLoad(){
+            let that = this;
+            this.findBrandList();
+        };
+        getList(){
+            console.log('getBrand');
+        };
+        //品牌
+        async findBrandList(){
+            let that = this;
+            const json = await api.getBrandList({
+                query:{}
+            });
+            if( json.data.length > 0 ){
+                this.brandList = [...that.brandList, ...json.data];
+                this.$apply();
+            }else{}
+        }
+        computed = {
+
+        };
+        methods = {}
+}
+</script>
+<style lang="less">
+    .brand_list{
+        display: flex;
+        display: -webkit-flex;
+        flex-wrap: wrap;
+        .brand_item{
+            width: 25%;
+        }
+        navigator{
+            text-align: center;
+        }
+        image{
+            height: 80rpx;
+            width: 80rpx;
+            margin: 0 auto;
+            margin-bottom: 13rpx;
+        }
+    }
+</style>

@@ -1,0 +1,222 @@
+<template>
+  <view class="container bc">
+    <topBar :config='config'></topBar>
+
+    <slider :config.sync='swiperConfig' @click.user='goGoodsDetail'></slider>
+    <!-- <view class="pos {{isIos ? 'ios_pos' : ''}}">
+      <view class="search_read_only">
+        <navigator class="search_content" open-type="navigate" url="/pages/search">
+          <image src='../images/search.png' />
+          <view class="search_input">请输入搜索</view>
+        </navigator>
+      </view>
+    </view> -->
+    <!-- <canvas canvas-id='canvas'></canvas> -->
+
+    <view class='classify_list_wrap'>
+
+      <view class='title_content'>才智学堂</view>
+
+      <view class='classify_list'>
+        <repeat for='{{classifyList}}' item='item'>
+          <navigator class='classify_item' url='/pages/introduction/student?id={{item.id}}'>
+            <image class='classify_img' src='{{item.img}}' />
+            <view class='classify_name'>{{item.name}}</view>
+          </navigator>
+        </repeat>
+      </view>
+
+    </view>
+      
+    <view class='videoList'>
+
+      <view class='video_title'>
+        <view class='title_content'>视频介绍</view>
+        <navigator class='title_more' url='/pages/home/videoList'>更多</navigator>
+      </view>
+
+      <repeat for='{{videoList}}' item='item'>
+
+        <view class='item'>
+          <video class='item_img' src='{{item.video}}' />
+          <view class='item_content'>{{item.title}}</view>
+        </view>
+
+      </repeat>
+
+    </view>
+    
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import topBar from "../components/topBar";
+import swiper from "../components/slider";
+import api from '../utils/api.js';
+
+export default class Home extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    // disableScroll: true,
+  }
+  
+  components = {
+    topBar,
+    slider : swiper,
+  };
+
+  data = {
+    config: {
+      name: '首页',
+      canBack: false,
+      color: '#fff',
+      bg: '#a4bf96',
+    },
+    swiperConfig: {
+      data: [],
+    },
+    classifyList: [
+      { name: '公司风采', id: 'shengshicaizhi4', img: '../images/home/new.png' },
+      { name: '', id: 'shengshicaizhi5', img: '../images/home/hot.png' },
+      { name: '', id: 'shengshicaizhi6', img: '../images/home/cake.png' },
+    ],
+    videoList: [],
+  }
+
+  methods = {
+  }
+
+  onShow(){
+
+    this.getAdList();
+
+    this.getVideo();
+  }
+
+  onLoad(params) {
+
+  }
+
+  onPullDownRefresh(){
+    
+    wx.reLaunch({
+      url: '/pages/home',
+    });
+
+  }
+
+  // onReachBottom(){
+
+  // };
+
+  async getVideo(){
+
+    let res = await api.getVideo();
+
+    this.videoList = res.slice(0, 2);
+    this.$apply();
+  }
+
+  //轮播图
+  async getAdList() {
+    let params = {
+      componentId: 'shengshicaizhi1',
+    };
+
+    const res = await api.getCarousels(params);
+
+    if(!res){
+      return wx.showToast({ title: res.moreInfo, icon: 'none', duration: 2000, });
+    }
+    
+    this.swiperConfig.data = res.map(v => { return { id: v.store_id, imgUrl: v.image }; });
+    this.$apply();
+
+  }
+
+  
+
+}
+
+</script>
+<style lang="less">
+.container {
+  font: 30rpx 'RTWSYueGoTrial-Regular';
+  color: #000;
+  background: #fff;
+}
+
+.classify_list_wrap{
+  padding: 0 30rpx 30rpx;
+  background: #fff;
+}
+
+.classify_list{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .classify_item{
+    position: relative;
+    .classify_img{
+      width: 220rpx;
+      height: 150rpx;
+      background: #ccc;
+    }
+    .classify_name{
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      line-height: 150rpx;
+      text-align: center;
+      z-index: 1;
+      color: #fff;
+    }
+  }
+}
+
+.title_content{
+  margin: 30rpx 0;
+  padding-left: 20rpx;
+  border-left: 6rpx solid#a4bf96;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #222;
+}
+
+.videoList{
+  padding: 0 30rpx;
+  background: #fff;
+}
+
+.video_title{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .title_more{
+    font-size: 28rpx;
+    color: #999;
+  }
+}
+
+.item{
+  width: 690rpx;
+  margin-bottom: 40rpx;
+  .item_img{
+    width: 100%;
+    height: 350rpx;
+    background: #ccc;
+  }
+  .item_desc{
+    height: 80rpx;
+    line-height: 40rpx;
+    margin: 20rpx 0 0;;
+    font-size: 28rpx;
+    color: #999;
+    overflow: hidden;
+  }
+}
+
+
+</style>

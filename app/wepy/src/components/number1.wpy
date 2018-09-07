@@ -1,0 +1,113 @@
+<template>
+    <view class='number_wrap'>
+
+      <view class="minus {{config.hasBorder ? 'minus_border' : ''}}" @tap='minus'>-
+      </view>
+
+      <view class="number {{config.hasBorder ? 'number_border' : ''}}">{{item.qty}}</view>
+
+      <view class="add {{config.hasBorder ? 'add_border' : ''}}" @tap='add'>+
+      </view>
+    </view>
+</template>
+<script>
+import wepy from 'wepy';
+
+export default class number extends wepy.component {
+  props = {
+    config: {
+      type: Object,
+      twoWay: true,
+    },
+    item: { // 必须有qty参数
+      type: Object,
+      twoWay: true,
+    },
+    index: Number,
+    max: Number,
+    hasborder: Boolean,
+  }
+
+  components = {
+  }
+
+  data = {
+
+  }
+
+  onload() {
+  }
+
+  methods = {
+    minus(){
+      const parent = this.$parent;
+      
+      this.item.qty--;
+      // parent.numberConfig.number <= 1 ? wx.showModal({ title: '提示', content: '数量最小为1', showCancel: false, }) : parent.numberConfig.number--;
+      // parent.$apply();
+
+      this.$emit('change', this.index);
+    },
+    add(){
+
+console.log(this.item.qty);
+      this.item.qty++;
+      // this.$parent.numberConfig.number++;
+      // this.$parent.$apply();
+
+      this.$emit('change', this.index);
+    },
+  }
+  
+}
+
+</script>
+<style lang="css">
+.number_wrap{
+  display: flex;
+  line-height: 50rpx;
+  text-align: center;
+  background: #fff;
+  text-align: center;
+}
+.minus, .add{
+  margin: 0 18rpx;
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #959595;
+}
+.number{
+  padding: 7rpx 21rpx;
+  color: #333;
+}
+.minus_border, .add_border{
+  width: 60rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  margin: 0;
+  border: 1rpx solid #cdcdcd;
+}
+.minus_border{
+  border-radius: 10rpx 0 0 10rpx; 
+}
+.add_border{
+  border-radius: 0rpx 10rpx 10rpx 0rpx; 
+}
+.number_border{
+  width: 100rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  padding: 0;
+  border-top: 1rpx solid #cdcdcd; 
+  border-bottom: 1rpx solid #cdcdcd;
+}
+
+.icon_minus{
+  width: 19rpx;
+  height: 2rpx;
+}
+.icon_add{
+  width: 20rpx;
+  height: 20rpx;
+}
+</style>
