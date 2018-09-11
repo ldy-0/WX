@@ -6,21 +6,21 @@
 
       <repeat for='{{commentList}}' item='item'>
         <view class='comment_item'>
-          <image class='user_img' src='' />
+          <image class='user_img' src='{{item.geval_frommemberavatar}}' />
           
           <view class='comment_info'>
             <view class='row'>
-              <view class='user_name'>{{item.name}}</view>
-              <view class='user_time'>{{item.level}}</view>
+              <view class='user_name'>{{item.geval_frommembername}}</view>
+              <view class='user_time'>{{item.createdAt}}</view>
             </view>
             <view style='display: flex; align-items: center;'>
-              <star :size='36' :level='item.level' :src='starConfig.src' :sel_src='starConfig.sel_src'></star>
-              <text class='s-1' style='margin-left: 20rpx;'>{{item.level}}</text>
+              <star :size='36' :level='item.geval_scores' :src='starConfig.src' :sel_src='starConfig.sel_src'></star>
+              <text class='s-1' style='margin-left: 20rpx;'>{{item.geval_scores}}</text>
             </view>
-            <view class='comment_content'>{{item.content}}</view>
+            <view class='comment_content'>{{item.geval_content}}</view>
             <view class='comment_img'>
-              <repeat for='{{3}}' item='item'>
-                <image src='' />
+              <repeat for='{{item.geval_image}}' item='img'>
+                <image src='{{img}}' />
               </repeat>
             </view>
           </view>
@@ -37,6 +37,7 @@
 import wepy from 'wepy';
 import topBar from '../../components/topBar';
 import star from '../../components/star';
+import api from '../../utils/api.js';
 
 export default class Authorize extends wepy.page {
   config = {
@@ -59,15 +60,50 @@ export default class Authorize extends wepy.page {
       src: "../../images/icon/star.png",
       sel_src: "../../images/icon/star_sel.png",
     },
-    commentList: [  { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 3, content: '味道很正宗，服务态度不错，地好找...' }, 
-                    { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, }],
-  }
-
-  onLoad() {
-    
+    commentList: [],
+    currentPage: 1,
+    limit: 20,
+    total: 0,
+    canLoad: true,
   }
 
   methods = {
+
+  }
+
+  onLoad(){
+    this.getCommentList(this.currentPage); 
+  }
+
+  
+  onReachBottom(){
+
+    if(!this.canLoad){
+      return ;
+    }
+    this.canLoad = false;
+
+    if(this.total < this.currentPage * this.limit){
+      return wx.showToast({ title: '已经是最后一页了!', icon: 'none', duration: 1000, });
+    }
+
+    this.getCommentList(++this.currentPage);
+
+  }
+
+  async getCommentList(page){
+
+    let res = await api.getCommentList({
+      member_id: wx.getStorageSync('userInfo').member_id,
+      page,
+      limit: this.limit,
+    });
+
+    res.forEach((v, i) => res[i].createdAt = new Date(v.geval_addtime).toISOString().split('T')[0]);
+    this.commentList = this.commentList.concat(res);
+    this.total = this.commentList.length;
+    this.canLoad = true;
+    this.$apply();
 
   }
   

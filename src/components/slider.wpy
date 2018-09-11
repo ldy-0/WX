@@ -14,7 +14,7 @@
           <swiper-item>
 
             <image src="{{item.imgUrl}}" 
-                   class="slide_image" 
+                   class="slider_img" 
                    @tap="click({{item}})" 
                    mode='aspectFill'/>
 

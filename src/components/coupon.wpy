@@ -1,19 +1,19 @@
 <template>
-  <view class='coupon' @tap="goGoodsDetail({{canRedirect ? coupon.id : ''}})">
+  <view class='coupon' @tap="goGoodsDetail({{canRedirect ? coupon.goods_commonid : ''}})">
     <view class='coupon_info'>
       <view class='tuan_img'>
         <image style='width: 50rpx; height: 50rpx;' src='../images/icon/tuan.png' wx:if='{{true}}' />
       </view>
-      <image class='coupon_img' src='' />
+      <image class='coupon_img' src='{{coupon.goods_image}}' />
       <view class='info'>
-        <view class='coupon_title'>{{coupon.name}}</view>
-        <text class='coupon_price'>¥75.00</text>
-        <text class='origin_price'>¥120.00</text>
+        <view class='coupon_title'>{{coupon.goods_name}}</view>
+        <text class='coupon_price'>¥{{coupon.goods_price}}</text>
+        <text class='origin_price'>¥{{coupon.goods_marketprice}}</text>
       </view>
     </view>
-    <view class='coupon_sale'>已售3351</view>
+    <view class='coupon_sale'>已售{{coupon.goods_salenum}}</view>
     <view class='pay_btn no' wx:if='{{showBuy && canBuy === false}}'>购买</view>
-    <view class='pay_btn' catchtap="goSubmitOrder({{coupon.id}})" wx:if='{{showBuy && canBuy}}'>购买</view>
+    <view class='pay_btn' catchtap="goSubmitOrder({{coupon.goods_commonid}})" wx:if='{{showBuy && canBuy}}'>购买</view>
   </view>
 </template>
 <script>

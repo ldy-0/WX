@@ -6,22 +6,29 @@
         
         <view style='display: flex; align-items: center; margin-bottom: 10rpx; padding: 10rpx 0; background: #fff;'>
 
-          <repeat for='{{sendMethods}}' index='index' item='item'>
-            <view style='display: flex; align-items: center; margin-right: 30rpx;'>
-              <icon type='success' size='20' color="{{ item.isChecked ? '#ff5f00' : 'gray'}}" @tap='changeMethods({{index}})'></icon>
-              <view style='margin-left: 20rpx;'>{{item.title}}</view>
+          <!-- <repeat for='{{sendMethods}}' index='index' item='item'> -->
+            <view style='display: flex; align-items: center; margin-right: 30rpx;' wx:if='{{isVirtual}}'>
+              <icon type='success' size='20' color="{{ true ? '#ff5f00' : 'gray'}}" @tap='changeMethods({{index}})'></icon>
+              <view style='margin-left: 20rpx;'>{{sendMethods[0].title}}</view>
             </view>
-          </repeat>
+            <view style='display: flex; align-items: center; margin-right: 30rpx;' wx:else>
+              <icon type='success' size='20' color="{{ true ? '#ff5f00' : 'gray'}}" @tap='changeMethods({{index}})'></icon>
+              <view style='margin-left: 20rpx;'>{{sendMethods[1].title}}</view>
+            </view>
+          <!-- </repeat> -->
 
         </view>
 
-        <address :address.sync='address' @change.user='changeAddress' wx:if='{{sendMethods[1].isChecked}}'></address>
+        <address :address.sync='address' @change.user='changeAddress' wx:if='{{!isVirtual}}'></address>
 
         <repeat for='{{goodsList}}' item='item'>
           <view class='goods'>
             <image class='goods_img' src='{{item.goods_image}}' />
             <view class='goods_info'>
-              <view class='goods_name'>{{item.goods_name}}</view>
+              <view>
+                <view class='goods_name'>{{item.goods_name}}</view>
+                <view>{{item.goods_num}}</view>
+              </view>
               <view class='s-1'>¥{{item.goods_price}}</view>
             </view>
           </view>
@@ -30,11 +37,11 @@
         <view class='row' wx:if='{{isSingle}}'>
           <view class='number_wrap'>
             <view style='margin-right: 25rpx;'>数量</view>
-            <add :config.sync='numberConfig' @change.user='changeNumber'></add>
+            <add :config.sync='numberConfig' @change.user='changeNumber' ></add>
           </view>
           <view class='sum_wrap'>
             <text class='sum_title'>总价</text>
-            <text class='s-1'>¥21.7</text>
+            <text class='s-1'>¥{{totalFee}}</text>
           </view>
         </view>
 
@@ -44,8 +51,8 @@
         </view>
 
         <view class='bottom_bar'>
-            <view>实付金额：<text class='s-1'>¥21.7</text></view>
-            <view class='buy_btn' @tap='submitOrder'>去付款</view>
+          <view>实付金额：<text class='s-1'>¥{{totalFee}}</text></view>
+          <view class='buy_btn' @tap='submitOrder'>去付款</view>
         </view>
       </view>
 
@@ -81,28 +88,21 @@ export default class submitOrder extends wepy.page {
       max: 1,
       hasBorder: true,
     },
-    sendMethods: [ { title: '到店使用', isChecked: true, }, { title: '快递邮寄', isChecked: false, } ],
-    address: {
-      id: 121,
-      name: 'ajsdfjkdsmkmf可是对方开始疯狂的疯狂时代可适当放宽麻烦vsf',
-      phone: 12938548,
-      address: 'ajsdfjjkdsmfk是肯定没法肯定是免费v肯定是免费v看完可是每当非常陌生地方什么地方sdf',
-    },
-    goodsList: [ 
-      { name: '单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券', price: 21.2,  },
-      { name: '单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券', price: 21.2,  },
-      { name: '单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券', price: 21.2,  },
-      { name: '单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券', price: 21.2,  },
-      { name: '单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券', price: 21.2,  },
-      { name: '单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券单人套餐优惠券', price: 21.2,  }
-    ],
+    sendMethods: [ { title: '到店使用', isVirtual: true, }, { title: '快递邮寄', isVirtual: false, } ],
+    address: null, 
+    goodsList: [],
     isSingle: true, // true 表示单个商品, false: 表示购物车
+    isVirtual: null,
+    canAdd: true,
+    totalFee: null,
     canSubmit: true,
+    canGo: false,
   }
 
   computed = {
     getPhone(){
-      return wx.getStorageSync('userInfo').phone;
+      let reg = /^\d{3}(\d{4})/g;
+      return wx.getStorageSync('userInfo').phone.replace(/^(\d{3})\d{4}(\d{4})$/, "$1****$2");
     },
   }
 
@@ -112,12 +112,30 @@ export default class submitOrder extends wepy.page {
 
     if(params.goodsList){
       this.isSingle = false;
-      return this.goodsList = JSON.parse(decodeURIComponent(params.goodsList));    
+      this.goodsList = JSON.parse(decodeURIComponent(params.goodsList));    
+      this.isVirtual = this.goodsList.every(v => v.is_virtual); 
+      // console.log(this.isVirtual, this.goodsList);
+      return ;
     }
 
     this.goodsList = [ JSON.parse(decodeURIComponent(params.goods)) ];
-    console.log(this.goodsList);
+    this.isVirtual = this.goodsList[0].is_virtual;
+    console.log(this.isVirtual, this.goodsList);
 
+  }
+
+  onShow(){
+    if(this.canGo){
+      return this.goPayed();    
+    }
+
+    let global = this.$parent.globalData;
+    if(global.address){
+      this.address = global.address;
+      delete global.address;
+    }
+
+    this.checkout();
   }
 
   methods = {
@@ -125,12 +143,14 @@ export default class submitOrder extends wepy.page {
       this.sendMethods.forEach((v, i) => this.sendMethods[i].isChecked = i === index ? true : false);
     },
     changeAddress(){
-      console.log('submit', this.address);
+      // console.log('submit', this.address);
+      wx.navigateTo({ url: '/pages/my/addressList?canBack=true' });
     },
     changeNumber(){
       let number = this.numberConfig.number;
 
       console.log('-----change Number----', number, this.numberConfig.number);
+      this.checkout();
       
     },
     submitOrder(){
@@ -141,9 +161,7 @@ export default class submitOrder extends wepy.page {
       this.canSubmit = false;
       this.submit().then(res => {
 
-        wx.navigateTo({
-          url: '/pages/food/payed?id=' + 'id',
-        });
+        
       
       }).catch(e => console.log(e));
       
@@ -151,18 +169,95 @@ export default class submitOrder extends wepy.page {
     }
   }
   
-  submit(){
+  async submit(){
+    wx.showLoading({ title: 'Loading...' });
+
+    let params = {
+      cart_id: this.getCartId(),
+      address_id: this.isVirtual ? null : this.address.address_id,
+      pay_name: 'online',
+      pay_message: [],
+      order_from: 2,
+      is_virtual: this.isVirtual,
+      is_pintuan: null,
+      ifcart: this.isSingle ? 0 : 1,
+    };
+
+    let res = await api.submitOrder(params);
+
+    let payres = await this.pay(res.pay_sn); 
+
+    this.canGo = true;
+    this.$apply();
+    wx.hideLoading();
+  }
+
+  async pay(pay_sn){
+
+    let params = {
+      pay_type: this.isVirtual ? 'vr_order' : 'real_order',
+    },
+    res = await api.payOrder(pay_sn, params);
 
     return new Promise(function(resolve, reject){
 
-      setTimeout(() => {
-        resolve('ok');
-      }, 3000);
+      wx.requestPayment({
+        nonceStr: res.nonceStr,
+        package: res.package, 
+        signType: res.signType,
+        paySign: res.paySign, 
+        timeStamp: res.timeStamp,
+        success(e){ resolve(e) },
+        fail(e){ reject(e); console.log(e); },
+      });
 
-    }); 
+    }).catch(e => e.errMsg);
+    
+    
+  }
 
+  async checkout(){
+  
+    let address;
+    if(!this.isVirtual && !this.address){
+      address = await api.getDefaultAddress({ address_is_default: 1, });
+
+      this.address = address[0];
+      this.$apply();
+    }
+      
+    let params = {
+      cart_id: this.getCartId(), 
+      ifcart: this.isSingle ? 0 : 1,
+      city_id: this.address.city_id,
+    };
+    // console.log('----', params, this.address);
+
+    let res = await api.checkout(params),
+        totalObj = res.store_final_order_total;
+
+    this.totalFee = 0;
+    for(let key in totalObj){
+     this.totalFee += totalObj[key];
+    }
+
+    this.totalFee = this.totalFee.toFixed(2);
+    this.canAdd = true;
+    this.$apply();
   }
   
+  getCartId(){
+    return this.isSingle ? this.goodsList.map(v => `${v.goods_commonid}|${this.numberConfig.number}`) : this.goodsList.map(v => `${v.cart_id}|${v.goods_num}`);
+  }
+
+  goPayed(){
+
+    wx.navigateTo({
+      url: '/pages/food/payed?id=' + 'id',
+    });
+
+  }
+
 }
 
 </script>

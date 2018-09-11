@@ -7,7 +7,7 @@
           <view class="content" 
                 style="top: calc(50% - {{config.height/2 || 150}}rpx); left: calc(50% - {{config.width/2 || 150}}rpx); width: {{config.width || 300}}rpx; height: {{config.height || 300}}rpx; "
                 wx:if='{{config.center}}'>
-           <slot name='center'></slot> 
+            <slot name='center'></slot> 
           </view>
           <view class='content' wx:else>
             <slot name='bottom'></slot>
@@ -45,7 +45,8 @@ export default class Model extends wepy.component {
   methods = {
     preventMove(){ return false; },
     hide(){
-      if(!this.canCancel){
+      console.log(this);
+      if(!this.config.canCancel){
         return ;
       }
 
@@ -56,7 +57,7 @@ export default class Model extends wepy.component {
 }
 
 </script>
-<style lang="css">
+<style lang="css" scoped>
 .model{
   
   

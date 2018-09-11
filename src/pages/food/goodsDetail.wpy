@@ -79,7 +79,7 @@
       </view>
       
       <!-- 获取手机号 -->
-      <model :isShow.sync='isShow' :canCancel.sync='canCancel' :config.sync='modelConfig'>
+      <model :isShow.sync='isShow' :canCancel.sync='canCancel' :config.sync='modelConfig' catchtouchmove='preventMove'>
         <view slot='center'>
           <view class='phone_desc'>* 需要微信授权</view>
           <button class='phone_btn' open-type='getPhoneNumber' bindgetphonenumber='getPhone'>授权获取手机号</button>
@@ -134,8 +134,6 @@ export default class goodsDetail extends wepy.page {
         { imgUrl: '../../images/authorize_bg_629.png', }
       ],
     },
-    // coupon: {},
-    // canRedirect: false,
     goods: {
       business: '小麻巷ahsfdif世界佛教四大佛教科技发达sjfiojsdfj（江汉北路店）',
       name: '情侣价值100元套餐士大夫艰苦福克斯麻烦时间咖啡的苦涩JFKsf',
@@ -153,6 +151,10 @@ export default class goodsDetail extends wepy.page {
     canAdd: true,
   }
 
+  onShow(){
+    this.canBuy = true;
+  }
+
   async onLoad(param){
 
     if(!wx.getStorageSync('userInfo').phone){ // 绑定手机号
@@ -166,6 +168,9 @@ export default class goodsDetail extends wepy.page {
   }
 
   methods = {
+    preventMove(){
+      return ;
+    },
     goHome: () => wx.reLaunch({ url: '/pages/home' }),
     async addCart(){
       

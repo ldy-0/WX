@@ -25,7 +25,7 @@
         
         <view class='business_time'>营业时间：{{business.store_workingtime}}</view>
 
-        <model :isShow.sync='isShow' :canCancel='isShow'>
+        <model :isShow.sync='isShow' :config.sync='modalConfig'>
           <map class='map' slot='bottom' latitude='{{markers[0].latitude}}' longitude='{{markers[0].longitude}}' markers='{{markers}}' show-location='{{true}}' scale='16'></map> 
         </model>
       </view>
@@ -41,7 +41,7 @@
 
       <view class='coupon_list' wx:if="{{status === tab[0].name}}">
         
-          <repeat for='{{couponList}}' item='item'>
+          <repeat for='{{business.goods_list}}' item='item'>
             <coupon :coupon.sync='item' :canRedirect='true'></coupon>
           </repeat>
 
@@ -52,21 +52,21 @@
         <repeat for='{{commentList}}' item='item'>
 
           <view class='comment_item'>
-            <image class='user_img' src='' />
+            <image class='user_img' src='{{item.geval_frommemberavatar}}' />
             
             <view class='comment_info'>
               <view class='row'>
-                <view class='user_name'>{{item.name}}</view>
-                <view class='user_time'>{{item.level}}</view>
+                <view class='user_name'>{{item.geval_frommembername}}</view>
+                <view class='user_time'>{{item.createdAt}}</view>
               </view>
               <view style='display: flex; align-items: center;'>
                 <starLevel :size='36' :level='item.level' :src='starConfig.src' :sel_src='starConfig.sel_src'></starLevel>
-                <text class='s-1' style='margin-left: 20rpx;'>{{item.level}}</text>
+                <text class='s-1' style='margin-left: 20rpx;'>{{item.geval_scores}}</text>
               </view>
-              <view class='comment_content'>{{item.content}}</view>
+              <view class='comment_content'>{{item.geval_content}}</view>
               <view class='comment_img'>
-                <repeat for='{{item.imgs}}' item='item'>
-                  <image src='{{item}}' @tap='previewImg({{item}})' />
+                <repeat for='{{item.imgs}}' item='img'>
+                  <image src='{{img}}' @tap='previewImg({{img}})' />
                 </repeat>
               </view>
             </view>
@@ -92,9 +92,9 @@ import api from '../../utils/api.js';
 export default class businessDetail extends wepy.page {
   config = {
     enablePullDownRefresh: false,
-    disableScroll: true,
+    disableScroll: false,
   }
-
+  
   components = {
     topBar,
     coupon,
@@ -109,6 +109,9 @@ export default class businessDetail extends wepy.page {
       isLeft: true,
       name: '商家',
       canBack: true,
+    },
+    modalConfig: {
+      canCancel: true,   
     },
     isShow: false,
     business: {},
@@ -147,7 +150,7 @@ export default class businessDetail extends wepy.page {
 
   methods = {
     changeStatus: index => this.status = this.tab[index].name,
-    call(){ wx.makePhoneCall({ phoneNumber: this.bussiness.store_phone, }); },
+    call(){ wx.makePhoneCall({ phoneNumber: this.business.store_phone, }); },
     showMap: () => {
       this.isShow = true;
     },
@@ -174,10 +177,21 @@ export default class businessDetail extends wepy.page {
       this.markers = [ {id: 0, latitude: res.store_latitude, longitude: res.store_longitude, alpha: 1} ];
       this.$apply();
     
-      let coupons = await api.getBusinessCouponList(res.store_id);
-      coupons ? this.couponList = coupons : void(0);
+      let comments = await api.getCommentList({
+        store_id: res.store_id,
+      });
 
-      // let comments = await api.getBusinessCommentList({});
+      this.commentList = comments.forEach(function(v, i){
+
+        comments[i].createdAt = new Date(v.geval_addtime).toISOString().split('T')[0];
+        comments[i] = [];
+        for(let key in v.geval_image){
+          comments[i].imgs.push(v.geval_image[key]);
+        }
+
+      });
+      
+      this.$apply();
 
     }
 

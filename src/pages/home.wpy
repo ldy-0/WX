@@ -136,7 +136,6 @@ export default class Home extends wepy.page {
 
   }
 
-  //加载更多
   onReachBottom(){
 
     if(!this.canLoad){
@@ -155,6 +154,10 @@ export default class Home extends wepy.page {
     this.getDiscoverList(++this.currentPage);
 
   };
+
+  onShareAppMessage(){
+    
+  }
 
   // 获取某类商品列表
   async getDiscoverList(page){

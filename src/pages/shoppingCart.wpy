@@ -455,12 +455,13 @@ export default class ShoppingCart extends wepy.page {
       
       if(carts[i].isChecked){
         goodsList.push({
-          // id: carts[i].productId,
-          name: carts[i].name,
-          // img: carts[i].imgUrl,
-          price: carts[i].price,
+          cart_id: carts[i].cart_id,
+          goods_name: carts[i].goods_name,
+          goods_image: carts[i].goods_image,
+          goods_price: carts[i].goods_price,
+          goods_num: carts[i].goods_num,
+          is_virtual: carts[i].is_virtual,
           // standard: carts[i].sku,
-          nubs: carts[i].qty,
         });
 
       }

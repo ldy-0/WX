@@ -37,7 +37,7 @@ export default class Address extends wepy.component {
   methods = {
     goAddressList(){
       // this.address.name = 'aaaa';
-      this.$emit('change');
+      this.$emit('change', this.address.address_id);
     }
 
   }

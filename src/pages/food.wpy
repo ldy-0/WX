@@ -160,10 +160,11 @@
   }
           
 }
-.ios_wrap{
-  // margin: 100rpx 0 0;
+
+.map{
+  width: 100%;
+  height: 100%;
 }
-  
 </style>
 
 <template>
@@ -181,7 +182,7 @@
           <view class="class_list">
             
             <view class='class_row'>
-              <view class='address_wrap'>
+              <view class='address_wrap' @tap='showMap'>
                 <image class='address_img' src='../images/icon/latlon.png' />
                 <view class='address'>{{address.address}}</view>
                 <image style='width: 18rpx; height: 18rpx;' src='../images/icon/toBottom.png' />
@@ -245,6 +246,10 @@
 
           </view>
       </view>
+    
+    <modal :isShow.sync='isShow' :config.sync='modalConfig'>
+      <map class='map' slot='bottom' latitude='{{address.latitude}}' longitude='{{address.longitude}}' markers='{{setMarkers}}' show-location='{{true}}' scale='16'></map> 
+    </modal>     
   </view>
 </template>
 
@@ -253,6 +258,7 @@ import wepy from "wepy";
 import shopApi from "../api/shopApi.js";
 import topBar from '../components/topBar';
 import starLevel from '../components/star';
+import modal from '../components/model';
 import bd from '../utils/bmap-wx.min.js';
 import api from '../utils/api.js';
 
@@ -270,6 +276,10 @@ export default class Classify extends wepy.page {
       src: "../images/icon/star.png",
       sel_src: "../images/icon/star_sel.png",
     },
+    modalConfig: {
+      canCancel: true,   
+    },
+    isShow: false,
     // 一级列表
     classList: ['全部', '距离', '销量排序'],
     classDetailList: [ 
@@ -281,13 +291,9 @@ export default class Classify extends wepy.page {
     currentStatus: ['order_dis', 'asc'], // 排序方式
     // checkedList: [],
     storeList: [],
-    // goodsList: [
-    //   { name: '12sfjdkfkfknvcmnmvnz-3or-0o3-20-3r90rdsojfkgjrhgnfjdn343', price: '1432', imgUrl: '../images/background_info.@3x.png', level: 2 },
-    //   { name: '12343', price: '1432', imgUrl: '../images/background_info.@3x.png', level: 4 },
-    // ],
     currentType: null,
     currentPage: 1,
-    limit: 2,
+    limit: 20,
     total: null,
     isIos: null,
     canLoad: true,
@@ -297,15 +303,21 @@ export default class Classify extends wepy.page {
   components = {
     topBar,
     starLevel,
+    modal,
   };
   
   computed = {
+    setMarkers: () => [ this.address ],
     getIdentity(){
       return wx.getStorageSync('userInfo').hasIdentity;
     }
   };
 
   methods = {
+    showMap(){
+      console.log('--- showMap', this.address); 
+      this.isShow = true;
+    },
     search(e){
       console.log(e.detail.value);
     },
@@ -387,6 +399,13 @@ export default class Classify extends wepy.page {
 
   }
 
+  onPullDownRefresh(){
+    
+    wx.reLaunch({
+      url: '/pages/food',
+    });
+
+  }
   //加载更多
   onReachBottom() {
 
@@ -404,6 +423,10 @@ export default class Classify extends wepy.page {
     this.getStoreList(++this.currentPage);
 
   };
+
+  onShareAppMessage(){
+
+  }
 
   async getStoreClass(){
     

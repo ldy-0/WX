@@ -37,12 +37,22 @@ export default class Number extends wepy.component {
     minus(){
       const parent = this.$parent;
 
+      if(!parent.canAdd){
+        return wx.showToast({ title: '正在结算...', icon: 'none', duration: 2000, });
+      }
+      parent.canAdd = false;
+
       parent.numberConfig.number <= 1 ? wx.showModal({ title: '提示', content: '数量最小为1', showCancel: false, }) : parent.numberConfig.number--;
       parent.$apply();
 
       this.$emit('change');
     },
     add(number){
+      if(!this.$parent.canAdd){
+        return wx.showToast({ title: '正在结算...', icon: 'none', duration: 2000, });
+      }
+      this.$parent.canAdd = false;
+
       this.$parent.numberConfig.number++;
       this.$parent.$apply();
 

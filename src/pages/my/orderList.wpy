@@ -64,11 +64,13 @@
 
 .order_list{
   padding: 0 15rpx;
+  .order{
+    margin: 12rpx 0 0;
+    background: #fff;
+  }
   .product_info{
     display: flex;
-    margin: 12rpx 0 0;
     padding: 30rpx 15rpx 30rpx 17rpx;
-    background: #fff;
   }
   .product_img{
     width: 200rpx;
@@ -97,10 +99,10 @@
     }
   }
   .other{
-    margin-left: 57rpx;
-    padding: 20rpx 0;
+    // margin-left: 57rpx;
+    padding: 20rpx;
     display: flex;
-    flex-direction: column;
+    // flex-direction: column;
     justify-content: space-between;
     align-items: center;
     .btn{
@@ -121,12 +123,21 @@
       <topBar :config="config"></topBar>
 
       <view class='wrap tab_wrap'>
-          <view class="{{checkedList[0] ? 'checked' : '' }}" @tap='click(all)'>全部</view>
-          <view class="{{checkedList[1] ? 'checked' : '' }}" @tap='click(submitted)'>待付款</view>
-          <view class="{{checkedList[2] ? 'checked' : '' }}" @tap='click(paid)'>待发货</view>
-          <view class="{{checkedList[3] ? 'checked' : '' }}" @tap='click(shipped)'>待收货</view>
-          <view class="{{checkedList[4] ? 'checked' : '' }}" @tap='click(comment)'>待评价</view>
+          <!-- <view class="{{checkedList[0] ? 'checked' : '' }}" @tap='click(all)'>全部</view> -->
+          <!-- <view class="{{checkedList[1] ? 'checked' : '' }}" @tap='click(10)'>待付款</view>
+          <view class="{{checkedList[2] ? 'checked' : '' }}" @tap='click(20)'>待发货</view>
+          <view class="{{checkedList[3] ? 'checked' : '' }}" @tap='click(30)'>待收货</view>
+          <view class="{{checkedList[4] ? 'checked' : '' }}" @tap='click(50)'>待评价</view> -->
+          <view class="{{status === null ? 'checked' : '' }}" @tap='click(null)'>全部</view>
+          <view class="{{status === 10 ? 'checked' : '' }}" @tap='click(10)'>待付款</view>
+          <view class="{{status === 20 ? 'checked' : '' }}" @tap='click(20)'>待发货</view>
+          <view class="{{status === 30 ? 'checked' : '' }}" @tap='click(30)'>待收货</view>
+          <view class="{{status === 50 ? 'checked' : '' }}" @tap='click(50)'>待评价</view>
       </view>
+
+      <!-- <view>
+        <repeat></repeat>
+      </view> -->
 
       <view class='no_wrap' wx:if='{{isNull}}'>
           <view class='no'>
@@ -136,7 +147,7 @@
           </view>
       </view>
       <view wx:else>
-          <view>
+          <view style='background: #f5f5f5;'>
 
                 <view class='order_list'>
 
@@ -144,31 +155,39 @@
 
                         <!-- <view class='title' wx:if="{{orderList[index - 1].status !== items.status ? true : false}}">{{items.statusStr}}</view>  -->
 
-                        <view>
+                        <view class='order'>
 
-                            <repeat for='{{items.orderItems}}' item='item'>
-                                <navigator class='product_info' url='./orderDetail?id={{items.id}}'>
-                                    <image class='product_img' src='{{item.productImgUrl}}' mode='aspectFill' />
-                                    <view class='product'>
-                                        <view class='product_business'>kJKKF看到事件发生的开发基地是解放军首付款莫斯科的父母dsf</view>
-                                        <view class='product_name'>sjfsj即时的反馈技术开发开始疯狂刷卡付款的莫斯科方面的开始时刻提防加快速度加快s</view>
-                                        <view class='row'>
-                                            <view class='product_number'>数量：<text>s12</text></view>
-                                            <view class='product_price'>总价：<text>345</text></view>
-                                            <!-- <view class='product_address'>福建福州</view> -->
-                                        </view>
-                                        <!--<view class='row'>
-                                            <view class='product_standard'>规格：{{item.skuStr}}</view>
-                                            <view class='product_number'>×{{item.amount}}</view>
-                                        </view> -->
+                            <repeat for='{{items}}' item='item'>
+                              <navigator  url='./orderDetail?id={{item.order_id}}'>
+                                  <repeat for='{{item.order_goods}}' item='goods'>
+                                    <view class='product_info'>
+                                      <image class='product_img' src='{{goods.goods_image}}' mode='aspectFill' />
+                                      <view class='product'>
+                                          <view class='product_business'>{{item.store_name}}</view>
+                                          <view class='product_name'>{{goods.goods_name}}</view>
+                                          <view class='row'>
+                                              <view class='product_number'>数量：<text>{{goods.goods_num}}</text></view>
+                                              <view class='product_price'>总价：<text>{{goods.goods_pay_price}}</text></view>
+                                              <!-- <view class='product_address'>福建福州</view> -->
+                                          </view>
+                                          <!--<view class='row'>
+                                              <view class='product_standard'>规格：{{item.skuStr}}</view>
+                                              <view class='product_number'>×{{item.amount}}</view>
+                                          </view> -->
+                                      </view>
                                     </view>
-                                    <view class='other'>
-                                      <view class='order_status'>待付款</view>
-                                      <view class='btn' wx:if='{{!item.payed}}' catchtap='pay({{index}})' hover-class='none' hover-stop-propagation='{{true}}'>付款</view>
-                                    </view>
-                                </navigator>
+                                  </repeat>
+                              </navigator>
                             </repeat>
+                                <!-- <view class='other'>
+                                  <view class='order_status'>{{item.order_state}}</view>
+                                  <view class='btn' wx:if='{{!item.payed}}' catchtap='pay({{index}})' hover-class='none' hover-stop-propagation='{{true}}'>付款</view>
+                                </view> -->
 
+                            <view class='other'>
+                                <view class='order_status'>{{items[0].order_state}}</view>
+                                <view class='btn' wx:if="{{items[0].order_state === '未付款'}}" catchtap='pay({{items[0].pay_sn}})' hover-class='none' hover-stop-propagation='{{true}}'>付款</view>
+                            </view>
                             <!-- <view class='price_info'>
                                 <view>实付款</view>
                                 <view>
@@ -211,8 +230,7 @@
 <script>
 import wepy from "wepy";
 import topBar from "../../components/topBar";
-import orderApi from "../../api/orderApi.js";
-import shopApi from '../../api/shopApi.js';
+import api from '../../utils/api.js';
 
 export default class OrderList extends wepy.page {
   components = {
@@ -227,8 +245,16 @@ export default class OrderList extends wepy.page {
     },
     //
     checkedList: [true, false, false, false, false],
+    statusList: [
+      { name: '已取消', status: 0, },
+      { name: '待付款', status: 10, },
+      { name: '已付款', status: 20, },
+      { name: '已发货', status: 30, },
+      { name: '已收货', status: 40, },
+      { name: '未评价', status: 50, },
+    ],
     // 订单状态
-    status: "all",
+    status: null,
     // 待付款订单列表
     submittedList: [],
     // 待收货订单列表
@@ -237,15 +263,14 @@ export default class OrderList extends wepy.page {
     shippedList: [],
     // 待评价订单列表
     commentList: [],
-    isNull: false, // 是否为空
-    currentPage: 0,
+    currentPage: 1,
     orderList: [], // 订单列表
     isFirst: true,
     currentStatus: '', // 
   };
 
   computed = {
-    
+    isNull: () => !this.orderList.length,
   };
 
   methods = {
@@ -256,27 +281,24 @@ export default class OrderList extends wepy.page {
       });
 
     },
-    //支付
-    pay(idx) {
-      console.log('pay');
-      // this.pay(idx);
-    },
+    pay: pay_sn => this.pay(pay_sn),
     //切换
     click(status) {
-      if(this.status === status){
+      let s = Number(status);
+      if(this.status === s){
         return ;
       }
 
-      let checkedList = this.data.checkedList;
+      // let checkedList = this.data.checkedList;
 
-      checkedList.forEach((v, i) => (checkedList[i] = false));
+      // checkedList.forEach((v, i) => (checkedList[i] = false));
       // checkedList[Number(index)] = true;
 
       this.orderList = [];
-      this.currentPage = 0;
-      this.status = status;
+      this.currentPage = 1;
+      this.status = s;
 
-      this.getOrderList(0);
+      this.getOrderList(this.currentPage);
     },
     //退货换货
     returnGoods(item){
@@ -303,51 +325,32 @@ export default class OrderList extends wepy.page {
       });
     },
 
-    //查看订单详情
-    goOrderDetail(index, status) {
-    }
   };
-  async pay(orderId) {
-    console.log("支付参数" + orderId);
-    wx.showToast({
-      title: "支付申请中...",
-      icon: "none",
-      duration: 2000
-    });
-    let res = await orderApi.getPayInfo({
-      params: {
-        orderId: orderId,
-        payType: "WEIXIN",
-        currentUrl:
-          "https%3A%2F%2Fwoxifan.51shop.mobi%2Fshop%3Fcode%3D001nLu8P1MW8Z21JDn9P1TVq8P1nLu89%26state%3Dwxloginmhaawxloginaj6wd1mm"
-      }
-    });
-    //console.log("唤起支付返回结果。。。")
-    // console.log(res)
-    if (res) {
-      //console.log(`getPayinfo--${res}`);
+
+  async pay(pay_sn){
+
+    // let params = {
+    //   pay_type: this.isVirtual ? 'vr_order' : 'real_order',
+    // },
+    console.log(pay_sn);
+    let res = await api.payOrder(pay_sn);
+
+    return new Promise(function(resolve, reject){
+
       wx.requestPayment({
-        timeStamp: res.timeStamp,
         nonceStr: res.nonceStr,
-        package: res.package,
-        signType: "MD5",
-        paySign: res.paySign,
-        success: function(res) {
-          // console.log('支付成功返回的结果')
-          // console.log(res)
-          order.payAt = Date.now();
-          this.$apply();
-        },
-        fail: function(res) {
-          wx.showToast({
-            title: "支付失败",
-            icon: "none",
-            duration: 2000
-          });
-        }
+        package: res.package, 
+        signType: res.signType,
+        paySign: res.paySign, 
+        timeStamp: res.timeStamp,
+        success(e){ resolve(e) },
+        fail(e){ reject(e); console.log(e); },
       });
-    }
+
+    }).catch(e => e.errMsg);
+    
   }
+  
   async comfirmOrder(orderId) {
     let res = await orderApi.confirmReceive({
       params: {
@@ -364,80 +367,64 @@ export default class OrderList extends wepy.page {
     wx.showToast({ title: "收货成功", icon: "success", duration: 2000 });
     this.orderList = [];
     this.currentPage = 0;
-    this.isNull = true;
     this.$apply();
 
-    this.getOrderList(0);
+    this.getOrderList(this.currentPage);
 
   }
 
   async onLoad(params) {
-
-    this.status = params.status ? params.status : 'all';
 
   }
 
   onShow(){
 
     this.orderList = [];
-    this.currentPage = 0;
-    this.isNull = true;
+    this.currentPage = 1;
 
-    // this.getOrderList(0);
-    this.orderList = [
-      { orderItems: [ { title: 'sf', id: 1, payed: true, }, ], },
-      { orderItems: [ { title: 'sf', id: 1, payed: false, }, ], },
-    ];
-    this.isNull = false;
+    this.getOrderList(this.currentPage);
   }
 
   async onReachBottom(){
 
-    this.getOrderList(++this.currentPage);
+    // this.getOrderList(++this.currentPage);
   
   }
 
   async getOrderList(page){
-    wx.showLoading({ title: "加载中" });
+    wx.showLoading({ title: "Loading..." });
 
-    let res = await orderApi.getOrderList({
-      orderStatus: this.status,
-      params: {
-        page: page,
-        size: 10
+    let params = this.status ? {
+          order_state: this.status === null ? null : this.status,
+          payment_order: null,
+        } : {
+          payment_order: 1,
+        },
+        res = await api.getOrderList(params);
+
+    if(res){
+      for(let key in res){
+        this.orderList.push(res[key]); 
       }
-    });
-
-    if(!res[0]){
-      wx.hideLoading();
-      if(page !== 0){
-        return wx.showToast({ title: '已经到底了!', icon: 'none', duration: 2000, });
-      }
-
-      this.isNull = true;
-      this.$apply();
-
     }
-
-    this.orderList = this.orderList.concat(res);
-    this.isNull = this.orderList[0] ? false : true;
+   console.log(this.orderList); 
     wx.hideLoading();
 
     // 跳转至指定状态
-    let status = this.status;
-    if (status) {
-      //console.log(`status: =-=${status}`);
-      this.checkedList[0] = false;
-      if (status === "submitted") {
-        this.checkedList[1] = true;
-      } else if (status === "paid") {
-        this.checkedList[2] = true;
-      } else if (status === "shipped") {
-        this.checkedList[3] = true;
-      } else if (status === "comment") {
-        this.checkedList[4] = true;
-      }
-    }
+    // let status = this.status;
+    // if (status) {
+    //   //console.log(`status: =-=${status}`);
+    //   this.checkedList[0] = false;
+    //   if (status === "submitted") {
+    //     this.checkedList[1] = true;
+    //   } else if (status === "paid") {
+    //     this.checkedList[2] = true;
+    //   } else if (status === "shipped") {
+    //     this.checkedList[3] = true;
+    //   } else if (status === "comment") {
+    //     this.checkedList[4] = true;
+    //   }
+    // }
 
     this.$apply();
   }

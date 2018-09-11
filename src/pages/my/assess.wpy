@@ -17,7 +17,7 @@
         </view> -->
 
         <view class='assess_info'>
-          <textarea maxlength='50' value='{{content}}' placeholder='图片最多上传三张' placeholder-style='color: #c0c0c0;'></textarea>
+          <textarea maxlength='50' value='{{content}}' bindinput='setContent' placeholder='图片最多上传三张' placeholder-style='color: #c0c0c0;'></textarea>
           <view class='desc'>最多输入50个字</view>
         </view>
       </view>
@@ -33,6 +33,7 @@ import wepy from 'wepy';
 import topBar from '../../components/topBar';
 import star from '../../components/star';
 import img from '../../components/img';
+import api from '../../utils/api.js';
 
 export default class Authorize extends wepy.page {
   config = {
@@ -62,20 +63,37 @@ export default class Authorize extends wepy.page {
     level: 0,
     imgNumber: 2,
     activeSize: 0,
-    content: null,
+    content: '',
+    order: null,
   }
 
   onLoad(params) {
     let order = JSON.parse(decodeURIComponent(params.order));
-    this.config.name = 'kjSFDKj迪斯科飞机开始扩大飞机迪斯科就开始JFK是开放的士大夫KF的看法是进口降幅扩大s';
+    this.order = order; 
+    this.config.name = order.store_name;
   }
 
   methods = {
-    submit(){
+    setContent(e){
+      this.content = e.detail.value;
+      return this.content;
+    },
+    async submit(){
       
-      if(this.content !== ''){
+      if(this.content === ''){
         return wx.showModal({ title: '提示', content: '评价内容不能为空!', showCancel: false, });
       }
+
+      let res = await api.assess({
+        goods_id: this.order.order_goods[0].goods_id,
+        order_id: this.order.id,
+        order_no: this.order.order_sn, 
+        image: ['https://sf', 'http://'],
+        content: this.content,
+        score: this.level,
+      });
+
+      res ? wx.showModal({ title: '提示', content: '添加成功!', showCancel: false, }) : void(0);
 
     },
   }

@@ -58,7 +58,7 @@ export default class classifyList extends wepy.page {
       sel_src: "../../images/icon/star_sel.png",
     },
     classId: null,
-    limit: 2,
+    limit: 20,
     currentPage: 1,
     canLoad: true,
     total: 0,

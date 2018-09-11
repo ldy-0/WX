@@ -97,7 +97,7 @@
             <scroll-view class='bottom_space' scroll-y='true' style='height: 100%;'>
                 <repeat for='{{addressList}}' index='index' item='item'>
 
-                    <address :address.sync='item'>
+                    <address :address.sync='item' @change.user='goBack'>
                         <view class='other_info'>
                           <view class='default' wx:if="{{item.address_is_default === '1'}}">[默认地址]</view>
                           <view wx:else></view>
@@ -171,6 +171,26 @@
         console.log('touch move');
         return this.addressList.length;
       },
+      goBack(id){
+        let _this = this;
+
+        if(!this.canBack){
+          return ;
+        }
+
+        this.addressList.forEach(function(v, i){
+
+          if(v.address_id === id){
+            // let pages = getCurrentPages(),
+            //     page = pages[pages.length - 2];
+            
+            _this.$parent.globalData.address = v;
+            wx.navigateBack({ detail : 1, });
+          } 
+
+        });
+        
+      },
       add(){
 
         wx.navigateTo({
@@ -205,6 +225,11 @@
 
       this.getAddressList();
       
+    }
+
+    onLoad(param){
+      
+      this.canBack = param.canBack;
     }
 
     onPullDownRefresh(){

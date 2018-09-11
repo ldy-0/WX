@@ -1,4 +1,3 @@
-import wepy from 'wepy';
 
 // const DOMAIN = 'http://106.14.145.66:3000/';
 // const DOMAIN = 'http://101.37.30.205/';
@@ -18,7 +17,7 @@ async function get(url, params, header, responseType){
 
   }
 
-  if(typeof params === 'object'){
+  if(typeof params === 'object'){ // && header['content-Type'] !== 'application/json'
 
     for(let key in params){
       query += (query === '' ? '?' : '&') + key + '=' + params[key];
@@ -109,7 +108,6 @@ async function post(url, params, header, responseType){
     }
 
   }
-  
 
   return new Promise(function(resolve, reject){
 

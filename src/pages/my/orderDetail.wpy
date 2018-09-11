@@ -5,13 +5,13 @@
     <view class='wrap'>
       
       <view class='goods_list'>
-        <repeat for='{{goodsList}}' item='item'>
+        <repeat for='{{order.order_goods}}' item='item'>
           <view class='goods_item'>
-            <image class='goods_img' src='' />
+            <image class='goods_img' src='{{item.goods_image}}' />
             <view class='goods_info'>
-              <view class='goods_name'>{{item.name}}</view>
+              <view class='goods_name'>{{item.goods_name}}</view>
               <view class='goods_time'>{{item.name}}</view>
-              <view class='goods_price'>123.13</view>
+              <view class='goods_price'>{{item.goods_price}}</view>
             </view>
           </view>
         </repeat>
@@ -23,49 +23,57 @@
         <view class='order_content'>
           <view class='order_item'>
             <view>订单号：</view>
-            <view>{{order.orderNo}}</view>
+            <view>{{order.order_sn}}</view>
           </view>
           <view class='order_item'>
             <view>绑定手机号：</view>
-            <view>{{order.phone}}</view>
+            <view>{{getPhone}}</view>
           </view>
           <view class='order_item'>
             <view>下单时间</view>
-            <view>2018-07-19    15:20</view>
+            <view>{{order.payment_time}}</view>
           </view>
-          <view class='order_item' wx:if="{{status !== 'used'}}">
+          <view class='order_item' wx:if="{{order.status !== 'used'}}">
             <view>数量：</view>
-            <view></view>
+            <view>{{0}}</view>
           </view>
           <view class='order_item' wx:else>
             <view style='text-decoration: line-through;'>券码：4894151651513512</view>
           </view>
-          <view class='order_item' wx:if="{{status !== 'used'}}">
+          <view class='order_item' wx:if="{{order.order_state === '未付款'}}">
             <view>总价：</view>
-            <view></view>
+            <view>{{order.order_amount}}</view>
           </view>
           <view class='order_item' wx:else>
             <view>消费金额：</view>
             <view>¥:12.1</view>
           </view>
-          <view class='' wx:if="{{status === 'used'}}">
+          <view class='' wx:if="{{true}}">
             <view class='assess_btn_wrap'><view class='assess_btn' @tap='goAssess'>去评价</view></view>
             <view class='assess_desc'>评价有助于商家完善其服务，你也可以取得更好的服务！</view>
             <view class='phone'>客服电话：10107888</view>
-          </view>
+          </view>   
 
         </view>
       </view>
 
-      <view class='other_wrap' wx:if="{{status !== 'used' || status !== 'payed'}}"> 
+      <view style='margin: 20rpx 0 0; padding: 10rpx 0 0 38rpx; background: #fff;' wx:if='{{address}}'>
+        <view>收货信息</view>
+        <address :address.sync='address'></address>
+      </view>
+      
+
+      <view class='other_wrap' wx:if="{{order.order_state === '未付款'}}"> 
         <view class='countDown s-1'>
-          <view wx:if="{{status !== 'expire'}}">距离支付失效：{{countDown.day}}:{{countDown.hour}}:{{countDown.minute}}:{{countDown.second}}</view>
+          <view wx:if="{{order.countdown !== null}}">距离支付失效：{{countDown.day}}:{{countDown.hour}}:{{countDown.minute}}:{{countDown.second}}</view>
         </view>
 
-        <view class="btn {{status === 'expire' ? 'expire' : ''}}" @tap='pay'>立即付款</view>
+        <view class="btn {{status === 'expire' ? 'expire' : ''}}" @tap='pay({{order.pay_sn}})'>立即付款</view>
       </view>
 
-      <view class='coupon_info' wx:if="{{status === 'payed'}}">
+      
+
+      <view class='coupon_info' wx:if="{{order.order_state === 'payed'}}">
         <view class='coupon'>
           <view class=''>我的券码</view>
           <view class=''>券码：4894151651513512</view>
@@ -81,6 +89,8 @@
 <script>
 import wepy from 'wepy';
 import topBar from '../../components/topBar';
+import address from '../../components/address';
+import api from '../../utils/api.js';
 
 export default class OrderDetail extends wepy.page {
   config = {
@@ -90,6 +100,7 @@ export default class OrderDetail extends wepy.page {
 
   components = {
     topBar,
+    address,
   }
 
   data = {
@@ -99,27 +110,34 @@ export default class OrderDetail extends wepy.page {
       canBack: true,
     },
     order: null,
+    id: null,
     goodsList: [ { name: '的是佛教房东房客上课了吗首付贷款买房昆明昆明dfsfk',  } ],
     countDown: {
-      day: null,
-      hour: null,
-      minute: null,
-      second: null,
+      day: '',
+      hour: '',
+      minute: '',
+      second: '',
     }, 
     interval: null,
     expire: false,
     payed: false,
-    status: 'used',
+    status: '',
+    address: null,
+  }
+
+  computed = {
+    getPhone(){
+      let phone = wx.getStorageSync('userInfo').phone;
+      return phone ? this.modifyPhone(phone) : '';
+    },
   }
 
   onLoad(params) {
     console.log(params.id);
-    this.order = {
-     orderNo: 4527280854,
-     phone:  15012349627,
-    };
-    this.order.phone = this.modifyPhone(this.order.phone);
-    this.setTime();
+
+    this.id = params.id;
+    this.getOrderDetail(params.id);
+    
   }
 
   onUnload(){
@@ -133,30 +151,69 @@ export default class OrderDetail extends wepy.page {
   methods = {
     goAssess(){
 
+      this.order.id = this.id;
       wx.navigateTo({
         url: '/pages/my/assess?order=' + encodeURIComponent(JSON.stringify(this.order)),
       });
 
     },
-    pay(){
-
-      console.log('pay');
-
+    pay(pay_sn){
+      this.pay(pay_sn);
     }
   }
   
-  modifyPhone(phone){
-    return phone.toString().replace(/\d{4}(?=\d{4}$)/, '****');
+  async getOrderDetail(id){
+
+    let res = await api.getOrderInfo(id),
+        address = res.order_reciver_info;
+
+    this.order = res;
+
+    this.address = { 
+      address_realname: address.name,
+      address_mob_phone: address.phone,
+      area_info: address.address ? address.address.split(' ')[0] : '无',
+      address_detail: address.address ? address.address.split(' ')[1] : '无',
+    };
+    this.$apply();
+  
+    if(false){
+      this.setTime(Date.now() + 1000 - Date.now() );
+    }
+
   }
 
-  setTime(data){
+  async pay(pay_sn){
+
+    let res = await api.payOrder(pay_sn);
+
+    return new Promise(function(resolve, reject){
+
+      wx.requestPayment({
+        nonceStr: res.nonceStr,
+        package: res.package, 
+        signType: res.signType,
+        paySign: res.paySign, 
+        timeStamp: res.timeStamp,
+        success(e){ resolve(e) },
+        fail(e){ reject(e); console.log(e); },
+      });
+
+    }).catch(e => e.errMsg);
+    
+  }
+
+  modifyPhone(phone){ 
+    return phone.toString().replace(/\d{4}(?=\d{4}$)/, '****'); 
+  }
+
+  setTime(_second){
    
-    let _this = this,
-        _second = 360006;
+    let _this = this;
 
     this.interval = setInterval(function(){
 
-      if(data <= 0){
+      if(_second <= 0){
         return ;
       }
 

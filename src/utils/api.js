@@ -104,6 +104,15 @@ async function getAddressList(params){
   return res.data;
 }
 
+async function getDefaultAddress(params){
+  let res = await request.get('/api/v2/member/address', params, {
+    'token': wx.getStorageSync('token'),
+    'content-Type': 'application/json',
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
 async function updateAddress(id, params){
 
   let res = await request.put('/api/v2/member/address/' + id, params, {
@@ -198,15 +207,8 @@ async function getBusinessCouponList(id, params){
   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
 }
 
-async function getBusinessCommnetList(params){
 
-  let res = await request.get('/api/v1/member/goodsevaluate', params, {
-    'token': wx.getStorageSync('token'),
-  });
-
-  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
-}
-
+// goods
 async function getGoods(id, params){
 
   let res = await request.get(`/api/v2/member/goodscommon/${id}`, params, {
@@ -221,6 +223,37 @@ async function getPayMethod(id, params){
   let res = await request.get(`/api/v2/member/payment/${id}`, params, {
       'token': wx.getStorageSync('token'),
   });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
+async function submitOrder(params){
+
+  let res = await request.post(`/api/v2/member/order`, params, {
+      'token': wx.getStorageSync('token'),
+      'content-Type': 'application/json',
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
+async function payOrder(paySign, params){
+
+  let res = await request.put(`/api/v2/member/order/${paySign}`, params, {
+      'token': wx.getStorageSync('token'),
+  });
+
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
+async function assess(params){
+
+  let res = await request.post('/api/v2/member/goodsevaluate', params, {
+      'token': wx.getStorageSync('token'),
+      'content-Type': 'application/json',
+  });
+
 
   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
 }
@@ -266,6 +299,7 @@ async function checkout(params){
 
   let res = await request.post('/api/v2/member/checkout', params, {
       'token': wx.getStorageSync('token'),
+      'content-Type': 'application/json'
   });
 
   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
@@ -274,7 +308,7 @@ async function checkout(params){
 // my
 async function getOrderList(params){
 
-  let res = await request.get('', params, {
+  let res = await request.get('/api/v2/member/order', params, {
     'token': wx.getStorageSync('token'),
   });
 
@@ -283,7 +317,16 @@ async function getOrderList(params){
 
 async function getOrderInfo(id, params){
 
-  let res = await request.get('', params, {
+  let res = await request.get(`/api/v2/member/order/${id}`, params, {
+    'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data[0];
+}
+
+async function setOrderStatus(type, params){
+
+  let res = await request.put(`/api/v2/member/orderstate/${type}`, params, {
     'token': wx.getStorageSync('token'),
   });
 
@@ -292,7 +335,7 @@ async function getOrderInfo(id, params){
 
 async function getCommentList(params){
 
-  let res = await request.get('', params, {
+  let res = await request.get('/api/v2/member/goodsevaluate', params, {
     'token': wx.getStorageSync('token'),
   });
 
@@ -308,6 +351,7 @@ export default {
   getAddressInfo, // address
   setAddress,
   getAddressList,
+  getDefaultAddress,
   updateAddress,
   deleteAddress,
   getBanner, // home
@@ -317,9 +361,11 @@ export default {
   getStoreClass,
   getStore,
   getBusinessCouponList,
-  getBusinessCommnetList,
-  getGoods,
+  getGoods, // goods
   getPayMethod,
+  submitOrder,
+  payOrder,
+  assess,
   addCart, // shoppingCart
   getCartList,
   updateCart,
@@ -327,5 +373,6 @@ export default {
   checkout,
   getOrderList,
   getOrderInfo,
+  setOrderStatus,
   getCommentList,
 }

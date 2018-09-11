@@ -5,12 +5,12 @@
         <view class="header"> <!-- {{isIos ? '' : 'wrap'}} -->
             <image class='bg' src="../images/my/bg.png"></image>
             <view class="header_content">
-                <image class="user_img" src="{{userInfo.avatarUrl}}"></image>
+                <image class="user_img" src="{{userInfo.wx_avatar}}"></image>
                 <view class="user_info">
                     <view class='row'>
-                        <view class='user_name'>{{userInfo.nickName}}</view>
+                        <view class='user_name'>{{userInfo.wx_name}}</view>
                         <image class='member_img' src='../images/my/no_vip.png' />
-                        <view class='member_desc'>付费会员</view>
+                        <view class='member_desc' wx:if='{{userInfo.member_grade}}'>付费会员</view>
                     </view>
                     <view class='more_info'>
                         <navigator url='/pages/my/buyMember'>购买</navigator>
@@ -122,346 +122,270 @@
     </view>
 </template>
 <script>
-    import wepy from 'wepy';
-    import {shttp} from '../utils/http.js';
-    import api from '@/api/api';
-    import orderApi from '../api/orderApi.js';
-    import topBar from '../components/topBar';
-    import {
-        USER_INFO, USER_SPECICAL_INFO
-    } from '@/utils/constant';
+import wepy from "wepy";
+import { shttp } from "../utils/http.js";
+import orderApi from "../api/orderApi.js";
+import topBar from "../components/topBar";
+import { USER_INFO, USER_SPECICAL_INFO } from "@/utils/constant";
+import api from '../utils/api.js';
 
-    export default class Index extends wepy.page {
-        config = {
-            enablePullDownRefresh: false,
-            disableScroll: true,
-        }
+export default class Index extends wepy.page {
+  config = {
+    enablePullDownRefresh: true,
+    disableScroll: true
+  };
 
-        components = {
-            topBar,
-        }
+  components = {
+    topBar
+  };
 
-        data = {
-            config: {
-                name: '我的主页',
-                canBack: false,
-                bg: '#fff',
-            },
-            detail: {},
-            userInfo: {},
-            submittedCount: '', //待付款
-            paidCount: '',    //待发货
-            shippedCount: '', //待收货
-            commentCount: '', //待评价
-            refundingCount: '',          // 待售后
-            bShowBind: false,
-            pointTotal: '',     // 总德分
-            commissionTotal: '',// 总积分
-            isIos: null,
-            customerNumber:''
-        }
+  data = {
+    config: {
+      name: "我的主页",
+      canBack: false,
+      bg: "#fff"
+    },
+    userInfo: {},
+    submittedCount: "", //待付款
+    paidCount: "", //待发货
+    shippedCount: "", //待收货
+    commentCount: "", //待评价
+    refundingCount: "", // 待售后
+    bShowBind: false,
+    isIos: null,
+  };
 
-        onLoad() {
-            let that = this;
-            this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
-            that.detail = {};
-            this.userInfo = wx.getStorageSync('userInfo');
-            // console.log(userInfo);
+  computed = {
 
-            wx.getSystemInfo({
-                success: res => {
-                    that.setData({
-                        winWidth: res.windowWidth
-                    })
-                }
-            });
-            
-            if(!wx.getStorageSync('userInfo').customerNumber){
-                this.customerNumber = '';               
-            }else{
-                this.customerNumber = '：'+ wx.getStorageSync('userInfo').customerNumber;
-            }
-    
-        }
+  };
 
+  onLoad() {
+    let that = this;
+    this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
 
-        onShow() {
-            let that = this;
-            // 查询德分积分
-            // this.getPointInfo();
+    this.userInfo = wx.getStorageSync("userInfo");
 
-            // this.getTypeCount('submitted');
-            // this.getTypeCount('paid');
-            // this.getTypeCount('shipped');
-            // this.getTypeCount('comment');
-            // this.getTypeCount('refunding');
+    wx.getSystemInfo({
+      success: res => {
+        that.setData({
+          winWidth: res.windowWidth
+        });
+      }
+    });
 
-        }
+    // this.getUserInfo();
 
-        computed = {
-            getUserId: () => wx.getStorageSync('userInfo').customerNumber ? ':'+wx.getStorageSync('userInfo').customerNumber : '',
-            getIdentity(){
-                return wx.getStorageSync('userInfo').hasIdentity;
-            },
-            getUser(){
-                // wx.showToast({ title: 'has:'+wx.getStorageSync('userInfo').hasIdentity+'light:'+wx.getStorageSync('userInfo').isLighten  });
-                return wx.getStorageSync('userInfo').hasIdentity && wx.getStorageSync('userInfo').isLighten;
-            },
-          setPoint(){
-            return this.pointTotal > 10000 ? Math.floor(this.pointTotal/10000)+'w' : this.pointTotal;
-          },
-          setCommission(){
-            return this.commissionTotal > 10000 ? Math.floor(this.commissionTotal/10000)+'w' : this.commissionTotal;
-          },
-        };
-        methods = {
+  }
 
-        };
-        events = {}
+  onShow() {
+  }
 
-        // 订单数量
-        async getTypeCount(status){
+  onPullDownRefresh() {
+    wx.reLaunch({
+      url: "/pages/my"
+    });
+  }
+  
+  methods = {};
 
-            let result = await orderApi.getTypeCount({
-                            params: { status },
-                        });
-                
-            switch(status){
-                case 'submitted':
-                    this.submittedCount = result;
-                    break;
-                case 'paid':
-                    this.paidCount = result;
-                    break;
-                case 'shipped':
-                    this.shippedCount = result;
-                    break;
-                case 'comment':
-                    this.commentCount = result;
-                    break;
-                case 'refunding':
-                    this.refundingCount = result;
-                    break;
-            }
-
-            this.$apply();
-            
-        }
-
-        //用户德分，积分
-        async getPointInfo() {
-            let sessionId = wx.getStorageSync('sessionId'),
-                res = await shttp.get('/v2/openapi/users/'+wx.getStorageSync('userInfo').cpId+'/points/total', sessionId).end();
-            
-            if(!res){
-                return wx.showTaast({ title: '获取德分，积分失败', icon: 'none', duration: 2000, });
-            }
-
-            this.pointTotal = res.data.pointTotal.total;
-            this.commissionTotal = res.data.commissionTotal.usableEcomm + res.data.commissionTotal.freezedEcomm// res.data.commissionTotal.total;
-            this.$apply();
-        }
-
-    }
-
+  async getUserInfo(){
+    let res = await api.getUserInfo();
+  }
+}
 </script>
 <style lang="less">
-    .container{
-        font: 30rpx 'RTWSYueGoTrial-Regular';
-        color: #000;
-        background: #fff;
-    }
-
-    .header{
-        position: relative;
-        .bg{
-            width: 100%;
-            height: 311rpx;
-            background: #ccc;
-        }
-    }
-
-    .header_content {
-        position: absolute;
-        top: 27rpx;
-        left: 63rpx;
-        display: flex;
-        align-items: center;
-        .user_img{
-            width: 150rpx;
-            height: 150rpx;
-            margin-right: 40rpx;
-            border-radius: 50%;
-            background: #ccc;
-        }
-        .user_info{
-            .row{
-                display: flex;
-                align-items: center;
-            }
-            .user_name{
-                max-width: 150rpx;
-                height: 38rpx;
-                line-height: 38rpx;
-                margin-right: 20rpx;
-                color: #fff;
-                overflow: hidden;
-            }
-            .member_img{
-                width: 32rpx;
-                height: 27rpx;
-                margin-right: 10rpx;
-            }
-            .member_desc{
-                font-size: 24rpx;
-                color: #ff5f00;
-            }
-            .more_info{
-                display: flex;
-                align-items: center;
-                margin: 10rpx 0 0;
-                font-size: 24rpx;
-                color: #fff;
-            }
-        }
-    }
-
-    .setting{
-        position: absolute;
-        top: 17rpx;
-        right: 22rpx;
-        width: 35rpx;
-        height: 35rpx;
-    }
-
-    .info_block {
-        margin: 10rpx 0 0;
-        background: #fff;
-        .item {
-            border-bottom: 1rpx solid rgba(216, 216, 216, 0.3);
-            background: #fff;
-            padding: 30rpx 28rpx 30rpx 39rpx;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            .right_arrow{
-                width: 16rpx;
-                height: 26rpx;
-            }
-        }
-        .item:last-child {
-            border: none;
-        }
-        .item_content {
-            display: flex;
-            align-items: center;
-            .box{
-                width: 45rpx;
-                height: 37rpx;
-            }
-            .text {
-                margin-left: 20rpx;
-                font-size: 28rpx;
-                color: #808080;
-            }
-        }
-        .img-box{
-            width:auto;
-            height:71rpx;
-            line-height:71rpx;
-            text-align:center;
-        }
-        .achievement_img,.icon_img{
-            width: 35rpx;
-            height: 35rpx;
-        }
-        .orderImg{
-            width: 39rpx;
-            height: 48rpx;
-        }
-        .commentImg,.submittedImg{
-            width: 63rpx;
-            height: 58rpx;
-        }
-        .paidImg{
-            width: 63rpx;
-            height: 59rpx;
-        }
-        .shippedImg{
-            width: 60rpx;
-            height: 71rpx;
-            margin-top:-10rpx;
-        }
-        .commentImg{
-            width: 68rpx;
-            height: 57rpx;
-        }
-        .serverImg{
-            width: 58rpx;
-            height: 55rpx;
-            margin-top:1rpx;
-        }
-        .address_img{
-            width: 36rpx;
-            height: 45rpx;
-        }
-        .collection_img{
-            width: 45rpx;
-            height: 31rpx;
-        }
-        .help_img{
-            width:39rpx;
-            height: 39rpx;
-        }
-        .arrow {
-            color: #999;
-            font-size: 24rpx;
-        }
-        .tip {
-            color: #999;
-            font-size: 24rpx;
-            margin-top: 20rpx;
-            margin-left: 60rpx;
-        }
-        .order_item {
-            .flex-item {
-                position: relative;
-                text {
-                    position: absolute;
-                    top: -10rpx;
-                    right: 57%;
-                    font-size: 22rpx;
-                    border: 1rpx solid #e83820;
-                    border-radius: 50%;
-                    color: #e83820;
-                    min-width: 35rpx;
-                    height: 35rpx;
-                    line-height: 35rpx;
-                    text-align: center;
-                }
-            }
-            /* .item_img {
-                width: 71rpx;
-                height: 71rpx;
-                margin: 18rpx 0 0;
-            } */
-        }
-    }
-
-.btn_wrap{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    background: #fff;
-    .btn{
-        width: 678rpx;
-        line-height: 76rpx;
-        font-size: 30rpx;
-        color: #808080;
-        background: #f5f5f5;
-        text-align: center;
-    }
+.container {
+  font: 30rpx "RTWSYueGoTrial-Regular";
+  color: #000;
+  background: #fff;
 }
 
+.header {
+  position: relative;
+  .bg {
+    width: 100%;
+    height: 311rpx;
+    background: #ccc;
+  }
+}
+
+.header_content {
+  position: absolute;
+  top: 27rpx;
+  left: 63rpx;
+  display: flex;
+  align-items: center;
+  .user_img {
+    width: 150rpx;
+    height: 150rpx;
+    margin-right: 40rpx;
+    border-radius: 50%;
+    background: #ccc;
+  }
+  .user_info {
+    .row {
+      display: flex;
+      align-items: center;
+    }
+    .user_name {
+      max-width: 150rpx;
+      height: 38rpx;
+      line-height: 38rpx;
+      margin-right: 20rpx;
+      color: #fff;
+      overflow: hidden;
+    }
+    .member_img {
+      width: 32rpx;
+      height: 27rpx;
+      margin-right: 10rpx;
+    }
+    .member_desc {
+      font-size: 24rpx;
+      color: #ff5f00;
+    }
+    .more_info {
+      display: flex;
+      align-items: center;
+      margin: 10rpx 0 0;
+      font-size: 24rpx;
+      color: #fff;
+    }
+  }
+}
+
+.setting {
+  position: absolute;
+  top: 17rpx;
+  right: 22rpx;
+  width: 35rpx;
+  height: 35rpx;
+}
+
+.info_block {
+  margin: 10rpx 0 0;
+  background: #fff;
+  .item {
+    border-bottom: 1rpx solid rgba(216, 216, 216, 0.3);
+    background: #fff;
+    padding: 30rpx 28rpx 30rpx 39rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .right_arrow {
+      width: 16rpx;
+      height: 26rpx;
+    }
+  }
+  .item:last-child {
+    border: none;
+  }
+  .item_content {
+    display: flex;
+    align-items: center;
+    .box {
+      width: 45rpx;
+      height: 37rpx;
+    }
+    .text {
+      margin-left: 20rpx;
+      font-size: 28rpx;
+      color: #808080;
+    }
+  }
+  .img-box {
+    width: auto;
+    height: 71rpx;
+    line-height: 71rpx;
+    text-align: center;
+  }
+  .achievement_img,
+  .icon_img {
+    width: 35rpx;
+    height: 35rpx;
+  }
+  .orderImg {
+    width: 39rpx;
+    height: 48rpx;
+  }
+  .commentImg,
+  .submittedImg {
+    width: 63rpx;
+    height: 58rpx;
+  }
+  .paidImg {
+    width: 63rpx;
+    height: 59rpx;
+  }
+  .shippedImg {
+    width: 60rpx;
+    height: 71rpx;
+    margin-top: -10rpx;
+  }
+  .commentImg {
+    width: 68rpx;
+    height: 57rpx;
+  }
+  .serverImg {
+    width: 58rpx;
+    height: 55rpx;
+    margin-top: 1rpx;
+  }
+  .address_img {
+    width: 36rpx;
+    height: 45rpx;
+  }
+  .collection_img {
+    width: 45rpx;
+    height: 31rpx;
+  }
+  .help_img {
+    width: 39rpx;
+    height: 39rpx;
+  }
+  .arrow {
+    color: #999;
+    font-size: 24rpx;
+  }
+  .tip {
+    color: #999;
+    font-size: 24rpx;
+    margin-top: 20rpx;
+    margin-left: 60rpx;
+  }
+  .order_item {
+    .flex-item {
+      position: relative;
+      text {
+        position: absolute;
+        top: -10rpx;
+        right: 57%;
+        font-size: 22rpx;
+        border: 1rpx solid #e83820;
+        border-radius: 50%;
+        color: #e83820;
+        min-width: 35rpx;
+        height: 35rpx;
+        line-height: 35rpx;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.btn_wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background: #fff;
+  .btn {
+    width: 678rpx;
+    line-height: 76rpx;
+    font-size: 30rpx;
+    color: #808080;
+    background: #f5f5f5;
+    text-align: center;
+  }
+}
 </style>
