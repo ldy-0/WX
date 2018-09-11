@@ -27,6 +27,16 @@
         {{formForNotive.trans}}
       </p>
     </el-form-item>
+    <el-form-item label="shou" :label-width="formLabelWidth">
+      <p class="hbs-no-margin-p">
+        {{formForNotive.name}}
+      </p>
+    </el-form-item>
+    <el-form-item label="运费" :label-width="formLabelWidth">
+      <p class="hbs-no-margin-p">
+        {{formForNotive.phone}}
+      </p>
+    </el-form-item>
     <el-form-item label="下单时间" :label-width="formLabelWidth">
       <p class="hbs-no-margin-p">
         {{formForNotive.orderTime}}
@@ -80,19 +90,14 @@
     </el-form-item>
     <el-form-item label="收货信息" :label-width="formLabelWidth" v-if="formForNotive.buyerInfo">
       <el-form >
-        <el-form-item label="收货地址" :label-width="formLabelWidth">
-          <p class="hbs-no-margin-p">
-            {{formForNotive.buyerInfo.address}}
-          </p>
-        </el-form-item>
         <el-form-item label="收货人" :label-width="formLabelWidth">
           <p class="hbs-no-margin-p">
-            {{formForNotive.buyerInfo.name}}
+            {{formForNotive.name}}
           </p>
         </el-form-item>
         <el-form-item label="收货人电话" :label-width="formLabelWidth">
           <p class="hbs-no-margin-p">
-            {{formForNotive.buyerInfo.phone}}
+            {{formForNotive.phone}}
           </p>
         </el-form-item>
       </el-form>
@@ -543,8 +548,9 @@ export default {
                 time:aData.add_time,
                 state:aData.order_state,
                 stateID:aData.order_state_id,
-                orderTypeTXT :this.getOrderType(aData.order_type) 
-                
+                orderTypeTXT :this.getOrderType(aData.order_type) ,
+                name:aData.reciver_name,
+                phone:aData.reciver_telephone
                 // goodsList:aData.order_goods,
               })
             })
