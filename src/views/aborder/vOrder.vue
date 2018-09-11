@@ -27,11 +27,6 @@
         {{formForNotive.trans}}
       </p>
     </el-form-item>
-    <el-form-item label="shou" :label-width="formLabelWidth">
-      <p class="hbs-no-margin-p">
-        {{formForNotive.name}}
-      </p>
-    </el-form-item>
     <el-form-item label="运费" :label-width="formLabelWidth">
       <p class="hbs-no-margin-p">
         {{formForNotive.phone}}
@@ -88,7 +83,7 @@
         </el-table-column>
       </el-table>
     </el-form-item>
-    <el-form-item label="收货信息" :label-width="formLabelWidth" v-if="formForNotive.buyerInfo">
+    <el-form-item label="收货信息" :label-width="formLabelWidth">
       <el-form >
         <el-form-item label="收货人" :label-width="formLabelWidth">
           <p class="hbs-no-margin-p">
@@ -486,6 +481,9 @@ export default {
             tempForm.goodsTable = data.order_goods
             // 收货信息
             tempForm.buyerInfo = data.order_reciver_info 
+
+            tempForm.name = data.reciver_name
+            tempForm.phone= data.reciver_telephone
             
             this.formForNotive = tempForm //基础form完成填充
           }else{
