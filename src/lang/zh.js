@@ -30,6 +30,13 @@ export default {
 
 
     sellerAuth:'权限',
+
+    // answers:'答题',
+
+    library:"题库",
+    libraryList:"题目列表",
+    libraryClass:"分类",
+
     //平台
     home: '首页',
     goods: '商品',

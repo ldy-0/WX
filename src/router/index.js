@@ -124,6 +124,25 @@ export let asyncRouterMapAdmin = [
       meta: { title: 'auth', icon: 'notice' ,roles:['auth']}
     }]
   },
+  // {
+  //   path: '/library',
+  //   component: Layout,
+  //   redirect: '/library/libraryList',
+  //   name:'library',
+  //   meta: { title: 'library', icon: 'notice',roles:['library']},
+  //   children: [{
+  //     path: 'libraryList',
+  //     component: () => import('@/views/library/libraryList'),
+  //     name: 'libraryList',
+  //     meta: { title: 'libraryList', noCache: true}
+  //   },
+  //   {
+  //     path: 'libraryClass',
+  //     component: () => import('@/views/library/libraryClass'),
+  //     name: 'libraryClass',
+  //     meta: { title: 'library', noCache: true}
+  //   }]
+  // },
   // { path: '*', redirect: '/404', hidden: true }
 ]
 
@@ -276,7 +295,26 @@ export let asyncRouterMapSeller = [
       name: 'sellerAuth',
       meta: { title: 'sellerAuth', icon: 'goods', noCache: true }
     }]
-  }
+  },
+  {
+    path: '/library',
+    component: Layout,
+    redirect: '/library/libraryList',
+    name:'library',
+    meta: { title: 'library', icon: 'notice',roles:['library']},
+    children: [{
+      path: 'libraryList',
+      component: () => import('@/views/library/libraryList'),
+      name: 'libraryList',
+      meta: { title: 'libraryList', noCache: true}
+    },
+    {
+      path: 'libraryClass',
+      component: () => import('@/views/library/libraryClass'),
+      name: 'libraryClass',
+      meta: { title: 'library', noCache: true}
+    }]
+  },
 ]
   // {
   //   path: '/dashboard',
