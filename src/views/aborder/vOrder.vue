@@ -373,8 +373,8 @@ export default {
           return console.log('获取数据失败:handleDownload')
         }
         import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '交易日期']
-          const filterVal = ['id', 'money', 'num', 'state', 'time']
+          const tHeader = ['订单ID','买家','买家电话', '订单金额', '订单号', '订单状态', '交易日期']
+          const filterVal = ['id', 'name','phone','money', 'num', 'state', 'time']
           const tableDataAll = this.tableDataAll
           const data = this.formatJson(filterVal, tableDataAll)
           excel.export_json_to_excel({
