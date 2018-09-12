@@ -37,6 +37,14 @@ export default {
     libraryList:"题目列表",
     libraryClass:"分类",
 
+    answer:"答题",
+    answerList:"题目列表",
+    answerLibrary:"题库",
+    memberList:"人员列表",
+    bonusMode:"奖金模式",
+    paymentMode:"付费模式",
+    answerHistory:"答题历史",
+
     //平台
     home: '首页',
     goods: '商品',

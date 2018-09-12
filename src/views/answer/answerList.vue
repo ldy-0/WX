@@ -21,23 +21,23 @@
   width: 320px;
 }
 
-.el-form {
-  width: 750px;
+.el-form{
+  width: 750px;    
 }
-.el-form-item {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  flex-wrap: nowrap;
+.el-form-item{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
 }
 </style>
 
 <template>
     <div class="div">
 <div class="el-div">
-    <el-button type="primary" icon="el-icon-edit" @click="toAddSubject">添加题目</el-button>
-    <el-button type="primary" icon="document" @click="toGetSubList">批量导入</el-button>
-    <el-button type="primary" icon="document" @click="toExport">导出</el-button>
+    <el-button type="primary" icon="el-icon-edit" @click="dialogFormVisible = true">添加题目</el-button>
+    <el-button type="primary" icon="document" @click="dialogFormVisible = true">批量导入</el-button>
+    <el-button type="primary" icon="document" @click="handleDownload" :loading="downloadLoading">{{exportExcelStatus}}</el-button>
 
     <el-dialog title="添加题目" :visible.sync="dialogFormVisible">
         <el-form :model="form" class="el-form">
@@ -51,11 +51,8 @@
             </el-select>
             </el-form-item>
 
-            <el-button type="primary" @click="isAddAws = true">添加答案</el-button>
-            <div style="width:20px;height: 30px;"></div>
-
             <el-form-item label="答案一" >
-                <el-input v-model="form.aws[0]" auto-complete="off"></el-input>
+                <el-input v-model="form.aws[0]" auto-complete="off" suffix-icon="el-icon-date"></el-input>
                 <!-- <i class="el-icon-delete"></i> -->
             </el-form-item>
 
@@ -69,17 +66,14 @@
                 <!-- <i class="el-icon-delete"></i> -->
             </el-form-item>
 
-            <el-form-item label="答案四" v-if="isAddAws">
-                <el-input v-model="form.aws[3]" auto-complete="off">
-                  <el-button slot="append" icon="el-icon-error" @click="toClose"></el-button>
-                </el-input>
+            <el-form-item label="答案四" >
+                <el-input v-model="form.aws[3]" auto-complete="off"></el-input>
                 <!-- <i class="el-icon-delete"></i> -->
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-            <!-- <el-button @click="dialogFormVisible = false">取 消</el-button> -->
-            <el-button type="primary"  @click="toYesAdd">确 定</el-button>
-            <el-button type="primary"  @click="yesEdit">编 辑</el-button>
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
         </div>
     </el-dialog>
     <div style="width:20px;height: 30px;"></div>
@@ -91,8 +85,10 @@
     </div>
     <div style="width:20px;height: 30px;"></div>
 
-    <el-select v-model="form.classVal" value-key="id" placeholder="请选择">
-      <el-option v-for="item in form.options" :label="item.label" :key="item.id"  :value="item"></el-option>
+    <el-select v-model="select" slot="prepend" placeholder="请选择分类">
+      <el-option label="餐厅名" value="1"></el-option>
+      <el-option label="订单号" value="2"></el-option>
+      <el-option label="用户电话" value="3"></el-option>
     </el-select>
         <div style="width:1px;height: 30px;"></div>
     <el-button slot="append" icon="el-icon-search"></el-button>
@@ -103,6 +99,8 @@
 <el-main>
     <el-table
       :data="tableData"
+      stripe 
+      v-loading="listLoading" element-loading-text="给我一点时间"
       style="width: 100%" >
 
       <el-table-column
@@ -142,8 +140,8 @@
         label="操作" 
         >
         <template slot-scope="scope">
-          <el-button size="mini" type="info" @click="toEdit(scope.$index)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="toDelete(scope.$index)">删除</el-button>
+          <el-button size="mini" type="info" @click="toEdit">编辑</el-button>
+          <el-button size="mini" type="danger" @click="toDelete">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -160,37 +158,36 @@
 export default {
   data() {
     return {
-      isAddAws: false,
+      //excel
+      tableDataAll: "",
+      autoWidth: true,
+      filename: "实物订单Excel",
+      exportExcelStatus: "导出",
+      downloadLoading: false,
+
       dialogFormVisible: false,
       form: {
         name: "",
-        options: [
-          {
-            id: 1,
-            label: "语文"
-          },
-          {
-            id: 2,
-            label: "数学"
-          },
-          {
-            id: 3,
-            label: "科学"
-          },
-          {
-            id: 4,
-            label: "生活"
-          },
-          {
-            id: 5,
-            label: "音乐"
-          }
-        ],
-        value: "",
-        classVal: "",
+        options: [{
+          id: '选项1',
+          label: '黄金糕'
+        }, {
+          id: '选项2',
+          label: '双皮奶'
+        }, {
+          id: '选项3',
+          label: '蚵仔煎'
+        }, {
+          id: '选项4',
+          label: '龙须面'
+        }, {
+          id: '选项5',
+          label: '北京烤鸭'
+        }],
+        value:"",
         aws: []
       },
-      formLabelWidth: "120px",
+      formLabelWidth: "80px",
 
       input: "",
       tableData: [
@@ -214,44 +211,62 @@ export default {
     };
   },
   methods: {
-    toAddSubject: function() {
-      this.dialogFormVisible = true;
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v =>
+        filterVal.map(j => {
+          if (j === "timestamp") {
+            return parseTime(v[j]);
+          } else {
+            return v[j];
+          }
+        })
+      );
     },
-    toYesAdd: function() {
-      console.log(this.form.value.id);
-      this.dialogFormVisible = false;
-      this.tableData.push({
-        title: this.form.name,
-        awsA: this.form.aws[0],
-        awsB: this.form.aws[1],
-        awsC: this.form.aws[2],
-        awsD: this.form.aws[3],
-        class: this.form.value.label
+    async handleDownload() {
+      this.downloadLoading = true;
+      // let allRes = await this.getList(true).catch(e=>{
+      //   this.$notify({
+      //       title: '失败',
+      //       message: '操作失败:'+e.toString(),
+      //       type: 'error'
+      //     })
+      //   return 0
+      // })
+      // console.log('allRes',allRes)
+      // if(!allRes){
+      //   this.downloadLoading = false
+      //   return console.log('获取数据失败:handleDownload')
+      // }
+      import("@/vendor/Export2Excel").then(excel => {
+        const tHeader = [
+          "订单ID",
+          "订单金额",
+          "订单号",
+          "订单状态",
+          "交易日期"
+        ];
+        const filterVal = ["id", "money", "num", "state", "time"];
+        const tableDataAll = this.tableDataAll;
+        const data = this.formatJson(filterVal, tableDataAll);
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.filename,
+          autoWidth: this.autoWidth
+        });
+        this.downloadLoading = false;
       });
-      console.log(this.tableData);
-    },
-    yesEdit:function(){
-
-    },
-    toGetSubList: function() {},
-    toExport: function() {},
-    toClose: function() {
-      this.isAddAws = false;
-    },
-    toEdit(id) {
-      this.dialogFormVisible = true;
-      this.isAddAws = true;
-      var list = this.tableData[id];
-      this.form.name = list.title;
-      this.form.aws[0] = list.awsA;
-      this.form.aws[1] = list.awsB;
-      this.form.aws[2] = list.awsC;
-      this.form.aws[3] = list.awsB;
-      this.form.value = list.class;
-    },
-    toDelete(id) {
-      this.tableData.splice(id, 1);
     }
   }
+
+  // foot
+  //   handleSizeChange(val) {
+  //     this.listQuery.limit = val;
+  //     this.getList();
+  //   },
+  //   handleCurrentChange(val) {
+  //     this.listQuery.page = val;
+  //     this.getList();
+  //   }
 };
 </script>
