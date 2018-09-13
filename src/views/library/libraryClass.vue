@@ -84,6 +84,7 @@
 export default {
   data() {
     return {
+      editId : null,
       dialogFormVisible: false,
       isAdd: false,
       name: "",
@@ -108,13 +109,16 @@ export default {
       this.dialogFormVisible = false;
     },
     editClass: function() {
-      console.log("editClass");
+      console.log("editClassID",this.editId);
+      this.tableData[this.editId].class = this.name;
+      this.dialogFormVisible = false;
     },
     toDelete: function(id) {
       // console.log(this.tableData[id].class);
       this.tableData.splice(id, 1);
     },
     toEdit: function(id) {
+      this.editId = id;
       this.dialogFormVisible = true;
       this.isAdd = true;
       this.name = this.tableData[id].class;

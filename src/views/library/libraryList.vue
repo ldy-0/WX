@@ -47,7 +47,7 @@
 
             <el-form-item label="分类" >
             <el-select v-model="form.value" value-key="id" placeholder="请选择">
-                <el-option v-for="item in form.options" :label="item.label" :key="item.id"  :value="item"></el-option>
+                <el-option v-for="item in options" :label="item.label" :key="item.id"  :value="item"></el-option>
             </el-select>
             </el-form-item>
 
@@ -55,22 +55,22 @@
             <div style="width:20px;height: 30px;"></div>
 
             <el-form-item label="答案一" >
-                <el-input v-model="form.aws[0]" auto-complete="off"></el-input>
+                <el-input v-model="form.awsA" auto-complete="off"></el-input>
                 <!-- <i class="el-icon-delete"></i> -->
             </el-form-item>
 
             <el-form-item label="答案二" >
-                <el-input v-model="form.aws[1]" auto-complete="off"></el-input>
+                <el-input v-model="form.awsB" auto-complete="off"></el-input>
                 <!-- <i class="el-icon-delete"></i> -->
             </el-form-item>
 
             <el-form-item label="答案三" >
-                <el-input v-model="form.aws[2]" auto-complete="off"></el-input>
+                <el-input v-model="form.awsC" auto-complete="off"></el-input>
                 <!-- <i class="el-icon-delete"></i> -->
             </el-form-item>
 
             <el-form-item label="答案四" v-if="isAddAws">
-                <el-input v-model="form.aws[3]" auto-complete="off">
+                <el-input v-model="form.awsD" auto-complete="off">
                   <el-button slot="append" icon="el-icon-error" @click="toClose"></el-button>
                 </el-input>
                 <!-- <i class="el-icon-delete"></i> -->
@@ -78,8 +78,8 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
             <!-- <el-button @click="dialogFormVisible = false">取 消</el-button> -->
-            <el-button type="primary"  @click="toYesAdd">确 定</el-button>
-            <el-button type="primary"  @click="yesEdit">编 辑</el-button>
+            <el-button type="primary" v-if="!isShowEdit"  @click="toYesAdd">确 定</el-button>
+            <el-button type="primary" v-if="isShowEdit" @click="yesEdit">编 辑</el-button>
         </div>
     </el-dialog>
     <div style="width:20px;height: 30px;"></div>
@@ -91,8 +91,8 @@
     </div>
     <div style="width:20px;height: 30px;"></div>
 
-    <el-select v-model="form.classVal" value-key="id" placeholder="请选择">
-      <el-option v-for="item in form.options" :label="item.label" :key="item.id"  :value="item"></el-option>
+    <el-select v-model="classVal" value-key="id" placeholder="请选择">
+      <el-option v-for="item in options" :label="item.label" :key="item.id"  :value="item"></el-option>
     </el-select>
         <div style="width:1px;height: 30px;"></div>
     <el-button slot="append" icon="el-icon-search"></el-button>
@@ -160,13 +160,22 @@
 export default {
   data() {
     return {
+      isShowEdit: false, 
+      editId: null,
       isAddAws: false,
       dialogFormVisible: false,
       form: {
         name: "",
-        options: [
+        value: "",
+        awsA: "",
+        awsB: "",
+        awsC: "",
+        awsD: "",
+      },
+      classVal: "",
+      options: [
           {
-            id: 1,
+            id: 121,
             label: "语文"
           },
           {
@@ -185,11 +194,7 @@ export default {
             id: 5,
             label: "音乐"
           }
-        ],
-        value: "",
-        classVal: "",
-        aws: []
-      },
+      ],
       formLabelWidth: "120px",
 
       input: "",
@@ -216,38 +221,57 @@ export default {
   methods: {
     toAddSubject: function() {
       this.dialogFormVisible = true;
+      this.isShowEdit = false;
+      this.form.name = "";
+      this.form.value = "";
+      this.form.awsA = "";
+      this.form.awsB = "";
+      this.form.awsC = "";
+      this.form.awsD = "";
     },
     toYesAdd: function() {
       console.log(this.form.value.id);
       this.dialogFormVisible = false;
       this.tableData.push({
         title: this.form.name,
-        awsA: this.form.aws[0],
-        awsB: this.form.aws[1],
-        awsC: this.form.aws[2],
-        awsD: this.form.aws[3],
+        awsA: this.form.awsA,
+        awsB: this.form.awsB,
+        awsC: this.form.awsC,
+        awsD: this.form.awsD,
         class: this.form.value.label
       });
       console.log(this.tableData);
     },
     yesEdit:function(){
-
+      this.dialogFormVisible = false;
+      var edited = this.tableData[this.editId];
+      edited.title = this.form.name;
+      edited.class = this.form.value.label;
+      edited.awsA = this.form.awsA;
+      edited.awsB = this.form.awsB;
+      edited.awsC = this.form.awsC;
+      edited.awsD = this.form.awsD;
     },
+
     toGetSubList: function() {},
     toExport: function() {},
+
     toClose: function() {
       this.isAddAws = false;
     },
     toEdit(id) {
+      this.editId = id;
       this.dialogFormVisible = true;
       this.isAddAws = true;
+      this.isShowEdit = true;
       var list = this.tableData[id];
       this.form.name = list.title;
-      this.form.aws[0] = list.awsA;
-      this.form.aws[1] = list.awsB;
-      this.form.aws[2] = list.awsC;
-      this.form.aws[3] = list.awsB;
       this.form.value = list.class;
+      this.form.awsA = list.awsA;
+      this.form.awsB = list.awsB;
+      this.form.awsC = list.awsC;
+      this.form.awsD = list.awsD;
+      console.log("class",this.form.value);
     },
     toDelete(id) {
       this.tableData.splice(id, 1);
