@@ -1,0 +1,94 @@
+// color
+$black: #1b222b
+$blue: #FFDA44
+$yellow: #fabb51
+$white: #fffefe
+$grey-dark: #888888
+$grey-light: #e5e5e5
+$orange: #ff7900
+$BG_WHITE: #FFF
+$BG_YELLOW: #FFEE37
+$BG_RED: #AF0000
+$BD_GRAY: #E5E5E5
+$FC_DARK: #282425
+@mixin flex
+  display: flex
+  align-items: center
+@mixin around
+  display: flex
+  justify-content: space-around
+  align-items: center
+  width: 100%
+@mixin between
+  display: flex
+  justify-content: space-between
+  align-items: center
+@mixin column_between
+  @include between
+  flex-direction: column
+  height: 100%
+@mixin column_around
+  @include around
+  flex-direction: column
+  height: 100%  
+// 加载中和无数据效果
+.tips
+  width: 100%
+  text-align: center
+  line-height: 100rpx
+  font-size: 30rpx
+
+// 通用链接列表样式: 左侧文字,右侧箭头
+.link-list
+  & > navigator
+    position: relative
+    margin: 5rpx 0
+    padding-right: 50rpx
+    line-height: 88rpx
+    background: white
+  text
+    display: block
+    text-indent: 20rpx
+    font-size: 32rpx
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
+  image
+    width: 16rpx
+    height: 25rpx
+    margin-top: -12rpx
+    position: absolute
+    right: 20rpx
+    top: 50%
+
+//搜索模块
+.search
+  overflow: hidden
+  height: 108rpx
+  font: 28rpx PingFang-SC-Medium
+  color: #969696
+  background: #fff
+  text-align: center
+  .search_content
+    width: 690rpx
+    line-height: 68rpx
+    margin: 20rpx auto
+    border-radius: 34rpx
+    background: #f2f2f2
+.search_text
+  display: flex
+  align-items: center
+  justify-content: center
+.icon-search
+  width: 40rpx
+  height: 40rpx
+//无数据
+.nodata
+  margin-top: 50%
+  font-size: 38rpx
+  text-align: center
+//灰线
+.wire-gray
+  height: 20rpx
+  width: 100%
+  background: #f4f4f4                  

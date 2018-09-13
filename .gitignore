@@ -1,0 +1,15 @@
+dist/*
+node_modules
+*.swp
+.vscode
+npm-debug.log*
+.wepycache
+
+yarn-error.log
+
+**/**/*.DS_Store
+.project
+
+*.swo
+
+src/constant/configConstant.js
