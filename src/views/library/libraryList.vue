@@ -47,7 +47,7 @@
 
             <el-form-item label="分类" >
             <el-select v-model="form.value" value-key="id" placeholder="请选择">
-                <el-option v-for="item in options" :label="item.label" :key="item.id"  :value="item"></el-option>
+                <el-option v-for="item in options" :label="item.label" :key="item.id"  :value="item.label"></el-option>
             </el-select>
             </el-form-item>
 
@@ -92,7 +92,7 @@
     <div style="width:20px;height: 30px;"></div>
 
     <el-select v-model="classVal" value-key="id" placeholder="请选择">
-      <el-option v-for="item in options" :label="item.label" :key="item.id"  :value="item"></el-option>
+      <el-option v-for="item in options" :label="item.label" :key="item.id"  :value="item.label"></el-option>
     </el-select>
         <div style="width:1px;height: 30px;"></div>
     <el-button slot="append" icon="el-icon-search"></el-button>
@@ -157,10 +157,14 @@
     
 </template>
 <script>
+import { getLibList } from "@/api/libraryList";
 export default {
+  created() {
+    this.getLibraryList_api();
+  },
   data() {
     return {
-      isShowEdit: false, 
+      isShowEdit: false,
       editId: null,
       isAddAws: false,
       dialogFormVisible: false,
@@ -170,55 +174,42 @@ export default {
         awsA: "",
         awsB: "",
         awsC: "",
-        awsD: "",
+        awsD: ""
       },
       classVal: "",
       options: [
-          {
-            id: 121,
-            label: "语文"
-          },
-          {
-            id: 2,
-            label: "数学"
-          },
-          {
-            id: 3,
-            label: "科学"
-          },
-          {
-            id: 4,
-            label: "生活"
-          },
-          {
-            id: 5,
-            label: "音乐"
-          }
+        {
+          id: 121,
+          label: "语文"
+        }
       ],
       formLabelWidth: "120px",
 
       input: "",
-      tableData: [
-        {
-          title: "1111111",
-          awsA: "1212",
-          awsB: "qwqw",
-          awsC: "21211",
-          awsD: "12212",
-          class: "212"
-        },
-        {
-          title: "1111111",
-          awsA: "1212",
-          awsB: "qwqw",
-          awsC: "21211",
-          awsD: "12212",
-          class: "212"
-        }
-      ]
+      tableData: []
     };
   },
   methods: {
+    getLibraryList_api: function(page, limit) {
+      var data = {
+        page: page,
+        limit: limit
+      };
+      getLibList(data).then(res => {
+        console.log("res", res);
+        for (var i = 0; i < res.data.length; i++) {
+          var res_data = res.data[i];
+          this.tableData.push({
+            title: res_data.title,
+            awsA: res_data.answer1,
+            awsB: res_data.answer2,
+            awsC: res_data.answer3,
+            awsD: res_data.answer4,
+            class: res_data.classify_name
+          });
+        }
+      });
+    },
     toAddSubject: function() {
       this.dialogFormVisible = true;
       this.isShowEdit = false;
@@ -238,15 +229,15 @@ export default {
         awsB: this.form.awsB,
         awsC: this.form.awsC,
         awsD: this.form.awsD,
-        class: this.form.value.label
+        class: this.form.value
       });
       console.log(this.tableData);
     },
-    yesEdit:function(){
+    yesEdit: function() {
       this.dialogFormVisible = false;
       var edited = this.tableData[this.editId];
       edited.title = this.form.name;
-      edited.class = this.form.value.label;
+      edited.class = this.form.value;
       edited.awsA = this.form.awsA;
       edited.awsB = this.form.awsB;
       edited.awsC = this.form.awsC;
@@ -271,7 +262,7 @@ export default {
       this.form.awsB = list.awsB;
       this.form.awsC = list.awsC;
       this.form.awsD = list.awsD;
-      console.log("class",this.form.value);
+      console.log("class", this.form.value);
     },
     toDelete(id) {
       this.tableData.splice(id, 1);

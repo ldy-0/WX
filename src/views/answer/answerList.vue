@@ -104,7 +104,7 @@
 
             <el-form-item label="分类" >
             <el-select v-model="form.value" value-key="id" placeholder="请选择">
-                <el-option v-for="item in options" :label="item.label" :key="item.id"  :value="item"></el-option>
+                <el-option v-for="item in options" :label="item.label" :key="item.id"  :value="item.label"></el-option>
             </el-select>
             </el-form-item>
 
@@ -225,7 +225,7 @@ export default {
       dialogFormVisible: false,
       form: {
         name: "",
-        value: {id:0,label:"未选择"},
+        value: "",
         awsA: "",
         awsB: "",
         awsC: "",
@@ -323,7 +323,7 @@ export default {
       this.dialogFormVisible = true;
       this.isShowEdit = false;
       this.form.name = "";
-      this.form.value = {id:0,label:"未选择"};
+      this.form.value = "";
       this.form.awsA = "";
       this.form.awsB = "";
       this.form.awsC = "";
@@ -339,7 +339,7 @@ export default {
         awsB: this.form.awsB,
         awsC: this.form.awsC,
         awsD: this.form.awsD,
-        class: this.form.value.label
+        class: this.form.value
       });
       console.log(this.tableData);
     },

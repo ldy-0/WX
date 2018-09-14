@@ -30,6 +30,30 @@
   justify-content: flex-start;
   flex-wrap: nowrap;
 }
+
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
 </style>
 
 <template>
@@ -42,14 +66,73 @@
             <el-form-item label="房间名称">
                 <el-input v-model="form.name" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="房间名称">
-                <el-input v-model="form.name" auto-complete="off"></el-input>
+            <el-form-item label="题库">
+                <el-select v-model="form.libName" value-key="id" placeholder="请选择">
+                <el-option v-for="item in options" :label="item.label" :key="item.id"  :value="item.label"></el-option>
+            </el-select>
             </el-form-item>
-            <el-form-item label="房间名称">
-                <el-input v-model="form.name" auto-complete="off"></el-input>
+            <el-form-item label="题库数量">
+                <el-input v-model="libNum" :disabled="true" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="房间名称">
-                <el-input v-model="form.name" auto-complete="off"></el-input>
+            <el-form-item label="答题数量">
+                <el-input v-model="form.awsNum" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="答题起止时间">
+              <el-time-select
+                placeholder="起始时间"
+                v-model="form.startTime"
+                :picker-options="{
+                  start: '00:00',
+                  step: '00:30',
+                  end: '22:30'
+                }">
+              </el-time-select>
+              <el-time-select
+                placeholder="结束时间"
+                v-model="form.endTime"
+                :picker-options="{
+                  start: '00:00',
+                  step: '00:30',
+                  end: '23:00',
+                  minTime: form.startTime
+                }">
+              </el-time-select>
+            </el-form-item>
+            <el-form-item label="活动规则">
+              <el-input
+                type="textarea"
+                :autosize="{ minRows: 3, maxRows: 5}"
+                placeholder="请输入内容"
+                v-model="form.rule">
+              </el-input>
+            </el-form-item>
+            <el-form-item label="奖品">
+              <div style="margin: 20px 0;"></div>
+              <el-button @click="addDomain">新增</el-button>
+              <div style="margin: 20px 0;"></div>
+               <el-form-item
+                  v-for="(domain, index) in form.domains"
+                  
+                  :key="domain.key"
+                  :prop="'domains.' + index + '.value'"
+                >
+                  <el-input v-model="domain.value"></el-input><el-button @click.prevent="removeDomain(domain)">删除</el-button>
+                  <div style="margin: 20px 0;"></div>
+
+                  <el-upload
+                    action="https://jsonplaceholder.typicode.com/posts/"
+                    list-type="picture-card"
+                    :on-preview="handlePictureCardPreview"
+                    :on-remove="handleRemove"
+                    :on-success="handUpSuccess">
+                    <i class="el-icon-plus"></i>
+                  </el-upload>
+                  <el-dialog :visible.sync="dialogVisible">
+                    <img width="100%" :src="dialogImageUrl" alt="">
+                  </el-dialog>
+                  <div style="margin: 20px 0;"></div>
+              </el-form-item>
+
             </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -104,21 +187,64 @@
 export default {
   data() {
     return {
+      dialogImageUrl: "",
+      libNum: "",
+      startEndTime: [
+        new Date(2018, 9, 10, 8, 40),
+        new Date(2018, 9, 10, 9, 40)
+      ],
       editId: null,
       dialogFormVisible: false,
+      dialogVisible: false,
       isAdd: false,
-      form: [
-          {name: "语文", time: "12:23", lib: "tikuyi"}
-      ],
+      form: {
+        name: "",
+        libName: "",
+        awsNum: "",
+        startTime: "",
+        endTime: "",
+        rule: "",
+        domains: [
+          {
+            value: "",
+            key: Date.now(),
+            imageUrl: ""
+          }
+        ]
+      },
 
-      formLabelWidth: "80px",
+      formLabelWidth: "150px",
 
       tableData: [
-        { id: 0, name: "语文", time: "12:23", lib: "tikuyi" },
-        { id: 2, name: "科学", time: "12:23", lib: "tikuyi" },
-        { id: 9, name: "生活", time: "12:23", lib: "tikuyi" },
-        { id: 3, name: "外语", time: "12:23", lib: "tikuyi" }
-      ]
+        { id: 0, name: "语文", time: "12:23 - 13:00", lib: "tikuyi" },
+        { id: 2, name: "科学", time: "12:23 - 13:00", lib: "tikuyi" },
+        { id: 9, name: "生活", time: "12:23 - 13:00", lib: "tikuyi" },
+        { id: 3, name: "外语", time: "12:23 - 13:00", lib: "tikuyi" }
+      ],
+      
+      options: [
+        {
+          id: 121,
+          label: "语文"
+        },
+        {
+          id: 2,
+          label: "数学"
+        },
+        {
+          id: 3,
+          label: "科学"
+        },
+        {
+          id: 4,
+          label: "生活"
+        },
+        {
+          id: 5,
+          label: "音乐"
+        }
+      ],
+      urlArr: []
     };
   },
   methods: {
@@ -126,12 +252,26 @@ export default {
       //新增房间入口
       this.dialogFormVisible = true;
       this.isAdd = false;
-      this.name = "";
+      this.form.name = "";
+      this.form.libName = "";
+      this.form.awsNum = "";
+      this.form.startTime = "";
+      this.form.endTime = "";
+      this.form.rule = "";
+      this.form.domains[0].value = "";
+      this.form.domains[0].key = Date.now();
+      this.form.domains[0].imageUrl = "";
+      this.form.domains.splice(1, this.form.domains.length - 1);
     },
     yesClass: function() {
       //对话框下角的确定添加按钮
-      console.log(this.name);
-      this.tableData.push({ class: this.name, id: this.tableData.length });
+      console.log(this.form);
+      this.tableData.push({
+        lib: this.form.libName,
+        id: this.tableData.length,
+        name: this.form.name,
+        time: this.form.startTime + " - " + this.form.endTime
+      });
       this.dialogFormVisible = false;
     },
     editClass: function() {
@@ -158,6 +298,36 @@ export default {
         message: "第" + id + "房间停止成功",
         type: "success"
       });
+    },
+    removeDomain(item) {
+      //删除奖品选项
+      var index = this.form.domains.indexOf(item);
+      if (index !== -1) {
+        this.form.domains.splice(index, 1);
+      }
+    },
+    addDomain() {
+      //添加奖品
+      this.form.domains.push({
+        value: "",
+        key: Date.now(),
+        imageUrl: ""
+      });
+    },
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    handUpSuccess: function(response, file, fileList) {
+      console.log(fileList[0].url);
+      // var urlArr = [];
+      this.urlArr.push(fileList[0].url);
+      for (var i = 0; i < this.form.domains.length; i++) {
+        this.form.domains[i].imageUrl = this.urlArr[i];
+      }
     }
   }
 };
