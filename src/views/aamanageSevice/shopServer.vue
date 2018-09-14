@@ -177,6 +177,7 @@ export default {
       },
     //head
       search(){ // 此时listQuery已经改变
+        this.listQuery.page = 1
         this.getList()
       },
       getList() { //获取店铺列表

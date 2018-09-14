@@ -301,7 +301,8 @@ export default {
           this.downloadLoading = false
         })
       },
-      search(){
+      search(){ // 此时listQuery已经改变
+        this.listQuery.page = 1
         this.getList()
       },
     // body
