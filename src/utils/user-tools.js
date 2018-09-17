@@ -1,6 +1,7 @@
 import wepy from "wepy";
-import { SHOPID } from "../constant/configConstant";
 import { shttp } from "./http";
+import { LOGINAPI } from "../constant/configConstant";
+//获取code码
 const getCode = async () => {
   let res = {
     status: false,
@@ -16,6 +17,7 @@ const getCode = async () => {
   }
   return res;
 };
+//登录逻辑
 const signIn = async (getUserInfo = false, shareId = "") => {
   let userInfo = {},
     codeInfo;
@@ -38,11 +40,8 @@ const signIn = async (getUserInfo = false, shareId = "") => {
   if (codeInfo.status) {
     userInfo.code = codeInfo.code;
   }
-  if (SHOPID) {
-    userInfo.source = SHOPID;
-  }
   return await shttp
-    .post("/api/v1/member/login")
+    .post(LOGINAPI)
     .send(userInfo)
     .end();
 };

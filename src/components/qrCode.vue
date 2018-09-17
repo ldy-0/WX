@@ -1,5 +1,4 @@
 <style lang="sass">
-@import "../pages/base.sass"
 .container-box
   background-color: rgba(0,0,0,0.5)
   height: 100vh

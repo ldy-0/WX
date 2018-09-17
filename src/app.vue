@@ -10,14 +10,13 @@ import wepy from "wepy";
 import "wepy-async-function";
 import { shttp } from "./utils/http";
 import { signIn } from "./utils/user-tools";
-import { SHOPID } from "./constant/configConstant";
 export default class extends wepy.app {
   config = {
     pages: [
       "pages/authorization", //授权页
-      "pages/home", //首页
-      "pages/shoppingCart", //购物车
-      "pages/mine", //我的
+      "pages/index1",
+      "pages/index2",
+      "pages/index3",
     ],
     window: {
       backgroundTextStyle: "dark",
@@ -34,20 +33,20 @@ export default class extends wepy.app {
       borderStyle: "block",
       list: [
         {
-          pagePath: "pages/home",
-          text: "首页",
+          pagePath: "pages/index1",
+          text: "index1",
           iconPath: "images/tab_shouye_yellow@2x.png",
           selectedIconPath: "images/tab_shouye@2x.png"
         },
         {
-          pagePath: "pages/shoppingCart",
-          text: "购物车",
+          pagePath: "pages/index2",
+          text: "index2",
           iconPath: "images/tab_gouwuche@2x.png",
           selectedIconPath: "images/tab_gouwuche_yellow@2x.png"
         },
         {
-          pagePath: "pages/mine",
-          text: "我的",
+          pagePath: "pages/index3",
+          text: "index3",
           iconPath: "images/tab_wode@2x.png",
           selectedIconPath: "images/tab_wode_yellow@2x.png"
         }
@@ -72,24 +71,12 @@ export default class extends wepy.app {
 
   async onLaunch() {
     console.log("onLaunch");
+    //微信用户登录换取token，并将token存入本地缓存中
     const userInfo = await signIn(false);
     if (userInfo.status === 0) {
       let auth = userInfo.data.token;
-      let cartNum = userInfo.data.cart_num;
       wx.setStorageSync("token", auth);
-      wx.setStorageSync("cartNum", cartNum);
     }
-    if (SHOPID) {
-      wx.setStorageSync("shopId", SHOPID);
-    } else {
-      wx.removeStorageSync("shopId");
-    }
-
-    // const memberSelf = await shttp.get("/v1/member/self").end();
-    // if (memberSelf.status == "success") {
-    //   let data = memberSelf.result;
-    //   wx.setStorageSync("memberSelf", data);
-    // }
   }
 }
 </script>

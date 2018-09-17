@@ -1,5 +1,4 @@
 <style lang="sass" scoped>
-@import "../pages/base.sass"
 .tab
   width: 100%
 .header
@@ -31,7 +30,7 @@
 .active .header-item_line:before
   content: ""
   width: 30rpx
-  background-color: $orange
+  background-color: skyblue
   height: 4rpx
 </style>
 <template>

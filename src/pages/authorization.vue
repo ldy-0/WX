@@ -11,6 +11,7 @@
 .imgbox .image1 {
   width: 223rpx;
   height: 224rpx;
+  background: #e9e9e9;
 }
 
 .btn {
@@ -54,9 +55,9 @@
 <template>
   <view class="container">
     <view class="imgbox">
-      <image class="image1" src="../images/icon_logo@2x.png" alt=""/>
+      <image class="image1" src="" alt=""/>
       <view class="tip_wel">Welcome !</view>
-      <view class="wx_name">悦合邦社区服务</view>
+      <view class="wx_name">授权演示文字</view>
     </view>
     <button class="btn" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">微信登入</button>
  </view>
@@ -65,7 +66,7 @@
 <script>
 import wepy from "wepy";
 import { shttp } from "../utils/http";
-import { showSuccessToast, showFailToast } from "../utils/tools";
+import { USERINFO } from "../constant/configConstant";
 export default class Authorization extends wepy.page {
   config = {
     navigationBarTitleText: "微信授权",
@@ -79,65 +80,36 @@ export default class Authorization extends wepy.page {
   };
 
   components = {};
-  onLoad(options) {
-    console.log(options.shopId, "shouquan");
-    if (options.path == "/pages/public/publicList") {
-      wx.setStorageSync("shopId", options.shopId);
-      this.path = `${options.path}?type=${options.type}&gohome=1&shopId=${
-        options.shopId
-      }`;
-    } else if (options.shareType == "bargain") {
-      wx.setStorageSync("shopId", options.shopId);
-      this.shareType = options.shareType;
-    } else {
-      wx.setStorageSync("shopId", options.shopId);
-      this.path = "/pages/home";
-    }
-  }
+  onLoad(options) {}
   onShow() {
+    //检验是否授权过
     this.wxUserInfo = wx.getStorageSync("wxUserInfo") || null;
     if (this.wxUserInfo != null) {
-      if (this.path == "/pages/home") {
-        wx.switchTab({
-          url: "/pages/home"
-        });
-      } else if (this.shareType == "bargain") {
-        wx.navigateBack();
-      } else {
-        wx.redirectTo({
-          url: this.path
-        });
-      }
+      wx.switchTab({
+        url: "/pages/index1"
+      });
     }
   }
 
-  //获取用户信息
+  //获取用户信息,onGotUserInfo中所用到的api接口
   async onGotUserInfo(e) {
     let wxUserInfo = e.detail.userInfo;
     wx.setStorageSync("wxUserInfo", wxUserInfo);
     if (wxUserInfo != null) {
       const res = await shttp
-        .post("/api/v1/member/memberinfo")
+        .post(USERINFO)
         .send({
           wx_name: wxUserInfo.nickName,
           wx_avatar: wxUserInfo.avatarUrl
         })
         .end();
-      //获取个人资料/api/v1/member4/profile
-      const memberRes = await shttp.get(`/api/v1/member/memberinfo`).end();
+      //获取用户资料存入本地缓存
+      const memberRes = await shttp.get(USERINFO).end();
       let memberInfo = memberRes.data;
       wx.setStorageSync("memberInfo", memberInfo);
-      if (this.path == "/pages/home") {
-        wx.switchTab({
-          url: "/pages/home"
-        });
-      } else if (this.shareType == "bargain") {
-        wx.navigateBack();
-      } else {
-        wx.redirectTo({
-          url: this.path
-        });
-      }
+      wx.switchTab({
+        url: "/pages/index1"
+      });
     }
   }
 }
