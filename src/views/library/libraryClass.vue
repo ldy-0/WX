@@ -59,7 +59,7 @@
       style="width: 100%" >
       <el-table-column
         label="分类" 
-        prop="class"
+        prop="name"
         >
       </el-table-column>
       <el-table-column
@@ -81,47 +81,82 @@
     
 </template>
 <script>
+import {
+  getClassList,
+  postAddClass,
+  putEditClass,
+  deleteClassList
+} from "@/api/libraryList";
+
 export default {
+  created() {
+    this.getClassList_api();
+  },
   data() {
     return {
-      editId : null,
+      editId: null,
       dialogFormVisible: false,
       isAdd: false,
       name: "",
       formLabelWidth: "80px",
-      tableData: [
-        { class: "语文", id: 0 },
-        { class: "科学", id: 2 },
-        { class: "生活", id: 9 },
-        { class: "外语", id: 3 }
-      ]
+      tableData: []
     };
   },
   methods: {
-    toAddClass:function(){
+    getClassList_api: function(page, limit) {
+      var data = {
+        page: 1,
+        limit: 0
+      };
+      getClassList(data).then(res => {
+        console.log("class list res", res.data);
+        this.tableData = [];
+        this.tableData = res.data;
+      });
+    },
+    toAddClass: function() {
       this.dialogFormVisible = true;
       this.isAdd = false;
       this.name = "";
     },
     yesClass: function() {
-      console.log(this.name);
-      this.tableData.push({ class: this.name, id: this.tableData.length });
-      this.dialogFormVisible = false;
-    },
-    editClass: function() {
-      console.log("editClassID",this.editId);
-      this.tableData[this.editId].class = this.name;
-      this.dialogFormVisible = false;
+      var data = {
+        name: this.name
+      };
+      postAddClass(data).then(res => {
+        console.log("add", res);
+        this.getClassList_api();
+        this.dialogFormVisible = false;
+      });
     },
     toDelete: function(id) {
-      // console.log(this.tableData[id].class);
-      this.tableData.splice(id, 1);
+      console.log(this.tableData[id].classify_id);
+      var data = {
+        classify_id: this.tableData[id].classify_id
+      };
+      deleteClassList(data).then(res => {
+        console.log(res);
+        this.tableData.splice(id, 1);
+      });
     },
     toEdit: function(id) {
       this.editId = id;
       this.dialogFormVisible = true;
       this.isAdd = true;
-      this.name = this.tableData[id].class;
+      this.name = this.tableData[id].name;
+      console.log("tab", this.tableData);
+    },
+    editClass: function() {
+      console.log("editClassID", this.editId);
+      this.tableData[this.editId].name = this.name;
+      var data = {
+        name: this.tableData[this.editId].name,
+        classify_id: this.tableData[this.editId].classify_id
+      };
+      putEditClass(data).then(res => {
+        console.log(res);
+        this.dialogFormVisible = false;
+      });
     }
   }
 };

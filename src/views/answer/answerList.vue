@@ -132,6 +132,16 @@
                 </el-input>
                 <!-- <i class="el-icon-delete"></i> -->
             </el-form-item>
+
+            <el-form-item label="正确答案" >
+            <el-select v-model="form.aws" placeholder="请选择">
+                <el-option :label="form.awsA" :value="form.awsA"></el-option>
+                <el-option :label="form.awsB" :value="form.awsB"></el-option>
+                <el-option :label="form.awsC" :value="form.awsC"></el-option>
+                <el-option :label="form.awsD" :value="form.awsD" v-if="isAddAws"></el-option>
+            </el-select>
+            </el-form-item>
+
         </el-form>
         <div slot="footer" class="dialog-footer">
             <!-- <el-button @click="dialogFormVisible = false">取 消</el-button> -->
@@ -170,29 +180,29 @@
 
       <el-table-column
         label="答案一" 
-        prop="awsA"
+        prop="answer1"
         >
       </el-table-column>
 
         <el-table-column
         label="答案二"
-        prop="awsB"
+        prop="answer2"
         >
       </el-table-column>
       <el-table-column
         label="答案三" 
-        prop="awsC"
+        prop="answer3"
         >
       </el-table-column>
 
       <el-table-column
         label="答案四" 
-        prop="awsD"
+        prop="answer4"
         >
       </el-table-column>
       <el-table-column
         label="分类" 
-        prop="class"
+        prop="classify_name"
         >
       </el-table-column>
       <el-table-column
@@ -214,7 +224,14 @@
     
 </template>
 <script>
+import { getLibClassList } from "@/api/libraryList";
+import { getShopList, postAddShopList } from "@/api/answer";
+
 export default {
+  created() {
+    this.getShopList_api(1, 0);
+    this.getClass(1, 0);
+  },
   data() {
     return {
       isDialogCheck: false,
@@ -229,52 +246,15 @@ export default {
         awsA: "",
         awsB: "",
         awsC: "",
-        awsD: ""
+        awsD: "",
+        aws: ""
       },
       classVal: "",
-      options: [
-        {
-          id: 121,
-          label: "语文"
-        },
-        {
-          id: 2,
-          label: "数学"
-        },
-        {
-          id: 3,
-          label: "科学"
-        },
-        {
-          id: 4,
-          label: "生活"
-        },
-        {
-          id: 5,
-          label: "音乐"
-        }
-      ],
+      options: [],
       formLabelWidth: "120px",
 
       input: "",
-      tableData: [
-        {
-          title: "1111111",
-          awsA: "1212",
-          awsB: "qwqw",
-          awsC: "21211",
-          awsD: "12212",
-          class: "212"
-        },
-        {
-          title: "1111111",
-          awsA: "1212",
-          awsB: "qwqw",
-          awsC: "21211",
-          awsD: "12212",
-          class: "212"
-        }
-      ],
+      tableData: [],
       dialogTableData: [
         {
           title: "sd",
@@ -304,6 +284,35 @@ export default {
     };
   },
   methods: {
+    getShopList_api: function(page, limit) {
+      //获取list
+      var data = {
+        page: page,
+        limit: limit
+      };
+      this.tableData = [];
+      getShopList(data).then(res => {
+        console.log(res.data);
+        this.tableData = res.data;
+      });
+    },
+    getClass: function(page, limit) {
+      //获取class
+      var data = {
+        page: page,
+        limit: limit
+      };
+      getLibClassList(data).then(res => {
+        console.log(res);
+        for (var i = 0; i < res.data.length; i++) {
+          var res_data = res.data[i];
+          this.options.push({
+            label: res_data.name,
+            id: res_data.classify_id
+          });
+        }
+      });
+    },
     toCheckEdit: function(command) {
       //添加题目
       if (command === "up") {
@@ -322,26 +331,36 @@ export default {
       //对话框里单独添加
       this.dialogFormVisible = true;
       this.isShowEdit = false;
+
       this.form.name = "";
       this.form.value = "";
       this.form.awsA = "";
       this.form.awsB = "";
       this.form.awsC = "";
       this.form.awsD = "";
+      this.form.aws = "";
     },
     toYesAdd: function() {
       //确定单独添加题目
-      console.log(this.form.value.id);
-      this.dialogFormVisible = false;
-      this.tableData.push({
+      var classify_id = null;
+      for(var i = 0;i<this.options.length;i++){
+        if(this.form.value === this.options[i].label){
+          classify_id = this.options[i].id;
+        }
+      }
+      var data = {
         title: this.form.name,
-        awsA: this.form.awsA,
-        awsB: this.form.awsB,
-        awsC: this.form.awsC,
-        awsD: this.form.awsD,
-        class: this.form.value
+        answer1: this.form.awsA,
+        answer2: this.form.awsB,
+        answer3: this.form.awsC,
+        answer4: this.form.awsD,
+        answers: this.form.aws,
+        classify_id: classify_id
+      };
+      postAddShopList(data).then(res => {
+        this.dialogFormVisible = false;
+        this.getShopList_api(1,0);
       });
-      console.log(this.tableData);
     },
     yesEdit: function() {
       //确定编辑

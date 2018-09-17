@@ -75,6 +75,16 @@
                 </el-input>
                 <!-- <i class="el-icon-delete"></i> -->
             </el-form-item>
+
+            <el-form-item label="正确答案" >
+            <el-select v-model="form.aws" placeholder="请选择">
+                <el-option :label="form.awsA" :value="form.awsA"></el-option>
+                <el-option :label="form.awsB" :value="form.awsB"></el-option>
+                <el-option :label="form.awsC" :value="form.awsC"></el-option>
+                <el-option :label="form.awsD" :value="form.awsD" v-if="isAddAws"></el-option>
+            </el-select>
+            </el-form-item>
+
         </el-form>
         <div slot="footer" class="dialog-footer">
             <!-- <el-button @click="dialogFormVisible = false">取 消</el-button> -->
@@ -85,17 +95,17 @@
     <div style="width:20px;height: 30px;"></div>
 
     <div class="input-search">
-        <el-input v-model="input" placeholder="题目搜索"></el-input>
+        <el-input v-model="inputTitle" placeholder="题目搜索"></el-input>
         <div style="width:1px;height: 30px;"></div>
-        <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-button slot="append" icon="el-icon-search" @click="toSearchTitle"></el-button>
     </div>
     <div style="width:20px;height: 30px;"></div>
 
-    <el-select v-model="classVal" value-key="id" placeholder="请选择">
-      <el-option v-for="item in options" :label="item.label" :key="item.id"  :value="item.label"></el-option>
+    <el-select v-model="classVal" value-key="id" placeholder="请选择" @change="toSearchClass">
+      <el-option v-for="(item,index) in options" :label="item.label" :key="item.id"  :value="item.label"></el-option>
     </el-select>
-        <div style="width:1px;height: 30px;"></div>
-    <el-button slot="append" icon="el-icon-search"></el-button>
+        <!-- <div style="width:1px;height: 30px;"></div>
+    <el-button slot="append" icon="el-icon-search" @click="toSearchClass"></el-button> -->
 
     </div>
 
@@ -157,10 +167,20 @@
     
 </template>
 <script>
-import { getLibList } from "@/api/libraryList";
+import {
+  getLibList,
+  postLibSearchTitle,
+  getLibClassList,
+  getLibSearchClass,
+  deleteLibList,
+  postLibAddList,
+  putLibEditList
+} from "@/api/libraryList";
+
 export default {
   created() {
     this.getLibraryList_api();
+    this.getClass();
   },
   data() {
     return {
@@ -174,37 +194,101 @@ export default {
         awsA: "",
         awsB: "",
         awsC: "",
-        awsD: ""
+        awsD: "",
+        aws: ""
       },
       classVal: "",
-      options: [
-        {
-          id: 121,
-          label: "语文"
-        }
-      ],
+      options: [],
       formLabelWidth: "120px",
 
-      input: "",
+      inputTitle: "",
       tableData: []
     };
   },
   methods: {
     getLibraryList_api: function(page, limit) {
       var data = {
-        page: page,
-        limit: limit
+        page: 1,
+        limit: 50
       };
       getLibList(data).then(res => {
         console.log("res", res);
         for (var i = 0; i < res.data.length; i++) {
           var res_data = res.data[i];
           this.tableData.push({
+            id: res_data.topic_id,
             title: res_data.title,
             awsA: res_data.answer1,
             awsB: res_data.answer2,
             awsC: res_data.answer3,
             awsD: res_data.answer4,
+            aws: res_data.answers,
+            class: res_data.classify_name
+          });
+        }
+      });
+    },
+    getClass: function() {
+      var data = {
+        page:1,
+        limit:0
+      }
+      getLibClassList(data).then(res => {
+        console.log(res);
+        for (var i = 0; i < res.data.length; i++) {
+          var res_data = res.data[i];
+          this.options.push({
+            label: res_data.name,
+            id: res_data.classify_id
+          });
+        }
+      });
+    },
+    toSearchTitle: function() {
+      var data = { title: this.inputTitle };
+      postLibSearchTitle(data).then(res => {
+        console.log(res.data);
+        this.tableData = [];
+        for (var i = 0; i < res.data.length; i++) {
+          var res_data = res.data[i];
+          this.tableData.push({
+            id: res_data.topic_id,
+            title: res_data.title,
+            awsA: res_data.answer1,
+            awsB: res_data.answer2,
+            awsC: res_data.answer3,
+            awsD: res_data.answer4,
+            aws: res_data.answers,
+            class: res_data.classify_name
+          });
+        }
+      });
+    },
+    toSearchClass: function() {
+      console.log(this.classVal);
+      var classify_id = null;
+      for (var i = 0; i < this.options.length; i++) {
+        var obj = this.options[i];
+        if (obj.label === this.classVal) {
+          classify_id = obj.id;
+        }
+      }
+      var data = {
+        classify_id: classify_id
+      };
+      getLibSearchClass(data).then(res => {
+        console.log(res);
+        this.tableData = [];
+        for (var i = 0; i < res.data.length; i++) {
+          var res_data = res.data[i];
+          this.tableData.push({
+            id: res_data.topic_id,
+            title: res_data.title,
+            awsA: res_data.answer1,
+            awsB: res_data.answer2,
+            awsC: res_data.answer3,
+            awsD: res_data.answer4,
+            aws: res_data.answers,
             class: res_data.classify_name
           });
         }
@@ -219,29 +303,58 @@ export default {
       this.form.awsB = "";
       this.form.awsC = "";
       this.form.awsD = "";
+      this.form.aws = "";
     },
     toYesAdd: function() {
-      console.log(this.form.value.id);
+      console.log(this.form.value);
+      var classify_id = null;
+      for (var i = 0; i < this.options.length; i++) {
+        var obj = this.options[i];
+        if (obj.label === this.form.value) {
+          classify_id = obj.id;
+        }
+      }
       this.dialogFormVisible = false;
-      this.tableData.push({
+      var data = {
         title: this.form.name,
-        awsA: this.form.awsA,
-        awsB: this.form.awsB,
-        awsC: this.form.awsC,
-        awsD: this.form.awsD,
-        class: this.form.value
+        answer1: this.form.awsA,
+        answer2: this.form.awsB,
+        answer3: this.form.awsC,
+        answer4: this.form.awsD,
+        answers: this.form.aws,
+        classify_id: classify_id
+      };
+      postLibAddList(data).then(res => {
+        console.log(res);
+        this.tableData = [];
+        this.getLibraryList_api();
       });
-      console.log(this.tableData);
     },
     yesEdit: function() {
       this.dialogFormVisible = false;
-      var edited = this.tableData[this.editId];
-      edited.title = this.form.name;
-      edited.class = this.form.value;
-      edited.awsA = this.form.awsA;
-      edited.awsB = this.form.awsB;
-      edited.awsC = this.form.awsC;
-      edited.awsD = this.form.awsD;
+      var edited = this.tableData[this.editId].id;
+      var classify_id = null;
+      for (var i = 0; i < this.options.length; i++) {
+        var obj = this.options[i];
+        if (obj.label === this.form.value) {
+          classify_id = obj.id;
+        }
+      }
+      var data = {
+        title : this.form.name,
+        classify_id : classify_id,
+        answer1 : this.form.awsA,
+        answer2 : this.form.awsB,
+        answer3 : this.form.awsC,
+        answer4 : this.form.awsD,
+        answers: this.form.aws,
+        topic_id: edited
+      }
+      putLibEditList(data).then( res =>{
+        console.log("edit res",res);
+        this.tableData = [];
+        this.getLibraryList_api();
+      })
     },
 
     toGetSubList: function() {},
@@ -249,12 +362,14 @@ export default {
 
     toClose: function() {
       this.isAddAws = false;
+      this.form.awsD = "";
     },
     toEdit(id) {
       this.editId = id;
       this.dialogFormVisible = true;
       this.isAddAws = true;
       this.isShowEdit = true;
+
       var list = this.tableData[id];
       this.form.name = list.title;
       this.form.value = list.class;
@@ -262,9 +377,15 @@ export default {
       this.form.awsB = list.awsB;
       this.form.awsC = list.awsC;
       this.form.awsD = list.awsD;
-      console.log("class", this.form.value);
+      this.form.aws = list.aws;
     },
     toDelete(id) {
+      var data = {
+        topic_id: this.tableData[id].id
+      };
+      deleteLibList(data).then(res => {
+        console.log(res);
+      });
       this.tableData.splice(id, 1);
     }
   }
