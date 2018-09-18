@@ -38,7 +38,7 @@
   * 功能：`数据请求的get、put、post、detile的封装`
   * 文档： [查看使用范例](..\manual\http.md)
   * 备注:
-*** 
+
 ## 三方js库
 * 库名：`Day.js`
   - 功能：`Day.js有很多API 来解析、处理、校验、增减、展示时间和日期`
@@ -49,9 +49,9 @@
   - 功能：`算术计算`
   - 文档： [查看使用文档](https://github.com/fzred/calculatorjs/blob/master/README-ZH.md)
   - 备注:
-***   
+
 ## 组件
-***
+
 
 
 备注： 有好的自有js库、三方js库、组件可以往这添加积累以供大家一起使用，提升开发效率
