@@ -18,7 +18,7 @@
 └── package.json               项目的package配置
 ```
 ## 开发前准备
- * 开始项目时需在[configTemplate.js](.\src\constant\configTemplate.js)文件中配置好项目的相关参数
+ * 开始项目时需在[configTemplate.js](..\src\constant\configTemplate.js)文件中配置好项目的相关参数
     >在[腾讯文档](https://docs.qq.com/sheet/BqI21X2yZIht16aEvJ2OmCjn1V9HaE4ejMTJ1ikqaA01VCbM4)中根据所需开发项目的订单号可查看该项目的开发必备信息
 
 ## 运行项目
@@ -36,7 +36,7 @@
 ## 自有js库
 * 库名：`http.js`
   * 功能：`数据请求的get、put、post、detile的封装`
-  * 文档： [查看使用范例](.\manual\http.md)
+  * 文档： [查看使用范例](..\manual\http.md)
   * 备注:
 *** 
 ## 三方js库
