@@ -37,7 +37,7 @@
     <div class="input-search">
         <el-input v-model="inputPhoneNum" placeholder="搜索手机号"></el-input>
         <div style="width:1px;height: 30px;"></div>
-        <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-button slot="append" icon="el-icon-search" @click="searchNumber"></el-button>
     </div>
 <el-container class="notice">
 <el-main>
@@ -48,38 +48,38 @@
     <el-table-column
         label="头像">
         <template slot-scope="scope">
-        <img :src="scope.row.userPic" alt="" style="width:50px;height:50px;">
+        <img :src="scope.row.subscriber_avatar" alt="" style="width:50px;height:50px;">
       </template>
     </el-table-column>
 
     <el-table-column
         label="昵称" 
-        prop="nickName">
+        prop="subscriber_nickname">
     </el-table-column>
 
     <el-table-column
         label="手机号" 
-        prop="phoneNumber">
+        prop="subscriber_phone">
     </el-table-column>
 
     <el-table-column
         label="名字" 
-        prop="name">
+        prop="subscriber_name">
     </el-table-column>
 
     <el-table-column
         label="孩子年龄" 
-        prop="age">
+        prop="subscriber_age">
     </el-table-column>
 
     <el-table-column
         label="孩子年级" 
-        prop="grade">
+        prop="subscriber_grade">
     </el-table-column>
 
     <el-table-column
         label="所在城市" 
-        prop="city">
+        prop="subscriber_city">
     </el-table-column>
     
     </el-table>
@@ -93,20 +93,37 @@
 </template>
 
 <script>
+import { getMemberList, postSearchNumber } from "@/api/answer";
 export default {
+  created() {
+    this.getList_api(1, 0);
+  },
   data() {
     return {
       inputPhoneNum: "",
-
-      tableData: [
-        { userPic: "../../../static/img/plane.png", nickName: "qwe", phoneNumber:"13356895412" , name:"sanh" , age:"12" , city:"wuhan" , grade : "6" },
-        { userPic: "../../../static/img/plane.png", nickName: "qwe", phoneNumber:"13356895412" , name:"sanh" , age:"12" , city:"wuhan" , grade : "6" },
-        { userPic: "../../../static/img/plane.png", nickName: "qwe", phoneNumber:"13356895412" , name:"sanh" , age:"12" , city:"wuhan" , grade : "6" }
-      ]
+      tableData: []
     };
   },
   methods: {
-
+    getList_api: function(page, limit) {
+      var data = {
+        page: page,
+        limit: limit
+      };
+      getMemberList(data).then(res => {
+        this.tableData = res.data;
+        console.log(res.data);
+      });
+    },
+    searchNumber: function() {
+      var data = {
+        phone: this.inputPhoneNum
+      };
+      postSearchNumber(data).then(res => {
+        console.log(res.data);
+        this.tableData = res.data;
+      });
+    }
   }
 };
 </script>

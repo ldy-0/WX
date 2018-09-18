@@ -333,6 +333,7 @@ export default {
     yesEdit: function() {
       this.dialogFormVisible = false;
       var edited = this.tableData[this.editId].id;
+      console.log(edited);
       var classify_id = null;
       for (var i = 0; i < this.options.length; i++) {
         var obj = this.options[i];

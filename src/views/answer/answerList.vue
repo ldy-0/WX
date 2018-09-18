@@ -60,29 +60,29 @@
 
       <el-table-column
         label="答案一" 
-        prop="awsA"
+        prop="answer1"
         >
       </el-table-column>
 
         <el-table-column
         label="答案二"
-        prop="awsB"
+        prop="answer2"
         >
       </el-table-column>
       <el-table-column
         label="答案三" 
-        prop="awsC"
+        prop="answer3"
         >
       </el-table-column>
 
       <el-table-column
         label="答案四" 
-        prop="awsD"
+        prop="answer4"
         >
       </el-table-column>
       <el-table-column
         label="分类" 
-        prop="class"
+        prop="classify_name"
         >
       </el-table-column>
       <el-table-column
@@ -152,9 +152,9 @@
     <div style="width:20px;height: 30px;"></div>
 
     <div class="input-search">
-        <el-input v-model="input" placeholder="题目搜索"></el-input>
+        <el-input v-model="inputTitle" placeholder="题目搜索"></el-input>
         <div style="width:1px;height: 30px;"></div>
-        <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-button slot="append" icon="el-icon-search" @click="searchTitle"></el-button>
     </div>
     <div style="width:20px;height: 30px;"></div>
 
@@ -224,13 +224,20 @@
     
 </template>
 <script>
-import { getLibClassList } from "@/api/libraryList";
-import { getShopList, postAddShopList } from "@/api/answer";
+import { getLibClassList, getLibList } from "@/api/libraryList";
+import {
+  getShopList,
+  postAddShopList,
+  deleteShopList,
+  putEditShopList,
+  postLibSearchTitle
+} from "@/api/answer";
 
 export default {
   created() {
     this.getShopList_api(1, 0);
     this.getClass(1, 0);
+    this.getLibraryList_api(1, 0);
   },
   data() {
     return {
@@ -253,37 +260,29 @@ export default {
       options: [],
       formLabelWidth: "120px",
 
-      input: "",
+      inputTitle: "",
       tableData: [],
-      dialogTableData: [
-        {
-          title: "sd",
-          awsA: "qw",
-          awsB: "qwqw",
-          awsC: "qq",
-          awsD: "df",
-          class: "gf"
-        },
-        {
-          title: "qsd",
-          awsA: "sxc",
-          awsB: "qwqw",
-          awsC: "sd",
-          awsD: "as",
-          class: "ad"
-        },
-        {
-          title: "a",
-          awsA: "j",
-          awsB: "c",
-          awsC: "v",
-          awsD: "h",
-          class: "m"
-        }
-      ]
+      dialogTableData: []
     };
   },
   methods: {
+    searchTitle: function() {
+      var data = {
+        title: this.inputTitle
+      };
+      postLibSearchTitle(data).then(res => {
+        this.tableData = res.data;
+      });
+    },
+    getLibraryList_api: function(page, limit) {
+      var data = {
+        page: page,
+        limit: limit
+      };
+      getLibList(data).then(res => {
+        this.dialogTableData = res.data;
+      });
+    },
     getShopList_api: function(page, limit) {
       //获取list
       var data = {
@@ -325,7 +324,11 @@ export default {
     toDialogAdd: function(id) {
       //对话框里从列表添加
       console.log("id", id);
-      this.tableData.push(this.dialogTableData[id]);
+      // this.tableData.push(this.dialogTableData[id]);
+      var data = this.dialogTableData[id];
+      postAddShopList(data).then(res => {
+        this.getShopList_api(1, 0);
+      });
     },
     toAddSubject: function() {
       //对话框里单独添加
@@ -343,8 +346,8 @@ export default {
     toYesAdd: function() {
       //确定单独添加题目
       var classify_id = null;
-      for(var i = 0;i<this.options.length;i++){
-        if(this.form.value === this.options[i].label){
+      for (var i = 0; i < this.options.length; i++) {
+        if (this.form.value === this.options[i].label) {
           classify_id = this.options[i].id;
         }
       }
@@ -359,20 +362,32 @@ export default {
       };
       postAddShopList(data).then(res => {
         this.dialogFormVisible = false;
-        this.getShopList_api(1,0);
+        this.getShopList_api(1, 0);
       });
     },
     yesEdit: function() {
       //确定编辑
-      console.log(this.form);
-      this.dialogFormVisible = false;
-      var edited = this.tableData[this.editId];
-      edited.title = this.form.name;
-      edited.class = this.form.value;
-      edited.awsA = this.form.awsA;
-      edited.awsB = this.form.awsB;
-      edited.awsC = this.form.awsC;
-      edited.awsD = this.form.awsD;
+      var classify_id = null;
+      for (var i = 0; i < this.options.length; i++) {
+        if (this.form.value === this.options[i].label) {
+          classify_id = this.options[i].id;
+        }
+      }
+      var edited = this.tableData[this.editId].question_id;
+      var data = {
+        question_id: edited,
+        title: this.form.name,
+        answer1: this.form.awsA,
+        answer2: this.form.awsB,
+        answer3: this.form.awsC,
+        answer4: this.form.awsD,
+        answers: this.form.aws,
+        classify_id: classify_id
+      };
+      putEditShopList(data).then(res => {
+        this.dialogFormVisible = false;
+        this.getShopList_api(1, 0);
+      });
     },
 
     toGetSubList: function() {
@@ -395,16 +410,23 @@ export default {
       this.isShowEdit = true;
       var list = this.tableData[id];
       this.form.name = list.title;
-      this.form.value = list.class;
-      this.form.awsA = list.awsA;
-      this.form.awsB = list.awsB;
-      this.form.awsC = list.awsC;
-      this.form.awsD = list.awsD;
-      console.log("class", this.form.value);
+      this.form.value = list.classify_name;
+      this.form.awsA = list.answer1;
+      this.form.awsB = list.answer2;
+      this.form.awsC = list.answer3;
+      this.form.awsD = list.answer4;
+      this.form.aws = list.answers;
     },
     toDelete(id) {
       //题目列表里的删除操作
-      this.tableData.splice(id, 1);
+      var question_id = this.tableData[id].question_id;
+      var data = {
+        question_id: question_id
+      };
+      deleteShopList(data).then(res => {
+        console.log(res);
+        this.tableData.splice(id, 1);
+      });
     }
   }
 };

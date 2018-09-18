@@ -68,7 +68,7 @@
             </el-form-item>
             <el-form-item label="题库">
                 <el-select v-model="form.libName" value-key="id" placeholder="请选择">
-                <el-option v-for="item in options" :label="item.label" :key="item.id"  :value="item.label"></el-option>
+                <el-option v-for="item in options" :label="item.name" :key="item.id"  :value="item.name"></el-option>
             </el-select>
             </el-form-item>
             <el-form-item label="题库数量">
@@ -77,6 +77,18 @@
             <el-form-item label="答题数量">
                 <el-input v-model="form.awsNum" auto-complete="off"></el-input>
             </el-form-item>
+            <el-form-item label="答题起止日期">
+              <div class="block">
+                <el-date-picker
+                  v-model="clickData"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期">
+                </el-date-picker>
+              </div>
+            </el-form-item>
+
             <el-form-item label="答题起止时间">
               <el-time-select
                 placeholder="起始时间"
@@ -184,9 +196,16 @@
     
 </template>
 <script>
+import { getBonusRoomInfo, postAddBonusRoom, grtLibList } from "@/api/answer";
+
 export default {
+  created() {
+    this.getList_api(1, 0);
+    this.getLibList_api(1, 0);
+  },
   data() {
     return {
+      clickData: null,
       dialogImageUrl: "",
       libNum: "",
       startEndTime: [
@@ -215,39 +234,32 @@ export default {
 
       formLabelWidth: "150px",
 
-      tableData: [
-        { id: 0, name: "语文", time: "12:23 - 13:00", lib: "tikuyi" },
-        { id: 2, name: "科学", time: "12:23 - 13:00", lib: "tikuyi" },
-        { id: 9, name: "生活", time: "12:23 - 13:00", lib: "tikuyi" },
-        { id: 3, name: "外语", time: "12:23 - 13:00", lib: "tikuyi" }
-      ],
-      
-      options: [
-        {
-          id: 121,
-          label: "语文"
-        },
-        {
-          id: 2,
-          label: "数学"
-        },
-        {
-          id: 3,
-          label: "科学"
-        },
-        {
-          id: 4,
-          label: "生活"
-        },
-        {
-          id: 5,
-          label: "音乐"
-        }
-      ],
+      tableData: [],
+
+      options: [],
       urlArr: []
     };
   },
   methods: {
+    getLibList_api: function(page, limit) {
+      var data = {
+        page: page,
+        limit: limit
+      };
+      grtLibList(data).then(res => {
+        this.options = res.data;
+        console.log("class",res.data)
+      });
+    },
+    getList_api: function(page, limit) {
+      var data = {
+        page: page,
+        limit: limit
+      };
+      getBonusRoomInfo(data).then(res => {
+        console.log(res.data);
+      });
+    },
     toAddClass: function() {
       //新增房间入口
       this.dialogFormVisible = true;
