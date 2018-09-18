@@ -36,7 +36,7 @@
 ## 自有js库
 * 库名：`http.js`
   * 功能：`数据请求的get、put、post、detile的封装`
-  * 文档： [查看使用范例](..\manual\http.md)
+  * 文档： [查看使用范例](http://118.31.48.192/minivictory/appletofWeChat/blob/master/manual/http.md)
   * 备注:
 
 ## 三方js库
@@ -54,7 +54,7 @@
 
 
 
-备注： 有好的自有js库、三方js库、组件可以往这添加积累以供大家一起使用，提升开发效率
+备注： 有好的自有js库、三方js库、组件可以往这添加积累以供大家一起使用，提升开发效率😁
   
 
 
