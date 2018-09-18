@@ -20,6 +20,8 @@
 ## 开发前准备
  * 开始项目时需在[configTemplate.js](..\src\constant\configTemplate.js)文件中配置好项目的相关参数
     >在[腾讯文档](https://docs.qq.com/sheet/BqI21X2yZIht16aEvJ2OmCjn1V9HaE4ejMTJ1ikqaA01VCbM4)中根据所需开发项目的订单号可查看该项目的开发必备信息
+  * 验证所获取的信息是否正确（如appid和	secret是否正确）
+    >[在线验证](https://mp.weixin.qq.com/debug/cgi-bin/apiinfo?t=index&type=%E5%9F%BA%E7%A1%80%E6%94%AF%E6%8C%81&form=%E8%8E%B7%E5%8F%96access_token%E6%8E%A5%E5%8F%A3%20/token&token=&lang=zh_CN)
 
 ## 运行项目
 * 安装依赖包： `npm install`
