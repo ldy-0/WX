@@ -28,9 +28,14 @@ export default {
     distribution:'分销',
     vote:'投票',
     // test
-    signIn: '签到',
-    coulse: '课程',
-    teacher: '老师',
+    signIn: '签到列表',
+    signin: '签到列表',
+    coulse: '课程列表',
+    teacher: '老师列表',
+    student: '学生列表',
+    address: '教学点列表',
+    appointment: '预约列表',
+    addGoods: '新增商品',
 
 
     sellerAuth:'权限',

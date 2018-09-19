@@ -8,9 +8,9 @@ console.log("request")
 const service = axios.create({
   // withCredentials:true,
   // baseURL: window.api, // api的base_url
-  baseURL: process.env.BASE_API, // api的base_url
+  // baseURL: process.env.BASE_API, // api的base_url
   // baseURL: 'https://www.njjncm.com/', // api的base_url
-  // baseURL: 'http://203.195.203.67/', // api的base_url
+  baseURL: 'http://203.195.203.67/', // api的base_url
   
   timeout: 20000 // request timeout
 })
@@ -44,16 +44,17 @@ service.interceptors.response.use(
     console.log('request.js', response)
     const res = response.data
     if (res&&res.status === 1) {
-      Message({
-        message: res.error,
-        type: 'error',
-        duration: 5 * 1000
-      })
+      // Message({
+      //   message: res.error,
+      //   type: 'error',
+      //   duration: 5 * 1000
+      // })
       // store.dispatch('FedLogOut').then(() => {
       //   location.reload() // 为了重新实例化vue-router对象 避免bug
       // })
       // store.dispatch('FedLogOut')
-      return Promise.reject('request.js拦截响应 res.status == 1')
+      // return Promise.reject('request.js拦截响应 res.status == 1')
+      return response;
     } else if(res&&res.status === 10){
         Message({
           message: res.error,
@@ -64,7 +65,8 @@ service.interceptors.response.use(
           location.reload() 
         })
     }else  {
-      return response.data
+      // return response.data
+      return response
     }
   },
   error => {

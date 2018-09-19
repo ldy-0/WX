@@ -319,8 +319,13 @@ export let asyncRouterMapSeller = [
       },
       { path: 'appointment',
         component: () => import('@/views/signIn/appointment'),
-        name: 'appointment',
+        name: 'signIn_appointment',
         meta: { title: 'appointment' }
+      },
+      { path: 'addGoods',
+        component: () => import('@/views/signIn/goods'),
+        name: 'appointment',
+        meta: { title: 'addGoods' }
       },
     ]
   }

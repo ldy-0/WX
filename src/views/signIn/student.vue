@@ -21,7 +21,7 @@
     <el-form :inline="true"  class="form"> <!--:model="formInline" -->
 
       <el-form-item>
-        <el-input style="width: 340px;" placeholder="请输入联系方式" v-model="studentListConfig.parentPhone"></el-input>
+        <el-input style="width: 340px;" placeholder="请输入联系方式" v-model="listConfig.parentPhone"></el-input>
         <el-button type="primary" icon="el-icon-search" @click="searchStudent">查询</el-button>
       </el-form-item>
 
@@ -32,9 +32,9 @@
     </el-form>
 
     <el-table :data="studentList" stripe v-loading="loadStudent" element-loading-text="给我一点时间" style="width: 100%" >
-      <el-table-column label='学生姓名' prop='name'></el-table-column>
-      <el-table-column label='家长姓名' prop='parentName'></el-table-column>
-      <el-table-column label='家长手机' prop='phone'></el-table-column>
+      <el-table-column label='学生姓名' prop='student_name'></el-table-column>
+      <el-table-column label='家长姓名' prop='parent_name'></el-table-column>
+      <el-table-column label='家长手机' prop='parent_mobile'></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="showCoulse(scope.$index, scope.row)">查看</el-button>
@@ -44,11 +44,11 @@
     </el-table>
 
     <el-pagination background 
-                  @size-change="studentSizeChange" 
-                  @current-change="studentPageChange" 
-                  :current-page="studentListConfig.page" 
+                  @size-change="sizeChange" 
+                  @current-change="pageChange" 
+                  :current-page="listConfig.page" 
                   :page-sizes="[10,2,30, 50]" 
-                  :page-size="studentListConfig.limit" 
+                  :page-size="listConfig.limit" 
                   layout="total, sizes, prev, pager, next" :total="studentTotal">
     </el-pagination>
 
@@ -105,7 +105,7 @@
 </template>
 <script>
 
-import {getAuthList_api,deleteAuth_api,addAuth_api,editAuth_api} from '@/api/seller' 
+import api from '@/api/seller' 
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 
 export default {
@@ -128,7 +128,7 @@ export default {
       coulseTotal: '',
       address: null,
       addressList: [],
-      studentListConfig: { // student
+      listConfig: { // student
         page: 1,
         limit: 10,
         coulseId: 0,
@@ -143,23 +143,31 @@ export default {
     }
   },
   methods: {
-      showCoulse(index, rowData){
-        console.log(rowData)
-        
-        this.canShowCoulse = true;
-        this.loadCoulse = true;
-        this.coulseList = [
-          { name: 'k1', num: 10, numed: 2, teacher: 'sjdfk；是看佛德国发动进攻i都经过到了法国害怕佛靠打工', address: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就', time: new Date().toLocaleString() },
-          { name: 'k1', num: 10, numed: 2, address: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就', time: new Date().toLocaleString() },
-          { name: 'k1', num: 10, numed: 2, address: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就', time: new Date().toLocaleString() },
-          { name: 'k1', num: 10, numed: 2, address: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就', time: new Date().toLocaleString() }
-        ];
-        this.loadCoulse = false;
-        this.coulseTotal = this.coulseList.length;
-      },
-      searchStudent(){
-        console.log('search student', this.studentListConfig.parentPhone);
-      },
+    searchStudent(){
+      console.log('search student', this.listConfig.parentPhone);
+    },
+    sizeChange(val) {
+      this.listConfig.limit = val
+      this.getList()
+    },
+    pageChange(val) {
+      this.listConfig.page = val
+      this.getList()
+    },
+    showCoulse(index, rowData){
+      console.log(rowData)
+      
+      this.canShowCoulse = true;
+      this.loadCoulse = true;
+      this.coulseList = [
+        { name: 'k1', num: 10, numed: 2, teacher: 'sjdfk；是看佛德国发动进攻i都经过到了法国害怕佛靠打工', address: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就', time: new Date().toLocaleString() },
+        { name: 'k1', num: 10, numed: 2, address: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就', time: new Date().toLocaleString() },
+        { name: 'k1', num: 10, numed: 2, address: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就', time: new Date().toLocaleString() },
+        { name: 'k1', num: 10, numed: 2, address: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就', time: new Date().toLocaleString() }
+      ];
+      this.loadCoulse = false;
+      this.coulseTotal = this.coulseList.length;
+    },
       importDone({ results, header }) { // upload xls success
         this.tableData = results
         this.tableHeader = header
@@ -181,16 +189,19 @@ export default {
         this.canShowStudent = true;
         this.getList(); 
       },
-      getList() { //获取列表
+      async getList() { //获取列表
         this.loadStudent = true;
 
         // let sendData = Object.assign({},this.listQuery)
+        let studentList = await api.getStudentList(this.listConfig);
+        this.studentList = studentList.data;
+        this.studentTotal = studentList.pagination.total;
+        console.log('get student', studentList);
         
-        this.studentList = [
-          { name: 'k1', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-          { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-        ];
-        this.studentTotal = this.studentList.length;
+        // this.studentList = [
+        //   { name: 'k1', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
+        //   { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
+        // ];
         this.loadStudent = false;
       },
       deleteStudent(index,row){
@@ -231,14 +242,7 @@ export default {
           
         
       },
-    studentSizeChange(val) {
-      this.student.limit = val
-      this.getList()
-    },
-    studentPageChange(val) {
-      this.student.page = val
-      this.getList()
-    },
+    
     coulseSizeChange(val){
       console.log('coulse size change', val);
     },

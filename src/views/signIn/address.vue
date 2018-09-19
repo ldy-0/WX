@@ -32,12 +32,12 @@
   <el-main>
 
     <el-table :data="addressList" stripe v-loading="loadAddress" element-loading-text="给我一点时间" style="width: 100%" >
-      <el-table-column label='名称' prop='name'></el-table-column>
-      <el-table-column label='地址' prop='address'></el-table-column>
+      <el-table-column label='名称' prop='address_name'></el-table-column>
+      <el-table-column label='地址' prop='address_detail'></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="showForm(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="deleteAddress(scope.$index, scope.row)">删除</el-button>
+          <el-button size="mini" type="danger" @click="deleteItem(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -59,13 +59,13 @@
 
   <el-form :model="addressForm"  ref="ruleForm" :rules="rules">
     <!-- 名称 -->
-    <el-form-item label="名称" :label-width="formLabelWidth"  prop="name">
-      <el-input v-model="addressForm.name" auto-complete="off"></el-input>
+    <el-form-item label="名称" :label-width="formLabelWidth"  prop="address_name">
+      <el-input v-model="addressForm.address_name" auto-complete="off"></el-input>
     </el-form-item>
 
     <!-- 地址 -->
-    <el-form-item label="地址" :label-width="formLabelWidth" prop='address'>
-      <el-input v-model="addressForm.address" auto-complete="off"></el-input>
+    <el-form-item label="地址" :label-width="formLabelWidth" prop='address_detail'>
+      <el-input v-model="addressForm.address_detail" auto-complete="off"></el-input>
     </el-form-item>
 
   </el-form>
@@ -81,7 +81,7 @@
 </template>
 <script>
 
-import {getAuthList_api,deleteAuth_api,addAuth_api,editAuth_api} from '@/api/seller' 
+import api from '@/api/seller' 
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 
 export default {
@@ -97,12 +97,12 @@ export default {
       isAdd: true,
       canSubmit: true,
       rules: {
-        name: [ { required: true, message: '请输入名称' } ],
-        address: [ { required: true, message: '请输入地址详情' } ],
+        address_name: [ { required: true, message: '请输入名称' } ],
+        address_detail: [ { required: true, message: '请输入地址详情' } ],
       },
       addressForm: {
-        name: '',
-        address: '',
+        address_name: '',
+        address_detail: '',
       },
       addressListConfig: { 
         page: 1,
@@ -113,6 +113,7 @@ export default {
       loadAddress: false,
       addressList: [],
       addressTotal: null,
+      interval: null,
     }
   },
   methods: {
@@ -130,7 +131,10 @@ export default {
         this.addressForm = row;
       },
       clearForm(done){
-        this.addressForm = {};
+        this.addressForm = {
+          address_name: '',
+          address_detail: '',
+        };
         done();
       },
       async addAddress(rule){
@@ -139,62 +143,41 @@ export default {
           return 
         }
         this.canSubmit = false;
-        console.log('add address', this.addressForm);
+        await api.setAddress(this.addressForm, this); 
         this.canSubmit = true;
       },
-      async editAddress(){
+      async editAddress(rule){
         let res = await this.$refs[rule].validate().catch(e => e);
         if(!res){
           return 
         }
         this.canSubmit = false;
+        await api.updateAddress(this.addressForm, this);
         console.log('edit address', this.addressForm);
         this.canSubmit = true;
       },
-      deleteAddress(index, row){
-        let id = row.id
+      deleteItem(index, row){
+        let id = row.address_id;
+
         this.$confirm(`此操作将删除该条目, 是否继续?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(() => {
-          console.log('delete ');
+        }).then(async () => {
+          await api.deleteAddress({address_id: id});
         }).catch(()=>{ this.$notify.info({ title: '消息', message: '已取消' }); })
       },
       //
-      getList() { //获取列表
+      async getList() { //获取列表
         this.loadAddress = true;
 
-        // let sendData = Object.assign({},this.listQuery)
+        let res = await api.getAddressList(this.addressListConfig, this);
         
-        this.addressList = [
-          { name: 'k1', address: '双方的破碎的卡佛的感觉卡佛大哥可连拍速度过快v发动攻击看dfjioj', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-          { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-        ];
-        this.addressTotal = this.addressList.length;
+        this.addressList = res.data;
+        this.addressTotal = res.pagination.total;
         this.loadAddress = false;
       },
       
-      delete(id){
-        let sendData = {
-          seller_id:id,
-        }
-        deleteAuth_api(sendData).then(res=>{
-          if(res&&res.status===0){
-            this.$notify({ title: '成功', message: '操作成功', type:'success' });
-            this.getList()
-          }else{
-            this.$notify({
-              title: '错误',
-              message: '操作失败',
-              type:'error'
-            });
-          }
-        }).catch(err=>{
-          console.error('deleteseller_api')
-        })
-        
-      },
     addressSizeChange(val) {
       this.addressListConfig.limit = val
       this.getList()
@@ -209,8 +192,8 @@ export default {
     coulsePageChange(val){
       
       console.log('coulse page change', val);
-    }
-    
+    },
+     
   }
 }
 </script>

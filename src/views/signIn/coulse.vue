@@ -35,23 +35,6 @@
   // .div{
   //   font-variant: small-caps;
   // }
-  .div2{
-  //   text-transform: uppercase;
-    width: 100px;
-    border: 1px solid #ccc;
-    // word-wrap: break-word;
-    // word-break: break-all;
-  }
-  .div3{
-    // white-space: pre;
-    // width: 50px;
-    // border: 1px solid #ccc;
-    // word-spacing: 10px;
-    // letter-spacing: 10px;
-  }
-  .div4{
-    text-align: justify;
-  }
 
 </style>
 
@@ -148,7 +131,7 @@
   
 
     <el-table :data="tableData" stripe v-loading="listLoading" element-loading-text="给我一点时间" style="width: 100%" >
-      <el-table-column label="姓名" prop="name"></el-table-column>
+      <el-table-column label="姓名" prop="course_name"></el-table-column>
 
       <el-table-column label="总期数" prop="count_total"></el-table-column>
       <el-table-column label="已上期数" prop="count"></el-table-column>
@@ -211,7 +194,7 @@
 </el-footer>
 </el-container>
 
-<!-- edit coulse --> -->
+<!-- edit coulse --> 
   <el-dialog :visible.sync='canShowStudent'>
     <el-form :inline="true" :model="formInline" class="form">
 
@@ -248,7 +231,7 @@
 // getList 接口 获取
 // addNotice 接口 添加
 
-import {getAuthList_api,deleteAuth_api,addAuth_api,editAuth_api} from '@/api/seller' 
+import api from '@/api/seller' 
 
 export default {
   created(){
@@ -304,7 +287,7 @@ export default {
       // footer
       listQuery: {
         page: 1,
-        limit: 20,
+        limit: 10,
         search:"",
         time:""
       },
@@ -487,40 +470,19 @@ export default {
         console.log('search student', this.studentKeyword);
       },
     // body
-      getList() { //获取列表
+      async getList() { //获取列表
         this.listLoading = true
-        let sendData = Object.assign({},this.listQuery)
-
-        getAuthList_api(sendData).then(response => {
-          if(response&&response.status==0){
-            let result = response.data
-            let tempTableData = []
-            // result.forEach((aData)=>{
-            //   tempTableData.push({
-            //     //后端生成
-            //     id:aData.seller_id,
-            //     //前后统一
-            //     username:aData.seller_nick,
-            //     password:aData.seller_password,
-            //     account:aData.seller_name,
-            //     //
-            //     checkboxGroup1:aData.seller_limits,
-            //     //超级管理员标识
-            //     super:aData.is_admin
-            //   })
-            // })
-            this.tableData = [
-              { name: 'k1', count: 2, count_total: 20, num: 4, can_num: 10, teacher: ['a', 'b', 'ccccc'], address: ['a', 'bb'], times: [ {start: 'start', end: 'end'}] },
-              { name: 'k1', count: 2, count_total: 20, num: 4, can_num: 10, teacher: ['a', 'b', 'ccccc'], address: ['a', 'bb'], times: [ {start: 'start', end: 'end'}] },
-              { name: 'k1', count: 2, count_total: 20, num: 4, can_num: 10, teacher: ['a', 'b', 'ccccc'], address: ['a', 'bb'], times: [ {start: 'start', end: 'end'}] },
-              { name: 'k1', count: 2, count_total: 20, num: 4, can_num: 10, teacher: ['a', 'b', 'ccccc'], address: ['a', 'bb'], times: [ {start: 'start', end: 'end'}] },
-            ];
-            this.total = response.pagination.total ? response.pagination.total : 1
-          }
-          console.log("getList",response)
-          // this.list = response
-          this.listLoading = false
-        })
+        // let coulseList = await api.getRealCoulseList(this.listQuery);
+        // console.log('get coluse', coulseList);
+        // this.tableData = coulseList.data;
+        // this.total = coulseList.pagination.total;
+          this.tableData = [
+            { name: 'k1', count: 2, count_total: 20, num: 4, can_num: 10, teacher: ['a', 'b', 'ccccc'], address: ['a', 'bb'], times: [ {start: 'start', end: 'end'}] },
+            { name: 'k1', count: 2, count_total: 20, num: 4, can_num: 10, teacher: ['a', 'b', 'ccccc'], address: ['a', 'bb'], times: [ {start: 'start', end: 'end'}] },
+            { name: 'k1', count: 2, count_total: 20, num: 4, can_num: 10, teacher: ['a', 'b', 'ccccc'], address: ['a', 'bb'], times: [ {start: 'start', end: 'end'}] },
+            { name: 'k1', count: 2, count_total: 20, num: 4, can_num: 10, teacher: ['a', 'b', 'ccccc'], address: ['a', 'bb'], times: [ {start: 'start', end: 'end'}] },
+          ];
+        this.listLoading = false
       },
       getTeacherList(){
         this.teacherList = [

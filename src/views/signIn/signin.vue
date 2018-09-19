@@ -96,7 +96,7 @@
 </template>
 <script>
 
-import {getAuthList_api,deleteAuth_api,addAuth_api,editAuth_api} from '@/api/seller' 
+import api from '@/api/seller' 
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 
 export default {
@@ -193,11 +193,21 @@ export default {
         })
 
       },
+      sizeChange(val){
+        console.log('size change', val);
+      },
+      pageChange(val){
+        
+        console.log('page change', val);
+      },
       //
-      getList() { //获取列表
+      async getList() { //获取列表
         this.loadList = true;
 
-        // let sendData = Object.assign({},this.listQuery)
+        let coulseList = await api.getCoulseList(this.listConfig);
+        // this.list = coulseList.data;
+        // this.listTotal = coulseList.pagination.total;
+        console.log('coulse list', coulseList);
         
         this.list = [
           { name: 'k1', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
@@ -225,24 +235,14 @@ export default {
         }
         deleteAuth_api(sendData).then(res=>{
           if(res&&res.status===0){
-              this.$notify({
-              title: '成功',
-              message: '操作成功',
-              type:'success'
-            });
+            this.$notify({ title: '成功', message: '操作成功', type:'success' });
             this.getList()
           }else{
-            this.$notify({
-              title: '错误',
-              message: '操作失败',
-              type:'error'
-            });
+            this.$notify({ title: '错误', message: '操作失败', type:'error' });
           }
         }).catch(err=>{
           console.error('deleteseller_api')
         })
-          
-        
       },
     studentSizeChange(val) {
       this.student.limit = val
@@ -252,13 +252,6 @@ export default {
       this.student.page = val
       this.getList()
     },
-    sizeChange(val){
-      console.log('size change', val);
-    },
-    pageChange(val){
-      
-      console.log('page change', val);
-    }
     
   }
 }

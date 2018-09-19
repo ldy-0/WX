@@ -64,20 +64,27 @@
       </el-form-item> -->
     </el-form>
 
-    <el-table :data="studentList" stripe v-loading="loadStudent" element-loading-text="给我一点时间" style="width: 100%" >
+    <!-- <el-table :data="studentList" stripe v-loading="loadStudent" element-loading-text="给我一点时间" style="width: 100%" >
 
       <el-table-column :label="item.key" :prop="item.value" v-for='(item, index) in formList' :key='index'></el-table-column>
 
-    </el-table>
+    </el-table> -->
+    <el-form :data="studentList" stripe v-loading="loadStudent" element-loading-text="给我一点时间" style="width: 100%" >
 
-    <el-pagination background 
+      <el-form-item :label="item.key" :prop="item.value" v-for='(item, index) in formList' :key='index'>
+          <el-input style="width: 340px;" v-model="studentList[item.value]" disabled='true'></el-input>
+      </el-form-item>
+
+    </el-form>
+
+    <!-- <el-pagination background 
                     @size-change="studentSizeChange" 
                     @current-change="studentPageChange" 
                     :current-page="studentConfig.page" 
                     :page-sizes="[10, 2, 30, 50]" 
                     :page-size="studentConfig.limit" 
                     layout="total, sizes, prev, pager, next" :total="studentTotal">
-    </el-pagination>
+    </el-pagination> -->
 
     <span slot="footer" class="dialog-footer">
       <el-button @click="canShowStudent=false">取消</el-button>
@@ -132,7 +139,7 @@ export default {
       studentList: [],
       studentTotal: null,
       formList: [
-        { key: '预约人', value: 'name' },
+        { key: '预 约 人 ', value: 'name' },
         { key: '联系方式', value: 'phone' },
         { key: '学生姓名', value: 'name' },
         { key: '家长姓名', value: 'parentName' },
@@ -148,11 +155,7 @@ export default {
       },
       showItem(index, row){
         this.canShowStudent = true;
-        this.studentList = [
-          { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-          { name: 'k1s', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-          { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-        ];
+        this.studentList = { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' };
         this.studentTotal = this.studentList.length;
       },
       deleteItem(index,row){

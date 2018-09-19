@@ -436,3 +436,150 @@ export function editAllBuy_api(data){
     })
   }
 // ----------------------------------------------
+// signIn
+async function setAddress(data, _this){
+  let res = await request({
+    url: '/api/v1/teachaddress/add',
+    method: 'post',
+    data,
+  });
+console.log('res ', res);
+  return res.data.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.data.error })// res.data; 
+}
+
+async function updateAddress(data, _this){
+  let res = await request({
+    url: '/api/v1/teachaddress/edit',
+    method: 'post',
+    data,
+  });
+console.log('update address', res);
+  return res.data.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.data.error })// res.data; 
+}
+
+async function deleteAddress(params, _this){
+  let res = await request({
+    url: '/api/v1/teachaddress/delete',
+    method: 'get',
+    params,
+  });
+console.log('delete address', res);
+  return res.data.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.data.error })// res.data; 
+}
+
+async function getAddressList(params, _this){
+  let res = await request({
+    url: '/api/v1/teachaddress/getList',
+    methods: 'get',
+    params,
+  });
+
+  return res.data.error !== '' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : res.data; 
+}
+
+async function setTeacher(params, _this){
+
+  let res = await request({
+    url: '/api/v1/teacher/add',
+    methods: 'get',
+    params,
+  });
+console.log('res', res);
+  return res.data.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.data.error })// res.data; 
+}
+
+async function deleteTeacher(data, _this){
+
+  let res = await request({
+    url: '/api/v1/teacher/delete',
+    methods: 'post',
+    data,
+  });
+
+  return res.data.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.data.error })// res.data; 
+}
+
+async function getTeacherList(params){
+  let res = await request({
+    url: '/api/v1/teacher/getList',
+    methods: 'get',
+    params,
+  });
+
+  return res.data.error !== '' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res.data; 
+}
+
+async function setCoulse(data){
+  let res = await request({
+    url: '/api/v1/course/add',
+    methods: 'post',
+    data,
+  }); 
+
+  return res.data.error !== '' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res.data; 
+}
+
+async function getCoulseList(params){
+  let res = await request({
+    url: '/api/v1/course/getcourselist',
+    methods: 'get',
+    params,
+  });
+
+  return res.data.error !== '' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res.data; 
+}
+
+async function deleteCoulse(data){
+  let res = await request({
+    url: '/api/v1/course/delete',
+    methods: 'post',
+    data,
+  });
+
+  return res.data.error !== '' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res.data; 
+}
+
+async function setRealCoulse(data){
+  let res = await request({
+    url: '/api/v1/cschedule/add',
+    methods: 'post',
+    data,
+  }); 
+
+  return res.data.error !== '' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res.data; 
+}
+
+async function getRealCoulseList(params){
+  let res = await request({
+    url: '/api/v1/cschedule/getlist',
+    methods: 'get',
+    params,
+  });
+
+  return res.data.error !== '' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res.data; 
+}
+
+async function getStudentList(params){
+  let res = await request({
+    url: '/api/v1/student/getsimplelist',
+    methods: 'get',
+    params,
+  });
+
+  return res.data.error !== '' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res.data; 
+}
+
+export default {
+  setAddress,
+  updateAddress,
+  deleteAddress,
+  getAddressList,
+  setTeacher,
+  deleteTeacher,
+  getTeacherList,
+  setCoulse,
+  getCoulseList,
+  deleteCoulse,
+  getRealCoulseList,
+  getStudentList,
+}
