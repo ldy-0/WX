@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-    <topBar :config='config'></topBar>
+    <topBar :config.sync='config'></topBar>
 
     <view class='wrap assess'>
 
@@ -50,7 +50,7 @@ export default class classifyList extends wepy.page {
   data = {
     config: {
       isLeft: true,
-      name: '商品评价',
+      name: '',
       canBack: true,
     },
     starConfig: {
@@ -63,7 +63,6 @@ export default class classifyList extends wepy.page {
     canLoad: true,
     total: 0,
     goodsList: [], 
-    businessList: [  { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 3, }, { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, }],
   }
 
   
@@ -91,7 +90,6 @@ export default class classifyList extends wepy.page {
       this.classId = 4;
     }
 
-    test.reset(this, 0);
     this.getActive(this.currentPage);
   }
 

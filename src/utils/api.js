@@ -306,6 +306,24 @@ async function checkout(params){
 }
 
 // my
+async function getBuyInfo(params){
+
+  let res = await request.get('/api/v2/member/gradeorder', params, {
+    'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
+async function buy(params){
+
+  let res = await request.post('/api/v2/member/gradeorder', params, {
+    'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
 async function getOrderList(params){
 
   let res = await request.get('/api/v2/member/order', params, {
@@ -371,6 +389,8 @@ export default {
   updateCart,
   deleteCart,
   checkout,
+  getBuyInfo, // my
+  buy,
   getOrderList,
   getOrderInfo,
   setOrderStatus,

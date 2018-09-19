@@ -3,7 +3,7 @@
         
         <view class="discover_list">
 
-            <navigator class="item" wx:for="{{list}}" wx:key="item" url="/pages/food/goodsDetail?id={{item.goods_commonid}}" >
+            <navigator class="item" wx:for="{{list}}" wx:key="item" url="/pages/food/goodsDetail?id={{item.goods_commonid}}&isSeckill=true" >
                 <!-- <view class='image_wrap'> -->
                     <image class="item_img" src="{{item.goods_image}}" mode='aspectFill' /> <!-- style="width:{{item.imgWidth}}px;height:{{item.imgHeight}}px" -->
                 <!-- </view> -->

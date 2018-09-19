@@ -135,10 +135,6 @@
           <view class="{{status === 50 ? 'checked' : '' }}" @tap='click(50)'>待评价</view>
       </view>
 
-      <!-- <view>
-        <repeat></repeat>
-      </view> -->
-
       <view class='no_wrap' wx:if='{{isNull}}'>
           <view class='no'>
               <!-- <image src='../../images/Mall/icon_kongbaiye@2x.png' mode='aspectFill' /> -->
@@ -257,16 +253,12 @@ export default class OrderList extends wepy.page {
     status: null,
     // 待付款订单列表
     submittedList: [],
-    // 待收货订单列表
-    paidList: [],
-    // 待收货订单列表
-    shippedList: [],
-    // 待评价订单列表
-    commentList: [],
     currentPage: 1,
+    limit: 10,
+    total: 0,
     orderList: [], // 订单列表
-    isFirst: true,
     currentStatus: '', // 
+    canLoad: true,
   };
 
   computed = {
@@ -275,13 +267,26 @@ export default class OrderList extends wepy.page {
 
   methods = {
     //进入订单评价
-    goAssess(item){
-      wx.navigateTo({
-         url: './assess?idx='+item.orderItems[0].orderId,
-      });
+    // goAssess(item){
+    //   wx.navigateTo({
+    //      url: './assess?idx='+item.orderItems[0].orderId,
+    //   });
 
+    // },
+    async pay(pay_sn){
+
+      let res = await this.pay(pay_sn);
+
+      console.log(res);
+      
+      if(res.errMsg === 'requestPayment:ok'){
+        this.orderList = [];
+        this.currentPage = 1;
+        this.status = s;
+
+        this.getOrderList(this.currentPage);
+      }
     },
-    pay: pay_sn => this.pay(pay_sn),
     //切换
     click(status) {
       let s = Number(status);
@@ -301,38 +306,63 @@ export default class OrderList extends wepy.page {
       this.getOrderList(this.currentPage);
     },
     //退货换货
-    returnGoods(item){
+    // returnGoods(item){
 
-      console.log(item)
-      wx.navigateTo({
-        //  url: '../home/select?idx='+item.orderItems[0].orderId,
-        url: '../home/returnGoods?id='+item,
-      });
-    },
+    //   console.log(item)
+    //   wx.navigateTo({
+    //     //  url: '../home/select?idx='+item.orderItems[0].orderId,
+    //     url: '../home/returnGoods?id='+item,
+    //   });
+    // },
     //确认收货
-    Confirm(item) {
-      let that=this;
-      wx.showModal({
-        title: "提示",
-        content: "是否确认收货？",
-        success: function(res) {
-          if (res.confirm) {
-            that.comfirmOrder(item.id);
-          } else if (res.cancel) {
-            return;
-          }
-        }
-      });
-    },
+    // Confirm(item) {
+    //   let that=this;
+    //   wx.showModal({
+    //     title: "提示",
+    //     content: "是否确认收货？",
+    //     success: function(res) {
+    //       if (res.confirm) {
+    //         that.comfirmOrder(item.id);
+    //       } else if (res.cancel) {
+    //         return;
+    //       }
+    //     }
+    //   });
+    // },
 
   };
+
+  async onLoad(params) {
+
+  }
+
+  onShow(){
+    wx.showLoading({ title: 'Loading...', });
+
+    this.orderList = [];
+    this.currentPage = 1;
+
+    this.getOrderList(this.currentPage);
+  }
+
+  onReachBottom(){
+    if(!this.canLoad){
+      return ;
+    }
+    this.canLoad = false;
+
+    if(this.total < this.currentPage * this.limit){
+      return wx.showToast({ title: '已经是最后一页了！', icon: 'none', duration: 2000, });
+    }
+
+    this.getOrderList(++this.currentPage);
+  }
 
   async pay(pay_sn){
 
     // let params = {
     //   pay_type: this.isVirtual ? 'vr_order' : 'real_order',
     // },
-    console.log(pay_sn);
     let res = await api.payOrder(pay_sn);
 
     return new Promise(function(resolve, reject){
@@ -351,54 +381,40 @@ export default class OrderList extends wepy.page {
     
   }
   
-  async comfirmOrder(orderId) {
-    let res = await orderApi.confirmReceive({
-      params: {
-        orderId: orderId
-      }
-    });
+  // async comfirmOrder(orderId) {
+  //   let res = await orderApi.confirmReceive({
+  //     params: {
+  //       orderId: orderId
+  //     }
+  //   });
 
-    console.log("确认返回的结果");
-    console.log(res);
-    if (!res) {
-      return wx.showToast({ title: res.moreInfo, icon: "none", duration: 2000 });
-    } 
+  //   console.log("确认返回的结果");
+  //   console.log(res);
+  //   if (!res) {
+  //     return wx.showToast({ title: res.moreInfo, icon: "none", duration: 2000 });
+  //   } 
 
-    wx.showToast({ title: "收货成功", icon: "success", duration: 2000 });
-    this.orderList = [];
-    this.currentPage = 0;
-    this.$apply();
+  //   wx.showToast({ title: "收货成功", icon: "success", duration: 2000 });
+  //   this.orderList = [];
+  //   this.currentPage = 0;
+  //   this.$apply();
 
-    this.getOrderList(this.currentPage);
+  //   this.getOrderList(this.currentPage);
 
-  }
+  // }
 
-  async onLoad(params) {
-
-  }
-
-  onShow(){
-
-    this.orderList = [];
-    this.currentPage = 1;
-
-    this.getOrderList(this.currentPage);
-  }
-
-  async onReachBottom(){
-
-    // this.getOrderList(++this.currentPage);
   
-  }
-
   async getOrderList(page){
-    wx.showLoading({ title: "Loading..." });
 
     let params = this.status ? {
           order_state: this.status === null ? null : this.status,
           payment_order: null,
+          limit: this.limit,
+          page,
         } : {
           payment_order: 1,
+          limit: this.limit,
+          page,
         },
         res = await api.getOrderList(params);
 
@@ -407,7 +423,9 @@ export default class OrderList extends wepy.page {
         this.orderList.push(res[key]); 
       }
     }
-   console.log(this.orderList); 
+   console.log(this.orderList, this.total); 
+    this.total = this.orderList.reduce((pre, v) => pre + v.length, 0);
+    this.canLoad = true;
     wx.hideLoading();
 
     // 跳转至指定状态

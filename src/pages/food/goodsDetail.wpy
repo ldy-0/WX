@@ -149,6 +149,7 @@ export default class goodsDetail extends wepy.page {
     params: {},
     canBuy: true,
     canAdd: true,
+    isSeckill: false,
   }
 
   onShow(){
@@ -163,6 +164,8 @@ export default class goodsDetail extends wepy.page {
       this.isShow = true;
       this.$apply();
     }
+
+    this.isSeckill = param.isSeckill ? true : false; 
     
     this.getGoods(param.id);
   }
@@ -173,6 +176,10 @@ export default class goodsDetail extends wepy.page {
     },
     goHome: () => wx.reLaunch({ url: '/pages/home' }),
     async addCart(){
+      
+      if( this.isSeckill && wx.getStorageSync('userInfo').member_grade === 0 ){
+        return wx.showModal({ title: '提示', content: '秒杀商品仅会员可买', showCancel: false, });
+      }
       
       if(!this.canAdd){
         return ;
@@ -190,6 +197,11 @@ export default class goodsDetail extends wepy.page {
       this.addShoppingCart();
     },
     async goSubmitOrder(){
+
+      if( this.isSeckill && wx.getStorageSync('userInfo').member_grade === 0 ){
+        return wx.showModal({ title: '提示', content: '秒杀商品仅会员可买', showCancel: false, });
+      }
+
       if(!this.canBuy){
         return ;
       }
@@ -244,7 +256,7 @@ export default class goodsDetail extends wepy.page {
   async addShoppingCart(){
     console.log('add cart');
     let res = await api.addCart({
-      goods_id: this.goods.SKUList[0].goods_commonid,
+      goods_id: this.goods.SKUList[0].goods_id,
       quantity: 1,
     });
 
@@ -259,6 +271,7 @@ export default class goodsDetail extends wepy.page {
   } 
 
   async getGoods(id){
+    wx.showLoading({ title: 'Loading...' });
 
     let res = await api.getGoods(id, {
       goods_commonid: id,
@@ -267,9 +280,10 @@ export default class goodsDetail extends wepy.page {
     this.goods = res;
     this.swiperConfig.data = [ { imgUrl: res.SKUList[0].goods_image }];
     this.$apply();
-    let userInfo = await api.getPayMethod(this.goods.SKUList[0].store_id, {});
+    wx.hideLoading();
+    // let userInfo = await api.getPayMethod(this.goods.SKUList[0].store_id, {});
   }
-  
+
 }
 
 </script>

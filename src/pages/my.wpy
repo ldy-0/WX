@@ -159,11 +159,9 @@ export default class Index extends wepy.page {
 
   };
 
-  onLoad() {
+  onLoad(params) {
     let that = this;
     this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
-
-    this.userInfo = wx.getStorageSync("userInfo");
 
     wx.getSystemInfo({
       success: res => {
@@ -178,6 +176,8 @@ export default class Index extends wepy.page {
   }
 
   onShow() {
+
+    this.userInfo = wx.getStorageSync("userInfo");
   }
 
   onPullDownRefresh() {

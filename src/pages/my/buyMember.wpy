@@ -3,16 +3,33 @@
     <topBar :config='config'></topBar>
 
     <view>
+
       <view>
-        <image src='../../images/authorize_bg.png' mode='aspectFill' />
+        <image class='bg' src='' mode='aspectFill' />
       </view>
-      <view class='btn' @tap='buy'>购买</view>
+
+      <view class='btn' @tap='goBuy'>购买</view>
+
+      <modal :isShow.sync='isShow' :config.sync='modalConfig'>
+        <view slot='bottom'>
+          <repeat for='{{list}}' item='item' index='index'>
+            <view style='display: flex; justify-content: space-between; align-items: center; padding: 10rpx 30rpx; font-size: 30rpx;'>
+              <view class=''>天数：{{item.days}}</view>
+              <view class=''>价格：<text>{{item.price}}</text></view>
+              <view class='buy_btn' @tap='buy({{index}})'>购买</view>
+            </view>
+          </repeat>
+        </view>
+      </modal>
+
     </view>
   </view>
 </template>
 <script>
 import wepy from 'wepy';
 import topBar from '../../components/topBar';
+import modal from '../../components/model';
+import api from '../../utils/api.js';
 
 export default class Authorize extends wepy.page {
   config = {
@@ -22,6 +39,7 @@ export default class Authorize extends wepy.page {
 
   components = {
     topBar,
+    modal,
   }
 
   data = {
@@ -30,16 +48,69 @@ export default class Authorize extends wepy.page {
       name: '会员付费',
       canBack: true,
     },
+    modalConfig: {
+      canCancel: true,   
+    },
+    isShow: false,
+    list: [],
   }
 
   async onLoad() {
+
+    this.getList();
   
   }
 
   methods = {
-    buy(){
+    goBuy(){ this.isShow = true; },
+    buy(index){ this.buy(index); },
+  }
 
-    },
+  async buy(index){
+
+    let res = await api.buy({
+      key: index,
+    });
+
+    let payres = await this.pay(res);
+
+    if(payres.errMsg === 'requestPayment:ok'){
+      wx.showToast({ title: '购买成功', icon: 'none', duration: 2000, });
+
+      let user = await api.getUserInfo();
+      user ? wx.setStorageSync('userInfo', user) : void(0);
+
+      wx.reLaunch({
+        url: '/pages/my?change=true',
+      });
+    }
+  }
+
+  async getList(){
+    
+    let res = await api.getBuyInfo();
+
+    this.list = res;
+    this.$apply();
+  }
+
+  async pay(res){
+
+    return new Promise(function(resolve, reject){
+
+      wx.requestPayment({
+        nonceStr: res.nonceStr,
+        package: res.package, 
+        signType: res.signType,
+        paySign: res.paySign, 
+        timeStamp: res.timeStamp,
+        success(e){ resolve(e) },
+        fail(e){ reject(e); console.log(e); },
+      });
+
+    }).catch(e => e.errMsg);
+    
+    
   }
   
 }
@@ -54,13 +125,29 @@ page {
 .container{
 }
 
+.bg{
+  width: 100%;
+  height: 600rpx; 
+  background: #ccc;
+}
+
 .btn{
   width: 600rpx;
   height: 60rpx;
   line-height: 60rpx;
-  margin: 0 auto;
+  margin: 40rpx auto 0;
   border: 1rpx solid #000;
   border-radius: 10rpx;
+  text-align: center;
+}
+
+.buy_btn{
+  width: 158rpx;
+  height: 58rpx;
+  line-height: 58rpx;
+  border: 1rpx solid #ff5f00;
+  border-radius: 10rpx;
+  color: #ff5f00;
   text-align: center;
 }
 </style>

@@ -11,7 +11,6 @@
         </navigator>
       </view>
     </view> -->
-    <!-- <canvas canvas-id='canvas'></canvas> -->
 
     <view class='classify_list'>
       <repeat for='{{classifyList}}' item='item'>
@@ -34,6 +33,14 @@
     <!--暂无数据显示-->
     <placeholder :show.sync="is_empty" message="暂无发现数据"></placeholder>
 
+    <!-- 获取手机号 -->
+    <model :isShow.sync='isShow' :canCancel.sync='canCancel' :config.sync='modelConfig' catchtouchmove='preventMove'>
+      <view slot='center'>
+        <view class='phone_desc'>* 需要微信授权</view>
+        <button class='phone_btn' open-type='getPhoneNumber' bindgetphonenumber='getPhone'>授权获取手机号</button>
+      </view>
+    </model>
+
   </view>
 </template>
 <script>
@@ -44,10 +51,10 @@ import Discover from '@/components/discover';
 import BottomLoadMore from "../components/common/bottomLoadMore";
 import Placeholder from "../components/common/placeholder";
 import topBar from "../components/topBar";
+import model from "../components/model";
 import swiper from "../components/slider";
 import request from '../utils/request.js';
 import api from '../utils/api.js';
-import qrcode from '../utils/qrcode.js';
 
 export default class Home extends wepy.page {
   config = {
@@ -58,12 +65,18 @@ export default class Home extends wepy.page {
     bottomLoadMore: BottomLoadMore,
     placeholder: Placeholder,
     topBar,
+    model,
     slider : swiper,
   };
   data = {
     config: {
       name: '电小乐',
       canBack: false,
+    },
+    modelConfig: {
+      width: 400, 
+      height: 250,
+      center: true,
     },
     swiperConfig: {
       data: [],
@@ -78,13 +91,16 @@ export default class Home extends wepy.page {
     discoverList: [],
     is_empty: false,//是否有数据
     currentPage: 1,//当前页面
-    limit: 2,
+    limit: 20,
     isEnd: false, // 是否最后一页
     page_total: 0,//总页数
     //是否显示 底部loading
     showLoading: false,
     canLoad: true,
     isIos: null,
+    params: {},
+    isShow: false,
+    canCancel: false, // 弹窗是否可以取消
   }
   async onShow(){
     if(!wx.getStorageSync('userInfo')){
@@ -109,7 +125,6 @@ export default class Home extends wepy.page {
 
     }
 
-    // qrcode.api.draw('sjkf', 'canvas', 100, 100, this);
     
     this.getAdList();
 
@@ -122,9 +137,15 @@ export default class Home extends wepy.page {
     this.getDiscoverList(this.currentPage);
   }
 
-  onLoad(params) {
+  async onLoad(params) {
 
     this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
+    if(!wx.getStorageSync('userInfo').phone){ // 绑定手机号
+      let res = await wepy.login();
+      this.params.code = res.code;
+      this.isShow = true;
+      this.$apply();
+    }
 
   }
 
@@ -157,6 +178,31 @@ export default class Home extends wepy.page {
 
   onShareAppMessage(){
     
+  }
+
+  async getPhone(e){
+      let res = e.detail;
+
+      if(res.errMsg !== 'getPhoneNumber:ok'){
+        return ;
+      }
+
+      this.params.encryptedData = res.encryptedData;
+      this.params.iv = res.iv;
+
+      let data = await api.setPhone(this.params);
+
+      if(data){
+
+        let userInfo = wx.getStorageSync('userInfo');
+        userInfo.phone = data;
+        wx.setStorageSync('userInfo', userInfo);
+
+        this.isShow = false;       
+        this.$apply();
+
+      }
+
   }
 
   // 获取某类商品列表
@@ -207,6 +253,9 @@ export default class Home extends wepy.page {
   }
 
   methods = {
+    preventMove(){
+      return ;
+    },
     goGoodsDetail(item) {
       console.log('click', item);
       if(true){
@@ -339,4 +388,18 @@ export default class Home extends wepy.page {
   // overflow: hidden;
 }
 
+.phone_desc{
+  margin: 20rpx 0;
+  text-align: center;
+}
+.phone_btn{
+  position: absolute;
+  left: 50rpx;
+  bottom: 20rpx;
+  width: 300rpx;
+  border: 0;
+  font-size: 30rpx;
+  color: #fff;
+  background: #ff5f00;
+}
 </style>

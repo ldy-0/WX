@@ -131,9 +131,8 @@ page {
   justify-content: space-between;
   background: #fff;
   .user_img{
-    width: 177rpx;
-    height: 177rpx;
-    background: #ccc;
+    width: 142rpx;
+    height: 142rpx;
   }
   .comment_info{
     width: 500rpx;

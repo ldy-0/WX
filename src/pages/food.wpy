@@ -169,7 +169,7 @@
 
 <template>
   <view class="container">
-      <topBar :config='config'></topBar>
+      <topBar :config.sync='config'></topBar>
       
       <!-- <view class="topBar2 ios_topBar2"> 
         <navigator class="search_content" open-type="navigate" url="/pages/search">
@@ -283,13 +283,12 @@ export default class Classify extends wepy.page {
     // 一级列表
     classList: ['全部', '距离', '销量排序'],
     classDetailList: [ 
-      [ { storeclass_id: 0, storeclass_name: '全部'} ], 
+      [ { storeclass_id: 11, storeclass_name: '全部'} ], 
       [ { str: 'asc', name: '从近到远' }, { str: 'desc', name: '从远到近'}], 
       [ { str: 'asc', name: '从低到高' }, { str: 'desc', name: '从高到低'}],
     ],
     sortList: [0, 0, -1],
     currentStatus: ['order_dis', 'asc'], // 排序方式
-    // checkedList: [],
     storeList: [],
     currentType: null,
     currentPage: 1,
@@ -330,6 +329,7 @@ export default class Classify extends wepy.page {
         this.sortList[1] = 0;
         this.sortList[2] = -1;
         this.currentStatus = ['order_dis', 'asc'];
+        this.config.name = this.classDetailList[index][val].storeclass_name; 
       }else if(index == 1){
         this.sortList[2] = -1;
         this.currentStatus = ['order_dis', this.classDetailList[index][val].str ];
@@ -441,23 +441,11 @@ export default class Classify extends wepy.page {
     let params = {
       latitude: this.address.latitude,
       longitude: this.address.longitude,
-      storeclass_id: 11,
+      storeclass_id: this.classDetailList[0][this.sortList[0]].storeclass_id,
       page,
-      // order_dis: 'asc',
       limit: this.limit,
     };
 
-    // if(this.sortList[1] == '1'){
-    //   params.order_dis = 'desc';
-    // } 
-
-    // if(this.sortList[2] == '0'){
-    //   delete params.order_dis;
-    //   params.order_sale = 'asc';
-    // }else if(this.sortList[2] == '1'){
-    //   delete params.order_dis;
-    //   params.order_sale = 'desc';
-    // } 
     params[this.currentStatus[0]] = this.currentStatus[1]; 
 
     let res = await api.getStoreList(params);
@@ -472,7 +460,7 @@ export default class Classify extends wepy.page {
 
     }); 
     this.storeList = this.storeList.concat(res.data); 
-    this.total = res.pagination.total;
+    this.storeList.length ? this.total = this.storeList.length : wx.showModal({ title: '提示', content: '暂无数据', showCancel: false, }) ;
     this.canLoad = true;
     this.$apply();
 

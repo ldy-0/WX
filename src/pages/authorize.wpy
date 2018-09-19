@@ -42,8 +42,9 @@ export default class Authorize extends wepy.page {
   data = {
     config: {
       isLeft: false,
-      name: '电小乐',
+      name: '',
       canBack: false,
+      bg: '#ff5f00',
     },
     userinfo: null,
   }

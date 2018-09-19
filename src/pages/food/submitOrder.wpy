@@ -97,6 +97,7 @@ export default class submitOrder extends wepy.page {
     totalFee: null,
     canSubmit: true,
     canGo: false,
+    order_id: null,
   }
 
   computed = {
@@ -126,7 +127,8 @@ export default class submitOrder extends wepy.page {
 
   onShow(){
     if(this.canGo){
-      return this.goPayed();    
+      console.log('canGo pay after');
+      // return this.goPayed();    
     }
 
     let global = this.$parent.globalData;
@@ -159,11 +161,7 @@ export default class submitOrder extends wepy.page {
       }
 
       this.canSubmit = false;
-      this.submit().then(res => {
-
-        
-      
-      }).catch(e => console.log(e));
+      this.submit();
       
 
     }
@@ -178,26 +176,38 @@ export default class submitOrder extends wepy.page {
       pay_name: 'online',
       pay_message: [],
       order_from: 2,
-      is_virtual: this.isVirtual,
+      // is_virtual: this.isVirtual,
       is_pintuan: null,
       ifcart: this.isSingle ? 0 : 1,
     };
 
     let res = await api.submitOrder(params);
 
-    let payres = await this.pay(res.pay_sn); 
+    this.order_id = res.order_id; 
 
-    this.canGo = true;
-    this.$apply();
+    let payres = await this.pay(res); 
+
+    console.log('pay', this.order_id, payres);
     wx.hideLoading();
+
+    if(payres.errMsg === 'requestPayment:ok'){
+      this.canGo = true;
+      this.$apply();
+      wx.redirectTo({
+        url: '/pages/food/payed?id=' + this.order_id,
+      });
+    }else if(payres === 'requestPayment:fail cancel'){
+      wx.showToast({ title: '支付已取消!', icon: 'none', duration: 2000, });
+    }
+    
   }
 
-  async pay(pay_sn){
+  async pay(res){
 
-    let params = {
-      pay_type: this.isVirtual ? 'vr_order' : 'real_order',
-    },
-    res = await api.payOrder(pay_sn, params);
+    // let params = {
+    //   pay_type: 'real_order',// this.isVirtual ? 'vr_order' : 'real_order',
+    // },
+    // res = await api.payOrder(pay_sn, params);
 
     return new Promise(function(resolve, reject){
 
@@ -229,7 +239,7 @@ export default class submitOrder extends wepy.page {
     let params = {
       cart_id: this.getCartId(), 
       ifcart: this.isSingle ? 0 : 1,
-      city_id: this.address.city_id,
+      city_id: this.isVirtual ? '' : this.address.city_id,
     };
     // console.log('----', params, this.address);
 
@@ -247,13 +257,13 @@ export default class submitOrder extends wepy.page {
   }
   
   getCartId(){
-    return this.isSingle ? this.goodsList.map(v => `${v.goods_commonid}|${this.numberConfig.number}`) : this.goodsList.map(v => `${v.cart_id}|${v.goods_num}`);
+    return this.isSingle ? this.goodsList.map(v => `${v.goods_id}|${this.numberConfig.number}`) : this.goodsList.map(v => `${v.cart_id}|${v.goods_num}`);
   }
 
   goPayed(){
 
-    wx.navigateTo({
-      url: '/pages/food/payed?id=' + 'id',
+    wx.redirectTo({
+      url: '/pages/food/payed?id=' + this.order_id,
     });
 
   }

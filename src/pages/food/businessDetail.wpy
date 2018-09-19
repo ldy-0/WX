@@ -65,7 +65,7 @@
               </view>
               <view class='comment_content'>{{item.geval_content}}</view>
               <view class='comment_img'>
-                <repeat for='{{item.imgs}}' item='img'>
+                <repeat for='{{item.geval_image}}' item='img'>
                   <image src='{{img}}' @tap='previewImg({{img}})' />
                 </repeat>
               </view>
@@ -132,14 +132,8 @@ export default class businessDetail extends wepy.page {
       { name: '商品评价', img: '../../images/icon/edit.png', selImg: '../../images/icon/edit_sel.png' }, 
     ],
     status: '优惠劵',
-    couponList: [
-      // { id: '123', name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', price: 10, },
-      // { id: '123', name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', price: 10, }
-    ],
-    commentList: [ 
-      { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, imgs: [ 'http://qiniures.51shop.mobi/FmwPMX290iYB6zh97InanSKkFzzh?imageView2/2/w/640/q/100/@w/$w$@/@h/$h$@', ], content: '味道很正宗，服务态度不错，地好找...', }, 
-      { name: '是个看你发的是sfjgjgk水库附近肯定是分开sfaaa', level: 1, imgs: [ 'http://qiniures.51shop.mobi/FmwPMX290iYB6zh97InanSKkFzzh?imageView2/2/w/640/q/100/@w/$w$@/@h/$h$@', ], content: '味道很正宗，服务态度不错，地好找...', } 
-    ],
+    couponList: [],
+    commentList: [],
   }
 
   onLoad(param){
@@ -181,15 +175,12 @@ export default class businessDetail extends wepy.page {
         store_id: res.store_id,
       });
 
-      this.commentList = comments.forEach(function(v, i){
+      comments.forEach(function(v, i){
 
         comments[i].createdAt = new Date(v.geval_addtime).toISOString().split('T')[0];
-        comments[i] = [];
-        for(let key in v.geval_image){
-          comments[i].imgs.push(v.geval_image[key]);
-        }
-
       });
+      this.commentList = comments;
+      console.log(this.commentList);
       
       this.$apply();
 
@@ -217,8 +208,11 @@ page, .container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 10rpx 0 0;
+  // margin: 10rpx 0 0;
   font-size: 24rpx;
+}
+.linkPhone{
+  padding: 10rpx 0 0;
 }
 
 .s-1{
@@ -243,6 +237,7 @@ page, .container {
     text-overflow: ellipsis;
   }
   .business_level{
+    padding: 10rpx 0 0;
     display: flex;
     align-items: center;
     .number{
@@ -301,9 +296,8 @@ page, .container {
   justify-content: space-between;
   background: #fff;
   .user_img{
-    width: 177rpx;
-    height: 177rpx;
-    background: #ccc;
+    width: 142rpx;
+    height: 142rpx;
   }
   .comment_info{
     width: 500rpx;

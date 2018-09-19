@@ -18,7 +18,7 @@
       </view>
 
       <view class='order'>
-        <view class='order_title'>订单信息<text class='s-1' style='float: right;' wx:if="{{status === 'expire'}}">已失效</text></view>
+        <view class='order_title'>订单信息<text class='s-1' style='float: right;' wx:if="{{order.order_state === '已取消'}}">已失效</text></view>
 
         <view class='order_content'>
           <view class='order_item'>
@@ -33,22 +33,22 @@
             <view>下单时间</view>
             <view>{{order.payment_time}}</view>
           </view>
-          <view class='order_item' wx:if="{{order.status !== 'used'}}">
-            <view>数量：</view>
-            <view>{{0}}</view>
+          <view class='order_item' wx:if="{{isUsed}}">
+            <view style='text-decoration: line-through;'>券码：{{getVrCode}}</view>
           </view>
           <view class='order_item' wx:else>
-            <view style='text-decoration: line-through;'>券码：4894151651513512</view>
+            <view>数量：</view>
+            <view>{{order.num}}</view>
           </view>
-          <view class='order_item' wx:if="{{order.order_state === '未付款'}}">
+          <view class='order_item' wx:if="{{isUsed}}">
+            <view>消费金额：</view>
+            <view>¥:{{order.order_amount}}</view>
+          </view>
+          <view class='order_item' wx:else>
             <view>总价：</view>
             <view>{{order.order_amount}}</view>
           </view>
-          <view class='order_item' wx:else>
-            <view>消费金额：</view>
-            <view>¥:12.1</view>
-          </view>
-          <view class='' wx:if="{{true}}">
+          <view class='' wx:if="{{isUsed}}">
             <view class='assess_btn_wrap'><view class='assess_btn' @tap='goAssess'>去评价</view></view>
             <view class='assess_desc'>评价有助于商家完善其服务，你也可以取得更好的服务！</view>
             <view class='phone'>客服电话：10107888</view>
@@ -63,21 +63,22 @@
       </view>
       
 
-      <view class='other_wrap' wx:if="{{order.order_state === '未付款'}}"> 
+      <view class='other_wrap' wx:if="{{order.order_state === '未付款' || order.order_state === '已取消'}}"> 
         <view class='countDown s-1'>
-          <view wx:if="{{order.countdown !== null}}">距离支付失效：{{countDown.day}}:{{countDown.hour}}:{{countDown.minute}}:{{countDown.second}}</view>
+          <view wx:if="{{isExpire}}">距离支付失效：{{countDown.day}}:{{countDown.hour}}:{{countDown.minute}}:{{countDown.second}}</view>
         </view>
 
-        <view class="btn {{status === 'expire' ? 'expire' : ''}}" @tap='pay({{order.pay_sn}})'>立即付款</view>
+        <view class="btn {{order.order_state === '已取消' ? 'expire' : ''}}" @tap='pay({{order.pay_sn}})'>立即付款</view>
       </view>
 
       
 
-      <view class='coupon_info' wx:if="{{order.order_state === 'payed'}}">
+      <view class='coupon_info' wx:if="{{isVirtual}}">
         <view class='coupon'>
           <view class=''>我的券码</view>
-          <view class=''>券码：4894151651513512</view>
-          <image class='qr_img' src='' />
+          <view class=''>券码：{{getVrCode}}</view>
+          <canvas class='qr_img' canvas-id='canvas' width='277' height='277'></canvas>
+          <!-- <image  src='' /> -->
         </view>
 
         <view class='phone'>客服电话：10107888</view>  
@@ -91,6 +92,7 @@ import wepy from 'wepy';
 import topBar from '../../components/topBar';
 import address from '../../components/address';
 import api from '../../utils/api.js';
+import qrcode from '../../utils/qrcode.js';
 
 export default class OrderDetail extends wepy.page {
   config = {
@@ -111,7 +113,6 @@ export default class OrderDetail extends wepy.page {
     },
     order: null,
     id: null,
-    goodsList: [ { name: '的是佛教房东房客上课了吗首付贷款买房昆明昆明dfsfk',  } ],
     countDown: {
       day: '',
       hour: '',
@@ -119,8 +120,6 @@ export default class OrderDetail extends wepy.page {
       second: '',
     }, 
     interval: null,
-    expire: false,
-    payed: false,
     status: '',
     address: null,
   }
@@ -130,6 +129,33 @@ export default class OrderDetail extends wepy.page {
       let phone = wx.getStorageSync('userInfo').phone;
       return phone ? this.modifyPhone(phone) : '';
     },
+    isExpire(){
+      if(!this.order){
+        return ;
+      }
+      return this.order.countdown !== null && this.order.countdown > 0;
+    },
+    isVirtual(){
+      if(!this.order){
+        return ;
+      }
+
+      return this.order.order_goods[0].vr_code;
+    },
+    isUsed(){
+      if(!this.order){
+        return ;
+      }
+
+      let v = this.order.order_goods[0].vr_code;
+      return v && v.vr_state;
+    },
+    getVrCode(){
+      if(!this.order || !this.order.order_goods[0].vr_code){
+        return ;
+      }
+      return this.order.order_goods[0].vr_code.vr_code;
+    }
   }
 
   onLoad(params) {
@@ -158,28 +184,41 @@ export default class OrderDetail extends wepy.page {
 
     },
     pay(pay_sn){
+      if(this.order.order_state === '已取消'){
+        return ;
+      }
+
       this.pay(pay_sn);
     }
   }
   
   async getOrderDetail(id){
 
+    wx.showLoading({ title: 'Loading...' });
     let res = await api.getOrderInfo(id),
         address = res.order_reciver_info;
 
     this.order = res;
 
-    this.address = { 
+    this.order.num = res.order_goods.reduce((pre, v, i) => pre + v.goods_num, 0); 
+    this.address = address.phone ? { 
       address_realname: address.name,
       address_mob_phone: address.phone,
       area_info: address.address ? address.address.split(' ')[0] : '无',
       address_detail: address.address ? address.address.split(' ')[1] : '无',
-    };
+    } : null;
+
     this.$apply();
   
-    if(false){
-      this.setTime(Date.now() + 1000 - Date.now() );
+    if(this.order.countdown !== null){
+      this.setTime( this.order.countdown );
     }
+
+    if(this.order.order_goods[0].vr_code){
+      qrcode.api.draw(this.order.order_goods[0].vr_code.vr_code, 'canvas', 120, 120, this);
+    }
+
+    wx.hideLoading();
 
   }
 
@@ -360,11 +399,10 @@ page {
   background: #fff;
   .coupon{
     text-align: center;
-    image{
+    .qr_img{
       width: 277rpx;
       height: 279rpx;
-      margin: 60rpx 0 0;
-      background: #ccc;
+      margin: 60rpx auto 0;
     }
   }
   .phone{
