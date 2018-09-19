@@ -276,6 +276,53 @@ export let asyncRouterMapSeller = [
       name: 'sellerAuth',
       meta: { title: 'sellerAuth', icon: 'goods', noCache: true }
     }]
+  },
+  {
+    path: '/signIn',
+    component: Layout,
+    // redirct: '/signIn/index',
+    meta: { title: 'signIn', icon: 'goods' },
+    children: [
+      // {
+      //   path: 'caller',
+      //   component: () => import('@/views/signIn/caller'),
+      //   name: 'teach',
+      //   meta: { title: '老师', icon: 'goods' }
+      // },
+      {
+        path: 'teacher',
+        component: () => import('@/views/signIn/index'),
+        name: 'teacher',
+        meta: { title: 'teacher', }
+      },
+      {
+        path: 'coulse',
+        component: () => import('@/views/signIn/coulse'),
+        name: 'coulse',
+        meta: { title: 'coulse', }
+      },
+      { path: 'signin',
+        component: () => import('@/views/signIn/signin'),
+        name: 'signin',
+        meta: { title: 'signin' }
+      },
+      { path: 'address',
+        component: () => import('@/views/signIn/address'),
+        name: 'address',
+        meta: { title: 'address' }
+      },
+      {
+        path: 'student',
+        component: () => import('@/views/signIn/student'),
+        // name: 'studen',
+        meta: { title: 'student' }
+      },
+      { path: 'appointment',
+        component: () => import('@/views/signIn/appointment'),
+        name: 'appointment',
+        meta: { title: 'appointment' }
+      },
+    ]
   }
 ]
   // {

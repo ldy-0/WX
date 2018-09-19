@@ -105,8 +105,10 @@ export default {
       tabRole: '',
       // -------------
       loginForm: {
-        username: 'admin',
-        password: '1111111'
+        // username: 'admin',
+        // password: '1111111'
+        username: '13297528280',
+        password: '123456'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],

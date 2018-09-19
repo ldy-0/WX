@@ -27,6 +27,10 @@ export default {
     serverActivity:'活动',
     distribution:'分销',
     vote:'投票',
+    // test
+    signIn: '签到',
+    coulse: '课程',
+    teacher: '老师',
 
 
     sellerAuth:'权限',
