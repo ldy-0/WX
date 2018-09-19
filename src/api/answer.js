@@ -40,7 +40,7 @@ export function grtLibList(data) { //获取题库list
     })
 }
 
-export function postAddLibList(data) { //获取题库list
+export function postAddLibList(data) { //添加题库list
     return request({
         url: '/api/v1/seller/library',
         method: 'post',
@@ -141,6 +141,56 @@ export function getBonusRoomInfo(data) { //奖金模式room列表
 export function postAddBonusRoom(data) { //奖金模式添加room
     return request({
         url: '/api/v1/seller/room',
+        method: 'post',
+        data
+    })
+}
+
+export function deleteBonusRoom(data) { //奖金模式删除room
+    return request({
+        url: '/api/v1/seller/room',
+        method: 'delete',
+        data
+    })
+}
+
+export function putBounsRoom(data) { //奖金模式编辑room
+    return request({
+        url: '/api/v1/seller/room',
+        method: 'put',
+        data
+    })
+}
+
+export function putStopBonusRoom(data) { //奖金模式启用停用room
+    return request({
+        url: '/api/v1/seller/switchRoom',
+        method: 'put',
+        data
+    })
+}
+
+//答题历史
+
+export function getAwsHistory(data) { //答题历史列表（最外层）
+    return request({
+        url: '/api/v1/seller/record',
+        method: 'get',
+        params: data
+    })
+}
+
+export function putRoomNameSearch(data) { //房间名字搜索
+    return request({
+        url: '/api/v1/seller/record',
+        method: 'put',
+        data
+    })
+}
+
+export function postTimeSearch(data) { //时间搜索
+    return request({
+        url: '/api/v1/seller/record',
         method: 'post',
         data
     })

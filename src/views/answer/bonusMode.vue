@@ -67,9 +67,9 @@
                 <el-input v-model="form.name" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="题库">
-                <el-select v-model="form.libName" value-key="id" placeholder="请选择">
-                <el-option v-for="item in options" :label="item.name" :key="item.id"  :value="item.name"></el-option>
-            </el-select>
+                <el-select v-model="form.libName" value-key="id" placeholder="请选择" @change="changeLibNum($event)">
+                  <el-option v-for="item in options" :label="item.name" :key="item.id"  :value="item.name"></el-option>
+                </el-select>
             </el-form-item>
             <el-form-item label="题库数量">
                 <el-input v-model="libNum" :disabled="true" auto-complete="off"></el-input>
@@ -118,7 +118,44 @@
                 v-model="form.rule">
               </el-input>
             </el-form-item>
-            <el-form-item label="奖品">
+
+            <el-form-item label="奖品一">
+              <el-input v-model="form.domains[0].value" auto-complete="off"></el-input>
+              <div style="margin: 20px 0;"></div>
+              <el-upload
+                    action="https://jsonplaceholder.typicode.com/posts/"
+                    list-type="picture-card"
+                    :on-preview="handlePictureCardPreview"
+                    :on-remove="handleRemove"
+                    :on-success="handUpSuccess">
+                    <i class="el-icon-plus"></i>
+                </el-upload>
+            </el-form-item>
+            <el-form-item label="奖品二">
+              <el-input v-model="form.domains[1].value" auto-complete="off"></el-input>
+              <div style="margin: 20px 0;"></div>
+              <el-upload
+                    action="https://jsonplaceholder.typicode.com/posts/"
+                    list-type="picture-card"
+                    :on-preview="handlePictureCardPreview"
+                    :on-remove="handleRemove"
+                    :on-success="handUpSuccess">
+                    <i class="el-icon-plus"></i>
+                </el-upload>
+            </el-form-item>
+            <el-form-item label="奖品三">
+              <el-input v-model="form.domains[2].value" auto-complete="off"></el-input>
+              <div style="margin: 20px 0;"></div>
+              <el-upload
+                    action="https://jsonplaceholder.typicode.com/posts/"
+                    list-type="picture-card"
+                    :on-preview="handlePictureCardPreview"
+                    :on-remove="handleRemove"
+                    :on-success="handUpSuccess">
+                    <i class="el-icon-plus"></i>
+                </el-upload>
+            </el-form-item>
+            <!-- <el-form-item label="奖品">
               <div style="margin: 20px 0;"></div>
               <el-button @click="addDomain">新增</el-button>
               <div style="margin: 20px 0;"></div>
@@ -128,7 +165,8 @@
                   :key="domain.key"
                   :prop="'domains.' + index + '.value'"
                 >
-                  <el-input v-model="domain.value"></el-input><el-button @click.prevent="removeDomain(domain)">删除</el-button>
+                  <el-input v-model="domain.value">
+                  <el-button slot="append" icon="el-icon-error" @click="removeDomain(domain)"></el-button></el-input>
                   <div style="margin: 20px 0;"></div>
 
                   <el-upload
@@ -144,8 +182,7 @@
                   </el-dialog>
                   <div style="margin: 20px 0;"></div>
               </el-form-item>
-
-            </el-form-item>
+            </el-form-item> -->
         </el-form>
         <div slot="footer" class="dialog-footer">
             <!-- <el-button @click="dialogFormVisible = false">取 消</el-button> -->
@@ -167,13 +204,18 @@
         >
       </el-table-column>
       <el-table-column
-        label="答题时间" 
-        prop="time"
+        label="开始时间" 
+        prop= "start_time"
+        >
+      </el-table-column>
+      <el-table-column
+        label="结束时间" 
+        prop= "end_time"
         >
       </el-table-column>
       <el-table-column
         label="选用题库" 
-        prop="lib"
+        prop="library_name"
         >
       </el-table-column>
       <el-table-column
@@ -181,7 +223,8 @@
         >
         <template slot-scope="scope">
           <el-button size="mini" type="info" @click="toEdit(scope.$index)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="toStop(scope.$index)">停用</el-button>
+          <el-button size="mini" type="danger" v-if="tableData[scope.$index].switch === 0" @click="toStop(scope.$index)">停用</el-button>
+          <el-button size="mini" type="primary" v-if="tableData[scope.$index].switch === 1" @click="toStart(scope.$index)">启用</el-button>
           <el-button size="mini" type="danger" @click="toDelete(scope.$index)">删除</el-button>
         </template>
       </el-table-column>
@@ -196,7 +239,14 @@
     
 </template>
 <script>
-import { getBonusRoomInfo, postAddBonusRoom, grtLibList } from "@/api/answer";
+import {
+  getBonusRoomInfo,
+  postAddBonusRoom,
+  grtLibList,
+  deleteBonusRoom,
+  putStopBonusRoom,
+  putBounsRoom
+} from "@/api/answer";
 
 export default {
   created() {
@@ -208,10 +258,6 @@ export default {
       clickData: null,
       dialogImageUrl: "",
       libNum: "",
-      startEndTime: [
-        new Date(2018, 9, 10, 8, 40),
-        new Date(2018, 9, 10, 9, 40)
-      ],
       editId: null,
       dialogFormVisible: false,
       dialogVisible: false,
@@ -220,101 +266,237 @@ export default {
         name: "",
         libName: "",
         awsNum: "",
+        startDate: "",
+        endDate: "",
         startTime: "",
         endTime: "",
         rule: "",
         domains: [
           {
             value: "",
-            key: Date.now(),
+            imageUrl: ""
+          },
+          {
+            value: "",
+            imageUrl: ""
+          },
+          {
+            value: "",
+            imageUrl: ""
+          },
+          {
+            value: "",
+            imageUrl: ""
+          },
+          {
+            value: "",
             imageUrl: ""
           }
         ]
       },
-
       formLabelWidth: "150px",
-
       tableData: [],
-
       options: [],
       urlArr: []
     };
   },
   methods: {
     getLibList_api: function(page, limit) {
+      //题库列表
       var data = {
         page: page,
         limit: limit
       };
       grtLibList(data).then(res => {
         this.options = res.data;
-        console.log("class",res.data)
+        console.log("class", res.data);
       });
     },
     getList_api: function(page, limit) {
+      //房间列表
       var data = {
         page: page,
         limit: limit
       };
       getBonusRoomInfo(data).then(res => {
         console.log(res.data);
+        this.tableData = res.data;
       });
     },
     toAddClass: function() {
       //新增房间入口
       this.dialogFormVisible = true;
       this.isAdd = false;
+      this.libNum = "";
       this.form.name = "";
       this.form.libName = "";
       this.form.awsNum = "";
+      this.form.startDate = "";
+      this.form.endDate = "";
       this.form.startTime = "";
       this.form.endTime = "";
       this.form.rule = "";
       this.form.domains[0].value = "";
-      this.form.domains[0].key = Date.now();
       this.form.domains[0].imageUrl = "";
-      this.form.domains.splice(1, this.form.domains.length - 1);
+      this.form.domains[1].value = "";
+      this.form.domains[1].imageUrl = "";
+      this.form.domains[2].value = "";
+      this.form.domains[2].imageUrl = "";
+      this.form.domains[3].value = "";
+      this.form.domains[3].imageUrl = "";
+      this.form.domains[4].value = "";
+      this.form.domains[4].imageUrl = "";
     },
     yesClass: function() {
       //对话框下角的确定添加按钮
-      console.log(this.form);
-      this.tableData.push({
-        lib: this.form.libName,
-        id: this.tableData.length,
+      console.log("form", this.form);
+      var library_id = null;
+      for (var i = 0; i < this.options.length; i++) {
+        if (this.form.libName === this.options[i].name) {
+          library_id = this.options[i].library_id;
+        }
+      }
+      this.form.startDate = Math.round(Date.parse(this.clickData[0]) / 1000);
+      this.form.endDate = Math.round(Date.parse(this.clickData[1]) / 1000);
+
+      var data = {
         name: this.form.name,
-        time: this.form.startTime + " - " + this.form.endTime
+        library_id: Number(library_id),
+        number: Number(this.form.awsNum),
+        start_date: this.form.startDate,
+        end_date: this.form.endDate,
+        start_time: this.form.startTime,
+        end_time: this.form.endTime,
+        regulation: this.form.rule,
+        prize1:
+          this.form.domains[0].value + "-" + this.form.domains[0].imageUrl,
+        prize2:
+          this.form.domains[1].value + "-" + this.form.domains[1].imageUrl,
+        prize3:
+          this.form.domains[2].value + "-" + this.form.domains[2].imageUrl,
+        prize4:
+          this.form.domains[3].value + "-" + this.form.domains[3].imageUrl,
+        prize5: this.form.domains[4].value + "-" + this.form.domains[4].imageUrl
+      };
+      console.log("data", data);
+      postAddBonusRoom(data).then(res => {
+        console.log("res sss", res);
+        this.dialogFormVisible = false;
+        this.getList_api(1, 0);
       });
-      this.dialogFormVisible = false;
     },
     editClass: function() {
       //对话框确定编辑
       console.log("editClassID", this.editId);
-      this.tableData[this.editId].class = this.name;
-      this.dialogFormVisible = false;
+      var library_id = null;
+      for (var i = 0; i < this.options.length; i++) {
+        if (this.form.libName === this.options[i].name) {
+          library_id = this.options[i].library_id;
+        }
+      }
+      this.form.startDate = Math.round(Date.parse(this.clickData[0]) / 1000);
+      this.form.endDate = Math.round(Date.parse(this.clickData[1]) / 1000);
+      var data = {
+        room_id: this.tableData[this.editId].room_id,
+        name: this.form.name,
+        library_id: Number(library_id),
+        number: Number(this.form.awsNum),
+        start_date: this.form.startDate,
+        end_date: this.form.endDate,
+        start_time: this.form.startTime,
+        end_time: this.form.endTime,
+        regulation: this.form.rule,
+        prize1:
+          this.form.domains[0].value + "-" + this.form.domains[0].imageUrl,
+        prize2:
+          this.form.domains[1].value + "-" + this.form.domains[1].imageUrl,
+        prize3:
+          this.form.domains[2].value + "-" + this.form.domains[2].imageUrl,
+        prize4:
+          this.form.domains[3].value + "-" + this.form.domains[3].imageUrl,
+        prize5: this.form.domains[4].value + "-" + this.form.domains[4].imageUrl
+      };
+      putBounsRoom(data).then(res => {
+        this.dialogFormVisible = false;
+        this.getList_api(1,0);
+      });
     },
     toDelete: function(id) {
       //列表单条删除
-      this.tableData.splice(id, 1);
+      var data = {
+        room_id: this.tableData[id].room_id
+      };
+      deleteBonusRoom(data).then(res => {
+        this.tableData.splice(id, 1);
+      });
     },
     toEdit: function(id) {
       // 列表单条编辑
+      for (var i = 0; i < this.options.length; i++) {
+        if (this.tableData[id].library_id === this.options[i].library_id) {
+          this.libNum = this.options[i].number;
+        }
+      }
       this.editId = id;
       this.dialogFormVisible = true;
       this.isAdd = true;
-      this.name = this.tableData[id].class;
+      this.form.name = this.tableData[id].name;
+      this.form.libName = this.tableData[id].library_name;
+      this.form.endTime = this.tableData[id].end_time;
+      this.form.startTime = this.tableData[id].start_time;
+      this.form.awsNum = this.tableData[id].number;
+      this.form.rule = this.tableData[id].regulation;
+      this.clickData = [
+        new Date(this.tableData[id].start_date * 1000),
+        new Date(this.tableData[id].end_date * 1000)
+      ];
+      this.form.domains[0].value = this.tableData[id].prize1;
+      this.form.domains[1].value = this.tableData[id].prize2;
+      this.form.domains[2].value = this.tableData[id].prize3;
+      this.form.domains[3].value = this.tableData[id].prize4;
+      this.form.domains[4].value = this.tableData[id].prize5;
+      this.form.domains[0].imageUrl = "";
+      this.form.domains[1].imageUrl = "";
+      this.form.domains[2].imageUrl = "";
+      this.form.domains[3].imageUrl = "";
+      this.form.domains[4].imageUrl = "";
     },
     toStop: function(id) {
       //列表停用
-      this.$message({
-        showClose: true,
-        message: "第" + id + "房间停止成功",
-        type: "success"
+      var data = {
+        room_id: this.tableData[id].room_id,
+        switch: 1
+      };
+      putStopBonusRoom(data).then(res => {
+        this.$message({
+          showClose: true,
+          message: "房间停止成功",
+          type: "success"
+        });
+        this.tableData[id].switch = 0;
+        this.getList_api(1, 0);
+      });
+    },
+    toStart: function(id) {
+      //列表启用
+      var data = {
+        room_id: this.tableData[id].room_id,
+        switch: 0
+      };
+      putStopBonusRoom(data).then(res => {
+        this.$message({
+          showClose: true,
+          message: "房间启用成功",
+          type: "success"
+        });
+        this.tableData[id].switch = 1;
+        this.getList_api(1, 0);
       });
     },
     removeDomain(item) {
       //删除奖品选项
       var index = this.form.domains.indexOf(item);
-      if (index !== -1) {
+      if (index != -1) {
         this.form.domains.splice(index, 1);
       }
     },
@@ -326,9 +508,20 @@ export default {
         imageUrl: ""
       });
     },
+    changeLibNum: function(event) {
+      console.log(event);
+      for (var i = 0; i < this.options.length; i++) {
+        if (event === this.options[i].name) {
+          this.libNum = this.options[i].number;
+          console.log(this.libNum);
+        }
+      }
+    },
+
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
+
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
