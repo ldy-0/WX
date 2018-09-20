@@ -1,26 +1,29 @@
-<style lang="sass" scoped>
-.inner
-  margin: 0
-  padding: 0
+<style scoped>
+.inner {
+  margin: 0;
+  padding: 0;
+}
 
-.formId-button-push
-  display: block
-  justify-content: space-between
-  border: none
-  padding: 0
-  margin: 0
-  overflow: visible
-  border-radius: 0rpx
-  background: transparent
-  line-height: normal
-  text-align: left
-  &::after
-    content: none
-  
-.form
-  margin: 0
-  padding: 0
+.formId-button-push {
+  display: block;
+  justify-content: space-between;
+  border: none;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  border-radius: 0rpx;
+  background: transparent;
+  line-height: normal;
+  text-align: left;
+}
+.formId-button-push::after {
+  content: none;
+}
 
+.form {
+  margin: 0;
+  padding: 0;
+}
 </style>
 <template>
  <view class="inner">
@@ -32,6 +35,7 @@
 <script>
 import wepy from "wepy";
 import { shttp } from "../utils/http";
+import { FORMIDAPI } from "../constant/configConstant";
 export default class getFormId extends wepy.component {
   props = {};
 
@@ -42,24 +46,14 @@ export default class getFormId extends wepy.component {
   methods = {
     formSubmit(e) {
       this.formId = e.detail.formId;
-      let status = wx.getStorageSync("status");
-      if (status == "student") {
-        this.studentFormId();
-      } else if (status == "teacher") {
-        this.assistantFormId();
-      }
+      console.log('formId为',this.formId);
+      this.postFormId();
     }
   };
 
-  async studentFormId() {
+  async postFormId() {
     const res = await shttp
-      .post("/v1/student/notify")
-      .send({ formId: parseInt(this.formId) })
-      .end();
-  }
-  async assistantFormId() {
-    const res = await shttp
-      .post("/v1/assistant/notify")
+      .post(FORMIDAPI)
       .send({ formId: parseInt(this.formId) })
       .end();
   }

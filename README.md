@@ -54,7 +54,11 @@
 
 ## 组件
 
-
+* 组件名：`getFormId.vue`
+  - 功能：`用于收集发送小程序模板消息所需的form_id`
+  - 组件文档： [组件调用文档](http://118.31.48.192/minivictory/appletofWeChat/blob/master/manual/getFormId.md)
+  - 组件文档： [小程序官方API文档](https://developers.weixin.qq.com/miniprogram/dev/api/notice.html#%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)
+  - 备注: 由于微信政策变严，最好不要大范围使用此组件
 
 备注： 有好的自有js库、三方js库、组件可以往这添加积累以供大家一起使用，提升开发效率😁
   
