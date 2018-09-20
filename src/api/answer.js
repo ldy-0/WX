@@ -195,3 +195,27 @@ export function postTimeSearch(data) { //时间搜索
         data
     })
 }
+
+export function deleteHistoryList(data) { //删除历史列表对应列
+    return request({
+        url: '/api/v1/seller/record',
+        method: 'delete',
+        data
+    })
+}
+
+export function getRoomAwsHistory(data) { //答题历史列表（对应房间）
+    return request({
+        url: '/api/v1/seller/history',
+        method: 'get',
+        params: data
+    })
+}
+
+export function getSortDetails(data) { //获取对应的房间列表的详情
+    return request({
+        url: '/api/v1/seller/sortDetails',
+        method: 'get',
+        params: data
+    })
+}

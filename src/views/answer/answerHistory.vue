@@ -18,7 +18,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  width: 320px;
+  width: 500px;
 }
 
 .el-form {
@@ -37,27 +37,96 @@
 <div class="el-div">
     <!-- <el-button type="primary" icon="el-icon-edit" @click="toAddClass">添加分类</el-button> -->
     <div class="input-search">
-        <el-input v-model="inputTime" placeholder="题目搜索"></el-input>
-        <div style="width:1px;height: 30px;"></div>
+        <div class="block">
+            <el-date-picker
+                  v-model="inputTime"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期">
+            </el-date-picker>
+        </div>
         <el-button slot="append" icon="el-icon-search" @click="searchTime"></el-button>
     </div>
     <div style="width:20px;height: 30px;"></div>
         <div class="input-search">
-        <el-input v-model="inputRoomTitle" placeholder="题目搜索"></el-input>
+        <el-input v-model="inputRoomTitle" placeholder="房间名搜索"></el-input>
         <div style="width:1px;height: 30px;"></div>
         <el-button slot="append" icon="el-icon-search" @click="searchRoomTitle"></el-button>
     </div>
     <div style="width:20px;height: 30px;"></div>
-    <el-dialog title="添加分类" :visible.sync="dialogFormVisible">
-        <el-form  class="el-form">
-            <el-form-item label="分类">
-                <el-input v-model="name" auto-complete="off"></el-input>
-            </el-form-item>
-        </el-form>
+    <el-dialog title="详情" :visible.sync="dialogFormVisible">
+      
+      <el-dialog title="详情" :visible.sync="dialogFormVisible_info" append-to-body>
+      <el-table
+      :data="dialogTableData_info"
+      style="width: 100%" >
+
+      <el-table-column
+        label="题目"
+        prop="information_title"
+        >
+      </el-table-column>
+
+      <el-table-column
+        label="选项" 
+        prop="elect"
+        >
+      </el-table-column>
+
+        <el-table-column
+        label="正确项"
+        prop="answers"
+        >
+      </el-table-column>
+    </el-table>
         <div slot="footer" class="dialog-footer">
-            <!-- <el-button @click="dialogFormVisible = false">取 消</el-button> -->
-            <el-button type="primary" v-if="!isAdd" @click="yesClass">添 加</el-button>
-            <el-button type="primary" v-if="isAdd" @click="editClass">编 辑</el-button>
+            <el-button @click="dialogFormVisible_info = false">取 消</el-button>
+        </div>
+    </el-dialog>
+
+        <el-table
+      :data="dialogTableData"
+      style="width: 100%" >
+      <el-table-column
+        label="昵称"
+        prop="subscriber_nickname"
+        >
+      </el-table-column>
+
+      <el-table-column
+        label="姓名" 
+        prop="subscriber_name"
+        >
+      </el-table-column>
+
+        <el-table-column
+        label="手机号"
+        prop="subscriber_phone"
+        >
+      </el-table-column>
+      <el-table-column
+        label="答对题数" 
+        prop="right"
+        >
+      </el-table-column>
+
+      <el-table-column
+        label="答错题数" 
+        prop="wrong"
+        >
+      </el-table-column>
+      <el-table-column
+        label="操作" 
+        >
+
+        <template slot-scope="scope">
+          <el-button size="mini" type="info" @click="toDialogInfo(scope.$index)">详情</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">取 消</el-button>
         </div>
     </el-dialog>
     <div style="width:20px;height: 30px;"></div>
@@ -87,7 +156,7 @@
         label="操作" 
         >
         <template slot-scope="scope">
-          <el-button size="mini" type="info" @click="toEdit(scope.$index)">编辑</el-button>
+          <el-button size="mini" type="info" @click="toAwsInfo(scope.$index)">详情</el-button>
           <el-button size="mini" type="danger" @click="toDelete(scope.$index)">删除</el-button>
         </template>
       </el-table-column>
@@ -105,21 +174,24 @@
 import {
   getAwsHistory,
   putRoomNameSearch,
-  postTimeSearch
+  postTimeSearch,
+  getRoomAwsHistory,
+  deleteHistoryList,
+  getSortDetails
 } from "@/api/answer";
 
 export default {
   created() {
-    this.getHistoryList_api();
+    this.getHistoryList_api(1, 0);
   },
   data() {
     return {
       inputTime: null,
       inputRoomTitle: null,
-      editId: null,
+      dialogTableData_info: [],
+      dialogFormVisible_info: false,
       dialogFormVisible: false,
-      isAdd: false,
-      name: "",
+      dialogTableData: [],
       formLabelWidth: "80px",
       tableData: []
     };
@@ -127,8 +199,8 @@ export default {
   methods: {
     getHistoryList_api: function(page, limit) {
       var data = {
-        page: 1,
-        limit: 0
+        page: page,
+        limit: limit
       };
       getAwsHistory(data).then(res => {
         console.log("class list res", res.data);
@@ -136,56 +208,56 @@ export default {
         this.tableData = res.data;
       });
     },
-    toAddClass: function() {
-      this.dialogFormVisible = true;
-      this.isAdd = false;
-      this.name = "";
-    },
-    yesClass: function() {
-      var data = {
-        name: this.name
-      };
-      postAddClass(data).then(res => {
-        console.log("add", res);
-        this.getClassList_api();
-        this.dialogFormVisible = false;
-      });
-    },
     toDelete: function(id) {
-      console.log(this.tableData[id].classify_id);
+      console.log(this.tableData[id].record_id);
       var data = {
-        classify_id: this.tableData[id].classify_id
+        record_id: this.tableData[id].record_id
       };
-      deleteClassList(data).then(res => {
-        console.log(res);
+      deleteHistoryList(data).then(res => {
         this.tableData.splice(id, 1);
       });
     },
-    toEdit: function(id) {
-      this.editId = id;
+    toAwsInfo: function(id) {
       this.dialogFormVisible = true;
-      this.isAdd = true;
-      this.name = this.tableData[id].name;
-      console.log("tab", this.tableData);
-    },
-    editClass: function() {
-      console.log("editClassID", this.editId);
-      this.tableData[this.editId].name = this.name;
       var data = {
-        name: this.tableData[this.editId].name,
-        classify_id: this.tableData[this.editId].classify_id
+        record_id: this.tableData[id].record_id
       };
-      putEditClass(data).then(res => {
-        console.log(res);
-        this.dialogFormVisible = false;
+      getRoomAwsHistory(data).then(res => {
+        console.log("ress", res.data);
+        this.dialogTableData = res.data;
       });
     },
-    searchTime:function(){
-
+    toDialogInfo: function(id) {
+      this.dialogFormVisible_info = true;
+      var data = {
+        history_id: this.dialogTableData[id].history_id
+      };
+      getSortDetails(data).then(res => {
+        console.log("resssss", res.data);
+        this.dialogTableData_info = res.data;
+      });
     },
-    searchRoomTitle:function(){
 
+    searchTime: function() {
+      var data = {
+        start_time: Math.round(Date.parse(this.inputTime[0]) / 1000),
+        end_time: Math.round(Date.parse(this.inputTime[1]) / 1000)
+      };
+      postTimeSearch(data).then(res => {
+        this.tableData = res.data;
+        console.log(this.tableData);
+      });
     },
+    searchRoomTitle: function() {
+      var data = {
+        name: this.inputRoomTitle
+      };
+      putRoomNameSearch(data).then(res => {
+        this.tableData = res.data;
+        console.log(this.tableData);
+        // this.getHistoryList_api(1, 0);
+      });
+    }
   }
 };
 </script>
