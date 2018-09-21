@@ -40,6 +40,10 @@
   * 功能：`数据请求的get、put、post、detile的封装`
   * 文档： [查看使用范例](http://118.31.48.192/minivictory/appletofWeChat/blob/master/manual/http.md)
   * 备注:
+* 库名：`tencent-cos.js`
+  * 功能：`上传文件到腾讯云对象存储`
+  * 文档： 1.[配置腾讯云对象存储](https://docs.qq.com/doc/DTUplekVqS3FzSVdS) 2.[查看使用范例](http://118.31.48.192/minivictory/appletofWeChat/blob/master/manual/upossImg.md)
+  * 备注:  
 
 ## 三方js库
 * 库名：`Day.js`
@@ -58,10 +62,21 @@
   - 功能：`用于收集发送小程序模板消息所需的form_id`
   - 组件文档： [组件调用文档](http://118.31.48.192/minivictory/appletofWeChat/blob/master/manual/getFormId.md)
   - 组件文档： [小程序官方API文档](https://developers.weixin.qq.com/miniprogram/dev/api/notice.html#%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E)
-  - 备注: 由于微信政策变严，最好不要大范围使用此组件
+  - 备注: 由于微信政策变严，最好不要大范围使用此组件，form_id只有在真机上才显示，所以用到此组件时需要真机调试
 
 备注： 有好的自有js库、三方js库、组件可以往这添加积累以供大家一起使用，提升开发效率😁
-  
+* 待归纳排序
+  - √对象存储
+  - 登陆及授权-测试各种id是否正常
+  - 线下提现
+  - 线上提现
+  - 短信服务
+  - 后台-地图定位
+  - 前端代码部署
+  - 登陆及授权-后端灵活保存数据
+  - 长期项目的文档
+
+
 
 
 

@@ -1,8 +1,9 @@
-<style lang="sass">
-page
-  height: 100%
-  width: 100%
-  font-family: arial, 'PingFang SC', 'Microsoft Yahei', 'Hiragino Sans GB'
+<style>
+page {
+  height: 100%;
+  width: 100%;
+  font-family: arial, "PingFang SC", "Microsoft Yahei", "Hiragino Sans GB";
+}
 </style>
 
 <script>
@@ -16,7 +17,7 @@ export default class extends wepy.app {
       "pages/authorization", //授权页
       "pages/index1",
       "pages/index2",
-      "pages/index3",
+      "pages/index3"
     ],
     window: {
       backgroundTextStyle: "dark",

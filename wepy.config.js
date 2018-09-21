@@ -21,9 +21,9 @@ module.exports = {
   },
   eslint: false,
   compilers: {
-    sass: {
-      indentSyntax: true
-    },
+    // sass: {
+    //   indentSyntax: true
+    // },
     babel: {
       sourceMap: true,
       presets: [
@@ -52,7 +52,7 @@ setEnv();
 if (env === 'production' || env === 'test') {
   delete module.exports.compilers.babel.sourcesMap;
   // 压缩sass
-  module.exports.compilers['sass'] = { outputStyle: 'compressed' };
+  // module.exports.compilers['sass'] = { outputStyle: 'compressed' };
   // 压缩js
   module.exports.plugins = {
     uglifyjs: {
