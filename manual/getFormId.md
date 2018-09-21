@@ -1,5 +1,5 @@
 ## getFormId组件说明
-* 示例代码
+### 示例代码
 ```html
 <template>
    <getFormId>
