@@ -1,6 +1,6 @@
 ## 用法示例
-- 示例代码
-```
+### 示例代码
+```html
 <style scoped>
 </style>
 <template>
