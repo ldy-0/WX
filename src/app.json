@@ -1,0 +1,53 @@
+{
+  "pages": [
+    "pages/index/main",
+    "pages/logs/main",
+    "pages/counter/main",
+    "pages/my/main",
+    "pages/authorization/main",
+    "pages/design/main",
+    "pages/jiaju/main",
+    "pages/banbao/main",
+    "pages/address/addressList/main",
+    "pages/address/add/main",
+    "pages/goods/main",
+    "pages/submit/main",
+    "pages/payed/main",
+    "pages/order/list/main",
+    "pages/order/service/main",
+    "pages/order/assess/main",
+    "pages/shoppingCart/main",
+    "pages/help/main"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "WeChat",
+    "navigationStyle": "custom",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#8e8e8e",
+    "selectedColor": "#786578",
+    "backgroundColor": "#fff",
+    "borderStyle": "none",
+    "list": [
+      {
+        "pagePath": "pages/index/main",
+        "text": "易居生活",
+        "iconPath": "static/toolBar/home.png",
+        "selectedIconPath": "static/toolBar/home_sel.png"
+      },{
+        "pagePath": "pages/logs/main",
+        "text": "易居邻里",
+        "iconPath": "static/toolBar/food.png",
+        "selectedIconPath": "static/toolBar/food_sel.png"
+      },{
+        "pagePath": "pages/my/main",
+        "text": "我的易居",
+        "iconPath": "static/toolBar/my.png",
+        "selectedIconPath": "static/toolBar/my_sel.png"
+      }
+    ]
+  }
+}
