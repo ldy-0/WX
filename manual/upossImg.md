@@ -1,8 +1,5 @@
 ## 用法示例
-- 引入uploadSeriesFile方法
-```js
-import { uploadSeriesFile } from "../utils/tencent-cos";
-```
+* 示例代码
 ```html
 <style scoped>
 </style>
@@ -48,5 +45,4 @@ export default class Home extends wepy.page {
   methods = {};
 }
 </script>
-
 ```
