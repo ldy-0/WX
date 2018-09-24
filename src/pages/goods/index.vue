@@ -77,9 +77,12 @@
             </view>
           </picker>
 
-        <textarea class='textarea' placeholder="备注" placeholder-style='margin-left: 30px;'>
+        <div class='textarea'>
+          <textarea placeholder="备注" placeholder-style='margin-left: 30px;'>
+          
+          </textarea>
           <div class='textarea_count'>0/120</div>
-        </textarea>
+        </div>
 
         <div class='submit_btn s-fc-1 s-bg-3' @click='goSubmit'>提交</div>
       </div>

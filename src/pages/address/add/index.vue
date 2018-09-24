@@ -11,24 +11,25 @@
 
           <view class='row_flex'>联系方式：<input type='text' name='phone' class='inline s-fc-4' @input='setPhone' :value='address.phone' /></view>
 
-          <!-- <view class="row_flex">
+          <view class="row_flex">
               <view>所在地区：</view>
               <view class='flex' @click='openAddressPicker'> 
-                  <view class='flex'>
+                  <view class='flex' style='display: flex;'>
                       <view>{{province ? province.name : '省'}}</view>
-                      <image class="cityup" src="../../images/My/cityup.png"></image>
+                      <!-- <image class="cityup" src="../../images/My/cityup.png"></image> -->
                   </view>
-                  <view class='flex'>
+                  <view class='flex' style='display: flex;>
                       <view>{{city ? city.name : '市' }}</view>
-                       <image class="cityup" src="../../images/My/cityup.png"></image>
+                      <!-- <image class="cityup" src="../../images/My/cityup.png"></image> -->
                   </view>
-                  <view class='flex'>
+                  <view class='flex' style='display: flex;>
                       <view>{{area ? area.name : '区' }}</view>
-                       <image class="cityup" src="../../images/My/cityup.png"></image>
+                      <!-- <image class="cityup" src="../../images/My/cityup.png"></image> -->
                   </view>
               </view>
-              <areaPicker @areaArray.user="areaChange"></areaPicker>
-          </view> -->
+              <!-- <areaPicker @areaArray.user="areaChange"></areaPicker> -->
+              <areap ref='area'></areap>
+          </view>
 
           <view class='row_flex'>详细地址：<input type='text' name='detail' class='inline s-fc-4' @input='setStreet' :value='address.street' /></view>
 
@@ -55,6 +56,7 @@
 <script>
 import topBar from '@/components/topBar'
 import slide from '@/components/slide'
+import area from '@/components/area'
 
 export default {
   data () {
@@ -93,10 +95,16 @@ export default {
 
   components: {
     topBar,
-    slide
+    slide,
+    areap: area
   },
 
   methods: {
+    openAddressPicker(){
+        console.log('--openAddressPicker--');
+        //this.$invoke("areaPicker", "openAddressPicker");
+        this.$refs.area.openAddressPicker();
+    },
     bindViewTap () {
       const url = '../logs/main'
       wx.navigateTo({ url })
