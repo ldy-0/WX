@@ -95,8 +95,8 @@
                 v-model="form.startTime"
                 :picker-options="{
                   start: '00:00',
-                  step: '00:30',
-                  end: '22:30'
+                  step: '01:00',
+                  end: '22:00'
                 }">
               </el-time-select>
               <el-time-select
@@ -104,7 +104,7 @@
                 v-model="form.endTime"
                 :picker-options="{
                   start: '00:00',
-                  step: '00:30',
+                  step: '01:00',
                   end: '23:00',
                   minTime: form.startTime
                 }">
@@ -123,9 +123,11 @@
               <el-input v-model="form.domains[0].value" auto-complete="off"></el-input>
               <div style="margin: 20px 0;"></div>
               <el-upload
-                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :multiple="false"
+                    :auto-upload="false"
+                    action=""
                     list-type="picture-card"
-                    :on-preview="handlePictureCardPreview"
+                    :on-change="handlePicture0"
                     :on-remove="handleRemove"
                     :on-success="handUpSuccess">
                     <i class="el-icon-plus"></i>
@@ -135,9 +137,10 @@
               <el-input v-model="form.domains[1].value" auto-complete="off"></el-input>
               <div style="margin: 20px 0;"></div>
               <el-upload
-                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :auto-upload="false"
+                    action=""
                     list-type="picture-card"
-                    :on-preview="handlePictureCardPreview"
+                    :on-change="handlePicture1"
                     :on-remove="handleRemove"
                     :on-success="handUpSuccess">
                     <i class="el-icon-plus"></i>
@@ -147,42 +150,41 @@
               <el-input v-model="form.domains[2].value" auto-complete="off"></el-input>
               <div style="margin: 20px 0;"></div>
               <el-upload
-                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :auto-upload="false"
+                    action=""
                     list-type="picture-card"
-                    :on-preview="handlePictureCardPreview"
+                    :on-change="handlePicture2"
                     :on-remove="handleRemove"
                     :on-success="handUpSuccess">
                     <i class="el-icon-plus"></i>
                 </el-upload>
             </el-form-item>
-            <!-- <el-form-item label="奖品">
+            <el-form-item label="奖品四">
+              <el-input v-model="form.domains[3].value" auto-complete="off"></el-input>
               <div style="margin: 20px 0;"></div>
-              <el-button @click="addDomain">新增</el-button>
-              <div style="margin: 20px 0;"></div>
-               <el-form-item
-                  v-for="(domain, index) in form.domains"
-                  
-                  :key="domain.key"
-                  :prop="'domains.' + index + '.value'"
-                >
-                  <el-input v-model="domain.value">
-                  <el-button slot="append" icon="el-icon-error" @click="removeDomain(domain)"></el-button></el-input>
-                  <div style="margin: 20px 0;"></div>
-
-                  <el-upload
-                    action="https://jsonplaceholder.typicode.com/posts/"
+              <el-upload
+                    :auto-upload="false"
+                    action=""
                     list-type="picture-card"
-                    :on-preview="handlePictureCardPreview"
+                    :on-change="handlePicture3"
                     :on-remove="handleRemove"
                     :on-success="handUpSuccess">
                     <i class="el-icon-plus"></i>
-                  </el-upload>
-                  <el-dialog :visible.sync="dialogVisible">
-                    <img width="100%" :src="dialogImageUrl" alt="">
-                  </el-dialog>
-                  <div style="margin: 20px 0;"></div>
-              </el-form-item>
-            </el-form-item> -->
+                </el-upload>
+            </el-form-item>
+            <el-form-item label="奖品五">
+              <el-input v-model="form.domains[4].value" auto-complete="off"></el-input>
+              <div style="margin: 20px 0;"></div>
+              <el-upload
+                    :auto-upload="false"
+                    action=""
+                    list-type="picture-card"
+                    :on-change="handlePicture4"
+                    :on-remove="handleRemove"
+                    :on-success="handUpSuccess">
+                    <i class="el-icon-plus"></i>
+                </el-upload>
+            </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
             <!-- <el-button @click="dialogFormVisible = false">取 消</el-button> -->
@@ -247,6 +249,7 @@ import {
   putStopBonusRoom,
   putBounsRoom
 } from "@/api/answer";
+import uploadFn from "@/utils/aahbs";
 
 export default {
   created() {
@@ -347,6 +350,16 @@ export default {
       this.form.domains[4].value = "";
       this.form.domains[4].imageUrl = "";
     },
+    upImg: async function() {
+      var prize = [];
+      for (var i = 0; i < 5; i++) {
+        if (this.urlArr[i] != "") {
+          let src = await uploadFn(this.urlArr[i]);
+          prize[i] = src;
+        }
+      }
+      console.log("prize", prize[0][0]);
+    },
     yesClass: function() {
       //对话框下角的确定添加按钮
       console.log("form", this.form);
@@ -358,7 +371,6 @@ export default {
       }
       this.form.startDate = Math.round(Date.parse(this.clickData[0]) / 1000);
       this.form.endDate = Math.round(Date.parse(this.clickData[1]) / 1000);
-
       var data = {
         name: this.form.name,
         library_id: Number(library_id),
@@ -368,15 +380,26 @@ export default {
         start_time: this.form.startTime,
         end_time: this.form.endTime,
         regulation: this.form.rule,
-        prize1:
-          this.form.domains[0].value + "-" + this.form.domains[0].imageUrl,
-        prize2:
-          this.form.domains[1].value + "-" + this.form.domains[1].imageUrl,
-        prize3:
-          this.form.domains[2].value + "-" + this.form.domains[2].imageUrl,
-        prize4:
-          this.form.domains[3].value + "-" + this.form.domains[3].imageUrl,
-        prize5: this.form.domains[4].value + "-" + this.form.domains[4].imageUrl
+        prize1: JSON.stringify({
+          title: this.form.domains[0].value,
+          src: this.form.domains[0].imageUrl
+        }),
+        prize2: JSON.stringify({
+          title: this.form.domains[1].value,
+          src: this.form.domains[1].imageUrl
+        }),
+        prize3: JSON.stringify({
+          title: this.form.domains[2].value,
+          src: this.form.domains[2].imageUrl
+        }),
+        prize4: JSON.stringify({
+          title: this.form.domains[3].value,
+          src: this.form.domains[3].imageUrl
+        }),
+        prize5: JSON.stringify({
+          title: this.form.domains[4].value,
+          src: this.form.domains[4].imageUrl
+        })
       };
       console.log("data", data);
       postAddBonusRoom(data).then(res => {
@@ -406,19 +429,30 @@ export default {
         start_time: this.form.startTime,
         end_time: this.form.endTime,
         regulation: this.form.rule,
-        prize1:
-          this.form.domains[0].value + "-" + this.form.domains[0].imageUrl,
-        prize2:
-          this.form.domains[1].value + "-" + this.form.domains[1].imageUrl,
-        prize3:
-          this.form.domains[2].value + "-" + this.form.domains[2].imageUrl,
-        prize4:
-          this.form.domains[3].value + "-" + this.form.domains[3].imageUrl,
-        prize5: this.form.domains[4].value + "-" + this.form.domains[4].imageUrl
+        prize1: JSON.stringify({
+          title: this.form.domains[0].value,
+          src: this.form.domains[0].imageUrl
+        }),
+        prize2: JSON.stringify({
+          title: this.form.domains[1].value,
+          src: this.form.domains[1].imageUrl
+        }),
+        prize3: JSON.stringify({
+          title: this.form.domains[2].value,
+          src: this.form.domains[2].imageUrl
+        }),
+        prize4: JSON.stringify({
+          title: this.form.domains[3].value,
+          src: this.form.domains[3].imageUrl
+        }),
+        prize5: JSON.stringify({
+          title: this.form.domains[4].value,
+          src: this.form.domains[4].imageUrl
+        })
       };
       putBounsRoom(data).then(res => {
         this.dialogFormVisible = false;
-        this.getList_api(1,0);
+        this.getList_api(1, 0);
       });
     },
     toDelete: function(id) {
@@ -450,12 +484,12 @@ export default {
         new Date(this.tableData[id].start_date * 1000),
         new Date(this.tableData[id].end_date * 1000)
       ];
-      this.form.domains[0].value = this.tableData[id].prize1;
-      this.form.domains[1].value = this.tableData[id].prize2;
-      this.form.domains[2].value = this.tableData[id].prize3;
-      this.form.domains[3].value = this.tableData[id].prize4;
-      this.form.domains[4].value = this.tableData[id].prize5;
-      this.form.domains[0].imageUrl = "";
+      this.form.domains[0].value = JSON.parse(this.tableData[id].prize1).title;
+      this.form.domains[1].value = JSON.parse(this.tableData[id].prize2).title;
+      this.form.domains[2].value = JSON.parse(this.tableData[id].prize3).title;
+      this.form.domains[3].value = JSON.parse(this.tableData[id].prize4).title;
+      this.form.domains[4].value = JSON.parse(this.tableData[id].prize5).title;
+      this.form.domains[0].imageUrl = JSON.parse(this.tableData[id].prize1).src;
       this.form.domains[1].imageUrl = "";
       this.form.domains[2].imageUrl = "";
       this.form.domains[3].imageUrl = "";
@@ -522,17 +556,34 @@ export default {
       console.log(file, fileList);
     },
 
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
+    async handlePicture0(file, fileList) {
+      console.log("change0", file);
+      this.urlArr[0] = file.raw;
+      this.form.domains[0].imageUrl = await uploadFn(file.raw);
+    },
+    async handlePicture1(file, fileList) {
+      console.log("change1", file);
+      this.urlArr[1] = file.raw;
+      this.form.domains[1].imageUrl = await uploadFn(file.raw);
+    },
+    async handlePicture2(file, fileList) {
+      console.log("change2", file);
+      this.urlArr[2] = file.raw;
+      this.form.domains[2].imageUrl = await uploadFn(file.raw);
+    },
+    async handlePicture3(file, fileList) {
+      console.log("change3", file);
+      this.urlArr[3] = file.raw;
+      this.form.domains[3].imageUrl = await uploadFn(file.raw);
+    },
+    async handlePicture4(file, fileList) {
+      console.log("change4", file);
+      this.urlArr[4] = file.raw;
+      this.form.domains[4].imageUrl = await uploadFn(file.raw);
     },
     handUpSuccess: function(response, file, fileList) {
-      console.log(fileList[0].url);
-      // var urlArr = [];
-      this.urlArr.push(fileList[0].url);
-      for (var i = 0; i < this.form.domains.length; i++) {
-        this.form.domains[i].imageUrl = this.urlArr[i];
-      }
+      console.log("fileList", fileList);
+      console.log("file", file);
     }
   }
 };
