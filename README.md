@@ -19,7 +19,7 @@
 ```
 ## 开发前准备
  * 开始项目时需在[configTemplate.js](..\src\constant\configTemplate.js)文件中配置好项目的相关参数
-    >在[腾讯文档](https://docs.qq.com/sheet/BqI21X2yZIht16aEvJ2OmCjn1V9HaE4ejMTJ1ikqaA01VCbM4)中根据所需开发项目的订单号可查看该项目的开发必备信息
+    >在[腾讯文档项目列表（开发阶段）](https://docs.qq.com/sheet/BqI21X2yZIht16aEvJ2OmCjn1V9HaE4ejMTJ1ikqaA01VCbM4)中根据所需开发项目可查看该项目的开发必备信息
   * 验证所获取的信息是否正确（如appid和	secret是否正确）
     >[在线验证](https://mp.weixin.qq.com/debug/cgi-bin/apiinfo?t=index&type=%E5%9F%BA%E7%A1%80%E6%94%AF%E6%8C%81&form=%E8%8E%B7%E5%8F%96access_token%E6%8E%A5%E5%8F%A3%20/token&token=&lang=zh_CN)
 
@@ -43,8 +43,11 @@
 * 库名：`tencent-cos.js`
   * 功能：`上传文件到腾讯云对象存储`
   * 文档： 1.[配置腾讯云对象存储](https://docs.qq.com/doc/DTUplekVqS3FzSVdS) 2.[查看使用范例](http://118.31.48.192/minivictory/appletofWeChat/blob/master/manual/upossImg.md)
-  * 备注:  
-
+  * 备注:  需在configTemplate.js中配置腾讯云对象存储参数
+* 库名：`aliyun-oss.js`
+  * 功能：`上传文件到阿里云对象存储`
+  * 文档： 1.[配置阿里云对象存储](https://docs.qq.com/doc/DeHhtTVpKcXpEZVhQ) 2.[查看使用范例](http://118.31.48.192/minivictory/appletofWeChat/blob/master/manual/upossImg.md)
+  * 备注:  需在configTemplate.js中配置获取阿里云对象存储参数api接口
 ## 三方js库
 * 库名：`Day.js`
   - 功能：`Day.js有很多API 来解析、处理、校验、增减、展示时间和日期`

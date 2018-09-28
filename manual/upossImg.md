@@ -1,5 +1,14 @@
 ## 用法示例
-### 示例代码
+### 对象存储图片上传示例代码
+
+* 腾讯云对象存储上传在script中引入
+```js
+import { uploadSeriesFile } from "../utils/tencent-cos";
+```
+* 阿里云对象存储上传在script中引入
+```js
+import { uploadSeriesFile } from "../utils/aliyun-oss";
+```
 ```html
 <style scoped>
 </style>
