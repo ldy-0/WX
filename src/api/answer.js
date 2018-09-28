@@ -219,3 +219,11 @@ export function getSortDetails(data) { //获取对应的房间列表的详情
         params: data
     })
 }
+
+export function postMusic(data) { //背景音乐
+    return request({
+        url: '/api/v1/seller/music',
+        method: 'post',
+        data
+    })
+}

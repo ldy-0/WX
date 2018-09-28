@@ -37,7 +37,7 @@
 <div class="el-div">
     <el-button type="primary" icon="el-icon-edit" @click="toAddSubject">添加题目</el-button>
     <el-button type="primary" icon="document" @click="toGetSubList">批量导入</el-button>
-    <el-button type="primary" icon="document" @click="toExport">导出</el-button>
+    <el-button type="primary" icon="document" :loading="downloadLoading" @click="toExport">导出</el-button>
 
     <el-dialog title="添加题目" :visible.sync="dialogFormVisible">
         <el-form :model="form" class="el-form">
@@ -184,6 +184,7 @@ export default {
   },
   data() {
     return {
+      downloadLoading: false,
       isShowEdit: false,
       editId: null,
       isAddAws: false,
@@ -209,7 +210,7 @@ export default {
     getLibraryList_api: function(page, limit) {
       var data = {
         page: 1,
-        limit: 50
+        limit: 0
       };
       getLibList(data).then(res => {
         console.log("res", res);
@@ -230,9 +231,9 @@ export default {
     },
     getClass: function() {
       var data = {
-        page:1,
-        limit:0
-      }
+        page: 1,
+        limit: 0
+      };
       getLibClassList(data).then(res => {
         console.log(res);
         for (var i = 0; i < res.data.length; i++) {
@@ -342,24 +343,65 @@ export default {
         }
       }
       var data = {
-        title : this.form.name,
-        classify_id : classify_id,
-        answer1 : this.form.awsA,
-        answer2 : this.form.awsB,
-        answer3 : this.form.awsC,
-        answer4 : this.form.awsD,
+        title: this.form.name,
+        classify_id: classify_id,
+        answer1: this.form.awsA,
+        answer2: this.form.awsB,
+        answer3: this.form.awsC,
+        answer4: this.form.awsD,
         answers: this.form.aws,
         topic_id: edited
-      }
-      putLibEditList(data).then( res =>{
-        console.log("edit res",res);
+      };
+      putLibEditList(data).then(res => {
+        console.log("edit res", res);
         this.tableData = [];
         this.getLibraryList_api();
-      })
+      });
     },
 
     toGetSubList: function() {},
-    toExport: function() {},
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v =>
+        filterVal.map(j => {
+          if (j === "timestamp") {
+            return parseTime(v[j]);
+          } else {
+            return v[j];
+          }
+        })
+      );
+    },
+    toExport: async function() {
+      this.downloadLoading = true;
+      import("@/vendor/Export2Excel").then(excel => {
+        const tHeader = [
+          "题目",
+          "分类",
+          "答案A",
+          "答案B",
+          "答案C",
+          "答案D",
+          "正确答案"
+        ];
+        const filterVal = [
+          "title",
+          "class",
+          "awsA",
+          "awsB",
+          "awsC",
+          "awsD",
+          "aws"
+        ];
+        const tableDataAll = this.tableData;
+        const data = this.formatJson(filterVal, tableDataAll);
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: "平台题库列表"
+        });
+        this.downloadLoading = false;
+      });
+    },
 
     toClose: function() {
       this.isAddAws = false;

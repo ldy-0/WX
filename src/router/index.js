@@ -353,6 +353,11 @@ export let asyncRouterMapSeller = [
       component: () => import('@/views/answer/answerHistory'),
       name: 'answerHistory',
       meta: { title: 'answerHistory', noCache: true }
+    },{
+      path: 'music',
+      component: () => import('@/views/answer/music'),
+      name: 'music',
+      meta: { title: 'music', noCache: true }
     }]
   }
 ]
