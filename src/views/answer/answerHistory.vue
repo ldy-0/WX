@@ -57,11 +57,9 @@
     <div style="width:20px;height: 30px;"></div>
     <el-dialog title="详情" :visible.sync="dialogFormVisible">
       
-      <el-dialog title="详情" :visible.sync="dialogFormVisible_info" append-to-body>
-      <el-table
-      :data="dialogTableData_info"
-      style="width: 100%" >
-
+      <el-dialog title="" :visible.sync="dialogFormVisible_info" append-to-body>
+      <el-button type="primary" icon="document" :loading="downloadLoading" @click="toExport">导出</el-button>        
+      <el-table :data="dialogTableData_info" style="width: 100%" >
       <el-table-column
         label="题目"
         prop="information_title"
@@ -189,6 +187,7 @@ export default {
       inputTime: null,
       inputRoomTitle: null,
       dialogTableData_info: [],
+      downloadLoading: false,
       dialogFormVisible_info: false,
       dialogFormVisible: false,
       dialogTableData: [],
@@ -256,6 +255,41 @@ export default {
         this.tableData = res.data;
         console.log(this.tableData);
         // this.getHistoryList_api(1, 0);
+      });
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v =>
+        filterVal.map(j => {
+          if (j === "timestamp") {
+            return parseTime(v[j]);
+          } else {
+            return v[j];
+          }
+        })
+      );
+    },
+    toExport: async function() {
+      //导出
+      this.downloadLoading = true;
+      import("@/vendor/Export2Excel").then(excel => {
+        const tHeader = [
+          "题目",
+          "用户选项",
+          "正确选项"
+        ];
+        const filterVal = [
+          "information_title",
+          "elect",
+          "answers"
+        ];
+        const tableDataAll = this.dialogTableData_info;
+        const data = this.formatJson(filterVal, tableDataAll);
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: "商家题目列表"
+        });
+        this.downloadLoading = false;
       });
     }
   }

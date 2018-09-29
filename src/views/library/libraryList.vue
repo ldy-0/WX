@@ -36,9 +36,24 @@
     <div class="div">
 <div class="el-div">
     <el-button type="primary" icon="el-icon-edit" @click="toAddSubject">添加题目</el-button>
+    <!-- <el-button type="primary" icon="document" @click="toGetSubList">批量导入</el-button> -->
+    <!-- <el-upload
+      :auto-upload="false"
+      action=""
+      :on-change="handlePicture"
+      :limit="1"
+      :show-file-list="false">
+      <el-button style="margin:0px 10px 0 10px;" type="primary">批量导入</el-button>
+    </el-upload> -->
+    
+    <input type="file" id="fileId"></input>
     <el-button type="primary" icon="document" @click="toGetSubList">批量导入</el-button>
-    <el-button type="primary" icon="document" :loading="downloadLoading" @click="toExport">导出</el-button>
+     <!-- <form action="http://203.195.203.67/api/v1/Excel/import" enctype="multipart/form-data" token="7634d00d79857d0e2230229435e4c614" method="post">
+        <input type="file" name="name"/>
+        <input type="submit" value="提交">
+     </form> -->
 
+    <el-button type="primary" icon="document" :loading="downloadLoading" @click="toExport">导出</el-button>
     <el-dialog title="添加题目" :visible.sync="dialogFormVisible">
         <el-form :model="form" class="el-form">
             <el-form-item label="题目">
@@ -174,7 +189,8 @@ import {
   getLibSearchClass,
   deleteLibList,
   postLibAddList,
-  putLibEditList
+  putLibEditList,
+  postImportLib
 } from "@/api/libraryList";
 
 export default {
@@ -184,6 +200,7 @@ export default {
   },
   data() {
     return {
+      inputFile: "",
       downloadLoading: false,
       isShowEdit: false,
       editId: null,
@@ -358,8 +375,17 @@ export default {
         this.getLibraryList_api();
       });
     },
-
-    toGetSubList: function() {},
+    toGetSubList: function() {
+      this.inputFile = document.getElementById("fileId").files[0];
+      console.log(this.inputFile);
+      var data = {
+        file: document.getElementById("fileId").files[0]
+      };
+      console.log("data", data);
+      postImportLib(data).then(res => {
+        console.log(res);
+      });
+    },
     formatJson(filterVal, jsonData) {
       return jsonData.map(v =>
         filterVal.map(j => {
@@ -377,10 +403,10 @@ export default {
         const tHeader = [
           "题目",
           "分类",
-          "答案A",
-          "答案B",
-          "答案C",
-          "答案D",
+          "答案一",
+          "答案二",
+          "答案三",
+          "答案四",
           "正确答案"
         ];
         const filterVal = [
@@ -430,6 +456,22 @@ export default {
         console.log(res);
       });
       this.tableData.splice(id, 1);
+    },
+    handlePicture(file, fileList) {
+      console.log("change", file);
+      var data = {
+        file: file.raw
+      };
+      postImportLib(data)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          this.$notify.error({
+            title: "上传出错",
+            message: "请刷新后重新上传文件"
+          });
+        });
     }
   }
 };

@@ -44,7 +44,8 @@
         action=""
         :on-change="handlePicture"
         :on-remove="handleRemove"
-        :on-success="handUpSuccess">
+        :on-success="handUpSuccess"
+        :show-file-list="false">
         <el-button type="primary" size="medium" >选择</el-button>
     </el-upload>
     </div>

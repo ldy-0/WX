@@ -87,3 +87,11 @@ export function deleteClassList(data) { //删除分类
         data
     })
 }
+
+export function postImportLib(data) { //导出平台题目
+    return request({
+        url: '/api/v1/Excel/import',
+        method: 'post',
+        data
+    })
+}

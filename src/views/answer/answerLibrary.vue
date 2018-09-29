@@ -82,6 +82,9 @@
         </el-dropdown>
 
     <el-dialog title="从列表选择" :visible.sync="isDialogCheck_copy">
+    <el-select v-model="classVal" value-key="id" placeholder="请选择" @change="toSearchClass">
+      <el-option v-for="(item,index) in options" :label="item.label" :key="item.id"  :value="item.label"></el-option>
+    </el-select>
       <el-table
       :data="dialogTableData_copy"
       style="width: 100%" >
@@ -188,7 +191,10 @@
             </span>
         </el-dialog>
 
-    <el-dialog title="从列表选择" :visible.sync="isDialogCheck">
+    <el-dialog title="" :visible.sync="isDialogCheck">
+      <el-button type="primary" icon="document" :loading="downloadLoading" @click="toExport">导出</el-button>
+      <el-button type="primary" icon="document" :loading="downloadLoading" @click="toExport">批量导入</el-button>
+
       <el-table
       :data="dialogTableData"
       style="width: 100%" >
@@ -272,11 +278,13 @@ export default {
   },
   data() {
     return {
+      classVal: "",
       isDialogCheck: false,
       isDialogCheck_copy: false,
+      downloadLoading: false,
 
-      dialogTableData: [], 
-      dialogTableData_copy: [],//从列表加到题库
+      dialogTableData: [],
+      dialogTableData_copy: [], //从列表加到题库
       clickindex: null,
       isAddAws: false,
 
@@ -304,6 +312,36 @@ export default {
     };
   },
   methods: {
+    toSearchClass: function() { //按分类来搜索
+      console.log(this.classVal);
+      var classify_id = null;
+      for (var i = 0; i < this.options.length; i++) {
+        var obj = this.options[i];
+        if (obj.label === this.classVal) {
+          classify_id = obj.id;
+        }
+      }
+      var data = {
+        classify_id: classify_id
+      };
+      getLibSearchClass(data).then(res => {
+        console.log(res);
+        this.tableData = [];
+        for (var i = 0; i < res.data.length; i++) {
+          var res_data = res.data[i];
+          this.tableData.push({
+            id: res_data.topic_id,
+            title: res_data.title,
+            awsA: res_data.answer1,
+            awsB: res_data.answer2,
+            awsC: res_data.answer3,
+            awsD: res_data.answer4,
+            aws: res_data.answers,
+            class: res_data.classify_name
+          });
+        }
+      });
+    },
     getLibList_api: function(page, limit) {
       var data = {
         page: page,
@@ -499,15 +537,56 @@ export default {
         this.getFoucShopList(this.fousid);
       });
     },
-    toDialogAdd:function(id){
-      console.log(this.dialogTableData_copy[id],this.tableData[this.clickindex])
+    toDialogAdd: function(id) {
+      console.log(
+        this.dialogTableData_copy[id],
+        this.tableData[this.clickindex]
+      );
       var data = {
-        question_id:this.dialogTableData_copy[id].question_id,
-        library_id:this.tableData[this.clickindex].library_id
-      }
-      postGetLibFormShop(data).then(res =>{
-
-      })
+        question_id: this.dialogTableData_copy[id].question_id,
+        library_id: this.tableData[this.clickindex].library_id
+      };
+      postGetLibFormShop(data).then(res => {});
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v =>
+        filterVal.map(j => {
+          if (j === "timestamp") {
+            return parseTime(v[j]);
+          } else {
+            return v[j];
+          }
+        })
+      );
+    },
+    toExport: async function() {
+      this.downloadLoading = true;
+      import("@/vendor/Export2Excel").then(excel => {
+        const tHeader = [
+          "题目",
+          "答案一",
+          "答案二",
+          "答案三",
+          "答案四",
+          "正确答案"
+        ];
+        const filterVal = [
+          "title",
+          "answer1",
+          "answer2",
+          "answer3",
+          "answer4",
+          "answers"
+        ];
+        const tableDataAll = this.dialogTableData;
+        const data = this.formatJson(filterVal, tableDataAll);
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: "题库题目列表"
+        });
+        this.downloadLoading = false;
+      });
     }
   }
 };

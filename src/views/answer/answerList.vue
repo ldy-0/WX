@@ -44,8 +44,8 @@
             </el-dropdown-menu>
     </el-dropdown>
     <div style="width:20px;height: 30px;"></div>
-    <el-button type="primary" icon="document" @click="toGetSubList">批量导入</el-button>
-    <el-button type="primary" icon="document" @click="toExport">导出</el-button>
+    <el-button type="primary" icon="document"  @click="toGetSubList">批量导入</el-button>
+    <el-button type="primary" icon="document" :loading="downloadLoading" @click="toExport">导出</el-button>
     
     <el-dialog title="从列表选择" :visible.sync="isDialogCheck">
       <el-table
@@ -242,6 +242,7 @@ export default {
   data() {
     return {
       isDialogCheck: false,
+      downloadLoading: false,
 
       isShowEdit: false,
       editId: null,
@@ -393,8 +394,49 @@ export default {
     toGetSubList: function() {
       //批量导入
     },
-    toExport: function() {
+
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v =>
+        filterVal.map(j => {
+          if (j === "timestamp") {
+            return parseTime(v[j]);
+          } else {
+            return v[j];
+          }
+        })
+      );
+    },
+    toExport: async function() {
       //导出
+      this.downloadLoading = true;
+      import("@/vendor/Export2Excel").then(excel => {
+        const tHeader = [
+          "题目",
+          "分类",
+          "答案一",
+          "答案二",
+          "答案三",
+          "答案四",
+          "正确答案"
+        ];
+        const filterVal = [
+          "title",
+          "classify_name",
+          "answer1",
+          "answer2",
+          "answer3",
+          "answer4",
+          "answers"
+        ];
+        const tableDataAll = this.tableData;
+        const data = this.formatJson(filterVal, tableDataAll);
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: "商家题目列表"
+        });
+        this.downloadLoading = false;
+      });
     },
 
     toClose: function() {
