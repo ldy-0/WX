@@ -45,13 +45,7 @@
       :show-file-list="false">
       <el-button style="margin:0px 10px 0 10px;" type="primary">批量导入</el-button>
     </el-upload> -->
-    
-    <input type="file" id="fileId"></input>
-    <el-button type="primary" icon="document" @click="toGetSubList">批量导入</el-button>
-     <!-- <form action="http://203.195.203.67/api/v1/Excel/import" enctype="multipart/form-data" token="7634d00d79857d0e2230229435e4c614" method="post">
-        <input type="file" name="name"/>
-        <input type="submit" value="提交">
-     </form> -->
+    <upload-excel-component :on-success='handleSuccess'></upload-excel-component>
 
     <el-button type="primary" icon="document" :loading="downloadLoading" @click="toExport">导出</el-button>
     <el-dialog title="添加题目" :visible.sync="dialogFormVisible">
@@ -192,8 +186,11 @@ import {
   putLibEditList,
   postImportLib
 } from "@/api/libraryList";
+import uploadFn from "@/utils/aahbs";
+import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 
 export default {
+  components: { UploadExcelComponent },
   created() {
     this.getLibraryList_api();
     this.getClass();
@@ -457,10 +454,12 @@ export default {
       });
       this.tableData.splice(id, 1);
     },
-    handlePicture(file, fileList) {
+    async handlePicture(file, fileList) {
       console.log("change", file);
+      var url = await uploadFn(file.raw);
+      console.log("url", url[0]);
       var data = {
-        file: file.raw
+        url: url[0]
       };
       postImportLib(data)
         .then(res => {
@@ -472,6 +471,10 @@ export default {
             message: "请刷新后重新上传文件"
           });
         });
+    },
+    handleSuccess({ results, header }) {
+      console.log(results);
+      console.log(header);
     }
   }
 };
