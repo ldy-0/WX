@@ -37,15 +37,15 @@
 <div class="el-div">
     <el-button type="primary" icon="el-icon-edit" @click="toAddSubject">添加题目</el-button>
     <!-- <el-button type="primary" icon="document" @click="toGetSubList">批量导入</el-button> -->
-    <!-- <el-upload
+    <el-upload
       :auto-upload="false"
       action=""
       :on-change="handlePicture"
       :limit="1"
       :show-file-list="false">
       <el-button style="margin:0px 10px 0 10px;" type="primary">批量导入</el-button>
-    </el-upload> -->
-    <upload-excel-component :on-success='handleSuccess'></upload-excel-component>
+    </el-upload>
+    <!-- <upload-excel-component :on-success='handleSuccess'></upload-excel-component> -->
 
     <el-button type="primary" icon="document" :loading="downloadLoading" @click="toExport">导出</el-button>
     <el-dialog title="添加题目" :visible.sync="dialogFormVisible">
@@ -187,7 +187,7 @@ import {
   postImportLib
 } from "@/api/libraryList";
 import uploadFn from "@/utils/aahbs";
-import UploadExcelComponent from '@/components/UploadExcel/index.vue'
+import UploadExcelComponent from "@/components/UploadExcel/index.vue";
 
 export default {
   components: { UploadExcelComponent },
@@ -463,6 +463,28 @@ export default {
       };
       postImportLib(data)
         .then(res => {
+          console.log("resss!!", res);
+          this.tableData = [];
+          this.getLibraryList_api();
+        })
+        .catch(err => {
+          // this.$notify.error({
+          //   title: "上传出错",
+          //   message: "请刷新后重新上传文件"
+          // });
+          console.log("resss", err);
+          this.tableData = [];
+          this.getLibraryList_api();
+        });
+    },
+    async handleSuccess({ results, header }) {
+      console.log(results);
+      console.log(header);
+      let data = {
+        excel: results
+      };
+      postImportLib(data)
+        .then(res => {
           console.log(res);
         })
         .catch(err => {
@@ -471,10 +493,6 @@ export default {
             message: "请刷新后重新上传文件"
           });
         });
-    },
-    handleSuccess({ results, header }) {
-      console.log(results);
-      console.log(header);
     }
   }
 };
