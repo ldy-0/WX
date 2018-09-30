@@ -18,12 +18,31 @@
           <div style='font-size: 14rpx;'>DECORATION</div>
         </div>
         <div class='form_item s-fc-8'>
-          <div class='form_key'>姓      名</div>
-          <input class='form_value' placeholder="请输入姓名" />
+          <div class='form_key'>姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名</div>
+          <input class='form_value' placeholder="请输入姓名" placeholder-style='margin-left: 20rpx;' />
+          <div class='star'>*</div>
         </div>
         <div class='form_item s-fc-8'>
           <div class='form_key'>联系方式</div>
-          <input class='form_value' placeholder="请输入姓名" />
+          <input class='form_value' placeholder="请输入手机号" placeholder-style='margin-left: 20rpx;'/>
+          <div class='star'>*</div>
+        </div>
+        <div class='form_item s-fc-8'>
+          <div class='form_key'>小区地址</div>
+          <input class='form_value' placeholder="请输入小区地址" placeholder-style='margin-left: 20rpx;'/>
+          <div class='star'>*</div>
+        </div>
+        <div class='form_item s-fc-8'>
+          <div class='form_key'>面&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;积</div>
+          <input class='form_value' placeholder="请输入房屋面积" placeholder-style='margin-left: 20rpx;'/>
+        </div>
+        <div class='form_item s-fc-8'>
+          <div class='form_key'>意向风格</div>
+          <input class='form_value' placeholder="请输入意向风格" placeholder-style='margin-left: 20rpx;'/>
+        </div>
+        <div class='textarea_wrap s-fc-8'>
+          <div class='form_key'>备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注</div>
+          <textarea class='textarea' placeholder="请输入备注" placeholder-style='margin-left: 20rpx;'></textarea>
         </div>
 
         <div class='form_btn s-fc-1'>提交</div>
@@ -43,7 +62,7 @@ export default {
     return {
       userInfo: {},
       config: {
-        title: '确认订单',
+        title: '半包定制',
         color: '#222',
         bg: '#fff',
         backImg: '/static/back_gray.png'
@@ -99,11 +118,8 @@ export default {
 
   created () {
     if (!wx.getStorageSync('userInfo')) {
-      wx.reLaunch({
-        url: '/pages/authorization/main?referer=/pages/index/main'
-      })
     }
-    console.log('reLaunch')
+    console.log('')
   },
 
   onLoad (params) {
@@ -158,6 +174,7 @@ export default {
   text-align: center;
 }
 .form_item{
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -174,6 +191,19 @@ export default {
   border: 1rpx solid #c9c8d0; 
   border-radius: 5rpx;
 }
+.textarea_wrap{
+  display: flex;
+  justify-content: space-between;
+  width: 666rpx;
+  height: 150rpx;
+  margin: 0 auto 30rpx;
+}
+.textarea{
+  width: 530rpx;
+  height: 150rpx;
+  border: 1rpx solid #c9c8d0; 
+  border-radius: 5rpx;
+}
 .form_btn{
   width: 600rpx;
   height: 88rpx;
@@ -182,6 +212,11 @@ export default {
   border-radius: 10rpx;
   background: #786578;
   text-align: center;
+}
+.star{
+  position: absolute;
+  right: 20rpx;
+  color: #ff0000;
 }
 
 .save_btn{

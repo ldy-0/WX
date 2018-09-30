@@ -1,12 +1,12 @@
 {
   "pages": [
     "pages/index/main",
-    "pages/logs/main",
-    "pages/counter/main",
+    "pages/linli/main",
+    "pages/displace/main",
     "pages/my/main",
     "pages/authorization/main",
-    "pages/design/main",
-    "pages/jiaju/main",
+    "pages/oneClassList/main",
+    "pages/twoClassList/main",
     "pages/banbao/main",
     "pages/address/addressList/main",
     "pages/address/add/main",
@@ -38,10 +38,15 @@
         "iconPath": "static/toolBar/home.png",
         "selectedIconPath": "static/toolBar/home_sel.png"
       },{
-        "pagePath": "pages/logs/main",
+        "pagePath": "pages/linli/main",
         "text": "易居邻里",
-        "iconPath": "static/toolBar/food.png",
-        "selectedIconPath": "static/toolBar/food_sel.png"
+        "iconPath": "static/toolBar/linli.png",
+        "selectedIconPath": "static/toolBar/linli_sel.png"
+      },{
+        "pagePath": "pages/displace/main",
+        "text": "易居置换",
+        "iconPath": "static/toolBar/displace.png",
+        "selectedIconPath": "static/toolBar/displace_sel.png"
       },{
         "pagePath": "pages/my/main",
         "text": "我的易居",

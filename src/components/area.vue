@@ -6,6 +6,7 @@
         <text class='quxiao' @click="cancelPicker">取消</text>
         <text class="queren" @click="onAddressPick">确认</text>
       </view>
+
       <picker-view :value="defaultValue" indicator-style="height: 80rpx;font-size: 38rpx" style="width: 100%; height: 400rpx;" @change="bindChange">
         <picker-view-column class="pvc">
           <view v-for="(item, index) in provinces" :key='index' style="line-height: 80rpx;text-align:center;">{{item.name}}</view>
@@ -23,6 +24,7 @@
 <script>
 
 import regions from '@/utils/provinces'
+import api from '@/utils/api'
 
 export default {
   data () {
@@ -95,19 +97,22 @@ export default {
         this.area.name = ""
         this.code.zip_code = '' // this.code.code = ""
       }
-      this.$emit("areaArray", this.province, this.city, this.area)
+
+      this.$emit("getArea", { province: this.province, city: this.city, area: this.area })
     },
     // 滚动选择的时候触发事件
     bindChange (e) {
       // 这里是获取picker-view内的picker-view-column 当前选择的是第几项
       const _this = this
-      const val = e.detail.value
-      this.cities = regions[val[0]].cities
-      this.areas = regions[val[0]].cities[val[1]].areas
-      // 省变化，市区分别选中第一个
+      const val = e.mp.detail.value
+      console.log(val)
+
+      this.cities = this.region[val[0] + 1].map(v => { return { id: v[0], name: v[1], }; } );
+      this.areas = this.region[ this.cities[val[1]].id ].map(v => { return { id: v[0], name: v[1], }; });
+      // 省变化
       if (this.selectedRegion[0] != val[0]) {
         this.selectedRegion = [val[0], 0, 0]
-        // 市变化，区选中第一个
+        // 市变化
       } else if (this.selectedRegion[1] != val[1]) {
         this.selectedRegion = [val[0], val[1], 0]
         // 区变化，省市不变
@@ -125,50 +130,46 @@ export default {
       let defaultValue = selected || [0, 0, 0]
       const { province, city, area } = this
       // 遍历所有的省，将省的名字存到provinces这个数组中
-      for (let i = 0; i < regions.length; i++) {
-        // provinces.push({ name: regions[i].name, code: regions[i].code })
-        provinces.push({ name: regions[i].name, zip_code: regions[i].zip_code, id: regions[i].id })
-      }
+      // for (let i = 0; i < regions.length; i++) {
+      //   // provinces.push({ name: regions[i].name, code: regions[i].code })
+      //   provinces.push({ name: regions[i].name, zip_code: regions[i].zip_code, id: regions[i].id })
+      // }
+      provinces = this.region[0].map(v => { return { id: v[0], name: v[1] } })
       // 检查传入的省编码是否有，有的话，选中column第一个游标为province index
       provinces.some((item, index) => {
-        if (province && item.zip_code == province.zip_code) { //item.code == province.code
+        if (province && item.id == province.id ) { //item.code == province.code
           defaultValue[0] = index
           return true
         }
       })
-      const rCities = regions[defaultValue[0]].cities
-      if (rCities) { 
+
+      // const rCities = regions[defaultValue[0]].cities
+      cities = this.region[ provinces[defaultValue[0]].id ];
+      if (cities) { 
         // 这里判断这个省级里面有没有市（如数据中的香港、澳门等就没有写市）
-        // 填充cities数组
-        for (let i = 0; i < rCities.length; i++) {
-          // cities.push({ name: rCities[i].name, code: rCities[i].code })
-          cities.push({ name: rCities[i].name, zip_code: rCities[i].zip_code, id: rCities[i].id })
-        }
+        cities = cities.map(v => { return { id: v[0], name: v[1] } });
+        
         // 这里是判断这个选择的省里面，有没有相应的下标为cityCode的市，因为这里的下标是前一次选择后的下标，
         // 比如之前选择的一个省有10个市，我刚好滑到了第十个市，现在又重新选择了省，但是这个省最多只有5个市，
         // 但是这时候的cityCode为9，而这里的市根本没有那么多，所以会报错
         const hasCity = cities.some((item, index) => {
-          if (city && item.zip_code == city.zip_code) { // item.code == city.code
+          if (city && item.id == city.id) { // item.code == city.code
             defaultValue[1] = index
             return true
           }
         })
-        console.log('执行了区级判断')
-        const rAreas = rCities[defaultValue[1]].areas
-        if (rAreas) { // 这里是判断选择的这个市在数据里面有没有区县
-          for (let i = 0; i < rAreas.length; i++) {
-            areas.push({
-              name: rAreas[i].name,
-              zip_code: rAreas[i].zip_code,// code: rAreas[i].code
-              id: rAreas[i].id
-            })
-          }
+
+        areas = this.region[ cities[defaultValue[1]].id ];
+        if (areas) { // 这里是判断选择的这个市在数据里面有没有区县
+          // 设置区县
+          areas = areas.map(v => { return { id: v[0], name: v[1] } })
+
           areas.some((item, index) => {
-            if (area && item.zip_code == area.zip_code) { //item.code == area.code
+            if (area && item.id == area.id) { //item.code == area.code
               defaultValue[2] = index
               return true
             }
-          }); // 这里是判断选择的这个市里有没有下标为areaCode的区县，道理同上面市的选择
+          }); 
         } else {
           // 如果这个市里面没有区县，那么把这个市的名字就赋值给areas这个数组
           areas.push(cities[defaultValue[1]])
@@ -185,9 +186,18 @@ export default {
       this.defaultValue = defaultValue
       this.selectedRegion = defaultValue
     }
+  },
+
+  async onLoad () {
+    let res = await api.getAddressInfo()
+    console.log(res)
+
+    if (res) {
+      this.region = res
+    }
   }
 
-};
+}
 
 </script>
 <style>

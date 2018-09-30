@@ -7,13 +7,14 @@
 
       <div class='sub_bar' style='font-size: 32rpx;'>
         <div style='display: flex; align-items: center;'>
-          <view class='check_wrap' style='width: 40rpx; margin: 0 14rpx;' @click='check(item)'>
-              <icon class="" v-if='true' type="success" color="#786578" size="19" />
+          <view class='check_wrap' style='width: 40rpx; margin: 0 14rpx;' @click='checkAll(item)'>
+              <icon class="" v-if='isCheckAll' type="success" color="#786578" size="19" />
               <view class='big_circle' v-else></view>
           </view>
           <view class='s-fc-10'>全选</view>
         </div>
-        <div class=''>编辑</div>
+        <div class='' v-if='isEdited' @click='edit'>编辑</div>
+        <div class='' v-else @click='edit'>完成</div>
       </div>
 
       <div class='goods' v-for='(item, index) in list' :key='index'>
@@ -30,35 +31,25 @@
           <div class='goods_number'>
             <div class='goods_price s-fc-9'>{{item.price}}</div>
             <div class='count'>
-              <div class='add'>-</div>
-              <div class='number s-fc-8'>1</div>
-              <div class='minus'>+</div>
+              <div class='add' @click='minus(item)'>-</div>
+              <div class='number s-fc-8' v-text='item.qty'></div>
+              <div class='minus' @click='add(item)'>+</div>
             </div>
           </div>
         </div>
 
       </div>
 
-      <div class='bottom_bar'>
-        <div >
-          <div>
-            <div>合计：<span class='s-fc-9'>¥100.00</span></div>
-          </div>
+      <div class='bottom_bar' v-if='isEdited'>
+        <div>
+          <div>合计：<span class='s-fc-9'>¥{{price}}</span></div>
         </div>
-        <div class='submit_btn s-fc-1 s-bg-3' @click='submit'>结算(1)</div>
+        <div class='submit_btn s-fc-1 s-bg-3' @click='submit'>结算({{count}})</div>
+      </div>
+      <div class='bottom_bar' style='justify-content: flex-end;' v-else>
+        <div class='submit_btn s-fc-1 s-bg-3' @click='deleteItem'>删除</div>
       </div>
 
-    <div class='modal' v-if='isShowModal'>
-      <div class='mask' @click='hideModal'></div>
-      <div class='content_center' v-if='isVirtual'>
-      </div>
-      
-    </div>
-    <!-- <form class="form-container">
-      <input type="text" class="form-control" v-model="motto" placeholder="v-model" />
-      <input type="text" class="form-control" v-model.lazy="motto" placeholder="v-model.lazy" />
-    </form> -->
-    <!-- <a href="/pages/counter/main" class="counter">去往Vuex示例页面</a> -->
     </div>
   </div>
 </template>
@@ -67,6 +58,7 @@
 import topBar from '@/components/topBar'
 import slide from '@/components/slide'
 import goods from '@/components/goods'
+import api from '@/utils/api'
 
 export default {
   data () {
@@ -76,28 +68,16 @@ export default {
         title: '购物车',
         color: '#222',
         bg: '#fff',
-        backImg: '/static/back_gray.png'
-      },
-      slideConfig: {
-        height: '750rpx',
-        autoplay: false,
-        data: [
-          { img: '/static/toolBar/classify.png' },
-          { img: '/static/toolBar/home.png' }
-        ]
+        backImg: '/static/left_arrow.png'
       },
       goodsConfig: {
         margin: '20rpx 0 0'
       },
       list: {},
-      serverList: [
-        { title: '设计服务：', img: '' },
-        { title: '搬运服务：', img: '' },
-        { title: '安装服务：', img: '' }
-      ],
-      isVirtual: true,
-      isShowModal: false,
-      date: ''
+      isCheckAll: false,
+      isEdited: true,
+      canChange: true,
+      isVirtual: true
     }
   },
 
@@ -107,48 +87,124 @@ export default {
     goods
   },
 
+  computed: {
+    count () {
+      return this.list.reduce((p, v) => v.checked ? p + v.qty : p, 0)
+    },
+    price () {
+      return this.list.reduce((p, v) => v.checked ? this.add_minus(p, v.price * v.qty) : p, 0)
+    }
+  },
+
   methods: {
+    edit () { this.isEdited = !this.isEdited },
     check (item) {
       item.checked = !item.checked
+      this.isCheckAll = this.list.every(v => v.checked)
     },
-    submit () {
-      wx.reLaunch({
-        url: '/pages/payed/main'
-      })
+    checkAll () {
+      this.isCheckAll ? this.list.forEach(v => { v.checked = false }) : this.list.forEach(v => { v.checked = true })
+      this.isCheckAll = !this.isCheckAll
+    },
+    minus (item) {
+      if (item.qty <= 1) {
+        return wx.showModal({ title: '提示', content: '商品数量不能低于1', showCancel: false })
+      }
+
+      if (!this.canChange) {
+        return null
+      }
+      this.canChange = false
+
+      this.update(item.qty - 1)
+      item.qty--
+      this.canChange = true
     },
     add (item) {
+      if (!this.canChange) {
+        return null
+      }
+      this.canChange = false
+
+      this.update(item.qty + 1)
+      item.qty++
+      this.canChange = true
+    },
+    deleteItem () {
+      let _this = this
+      wx.showModal({
+        title: '提示',
+        content: '确认删除吗？',
+        async success (e) {
+
+          let list = _this.list
+          for (let i = list.length - 1; i >= 0; i--) {
+            if (list[i].checked) {
+              // let res = await api.deleteCart(list[i].cart_id, {
+              //   cart_id: list[i].cart_id
+              // })
+
+              // if (!res) {
+              //   return wx.showToast({ title: '删除失败', icon: 'none', duration: 2000, })
+              // };
+
+              list.splice(i, 1)
+            }
+          }
+        },
+        fail (e) {console.log(e)}
+      })
+    },
+    clear () {
+      this.list.forEach((v, i) => { v.checked = false })
+
+      this.isCheckedAll = false
+      this.count = this.price = 0
+
+    },
+    add_minus (nub1, nub2) {
+      let len1, len2, m
+      try { len1 = nub1.toString().split('.')[1].length; }catch(e){len1 = 0;}
+      try { len2 = nub2.toString().split('.')[1].length; }catch(e){len2 = 0;}
+      m = 10 ** Math.max(len1, len2)
+      return (nub1 * m + nub2 * m) / m
+    },
+    update (qty) {
+      console.log('update ', qty)
+    },
+    submit () {
       wx.navigateTo({
-        url: '/pages/address/add/main'
+        url: `/pages/submit/main?goodsList=${encodeURIComponent(JSON.stringify(this.list.filter(v => v.checked)))}`
       })
     }
   },
 
   created () {
-    if (!wx.getStorageSync('userInfo')) {
-      wx.reLaunch({
-        url: '/pages/authorization/main?referer=/pages/index/main'
-      })
-    }
-    console.log('reLaunch')
   },
 
-  onLoad (params) {
-    this.list = [
+  onShow () {
+    let res = [
       {
         name: '看到放送控股快速打开v功德佛楼盘数量大幅v哦的上空飞过v哦梵蒂冈v顺利破发v看到法国v端口sf',
-        price: 123324930,
-        qty: 192334,
-        scale: 34504935,
-        checked: false
+        price: 123,
+        qty: 1,
+        scale: 34504935
       },
       {
         name: '看到放送控股快速打开v功德佛楼盘数量大幅v哦的上空飞过v哦梵蒂冈v顺利破发v看到法国v端口sf',
-        price: 123324930,
-        qty: 192334,
-        scale: 34504935,
-        checked: true
+        price: 12,
+        qty: 19,
+        scale: 34504935
+      }, {
+        name: '看到放送控股快速打开v功德佛楼盘数量大幅v哦的上空飞过v哦梵蒂冈v顺利破发v看到法国v端口sf',
+        price: 2,
+        qty: 1,
+        scale: 34504935
       }
     ]
+
+    res.forEach(v => { v.checked = false })
+    this.list = res
   },
 
   onPullDownRefresh () {
@@ -436,5 +492,8 @@ export default {
 }
 .s-bg-3{
   background: #786578; 
+}
+.s-bg-4{
+  background: #af0000;
 }
 </style>

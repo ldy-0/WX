@@ -6,43 +6,35 @@
     <slide :config='slideConfig'></slide>
 
     <div class='search'>
-      <image class='search_icon' src='' />
+      <image class='search_icon' src='/static/search.png' />
       <div class='search_content s-fc-2'>搜索</div>
     </div>
 
     <div class='list_wrap'>
       <div class='item' v-for='(item, index) in list' :key='index' @click='goList(item, $event)'>
-        <img class='item_bg' src='' />
+        <img class='item_bg' :src='item.img' />
         <div class='item_desc'>
           <div class='mask'></div>
           <div class='item_title s-fc-1'>{{item.title}}</div>
         </div>
       </div>
     </div>
-    <!-- <div class="userinfo" @click="bindViewTap">
-      <img class="userinfo-avatar" v-if="userInfo.avatarUrl" :src="userInfo.avatarUrl" background-size="cover" />
-      <div class="userinfo-nickname">
-        <card :text="userInfo.nickName"></card>
+
+    <div class='modal' v-if='isShow'>
+      <div class='content' @touchmove.stop='preventScorll'>
+        <button class='btn' open-type='getPhoneNumber' @getphonenumber='getPhone' plain='true'>
+          <div>获取手机号</div>
+        </button>
       </div>
-    </div> -->
+    </div>
 
-    
-
-    <!-- <div class='modal'>
-      <div class=''></div> 
-    </div> -->
-
-    <!-- <form class="form-container">
-      <input type="text" class="form-control" v-model="motto" placeholder="v-model" />
-      <input type="text" class="form-control" v-model.lazy="motto" placeholder="v-model.lazy" />
-    </form> -->
-    <!-- <a href="/pages/counter/main" class="counter">去往Vuex示例页面</a> -->
   </div>
 </template>
 
 <script>
 import topBar from '@/components/topBar'
 import slide from '@/components/slide'
+import api from '@/utils/api'
 
 export default {
   data () {
@@ -52,7 +44,7 @@ export default {
         title: '易·居家居生活馆',
         color: '#222',
         bg: '#fff'
-        // backImg: '/static/back_gray.png'
+        // backImg: '/static/left_arrow.png'
       },
       slideConfig: {
         height: '500rpx',
@@ -63,15 +55,16 @@ export default {
         ]
       },
       list: [
-        { title: '设计师+', img: '', url: '/pages/design/main' },
-        { title: '半包定制', img: '', url: '/pages/banbao/main' },
-        { title: '易居管家', img: '' },
-        { title: '整居定制', img: '' },
-        { title: '集成暖通', img: '' },
-        { title: '主材选购', img: '' },
-        { title: '家具选购', img: '', url: '/pages/jiaju/main' },
-        { title: '易居海外', img: '' }
-      ]
+        { title: '设计师+', img: '/static/home/design.png', url: '/pages/twoClassList/main?category=' + encodeURIComponent('设计师+') },
+        { title: '半包定制', img: '/static/home/banbao.png', url: '/pages/banbao/main' },
+        { title: '易居管家', img: '/static/home/img_3.png', url: '/pages/twoClassList/main?category=' + encodeURIComponent('易居管家') },
+        { title: '整居定制', img: '/static/home/img_4.png', url: '/pages/twoClassList/main?category=' + encodeURIComponent('整居定制') },
+        { title: '集成暖通', img: '/static/home/img_5@2x.png', url: '/pages/twoClassList/main?category=' + encodeURIComponent('集成暖通') },
+        { title: '主材选购', img: '/static/home/img_6@2x.png', url: '/pages/twoClassList/main?category=' + encodeURIComponent('主材选购') },
+        { title: '家具选购', img: '/static/home/img_7@2x.png', url: '/pages/twoClassList/main?category=' + encodeURIComponent('家具选购') },
+        { title: '易居海外', img: '/static/home/img_8@2x.png', url: '/pages/twoClassList/main?category=' + encodeURIComponent('易居海外') }
+      ],
+      isShow: false
     }
   },
 
@@ -81,24 +74,78 @@ export default {
   },
 
   methods: {
-    bindViewTap () {
-      const url = '../logs/main'
-      wx.navigateTo({ url })
+    prenventScroll () {
+      return false
     },
     goList ({url}) {
       wx.navigateTo({
         url: url
       })
+    },
+
+    async getBanner () {
+      let res = await api.getBanner(9)
+      console.log(res)
+    },
+    async getPhone (e) {
+      let o = e.mp.detail
+      if (o.errMsg === 'getPhoneNumber:ok') {
+        let param = {
+          code: wx.getStorageSync('code'),
+          encryptedData: o.encryptedData,
+          iv: o.iv
+        }
+
+        let data = await api.setPhone(param)
+
+        if (data) {
+          let userInfo = wx.getStorageSync('userInfo')
+          userInfo.phone = data
+          wx.setStorageSync('userInfo', userInfo)
+
+          this.isShow = false
+        }
+        console.log(param, this.isShow)
+      }
+    },
+    login () {
+      return new Promise(function (resolve, reject) {
+        wx.login({
+          success (res) { resolve(res) },
+          fail (e) { resolve(e) }
+        })
+      })
     }
   },
 
-  created () {
+  async created () {
+    let p = new Promise(function (resolve, reject) {
+      reject('resolve')
+    })
+    let p2 = p.catch(e => console.log(Object.keys(e)))
+    setTimeout(function () {
+      let pp = new Promise(function(){}).then(() => console.log('full'), () => console.log('fail'))
+      console.log('timeout', p, p2, p === p2, p)
+    })
+    console.log('index created')
     if (!wx.getStorageSync('userInfo')) {
-      wx.reLaunch({
-        url: '/pages/authorization/main?referer=/pages/index/main'
-      })
+      let res = await this.login()
+      wx.setStorageSync('code', res.code)
+
+      let data = await api.getToken(res.code)
+      // console.log('-- get Token --', data)
+
+      let userInfo = await api.getUserInfo()
+      if (userInfo) {
+        wx.setStorageSync('userInfo', userInfo)
+      } else {
+        return wx.redirectTo({ url: '/pages/authorization/main?referer=/pages/index/main' })
+      }
     }
-    console.log('reLaunch')
+  },
+
+  onLoad (param) {
+    this.getBanner()
   },
 
   onPullDownRefresh () {
@@ -173,6 +220,29 @@ export default {
   height: 100rpx;
   line-height: 100rpx;
   text-align: center;
+}
+
+.modal{
+  position: fixed;
+  top: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, .3);
+}
+.content{
+  position: absolute;
+  left: calc(50% - 200rpx);
+  top: calc(50% - 150rpx);
+  width: 400rpx;
+  height: 300rpx;
+  background: #fff;
+}
+.btn{
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
 }
 
 .s-fc-1{

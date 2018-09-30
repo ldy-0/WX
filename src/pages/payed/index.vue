@@ -7,7 +7,7 @@
 
       <div style='height: 200rpx; background: #786578; overflow: hidden;'>
         <div style='display: flex; justify-content: center; align-items: center; margin: 30rpx auto;'>
-          <image class='package_img' src='' />
+          <image class='package_img' src='/static/package.png' />
           <div class='s-fc-6' style='margin-left: 60rpx; text-align: center;'>
             <div style='font-size: 32rpx;'>买家已付款</div>
             <div style='margin: 10rpx 0 0;'>您的包裹已整装待发</div>
@@ -25,7 +25,6 @@
             </view>
             <view class="active_address s-fc-7">收货地址：address.detailksdfjk士大夫可适当放宽就是东方开始大批佛龛山东分局JFKD精神科大夫就的方式时刻提防sdsfdjk</view>
           </view>
-          <!-- <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' /> -->
         </view>
 
       </view>
@@ -46,8 +45,8 @@
       <div style='height: 168rpx; margin: 2rpx 0 0; padding: 20rpx; background: #fff;'>
         <div>合计：<span class='s-fc-9' style='font-size: 37rpx; font-weight: bold;'>¥100.00</span></div>
         <div style='display: flex; justify-content: space-around; align-items: cener; margin: 50rpx 0 0;'>
-          <div class='btn'>查看订单</div>
-          <div class='btn'>返回首页</div>
+          <navigator class='btn' :url='detailUrl'>查看订单</navigator>
+          <navigator class='btn' url='/pages/index/main'>返回首页</navigator>
         </div>
       </div> 
 
@@ -57,16 +56,6 @@
         <div style='margin-bottom: 20rpx;'>付款时间：2018-08-30  16:49</div>
       </div>
 
-    <div class='modal' v-if='isShowModal'>
-      <div class='mask' @click='hideModal'></div>
-      <div class='content_center' v-if='isVirtual'>
-      </div>
-      
-    </div>
-    <!-- <form class="form-container">
-      <input type="text" class="form-control" v-model="motto" placeholder="v-model" />
-      <input type="text" class="form-control" v-model.lazy="motto" placeholder="v-model.lazy" />
-    </form> -->
     <!-- <a href="/pages/counter/main" class="counter">去往Vuex示例页面</a> -->
     </div>
   </div>
@@ -81,35 +70,15 @@ export default {
     return {
       userInfo: {},
       config: {
-        title: '确认订单',
+        title: '购买完成',
         color: '#222',
-        bg: '#fff',
-        backImg: '/static/back_gray.png'
-      },
-      slideConfig: {
-        height: '750rpx',
-        autoplay: false,
-        data: [
-          { img: '/static/toolBar/classify.png' },
-          { img: '/static/toolBar/home.png' }
-        ]
+        bg: '#fff'
+        // backImg: '/static/left_arrow.png'
       },
       goods: {},
-      commentList: [
-        { title: '购物车', phone: 13211111111, img: '' },
-        { title: '我的卡劵', phone: 13111111111, address: 'sfksdfkKSDFM<lsk破开神佛考生的分数都快发送的看法实力派v感慨地说佛v觉得佛教给vi的风景sfsdfjkd', img: '' },
-        { title: '地址管理', img: '', url: 'pages/addressList/main' },
-        { title: '整居定制', img: '' },
-        { title: 'aksfdosdfojsdfcv', img: '' }
-      ],
-      serverList: [
-        { title: '设计服务：', img: '' },
-        { title: '搬运服务：', img: '' },
-        { title: '安装服务：', img: '' }
-      ],
       isVirtual: true,
-      isShowModal: false,
-      date: ''
+      date: '',
+      detailUrl: ''
     }
   },
 
@@ -119,19 +88,9 @@ export default {
   },
 
   methods: {
-    showModal () {
-      this.isShowModal = true
-    },
-    hideModal () {
-      this.isShowModal = false
-    },
     setDate (e) {
       this.date = e.mp.detail.value
       console.log(e)
-    },
-    bindViewTap () {
-      const url = '../logs/main'
-      wx.navigateTo({ url })
     },
     add (item) {
       wx.navigateTo({
@@ -141,21 +100,17 @@ export default {
   },
 
   created () {
-    if (!wx.getStorageSync('userInfo')) {
-      wx.reLaunch({
-        url: '/pages/authorization/main?referer=/pages/index/main'
-      })
-    }
-    console.log('reLaunch')
   },
 
   onLoad (params) {
+    console.log(params.id)
     this.goods = {
       name: '看到放送控股快速打开v功德佛楼盘数量大幅v哦的上空飞过v哦梵蒂冈v顺利破发v看到法国v端口sf',
       price: 123324930,
       qty: 192334,
       scale: 34504935
     }
+    this.detailUrl = '/pages/order/detail/main?id=' + this.goods.id
   },
 
   onPullDownRefresh () {
@@ -183,7 +138,6 @@ export default {
 .package_img{
   width: 154rpx;
   height: 154rpx;
-  background: #ccc;
 }
 
 .address_info{

@@ -11,18 +11,18 @@
         <div class='goods_name'>{{goods.name}}</div>
         <div class='goods_price s-fc-4'>{{goods.price}}</div>
         <div style='display: flex; align-items: center;' v-if='isVirtual'>
-          <image style='width: 26rpx; height: 26rpx; background: #ccc;' src='' />
+          <image style='width: 26rpx; height: 26rpx;' src='/static/goods/icon_pingfen@2x.png' />
           <div>4.5</div>
         </div>
         <div class='s-fc-5' style='margin: 20rpx 0 0; font-size: 24rpx;' v-else>
           <span>{{goods.scale}}</span>
-          <span style='margin-left: 170rpx;'>{{goods.qty}}</span>
+          <span style='margin-left: 170rpx;'>{{goods.nub}}</span>
         </div>
       </div>
 
-      <div style='display: flex; justify-content: space-between; align-items: center; height: 88rpx; margin: 20rpx 0 0; padding: 0 20rpx; background: #fff;' v-if='!isVirtual'>
+      <div class='row' v-if='!isVirtual' @click='showModal'>
         <div>规格</div>
-        <image class='right_arrow' src='' />
+        <image class='right_arrow' src='/static/my/right_arrow.png' />
       </div>
 
       <div class='comment_wrap'>
@@ -46,19 +46,19 @@
 
       <div class='bottom_bar' v-if='isVirtual'>
         <div style='flex-grow: 1; display: flex; justify-content: center;'>
-          <div>
-            <image class='bottom_icon' src='' />
+          <button class='type_btn' :open-type='barList[0].type' plain='true'>
+            <image class='bottom_icon' :src='barList[0].img' />
             <div style='font-size: 20rpx;'>{{barList[0].title}}</div>
-          </div>
+          </button>
         </div>
         <div class='appoinment_btn s-fc-1 s-bg-3' @click="showModal">立即预约</div>
       </div>
       <div class='bottom_bar' v-else>
         <div class='left'>
-          <div v-for='(item, index) in barList' :key='index'>
-            <image class='bottom_icon' src='' />
+          <button class='type_btn' :open-type='item.type' v-for='(item, index) in barList' :key='index' plain='true' @click='go(item)'>
+            <image class='bottom_icon' :src='item.img' />
             <div style='font-size: 20rpx;'>{{item.title}}</div>
-          </div>
+          </button>
         </div>
         <div class='bottom_btn'><div class='s-fc-1 s-bg-2' @click="showModal">加入购物车</div></div>
         <div class='bottom_btn'><div class='s-fc-1 s-bg-3' @click='showModal'>立即购买</div></div>
@@ -68,19 +68,20 @@
     <div class='modal' v-if='isShowModal'>
       <div class='mask' @click='hideModal'></div>
       <div class='content_center' v-if='isVirtual'>
-        <div class='content_title'>预约信息</div>
+        <div class='content_title'>
+          <div>预约信息</div>
+          <image style='width: 24rpx; height: 24rpx; margin-left: 220rpx;' src='/static/goods/close.png' @click='hideModal' />
+        </div>
 
-          <picker mode="date" :value="date" start="2015-09-01" end="2017-09-01" @change="setDate">
+          <picker mode="date" :start="currentDate" :end="endDate" @change="setDate" style='width: 630rpx; padding: 0 30rpx;'>
             <view class="picker">
-              <view>请选择服务日期: {{date}}</view>
-              <image class='picker_icon' src='' />
+              <view> {{appoinment.date || '请选择服务日期:'}}</view>
+              <image class='picker_icon' src='/static/bottom_arrow.png' />
             </view>
           </picker>
 
         <div class='textarea'>
-          <textarea placeholder="备注" placeholder-style='margin-left: 30px;'>
-          
-          </textarea>
+          <textarea placeholder="备注" placeholder-style='margin-left: 30px;' @input='setContent'></textarea>
           <div class='textarea_count'>0/120</div>
         </div>
 
@@ -94,16 +95,17 @@
         <div class='modal_row'>
           <div class=''>购买数量</div>
           <div class='count'>
-            <div>-</div>
-            <div class='number'>1</div>
-            <div>+</div>
+            <div class='number_box' @click='minus'><image src='/static/minus.png' style='width: 20rpx; height: 2rpx; margin-right: 20rpx;' /></div>
+            <div class='number'>{{goods.qty}}</div>
+            <div class='number_box' @click='add'><image src='/static/add.png' style='width: 20rpx; height: 20rpx; margin-left: 20rpx;' /></div>
           </div>
         </div>
         <div class='modal_row'>温馨提示：项目经理服务最少购买1天。</div>
         <div class='bottom'>
           <div class='s-fc-1 s-bg-2'>加入购物车</div>
-          <div class='s-fc-1 s-bg-3'>立即购买</div>
+          <div class='s-fc-1 s-bg-3' @click='goSubmit'>立即购买</div>
         </div>
+        <image class='close' src='/static/goods/close.png' @click='hideModal' />
       </div>
     </div>
     <!-- <form class="form-container">
@@ -124,10 +126,10 @@ export default {
     return {
       userInfo: {},
       config: {
-        title: '新增地址',
+        title: '商品详情',
         color: '#222',
         bg: '#fff',
-        backImg: '/static/back_gray.png'
+        backImg: '/static/left_arrow.png'
       },
       slideConfig: {
         height: '750rpx',
@@ -146,12 +148,16 @@ export default {
         { title: 'aksfdosdfojsdfcv', img: '' }
       ],
       barList: [
-        { title: '客服', img: '' },
-        { title: '购物车', img: '' }
+        { title: '客服', img: '/static/goods/shoppingCart.png', type: 'concat' },
+        { title: '购物车', img: '/static/goods/concat.png' }
       ],
-      isVirtual: true,
+      isVirtual: false,
       isShowModal: false,
-      date: ''
+      appoinment: {
+        date: '',
+        content: ''
+      },
+      currentDate: ''
     }
   },
 
@@ -168,37 +174,60 @@ export default {
       this.isShowModal = false
     },
     setDate (e) {
-      this.date = e.mp.detail.value
-      console.log(e)
+      this.appoinment.date = e.mp.detail.value
+      console.log(this.appoinment)
+    },
+    setContent (e) {
+      this.appoinment.content = e.mp.detail.value
+      console.log(this.appoinment)
+    },
+    minus () {
+      this.goods.qty > 1 ? this.goods.qty-- : wx.showModal({ content: '商品数量至少为一', showCancel: false })
+    },
+    add () {
+      this.goods.qty++
+      console.log(this.goods)
     },
     goSubmit () {
+      console.log('sumbit')
       wx.navigateTo({
-        url: '/pages/submit/main?goods=goods'
+        url: `/pages/submit/main?goods=${encodeURIComponent(JSON.stringify(this.goods))}`
       })
     },
-    add (item) {
+    go (item) {
+      if (item.title !== '购物车') return null
+
       wx.navigateTo({
-        url: '/pages/address/add/main'
+        url: '/pages/shoppingCart/main'
       })
+    },
+    initDate () {
+      this.currentDate = new Date().toISOString().split('T')[0]
+      this.endDate = this.currentDate.split('-').reduce((p, v) => { return `${p}-${Number(v) > 31 ? Number(v) + 1 : v}` }, '')
+      console.log(this.currentDate, this.endDate)
     }
   },
 
   created () {
     if (!wx.getStorageSync('userInfo')) {
-      wx.reLaunch({
-        url: '/pages/authorization/main?referer=/pages/index/main'
-      })
+      // wx.reLaunch({
+      //   url: '/pages/authorization/main?referer=/pages/index/main'
+      // })
     }
     console.log('reLaunch')
   },
 
   onLoad (params) {
-    this.goods = {
+    this.initDate()
+    let res = {
       name: '看到放送控股快速打开v功德佛楼盘数量大幅v哦的上空飞过v哦梵蒂冈v顺利破发v看到法国v端口sf',
       price: 123324930,
-      qty: 192334,
+      nub: 192334,
       scale: 34504935
     }
+
+    res.qty = 1
+    this.goods = res
   },
 
   onPullDownRefresh () {
@@ -233,6 +262,16 @@ export default {
 .goods_price{
   margin: 30rpx 0 0;
   font-size: 37rpx;
+}
+
+.row{
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  height: 88rpx; 
+  margin: 20rpx 0 0; 
+  padding: 0 20rpx; 
+  background: #fff;
 }
 
 .comment_wrap{
@@ -289,6 +328,11 @@ export default {
   background: #fff;
   text-align: center;
 }
+.type_btn{
+  line-height: 1.2;
+  padding: 0;
+  border: none;
+}
 .left{
   flex-grow: 1;
   display: flex;
@@ -299,7 +343,6 @@ export default {
 .bottom_icon{
   width: 45rpx;
   height: 45rpx;
-  background: #ccc;
 }
 .bottom_btn{
   width: 210rpx;
@@ -340,6 +383,13 @@ export default {
     padding: 20rpx;
     background: #fff;
   }
+  .content .close{
+    position: absolute;
+    top: 30rpx;
+    right: 25rpx;
+    width: 26rpx;
+    height: 26rpx;
+  }
   .content .goods_thub{
     width: 180rpx;
     height: 180rpx;
@@ -373,11 +423,16 @@ export default {
     background: #fff;
   }
   .content_title{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
     margin: 30rpx 0 0;
+    padding: 0 30rpx;
     font-size: 34rpx;
     text-align: center;
   }
   .picker{
+    box-sizing: border-box;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -393,7 +448,6 @@ export default {
   .picker_icon{
     width: 24rpx;
     height: 14rpx;
-    background: #ccc;
   }
   .textarea{
     position: relative;
@@ -403,9 +457,13 @@ export default {
     border: 1rpx solid #969696;
     border-radius: 10rpx;
   }
+  textarea{
+    padding: 30rpx 0 0 30rpx;
+  }
   .textarea_count{
     position: absolute;
-    bottom: 0rpx;
+    right: 10rpx;
+    bottom: 20rpx;
   }
   .submit_btn{
     width: 360rpx;
@@ -419,6 +477,13 @@ export default {
 .count{
   display: flex;
   align-items: center;
+}
+.number_box{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 58rpx;
+  height: 58rpx;
 }
 .number{
   width: 80rpx;
@@ -462,7 +527,6 @@ export default {
 .right_arrow{
   width: 16rpx;
   height: 26rpx;
-  background: #ccc;
 }
 
 

@@ -5,27 +5,27 @@
 
     <div class='wrap'>
 
-      <div class='add' @click='add'>
+      <div class='add' @click='go(null)'>
           <view style='font-weight: bold;'>添加新地址</view>
-          <image class='right_arrow' src='' />
+          <image class='right_arrow' src='/static/my/right_arrow.png' />
       </div>   
 
       <div class='address_list s-fc-2'>
-        <view class='address' v-for='(item, index) in list' :key='item'>
+        <view class='address' v-for='(item, index) in list' :key='index' @click='selectAddress(item)'>
             <view>
-              <view class='user_info'>{{item.title}}<text class='inline'>{{item.phone}}</text></view>
-              <view class='address_info'>{{item.address}}</view>
+              <view class='user_info'>{{item.address_realname}}<text class='inline'>{{item.address_mob_phone}}</text></view>
+              <view class='address_info'>{{item.area_info}}</view>
             </view>
               <view class='other_info'>
-                <view class='default' v-if='item.isDefault'>[默认地址]</view>
+                <view class='default' v-if='Number(item.address_is_default)'>[默认地址]</view>
                 <view v-else></view>
                 <view class='operate_info'>
-                    <view class='operate_btn' @click='modify(index)'>
-                      <image src='../../images/My/edit.png' />
+                    <view class='operate_btn' @click='go(item)'>
+                      <image src='/static/my/edit.png' />
                       <view>修改</view>
                     </view>
-                    <view class='operate_btn' @click='deleteAddress(index)'>
-                      <image src='../../images/Mall/icon_shanchu@2x.png' />
+                    <view class='operate_btn' @click='deleteAddress(item)'>
+                      <image src='/static/my/delete.png' />
                       <view>删除</view>
                     </view>
                 </view>
@@ -34,11 +34,6 @@
       </div>
       
 
-    <!-- <form class="form-container">
-      <input type="text" class="form-control" v-model="motto" placeholder="v-model" />
-      <input type="text" class="form-control" v-model.lazy="motto" placeholder="v-model.lazy" />
-    </form> -->
-    <!-- <a href="/pages/counter/main" class="counter">去往Vuex示例页面</a> -->
     </div>
   </div>
 </template>
@@ -46,32 +41,26 @@
 <script>
 import topBar from '@/components/topBar'
 import slide from '@/components/slide'
+import api from '@/utils/api'
 
 export default {
   data () {
     return {
-      userInfo: {},
       config: {
         title: '地址管理',
         color: '#222',
         bg: '#fff',
-        backImg: '/static/back_gray.png'
-      },
-      slideConfig: {
-        height: '500rpx',
-        autoplay: false,
-        data: [
-          { img: '/static/toolBar/classify.png' },
-          { img: '/static/toolBar/home.png' }
-        ]
+        backImg: '/static/left_arrow.png'
       },
       list: [
-        { title: '购物车', phone: 13211111111, img: '' },
-        { title: '我的卡劵', phone: 13111111111, address: 'sfksdfkKSDFM<lsk破开神佛考生的分数都快发送的看法实力派v感慨地说佛v觉得佛教给vi的风景sfsdfjkd', img: '' },
-        { title: '地址管理', img: '', url: 'pages/addressList/main' },
-        { title: '整居定制', img: '' },
-        { title: 'aksfdosdfojsdfcv', img: '' }
-      ]
+        // { name: '购物车', phone: 13211111111, img: '' },
+        // { name: '我的卡劵', phone: 13111111111, address: 'sfksdfkKSDFM<lsk破开神佛考生的分数都快发送的看法实力派v感慨地说佛v觉得佛教给vi的风景sfsdfjkd', img: '' },
+        // { title: '地址管理', img: '', url: 'pages/addressList/main' },
+        // { title: '整居定制', img: '' },
+        // { title: 'aksfdosdfojsdfcv', img: '' }
+      ],
+      currentPage: 1,
+      limit: 2
     }
   },
 
@@ -81,24 +70,50 @@ export default {
   },
 
   methods: {
-    bindViewTap () {
-      const url = '../logs/main'
-      wx.navigateTo({ url })
-    },
-    add (item) {
+    go (item) {
       wx.navigateTo({
-        url: '/pages/address/add/main'
+        url: '/pages/address/add/main?item=' + encodeURIComponent(JSON.stringify(item))
       })
+    },
+    selectAddress (item) {
+      if(!this.canSel) return ; 
+      
+      wx.setStorageSync('address', item)
+      wx.navigateBack({ detail: 1 })
+    },
+    deleteAddress (item) {
+      wx.showModal({
+        content: '确认删除该地址吗?',
+        async success (e) {
+          let res = e.confirm && await api.deleteAddress(item.address_id) //FIXME: 
+          console.log(e, res)
+        }
+      })
+    },
+    async getList (page) {
+      let param = {
+        page,
+        limit: this.limit
+      }
+
+      let res = await api.getAddressList(param)
+
+      if (!res) return null
+
+      this.list = res
     }
   },
 
   created () {
-    if (!wx.getStorageSync('userInfo')) {
-      wx.reLaunch({
-        url: '/pages/authorization/main?referer=/pages/index/main'
-      })
-    }
-    console.log('reLaunch')
+    console.log('addressList create')
+  },
+
+  onLoad (param) {
+    if(param.referer) this.canSel = true
+  },
+
+  onShow () {
+    this.getList(this.currentPage)
   },
 
   onPullDownRefresh () {
@@ -120,7 +135,6 @@ export default {
 .right_arrow{
   width: 16rpx;
   height: 26rpx;
-  background: #ccc;
 }
 
 .add{
@@ -169,7 +183,6 @@ export default {
 .operate_btn image{
   width: 26rpx;
   height: 26rpx;
-  background: #ccc;
   margin-right: 12rpx;
 }
 .default{

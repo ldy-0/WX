@@ -1,7 +1,7 @@
 <template>
-  <div class="container" > <!--@click="clickHandle('test click', $event)" -->
+  <div class="container">
 
-    <topBar :config='config' title='-首页-'></topBar>
+    <topBar :config='config' title='首页'></topBar>
 
     <div class='authorization s-bg-1'>
 
@@ -17,26 +17,20 @@
 
     </div>
 
-    <!-- <form class="form-container">
-      <input type="text" class="form-control" v-model="motto" placeholder="v-model" />
-      <input type="text" class="form-control" v-model.lazy="motto" placeholder="v-model.lazy" />
-    </form>
-    <a href="/pages/counter/main" class="counter">去往Vuex示例页面</a> -->
   </div>
 </template>
 
 <script>
 import topBar from '@/components/topBar'
-// import util from '@/utils/util.js'
+import api from '@/utils/api.js'
 
 export default {
   data () {
     return {
       config: {
         title: '授权',
-        subTitle: '返回',
         color: '#fff',
-        bg: 'green'
+        bg: '#937d8a'
       },
       userInfo: {},
       referer: null
@@ -53,7 +47,7 @@ export default {
 
       if (e.mp.detail.errMsg === 'getUserInfo:ok') {
         wx.showLoading({ title: 'Loading...' })
-        let params = {}
+        // let params = {}
 
         if (!code) {
           return undefined
@@ -64,20 +58,21 @@ export default {
         // params.iv = e.detail.iv
 
         wx.setStorageSync('userInfo', e.mp.detail.userInfo)
-        wx.setStorageSync('params', params)
+        // wx.setStorageSync('params', params)
 
-        // console.log('setUser', user)
-        // if (!user) {
-        console.log(this.referer, 'userinfo')
-        wx.reLaunch({ url: this.referer })
-        // }
+        let user = await api.setUserInfo({
+          wx_name: wx.getStorageSync('userInfo').nickName,
+          wx_avatar: wx.getStorageSync('userInfo').avatarUrl
+        })
+        console.log('setUser', user)
+        if (!user) {
+          let userInfo = await api.getUserInfo()
+          userInfo && wx.setStorageSync('userInfo', userInfo)
+          wx.reLaunch({ url: this.referer })
+        }
 
         wx.hideLoading()
       }
-    },
-    clickHandle (msg, ev) {
-      console.log('clickHandle:', msg, ev)
-      this.config.bg = 'blue'
     },
     login () {
       return new Promise(function (resolve, reject) {
@@ -87,14 +82,17 @@ export default {
         })
       })
     },
-    async getCode () {
+    async getToken () {
       let res = await this.login()
       wx.setStorageSync('code', res.code)
+
+      let data = await api.getToken(res.code)
+      console.log('-- get Token --', data)
     }
   },
 
   created () {
-    this.getCode()
+    // this.getToken()
   },
 
   onLoad (params) {

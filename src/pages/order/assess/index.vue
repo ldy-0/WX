@@ -15,12 +15,16 @@
 
       <div class='star'>
         <div class='s-fc-4' style='margin: 0 30rpx;'>评分</div>
-        <image class='star_icon' src='' />
+        <image class='star_icon' :src="level < index + 1 ? '/static/star.png' : '/static/star_sel.png' " v-for='(item, index) in levelList' :key='index' @click='changeLevel(index + 1)' />
       </div>
 
-      <textarea class='textarea' placeholder="请输入评论..." >
-        <view class='box'>添加图片</view>
-      </textarea>
+      <div class='textarea_wrap'>
+        <textarea class='textarea' placeholder="请输入评论..." ></textarea>
+        <div class='box' @click='addImg'>
+          <image src='' style='width: 54rpx; height: 60rpx; margin: 20rpx 0 0;' src='/static/goods/icon_1_xiangji@2x.png' />
+          <div>添加图片</div>
+        </div>
+      </div>
 
       <div class='btn s-fc-1'>提交</div>
       
@@ -34,16 +38,6 @@
       </div>
     </div> -->
 
-    
-
-    <!-- <div class='modal'>
-      <div class=''></div> 
-    </div> -->
-
-    <!-- <form class="form-container">
-      <input type="text" class="form-control" v-model="motto" placeholder="v-model" />
-      <input type="text" class="form-control" v-model.lazy="motto" placeholder="v-model.lazy" />
-    </form> -->
     <!-- <a href="/pages/counter/main" class="counter">去往Vuex示例页面</a> -->
   </div>
 </template>
@@ -76,7 +70,9 @@ export default {
         { title: 'aksfdosdfojsdfcv', goods: { name: 'sdksdfodsfkoksdf开始大幅攀升地ffsd', price: 143.45234, qty: 3455 } },
         { title: 'aksfdosdfojsdfcv', goods: { name: 'sdksdfodsfkoksdf开始大幅攀升地ffsd', price: 143.45234, qty: 3455 } }
       ],
-      currentClass: '全部'
+      currentClass: '全部',
+      level: 3,
+      levelList: [0, 0, 0, 0, 0]
     }
   },
 
@@ -92,31 +88,14 @@ export default {
         url: '/pages/goods/main?id=a'
       })
     },
-    bindViewTap () {
-      const url = '../logs/main'
-      wx.navigateTo({ url })
-    },
-    getUserInfo () {
-      // 调用登录接口
-      wx.login({
-        success: () => {
-          wx.getUserInfo({
-            success: (res) => {
-              this.userInfo = res.userInfo
-            }
-          })
-        }
-      })
+    changeLevel (index) {
+      console.log(index)
+      this.level = index
     }
   },
 
   created () {
-    if (!wx.getStorageSync('userInfo')) {
-      wx.reLaunch({
-        url: '/pages/authorization/main?referer=/pages/index/main'
-      })
-    }
-    console.log('reLaunch')
+    
   },
 
   onPullDownRefresh () {
@@ -170,15 +149,24 @@ export default {
 .star_icon{
   width: 36rpx;
   height: 36rpx;
-  background: #ccc;
 }
 
-.textarea{
-  width: 100%;
+.textarea_wrap{
+  position: relative;
   height: 500rpx;
   background: #fff;
 }
+.textarea{
+  padding: 30rpx 0 0 30rpx;
+}
 .box{
+  position: absolute;
+  left: 30rpx;
+  bottom: 30rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 162rpx;
   height: 162rpx;
   border: 1rpx dashed #d9d9d9;

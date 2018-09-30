@@ -76,12 +76,7 @@ export default {
   },
 
   created () {
-    if (!wx.getStorageSync('userInfo')) {
-      wx.reLaunch({
-        url: '/pages/authorization/main?referer=/pages/index/main'
-      })
-    }
-    console.log('reLaunch')
+    console.log('help create')
   },
 
   onLoad (params) {

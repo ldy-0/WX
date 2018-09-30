@@ -13,24 +13,27 @@
           </view>
           <image class='arrow' src='../images/order/icon_zuojiantou@2x.png' />
         </view> -->
-        <view class="address_info" >
+        <view class="address_info" @click='changeAddress'>
+          <image style='width: 23rpx; height: 33rpx; margin-right: 20rpx; flex-shrink: 0;' src='/static/address.png' />
           <view class="grow" style='flex-grow: 1;'>
             <view class="user_info s-fc-7">
-              <view class="name">收货人：address.consignee</view>
-              <view class="phone">address.phone</view>
+              <view class="name">收货人：{{address.address_realname}}</view>
+              <view class="phone">{{address.address_mob_phone}}</view>
             </view>
             <view class="active_address s-fc-7">
               <!-- <text class="defult" wx:if="{{address.isdefault==1}}"> [默认]</text> -->
-              收货地址：address.detailksdfjk士大夫可适当放宽就是东方开始大批佛龛山东分局JFKD精神科大夫就的方式时刻提防sdsfdjk
+              收货地址：{{address.area_info}}
             </view>
           </view>
-          <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
+          <image class='right_arrow' src='/static/my/right_arrow.png' />
         </view>
       </view>
       
-      <image style='height: 10rpx; background: #ccc;' src='' />
+      <image style='height: 10rpx; margin: 0 0 20rpx 0;' src='/static/bar.png' />
 
-      <goods :goods='goods' :config='goodsConfig'></goods>
+      <goods :goods='goods' :config='goodsConfig' v-if='goods'></goods>
+
+      <goods :goods='item' :config='goodsConfig' v-for='(item, index) in goodsList' :key='index' v-if='goodsList.length'></goods>
 
       <div class='s-fc-8' style='display: flex; justify-content: space-between; align-items: center; height: 88rpx; margin: 2rpx 0 0; padding: 0 20rpx; background: #fff;' v-if='isVirtual'>
         <div>定金:</div>
@@ -41,31 +44,23 @@
         <div>¥10.00</div>
       </div>
 
-      <div class='row s-fc-8' v-for='(item, index) in serverList' :key='index'>
-        <div style='display: flex; align-items: center;'><div class='circle'><div class='circle_sel'></div></div>{{item.title}}</div>
-        <div>¥10.00</div>
+      <div style='margin: 0 0 100rpx'>
+        <div class='row s-fc-8' v-for='(item, index) in serverList' :key='index'>
+          <div style='display: flex; align-items: center;'>
+            <div class='circle' @click='check(item)'>
+              <div :class='{ circle_sel: item.checked }'></div>
+            </div>{{item.title}}</div>
+          <div>¥10.00</div>
+        </div>
       </div>
 
       <div class='bottom_bar'>
         <div >
-          <div>
-            <div>合计：<span class='s-fc-9'>¥100.00</span></div>
-          </div>
+            <div>合计：<span class='s-fc-9'>¥{{price}}</span></div>
         </div>
-        <div class='submit_btn s-fc-1 s-bg-3' @click='submit'>结算(1)</div>
+        <div class='submit_btn s-fc-1 s-bg-3' @click='submit'>结算({{count}})</div>
       </div>
 
-    <div class='modal' v-if='isShowModal'>
-      <div class='mask' @click='hideModal'></div>
-      <div class='content_center' v-if='isVirtual'>
-      </div>
-      
-    </div>
-    <!-- <form class="form-container">
-      <input type="text" class="form-control" v-model="motto" placeholder="v-model" />
-      <input type="text" class="form-control" v-model.lazy="motto" placeholder="v-model.lazy" />
-    </form> -->
-    <!-- <a href="/pages/counter/main" class="counter">去往Vuex示例页面</a> -->
     </div>
   </div>
 </template>
@@ -74,44 +69,39 @@
 import topBar from '@/components/topBar'
 import slide from '@/components/slide'
 import goods from '@/components/goods'
+import api from '@/utils/api'
+import util from '@/utils/util'
 
 export default {
   data () {
     return {
-      userInfo: {},
       config: {
         title: '确认订单',
         color: '#222',
         bg: '#fff',
-        backImg: '/static/back_gray.png'
-      },
-      slideConfig: {
-        height: '750rpx',
-        autoplay: false,
-        data: [
-          { img: '/static/toolBar/classify.png' },
-          { img: '/static/toolBar/home.png' }
-        ]
+        backImg: '/static/left_arrow.png'
       },
       goodsConfig: {
-        margin: '20rpx 0 0'
+        // margin: '20rpx 0 0'
       },
+      address: {},
       goods: {},
-      commentList: [
-        { title: '购物车', phone: 13211111111, img: '' },
-        { title: '我的卡劵', phone: 13111111111, address: 'sfksdfkKSDFM<lsk破开神佛考生的分数都快发送的看法实力派v感慨地说佛v觉得佛教给vi的风景sfsdfjkd', img: '' },
-        { title: '地址管理', img: '', url: 'pages/addressList/main' },
-        { title: '整居定制', img: '' },
-        { title: 'aksfdosdfojsdfcv', img: '' }
-      ],
+      goodsList: [],
       serverList: [
-        { title: '设计服务：', img: '' },
-        { title: '搬运服务：', img: '' },
-        { title: '安装服务：', img: '' }
+        { title: '设计服务：', price: 10.0, checked: false },
+        { title: '搬运服务：', price: 10.0, checked: false },
+        { title: '安装服务：', price: 10.0, checked: false }
       ],
-      isVirtual: true,
-      isShowModal: false,
-      date: ''
+      isVirtual: true
+    }
+  },
+
+  computed: {
+    count () {
+      return this.goods && this.goods.qty || this.goodsList.reduce((p, v) => p + v.qty, 0)
+    },
+    price () {
+      return this.goods && this.goods.qty || this.goodsList.reduce((p, v) => p + v.price, 0)
     }
   },
 
@@ -122,33 +112,74 @@ export default {
   },
 
   methods: {
-    submit () {
-      wx.reLaunch({
-        url: '/pages/payed/main'
+    changeAddress () {
+      wx.navigateTo({
+        url: `/pages/address/addressList/main?referer=submit`
       })
     },
-    add (item) {
-      wx.navigateTo({
-        url: '/pages/address/add/main'
-      })
+    check (item) {
+      item.checked = !item.checked
+      console.log(item)
+    },
+    async submit () {
+      wx.showLoading({ title: 'Loading...' })
+
+      let params = {
+        cart_id: this.getCartId(),
+        address_id: this.isVirtual ? null : this.address.address_id,
+        pay_name: 'online',
+        pay_message: [],
+        order_from: 2,
+        // is_virtual: this.isVirtual,
+        is_pintuan: null,
+        ifcart: this.isSingle ? 0 : 1,
+      }
+
+      let res = await api.submitOrder(params)
+
+      this.order_id = res.order_id
+
+      let payres = await this.pay(res)
+
+      console.log('pay', this.order_id, payres)
+      wx.hideLoading()
+
+      if (payres.errMsg === 'requestPayment:ok') {
+        this.canGo = true
+        wx.redirectTo({
+          url: '/pages/payed/main?id=' + this.order_id,
+        })
+      } else if (payres === 'requestPayment:fail cancel') {
+        wx.showToast({ title: '支付已取消!', icon: 'none', duration: 2000, });
+      }
+
+    },
+    getCartId () {
+      return this.goods ? `${this.goods.goods_id}|${this.goods.goods_num}` : this.goodsList.map(v => `${v.cart_id}|${v.goods_num}`)
+    },
+    async getDefauleAddress () {
+      let res = await api.getDefaultAddress({ address_is_default: 1 })
+      console.log(res)
     }
   },
 
   created () {
-    if (!wx.getStorageSync('userInfo')) {
-      wx.reLaunch({
-        url: '/pages/authorization/main?referer=/pages/index/main'
-      })
-    }
-    console.log('reLaunch')
   },
 
   onLoad (params) {
-    this.goods = {
-      name: '看到放送控股快速打开v功德佛楼盘数量大幅v哦的上空飞过v哦梵蒂冈v顺利破发v看到法国v端口sf',
-      price: 123324930,
-      qty: 192334,
-      scale: 34504935
+    this.goods = params.goods && JSON.parse(decodeURIComponent(params.goods))
+    this.goodsList = params.goodsList && JSON.parse(decodeURIComponent(params.goodsList))
+
+    console.log(this.goods, this.goodsList)
+
+    this.getDefauleAddress()
+  },
+
+  onShow () {
+    let address = wx.getStorageSync('address')
+    if (address) {
+      this.address = address
+      wx.removeStorageSync('address')
     }
   },
 
@@ -346,11 +377,11 @@ export default {
 }
 
 .right_arrow{
+  flex-shrink: 0;
   width: 16rpx;
   height: 26rpx;
-  background: #ccc;
+  margin-left: 20rpx;
 }
-
 
 .default{
   font-size: 22rpx;

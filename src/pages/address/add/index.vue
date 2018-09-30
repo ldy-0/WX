@@ -5,50 +5,44 @@
 
     <div class='wrap'>
 
-      <form bindsubmit='submit'>
+      <form @submit='submit'>
 
-          <view class='row_flex'>收件人： <input type='text' name='name' class='inline s-fc-4' @input='setConsignee' :value='address.consignee' /></view>
+          <view class='row_flex'>收件人： <input type='text' name='name' class='inline s-fc-4' @input='setName' :value='address.address_realname' /></view>
 
-          <view class='row_flex'>联系方式：<input type='text' name='phone' class='inline s-fc-4' @input='setPhone' :value='address.phone' /></view>
+          <view class='row_flex'>联系方式：<input type='text' name='phone' class='inline s-fc-4' @input='setPhone' :value='address.address_mob_phone' /></view>
 
           <view class="row_flex">
               <view>所在地区：</view>
-              <view class='flex' @click='openAddressPicker'> 
-                  <view class='flex' style='display: flex;'>
-                      <view>{{province ? province.name : '省'}}</view>
-                      <!-- <image class="cityup" src="../../images/My/cityup.png"></image> -->
+              <view style='display: flex;' @click='showAddressPicker'> 
+                  <view class='flex'>
+                      <view>{{address.province ? address.province.name : '省'}}</view>
+                      <image style="width: 25rpx; height: 15rpx;" src="/static/bottom_arrow.png" />
                   </view>
-                  <view class='flex' style='display: flex;>
-                      <view>{{city ? city.name : '市' }}</view>
-                      <!-- <image class="cityup" src="../../images/My/cityup.png"></image> -->
+                  <view class='flex'>
+                      <view>{{address.city ? address.city.name : '市' }}</view>
+                      <image style="width: 25rpx; height: 15rpx;" src="/static/bottom_arrow.png" />
                   </view>
-                  <view class='flex' style='display: flex;>
-                      <view>{{area ? area.name : '区' }}</view>
-                      <!-- <image class="cityup" src="../../images/My/cityup.png"></image> -->
+                  <view class='flex'>
+                      <view>{{address.area ? address.area.name : '区' }}</view>
+                      <image style="width: 25rpx; height: 15rpx;" src="/static/bottom_arrow.png" />
                   </view>
               </view>
-              <!-- <areaPicker @areaArray.user="areaChange"></areaPicker> -->
-              <areap ref='area'></areap>
+              <areap ref='area' @getArea='getArea'></areap>
           </view>
 
-          <view class='row_flex'>详细地址：<input type='text' name='detail' class='inline s-fc-4' @input='setStreet' :value='address.street' /></view>
+          <view class='row_flex'>详细地址：<input type='text' name='detail' class='inline s-fc-4' @input='setStreet' :value='address.address_detail' /></view>
 
           <view class='setting'>
               <view>
                   <view>设为默认地址</view>
                   <view class='comment s-fc-2'>注：每次下单时会使用该地址</view>
               </view>
-              <switch name='isDefault' :checked='address.isDefault'></switch>
+              <switch name='isDefault' :checked='Number(address.address_is_default)'></switch>
           </view>
 
           <button class='save_btn s-fc-1' formType='submit'>保存</button>
       </form>     
 
-    <!-- <form class="form-container">
-      <input type="text" class="form-control" v-model="motto" placeholder="v-model" />
-      <input type="text" class="form-control" v-model.lazy="motto" placeholder="v-model.lazy" />
-    </form> -->
-    <!-- <a href="/pages/counter/main" class="counter">去往Vuex示例页面</a> -->
     </div>
   </div>
 </template>
@@ -57,6 +51,7 @@
 import topBar from '@/components/topBar'
 import slide from '@/components/slide'
 import area from '@/components/area'
+import api from '@/utils/api'
 
 export default {
   data () {
@@ -66,30 +61,18 @@ export default {
         title: '新增地址',
         color: '#222',
         bg: '#fff',
-        backImg: '/static/back_gray.png'
-      },
-      slideConfig: {
-        height: '500rpx',
-        autoplay: false,
-        data: [
-          { img: '/static/toolBar/classify.png' },
-          { img: '/static/toolBar/home.png' }
-        ]
+        backImg: '/static/left_arrow.png'
       },
       address: {
-        id: '',
-        consignee: '',
-        phone: '',
-        zoneId: '',
-        street: '',
-        isDefault: '' },
-      list: [
-        { title: '购物车', phone: 13211111111, img: '' },
-        { title: '我的卡劵', phone: 13111111111, address: 'sfksdfkKSDFM<lsk破开神佛考生的分数都快发送的看法实力派v感慨地说佛v觉得佛教给vi的风景sfsdfjkd', img: '' },
-        { title: '地址管理', img: '', url: 'pages/addressList/main' },
-        { title: '整居定制', img: '' },
-        { title: 'aksfdosdfojsdfcv', img: '' }
-      ]
+        address_id: '',
+        address_realname: '',
+        address_mob_phone: '',
+        address_detail: '',
+        address_is_default: '',
+        province: null,
+        city: null,
+        area: null
+      }
     }
   },
 
@@ -100,29 +83,75 @@ export default {
   },
 
   methods: {
-    openAddressPicker(){
-        console.log('--openAddressPicker--');
-        //this.$invoke("areaPicker", "openAddressPicker");
-        this.$refs.area.openAddressPicker();
+    setName (e) {
+      if (e.mp.detail.value.length > 15) {
+        wx.showToast({ title: '用户名不能超过15个字符', icon: 'none', duration: 2000, })
+        return this.address.address_realname
+      }
+      this.address.address_realname = e.mp.detail.value
     },
-    bindViewTap () {
-      const url = '../logs/main'
-      wx.navigateTo({ url })
+    showAddressPicker () { this.$refs.area.openAddressPicker() },
+    getArea (e) {
+      this.address.province = e.province
+      this.address.city = e.city
+      this.address.area = e.area
     },
-    add (item) {
-      wx.navigateTo({
-        url: '/pages/address/add/main'
-      })
+    submit (e) {
+      let v = e.mp.detail.value
+      let phone = /^((13[0-9])|(14[5|7|9])|(15([0-3]|[5-9]))|(17[0,1,3,5,6,7,8])|(18[0-9]))\d{8}$/
+      if (!v.name) {
+        return wx.showToast({ title: '姓名不能为空!', icon: 'none', duration: 1000 })
+      }
+      if (v.phone === '' || !phone.test(v.phone)) {
+        return wx.showToast({ title: '手机号格式不正确!', icon: 'none', duration: 1000 })
+      }
+      if (!this.city) {
+        // return wx.showToast({ title: '请选择所在地区!', icon: 'none', duration: 1000 })
+      }
+      if (!v.detail) {
+        return wx.showToast({ title: '请完善详细地址!', icon: 'none', duration: 1000 })
+      }
+
+      this.address.address_id ? this.save(v, this.address.address_id) : this.save(v)
+    },
+    async save (v, id) {
+      console.log('info', v, id)
+      let param = {
+        address_realname: v.name,
+        address_mob_phone: v.phone,
+        address_tel_phone: v.phone,
+        address_detail: v.detail,
+        area_info: v.detail,
+        address_is_default: Number(v.isDefault),
+        province_id: 1,
+        city_id: 36,
+        area_id: 535
+      }
+
+      let res = id ? await api.updateAddress(id, param) : await api.setAddress(param)
+      if (res) {
+        wx.navigateBack({ detail: 1 })
+      }
     }
+
   },
 
   created () {
-    if (!wx.getStorageSync('userInfo')) {
-      wx.reLaunch({
-        url: '/pages/authorization/main?referer=/pages/index/main'
-      })
-    }
-    console.log('reLaunch')
+    console.log('add address')
+  },
+
+  onLoad (param) {
+    console.log(param, this.address)
+    this.address = param.item === 'null' ? {
+      address_id: '',
+      address_realname: '',
+      address_mob_phone: '',
+      address_detail: '',
+      address_is_default: '',
+      province: null,
+      city: null,
+      area: null
+    } : JSON.parse(decodeURIComponent(param.item))
   },
 
   onPullDownRefresh () {
@@ -142,10 +171,19 @@ export default {
   background: #f5f5f5;
 }
 
+.flex{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 180rpx;
+  margin-right: 20rpx;
+}
+
 .row_flex{
   display: flex;
   align-items: center;
-  margin-bottom: 1rpx;
+  height: 100rpx;
+  margin-bottom: 2rpx;
   padding-left: 23rpx;
   background: #fff;
 }

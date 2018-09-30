@@ -1,6 +1,6 @@
 <template>
   <div class='topBar' 
-      :style='{color: config.color, background: config.bg}'>
+      :style="{height: config.height, color: config.color, background: config.bg}">
 
     <div class='left' @click='goBack'>
       <image class='back' :src='config.backImg' alt='no found' v-if='config.backImg' />
@@ -47,11 +47,12 @@ export default {
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 2;
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: 200rpx;
+  height: 130rpx;
   padding: 0 20rpx;
   overflow: hidden;
 }

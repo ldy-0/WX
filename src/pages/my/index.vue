@@ -4,17 +4,14 @@
     <topBar :config='config' title='首页'></topBar>
 
     <div class='wrap'>
-    <!-- <slide :config='slideConfig'></slide> -->
 
-    <!-- <div class='search'>
-      <image class='search_icon' src='' />
-      <div class='search_content s-fc-2'>搜索</div>
-    </div> -->
       <div class='user_info'>
-        <image class='user_bg' src='' />
+        <div class='user_bg_wrap'>
+          <image class='user_bg' :src='userInfo.wx_avatar' />
+        </div>
         <div class='user'>
-          <image class='user_img' />
-          <div class='user_name s-fc-1'>username</div>
+          <image class='user_img' :src='userInfo.wx_avatar' />
+          <div class='user_name s-fc-1' v-text='userInfo.wx_name'></div>
         </div>
       </div>
 
@@ -24,56 +21,40 @@
           <view>个人管理</view>
           <view style='display: flex; align-items: center;'>
             <view>全部订单</view>
-            <image class='arrow' src='../images/Mall/icon_zuojiantou@2x.png' />
+            <image class='arrow' src='/static/my/right_arrow.png' />
           </view>
         </navigator>
         <view class='order_status'>
-          <navigator class='column_around' url='/pages/my/orderList?status=submitted'>
-            <image src='../images/My/icon_daifukuan@2x.png' />
+          <navigator class='column_around' url='/pages/order/list/main?status=submitted'>
+            <image src='/static/my/icon_daifukuan.png' />
             <view>待付款</view>
           </navigator>
-          <navigator class='column_around' url='/pages/my/orderList?status=paid'>
-            <image src='../images/My/icon_daifahuo@2x.png' />
+          <navigator class='column_around' url='/pages/order/list/main?status=paid'>
+            <image src='/static/my/icon_daifahuo.png' />
             <view>待发货</view>
           </navigator>
-          <navigator class='column_around' url='/pages/my/orderList?status=shipped'>
-            <image src='../images/My/icon_daishouhuo@2x.png' />
+          <navigator class='column_around' url='/pages/order/list/main?status=shipped'>
+            <image src='/static/my/icon_daishouhuo.png' />
             <view>待收货</view>
           </navigator>
           <navigator class='column_around' url='/pages/order/service/main?status=comment'>
-            <image src='../images/My/icon_daipingjia@2x.png' />
+            <image src='/static/my/icon_shouhou.png' />
             <view>售后</view>
           </navigator>
         </view>
       </div>
 
       <div class='class_wrap'>
+        <!-- <row class='s-fc-3' :config='rowConfig' :leftImg='item.img' :leftTitle='item.title' v-for='(item, index) in classList' :key='index'></row> -->
         <div class='class_item' v-for='(item, index) in classList' :key='index' @click='go(item, $event)'>
           <div style='display: flex; align-items: center;'>
-            <image class='class_item_icon' src='' />
+            <image class='class_item_icon' :src='item.img' />
             <div class='class_item_title s-fc-3'>{{item.title}}</div>
           </div>
-          <image class='arrow' src='' />
+          <image class='arrow' src='/static/my/right_arrow.png' />
         </div> 
       </div>
-    <!-- <div class="userinfo" @click="bindViewTap">
-      <img class="userinfo-avatar" v-if="userInfo.avatarUrl" :src="userInfo.avatarUrl" background-size="cover" />
-      <div class="userinfo-nickname">
-        <card :text="userInfo.nickName"></card>
-      </div>
-    </div> -->
-
     
-
-    <!-- <div class='modal'>
-      <div class=''></div> 
-    </div> -->
-
-    <!-- <form class="form-container">
-      <input type="text" class="form-control" v-model="motto" placeholder="v-model" />
-      <input type="text" class="form-control" v-model.lazy="motto" placeholder="v-model.lazy" />
-    </form> -->
-    <!-- <a href="/pages/counter/main" class="counter">去往Vuex示例页面</a> -->
     </div>
   </div>
 </template>
@@ -81,46 +62,48 @@
 <script>
 import topBar from '@/components/topBar'
 import slide from '@/components/slide'
+import row from '@/components/row'
 
 export default {
   data () {
     return {
-      userInfo: {},
       config: {
         title: '我的',
         color: '#222',
         bg: '#fff'
         // backImg: '/static/back_gray.png'
       },
-      slideConfig: {
-        height: '500rpx',
-        autoplay: false,
-        data: [
-          { img: '/static/toolBar/classify.png' },
-          { img: '/static/toolBar/home.png' }
-        ]
+      rowConfig: {
+        rightImg: '/static/my/right_arrow.png',  
+        rightWidth: '16rpx',
+        rightHeight: '26rpx'
       },
+      userInfo: {},
       classList: [
-        { title: '购物车', img: '', url: '/pages/shoppingCart/main' },
-        { title: '我的卡劵', img: '' },
-        { title: '地址管理', img: '', url: '/pages/address/addressList/main' },
-        { title: '帮助', img: '', url: '/pages/help/main' },
-        { title: 'aksfdosdfojsdfcv', img: '' }
+        { title: '购物车', img: '/static/my/shoppingCart.png', url: '/pages/shoppingCart/main' },
+        { title: '我的卡劵', img: '/static/my/coupon.png' },
+        { title: '地址管理', img: '/static/my/address.png', url: '/pages/address/addressList/main' },
+        { title: '联系客服', img: '/static/my/concat.png', url: '/pages/address/addressList/main' },
+        { title: '帮助', img: '/static/my/help.png', url: '/pages/help/main' }
+      ],
+      orderImg: [
+        { img: '/static/my/' }
       ]
     }
   },
 
   components: {
     topBar,
-    slide
+    slide,
+    row
   },
 
   methods: {
-    bindViewTap () {
-      const url = '../logs/main'
-      wx.navigateTo({ url })
-    },
     go (item) {
+      if (item.title === '我的卡劵') {
+        return wx.showModal({ title: '提示', content: '暂无', showCancel: false })
+      }
+
       wx.navigateTo({
         url: item.url
       })
@@ -128,17 +111,15 @@ export default {
   },
 
   created () {
-    if (!wx.getStorageSync('userInfo')) {
-      wx.reLaunch({
-        url: '/pages/authorization/main?referer=/pages/index/main'
-      })
-    }
-    console.log('reLaunch')
+  },
+
+  onLoad (param) {
+    this.userInfo = wx.getStorageSync('userInfo')
   },
 
   onPullDownRefresh () {
     wx.reLaunch({
-      url: '/pages/index/main'
+      url: '/pages/my/main'
     })
   }
 
@@ -155,7 +136,7 @@ export default {
 .arrow{
   width: 16rpx;
   height: 26rpx;
-  background: #ccc;
+  margin-left: 20rpx;
 }
 
 .user_info{
@@ -163,15 +144,24 @@ export default {
   width: 100%;
   height: 360rpx;
 }
-.user_bg{
+.user_bg_wrap{
   position: absolute;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+}
+.user_bg{
+  position: relative;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  filter: blur(20rpx);
 }
 .user{
   position: absolute;
   top: 60rpx;
   left: calc(50% - 72rpx);
+  text-align: center;
 }
 .user_img{
   width: 135rpx;
@@ -209,7 +199,6 @@ export default {
 .order_status image{
   width: 43rpx;
   height: 42rpx;
-  background: #ccc;
 }
 
 .class_wrap{
@@ -226,7 +215,7 @@ export default {
 .class_item_icon{
   width: 70rpx;
   height: 70rpx;
-  background: #ccc;
+  border-radius: 10rpx;
 }
 .class_item_title{
   margin-left: 20rpx;
