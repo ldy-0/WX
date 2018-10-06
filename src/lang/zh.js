@@ -33,9 +33,9 @@ export default {
 
     // answers:'答题',
 
-    library: "题库",
-    libraryList: "题目列表",
-    libraryClass: "分类",
+    // library: "题库",
+    // libraryList: "题目列表",
+    // libraryClass: "分类",
 
     answer: "答题",
     answerList: "题目列表",

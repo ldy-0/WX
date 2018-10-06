@@ -227,3 +227,11 @@ export function postMusic(data) { //背景音乐
         data
     })
 }
+
+export function postImportLib(data) { //批量导入
+    return request({
+        uel: '/api/v1/seller/questionImport',
+        method: 'post',
+        data
+    })
+}

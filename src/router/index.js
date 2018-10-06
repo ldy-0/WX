@@ -296,25 +296,25 @@ export let asyncRouterMapSeller = [
       meta: { title: 'sellerAuth', icon: 'goods', noCache: true }
     }]
   },
-  {
-    path: '/library',
-    component: Layout,
-    redirect: '/library/libraryList',
-    name: 'library',
-    meta: { title: 'library', icon: 'notice', roles: ['library'] },
-    children: [{
-      path: 'libraryList',
-      component: () => import('@/views/library/libraryList'),
-      name: 'libraryList',
-      meta: { title: 'libraryList', noCache: true }
-    },
-    {
-      path: 'libraryClass',
-      component: () => import('@/views/library/libraryClass'),
-      name: 'libraryClass',
-      meta: { title: 'libraryClass', noCache: true }
-    }]
-  },
+  // {
+  //   path: '/library',
+  //   component: Layout,
+  //   redirect: '/library/libraryList',
+  //   name: 'library',
+  //   meta: { title: 'library', icon: 'notice', roles: ['library'] },
+  //   children: [{
+  //     path: 'libraryList',
+  //     component: () => import('@/views/library/libraryList'),
+  //     name: 'libraryList',
+  //     meta: { title: 'libraryList', noCache: true }
+  //   },
+  //   {
+  //     path: 'libraryClass',
+  //     component: () => import('@/views/library/libraryClass'),
+  //     name: 'libraryClass',
+  //     meta: { title: 'libraryClass', noCache: true }
+  //   }]
+  // },
   {
     path: '/answer',
     component: Layout,

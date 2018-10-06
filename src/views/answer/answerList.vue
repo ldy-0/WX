@@ -44,7 +44,16 @@
             </el-dropdown-menu>
     </el-dropdown>
     <div style="width:20px;height: 30px;"></div>
-    <el-button type="primary" icon="document"  @click="toGetSubList">批量导入</el-button>
+
+    <el-upload
+      :auto-upload="false"
+      action=""
+      :on-change="handlePicture"
+      :limit="1"
+      :show-file-list="false">
+      <el-button style="margin:0px 10px 0 10px;" type="primary">批量导入</el-button>
+    </el-upload>
+
     <el-button type="primary" icon="document" :loading="downloadLoading" @click="toExport">导出</el-button>
     
     <el-dialog title="从列表选择" :visible.sync="isDialogCheck">
@@ -230,8 +239,10 @@ import {
   postAddShopList,
   deleteShopList,
   putEditShopList,
-  postLibSearchTitle
+  postLibSearchTitle,
+  postImportLib
 } from "@/api/answer";
+import uploadFn from "@/utils/aahbs";
 
 export default {
   created() {
@@ -390,11 +401,30 @@ export default {
         this.getShopList_api(1, 0);
       });
     },
-
-    toGetSubList: function() {
+    async handlePicture(file, fileList) {
       //批量导入
+      console.log("change", file);
+      var url = await uploadFn(file.raw);
+      console.log("url", url[0]);
+      var data = {
+        url: url[0]
+      };
+      postImportLib(data)
+        .then(res => {
+          console.log("res", res);
+          // this.tableData = [];
+          this.getShopList_api(1, 0);
+        })
+        .catch(err => {
+          this.$notify.error({
+            title: "上传出错",
+            message: "请刷新后重新上传文件"
+          });
+          console.log("err", err);
+          // this.tableData = [];
+          this.getShopList_api(1, 0);
+        });
     },
-
     formatJson(filterVal, jsonData) {
       return jsonData.map(v =>
         filterVal.map(j => {
