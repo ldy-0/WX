@@ -54,7 +54,6 @@
         </el-option>
       </el-select>
     </el-form-item>
-    {{formForNotive.is_virtual}}
     <!-- 普通、预售 -->
     <el-form-item label="商品类型" :label-width="formLabelWidth" prop="goodsType">
       <el-select v-model="formForNotive.goodsType" placeholder="请选择">
