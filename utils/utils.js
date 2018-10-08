@@ -1,21 +1,8 @@
-import wepy from 'wepy';
 
-const DOMAIN = 'http://101.37.30.205/';
-// const DOMAIN = 'https://www.hi-zhan.com/';
-
-async pay(orderId){
+async pay(res){
 
   wx.showToast({ title: "支付申请中...", icon: "none", duration: 2000 });
 
-  let res = await orderApi.getPayInfo({
-    params: {
-      orderId: orderId,
-      payType: "WEIXIN",
-      currentUrl:
-        "https%3A%2F%2Fwoxifan.51shop.mobi%2Fshop%3Fcode%3D001nLu8P1MW8Z21JDn9P1TVq8P1nLu89%26state%3Dwxloginmhaawxloginaj6wd1mm"
-    }
-  });
-  // console.log(res)
   if (res) {
 
     wx.requestPayment({
@@ -26,7 +13,7 @@ async pay(orderId){
       paySign: res.paySign,
       success: res => {
         // console.log(res)
-        this.$apply();
+        resolve(res);
       },
       fail: res => wx.showToast({ title: "支付失败", icon: "none", duration: 2000, }),
     });
@@ -77,9 +64,46 @@ add_minus(nub1, nub2){
   return (nub1*m+nub2*m)/m;
 }
 
+setTime(_second){
+   
+    let _this = this;
+
+    this.interval = setInterval(function(){
+
+      if(_second <= 0){
+        return ;
+      }
+
+      let _minute = _second / 60,
+          _hour = _minute / 60,
+          second = parseInt(_second) % 60,
+          minute = parseInt(_minute) % 60,
+          hour = parseInt(_hour) % 24,
+          day = parseInt(_hour / 24),
+          countDown = _this.countDown;
+
+      console.log(day, hour, minute, second, _second);
+      
+      countDown.day = day;
+      countDown.hour = hour;
+      countDown.minute = minute;
+      countDown.second = second;
+      _this.$apply();
+      
+      _second--;
+
+    }, 1000);
+
+}
+
+modifyPhone(phone){ 
+  return phone.toString().replace(/\d{4}(?=\d{4}$)/, '****'); 
+}
+
 
 module.exports = {
-  getQR,
+  // getQR,
   add_minus,
   toQueryStr,
+  setTime,
 };
