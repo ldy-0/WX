@@ -48,7 +48,7 @@
     <el-upload
       :auto-upload="false"
       action=""
-      :on-change="handlePicture"
+      :on-change="addSomeList"
       :limit="1"
       :show-file-list="false">
       <el-button style="margin:0px 10px 0 10px;" type="primary">批量导入</el-button>
@@ -224,34 +224,47 @@
       </el-table-column>
     </el-table>
 </el-main>
-<!-- <el-footer>
-  <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
+<el-footer>
+  <el-pagination
+    layout="prev, pager, next"
+    :total="pageLength"
+    :page-size="10"
+     @current-change="handleCurrentChange">
   </el-pagination>
-</el-footer> -->
+</el-footer>
 </el-container>
     </div>
     
 </template>
 <script>
-import { getLibClassList, getLibList } from "@/api/libraryList";
 import {
+  postSomeList,
+  getLibClassList,
+  getLibList,
   getShopList,
   postAddShopList,
   deleteShopList,
   putEditShopList,
-  postLibSearchTitle,
-  postImportLib
+  postLibSearchTitle
 } from "@/api/answer";
 import uploadFn from "@/utils/aahbs";
 
 export default {
   created() {
-    this.getShopList_api(1, 0);
+    getShopList({
+      page: 1,
+      limit: 0
+    }).then(res => {
+      this.pageLength = res.data.length;
+    });
+    
+    this.getShopList_api(1, 10);
     this.getClass(1, 0);
     this.getLibraryList_api(1, 0);
   },
   data() {
     return {
+      pageLength: 0,
       isDialogCheck: false,
       downloadLoading: false,
 
@@ -278,6 +291,10 @@ export default {
     };
   },
   methods: {
+    handleCurrentChange: function(val) {
+      // console.log(`当前页: ${val}`);
+      this.getShopList_api(val, 10);
+    },
     searchTitle: function() {
       var data = {
         title: this.inputTitle
@@ -314,7 +331,7 @@ export default {
         limit: limit
       };
       getLibClassList(data).then(res => {
-        console.log(res);
+        console.log("getLibClassList", res);
         for (var i = 0; i < res.data.length; i++) {
           var res_data = res.data[i];
           this.options.push({
@@ -401,30 +418,6 @@ export default {
         this.getShopList_api(1, 0);
       });
     },
-    async handlePicture(file, fileList) {
-      //批量导入
-      console.log("change", file);
-      var url = await uploadFn(file.raw);
-      console.log("url", url[0]);
-      var data = {
-        url: url[0]
-      };
-      postImportLib(data)
-        .then(res => {
-          console.log("res", res);
-          // this.tableData = [];
-          this.getShopList_api(1, 0);
-        })
-        .catch(err => {
-          this.$notify.error({
-            title: "上传出错",
-            message: "请刷新后重新上传文件"
-          });
-          console.log("err", err);
-          // this.tableData = [];
-          this.getShopList_api(1, 0);
-        });
-    },
     formatJson(filterVal, jsonData) {
       return jsonData.map(v =>
         filterVal.map(j => {
@@ -499,6 +492,23 @@ export default {
         console.log(res);
         this.tableData.splice(id, 1);
       });
+    },
+    async addSomeList(file, fileList) {
+      console.log("change", file);
+      var url = await uploadFn(file.raw);
+      console.log("url", url[0]);
+      var data = {
+        url: url[0]
+      };
+      postSomeList(data)
+        .then(res => {
+          console.log("res", res);
+          this.getShopList_api(1, 0);
+        })
+        .catch(err => {
+          console.log("err", err);
+          this.getShopList_api(1, 0);
+        });
     }
   }
 };

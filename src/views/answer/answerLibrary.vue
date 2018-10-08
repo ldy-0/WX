@@ -126,8 +126,7 @@
         label="操作" 
         >
         <template slot-scope="scope">
-          <el-button size="mini" type="info" @click="toDialogAdd(scope.$index)">添加</el-button>
-          <!-- <el-button size="mini" type="danger" @click="toDelete(scope.$index)">删除</el-button> -->
+          <el-button size="mini" type="primary" @click="toDialogAdd(scope.$index,scope)">添加</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -193,7 +192,15 @@
 
     <el-dialog title="" :visible.sync="isDialogCheck">
       <el-button type="primary" icon="document" :loading="downloadLoading" @click="toExport">导出</el-button>
-      <el-button type="primary" icon="document" :loading="downloadLoading" @click="toExport">批量导入</el-button>
+      <!-- <el-button type="primary" icon="document" :loading="downloadLoading" @click="toExport">批量导入</el-button> -->
+      <el-upload
+      :auto-upload="false"
+      action=""
+      :on-change="addSomeList"
+      :limit="1"
+      :show-file-list="false">
+      <el-button style="margin:10px 0px 0 0px;" type="primary">批量导入</el-button>
+      </el-upload>
 
       <el-table
       :data="dialogTableData"
@@ -256,8 +263,8 @@
     
 </template>
 <script>
-import { getLibClassList } from "@/api/libraryList";
 import {
+  getLibClassList,
   getShopList,
   grtLibList,
   postAddLibList,
@@ -267,8 +274,10 @@ import {
   getShopLibList,
   deleteDialong,
   putEditDialog,
-  postGetLibFormShop
+  postGetLibFormShop,
+  postImportList
 } from "@/api/answer";
+import uploadFn from "@/utils/aahbs";
 
 export default {
   created() {
@@ -312,7 +321,8 @@ export default {
     };
   },
   methods: {
-    toSearchClass: function() { //按分类来搜索
+    toSearchClass: function() {
+      //按分类来搜索
       console.log(this.classVal);
       var classify_id = null;
       for (var i = 0; i < this.options.length; i++) {
@@ -372,6 +382,8 @@ export default {
       this.fousid = id;
       //获取指定的题库题目
       var data = {
+        page: 1,
+        limit: 0,
         library_id: this.tableData[id].library_id
       };
       getShopLibList(data).then(res => {
@@ -414,6 +426,9 @@ export default {
       } else {
         // this.dialogCheck = true;
         this.isDialogCheck_copy = true;
+        for (var i = 0; i < this.dialogTableData_copy.length; i++) {
+          this.dialogTableData_copy[i].disabled = true;
+        }
       }
     },
     dropDown: function(index) {
@@ -537,17 +552,18 @@ export default {
         this.getFoucShopList(this.fousid);
       });
     },
-    toDialogAdd: function(id) {
-      console.log(
-        this.dialogTableData_copy[id],
-        this.tableData[this.clickindex]
-      );
+
+    toDialogAdd: function(id, scope) {
+      this.dialogTableData_copy[id].disabled = false;
+      console.log("scope", scope);
+      scope.column.type = "info";
       var data = {
         question_id: this.dialogTableData_copy[id].question_id,
         library_id: this.tableData[this.clickindex].library_id
       };
       postGetLibFormShop(data).then(res => {});
     },
+
     formatJson(filterVal, jsonData) {
       return jsonData.map(v =>
         filterVal.map(j => {
@@ -587,6 +603,23 @@ export default {
         });
         this.downloadLoading = false;
       });
+    },
+    async addSomeList(file, fileList) {
+      console.log("change", file);
+      var url = await uploadFn(file.raw);
+      console.log("url", url[0]);
+      var data = {
+        url: url[0]
+      };
+      postImportList(data)
+        .then(res => {
+          console.log("res", res);
+          // this.getShopList_api(1, 0);
+        })
+        .catch(err => {
+          console.log("err", err);
+          // this.getShopList_api(1, 0);
+        });
     }
   }
 };

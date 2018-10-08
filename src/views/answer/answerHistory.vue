@@ -160,10 +160,15 @@
       </el-table-column>
     </el-table>
 </el-main>
-<!-- <el-footer>
-  <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
+
+<el-footer>
+  <el-pagination
+    layout="prev, pager, next"
+    :total="tableDataLength"
+    :page-size="10"
+     @current-change="handleCurrentChange">>
   </el-pagination>
-</el-footer> -->
+</el-footer>
 </el-container>
     </div>
     
@@ -180,10 +185,14 @@ import {
 
 export default {
   created() {
-    this.getHistoryList_api(1, 0);
+    getAwsHistory({ page: 1, limit: 0 }).then(res => {
+      this.tableDataLength = res.data.length;
+    });
+    this.getHistoryList_api(1, 10);
   },
   data() {
     return {
+      tableDataLength: 0,
       inputTime: null,
       inputRoomTitle: null,
       dialogTableData_info: [],
@@ -196,6 +205,9 @@ export default {
     };
   },
   methods: {
+    handleCurrentChange: function(val) {
+      this.getHistoryList_api(val, 10);
+    },
     getHistoryList_api: function(page, limit) {
       var data = {
         page: page,
@@ -272,16 +284,8 @@ export default {
       //导出
       this.downloadLoading = true;
       import("@/vendor/Export2Excel").then(excel => {
-        const tHeader = [
-          "题目",
-          "用户选项",
-          "正确选项"
-        ];
-        const filterVal = [
-          "information_title",
-          "elect",
-          "answers"
-        ];
+        const tHeader = ["题目", "用户选项", "正确选项"];
+        const filterVal = ["information_title", "elect", "answers"];
         const tableDataAll = this.dialogTableData_info;
         const data = this.formatJson(filterVal, tableDataAll);
         excel.export_json_to_excel({

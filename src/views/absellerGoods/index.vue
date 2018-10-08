@@ -28,8 +28,8 @@
     <el-form-item  label="商品图片"  :label-width="formLabelWidth"  prop="fileList1">
           <el-upload 
             :auto-upload="false" 
-              action="" 
-              :limit="imgLimit1"
+            action="" 
+            :limit="imgLimit1"
             list-type="picture-card" 
             :on-success="onsuccess"
             :on-preview="preview" 

@@ -126,10 +126,9 @@
                     :multiple="false"
                     :auto-upload="false"
                     action=""
-                    list-type="picture-card"
                     :on-change="handlePicture0"
-                    :on-remove="handleRemove"
-                    :on-success="handUpSuccess">
+                    list-type="picture-card"
+                    :file-list="imgUrl1">
                     <i class="el-icon-plus"></i>
                 </el-upload>
             </el-form-item>
@@ -140,6 +139,7 @@
                     :auto-upload="false"
                     action=""
                     list-type="picture-card"
+                    :file-list="imgUrl2"
                     :on-change="handlePicture1"
                     :on-remove="handleRemove"
                     :on-success="handUpSuccess">
@@ -153,6 +153,7 @@
                     :auto-upload="false"
                     action=""
                     list-type="picture-card"
+                    :file-list="imgUrl3"
                     :on-change="handlePicture2"
                     :on-remove="handleRemove"
                     :on-success="handUpSuccess">
@@ -166,6 +167,7 @@
                     :auto-upload="false"
                     action=""
                     list-type="picture-card"
+                    :file-list="imgUrl4"
                     :on-change="handlePicture3"
                     :on-remove="handleRemove"
                     :on-success="handUpSuccess">
@@ -179,6 +181,7 @@
                     :auto-upload="false"
                     action=""
                     list-type="picture-card"
+                    :file-list="imgUrl5"
                     :on-change="handlePicture4"
                     :on-remove="handleRemove"
                     :on-success="handUpSuccess">
@@ -258,6 +261,12 @@ export default {
   },
   data() {
     return {
+      imgUrl1: [],
+      imgUrl2: [],
+      imgUrl3: [],
+      imgUrl4: [],
+      imgUrl5: [],
+
       clickData: null,
       dialogImageUrl: "",
       libNum: "",
@@ -328,6 +337,11 @@ export default {
     },
     toAddClass: function() {
       //新增房间入口
+      this.imgUrl1 = [];
+      this.imgUrl2 = [];
+      this.imgUrl3 = [];
+      this.imgUrl4 = [];
+      this.imgUrl5 = [];
       this.dialogFormVisible = true;
       this.isAdd = false;
       this.libNum = "";
@@ -340,15 +354,15 @@ export default {
       this.form.endTime = "";
       this.form.rule = "";
       this.form.domains[0].value = "";
-      this.form.domains[0].imageUrl = "";
+      this.form.domains[0].imageUrl = [];
       this.form.domains[1].value = "";
-      this.form.domains[1].imageUrl = "";
+      this.form.domains[1].imageUrl = [];
       this.form.domains[2].value = "";
-      this.form.domains[2].imageUrl = "";
+      this.form.domains[2].imageUrl = [];
       this.form.domains[3].value = "";
-      this.form.domains[3].imageUrl = "";
+      this.form.domains[3].imageUrl = [];
       this.form.domains[4].value = "";
-      this.form.domains[4].imageUrl = "";
+      this.form.domains[4].imageUrl = [];
     },
     upImg: async function() {
       var prize = [];
@@ -381,24 +395,24 @@ export default {
         end_time: this.form.endTime,
         regulation: this.form.rule,
         prize1: JSON.stringify({
-          title: this.form.domains[0].value,
-          src: this.form.domains[0].imageUrl
+          name: this.form.domains[0].value,
+          url: this.form.domains[0].imageUrl
         }),
         prize2: JSON.stringify({
-          title: this.form.domains[1].value,
-          src: this.form.domains[1].imageUrl
+          name: this.form.domains[1].value,
+          url: this.form.domains[1].imageUrl
         }),
         prize3: JSON.stringify({
-          title: this.form.domains[2].value,
-          src: this.form.domains[2].imageUrl
+          name: this.form.domains[2].value,
+          url: this.form.domains[2].imageUrl
         }),
         prize4: JSON.stringify({
-          title: this.form.domains[3].value,
-          src: this.form.domains[3].imageUrl
+          name: this.form.domains[3].value,
+          url: this.form.domains[3].imageUrl
         }),
         prize5: JSON.stringify({
-          title: this.form.domains[4].value,
-          src: this.form.domains[4].imageUrl
+          name: this.form.domains[4].value,
+          url: this.form.domains[4].imageUrl
         })
       };
       console.log("data", data);
@@ -430,24 +444,24 @@ export default {
         end_time: this.form.endTime,
         regulation: this.form.rule,
         prize1: JSON.stringify({
-          title: this.form.domains[0].value,
-          src: this.form.domains[0].imageUrl
+          name: this.form.domains[0].value,
+          url: this.form.domains[0].imageUrl
         }),
         prize2: JSON.stringify({
-          title: this.form.domains[1].value,
-          src: this.form.domains[1].imageUrl
+          name: this.form.domains[1].value,
+          url: this.form.domains[1].imageUrl
         }),
         prize3: JSON.stringify({
-          title: this.form.domains[2].value,
-          src: this.form.domains[2].imageUrl
+          name: this.form.domains[2].value,
+          url: this.form.domains[2].imageUrl
         }),
         prize4: JSON.stringify({
-          title: this.form.domains[3].value,
-          src: this.form.domains[3].imageUrl
+          name: this.form.domains[3].value,
+          url: this.form.domains[3].imageUrl
         }),
         prize5: JSON.stringify({
-          title: this.form.domains[4].value,
-          src: this.form.domains[4].imageUrl
+          name: this.form.domains[4].value,
+          url: this.form.domains[4].imageUrl
         })
       };
       putBounsRoom(data).then(res => {
@@ -466,6 +480,11 @@ export default {
     },
     toEdit: function(id) {
       // 列表单条编辑
+      this.imgUrl1 = [];
+      this.imgUrl2 = [];
+      this.imgUrl3 = [];
+      this.imgUrl4 = [];
+      this.imgUrl5 = [];
       for (var i = 0; i < this.options.length; i++) {
         if (this.tableData[id].library_id === this.options[i].library_id) {
           this.libNum = this.options[i].number;
@@ -484,16 +503,17 @@ export default {
         new Date(this.tableData[id].start_date * 1000),
         new Date(this.tableData[id].end_date * 1000)
       ];
-      this.form.domains[0].value = JSON.parse(this.tableData[id].prize1).title;
-      this.form.domains[1].value = JSON.parse(this.tableData[id].prize2).title;
-      this.form.domains[2].value = JSON.parse(this.tableData[id].prize3).title;
-      this.form.domains[3].value = JSON.parse(this.tableData[id].prize4).title;
-      this.form.domains[4].value = JSON.parse(this.tableData[id].prize5).title;
-      this.form.domains[0].imageUrl = JSON.parse(this.tableData[id].prize1).src;
-      this.form.domains[1].imageUrl = "";
-      this.form.domains[2].imageUrl = "";
-      this.form.domains[3].imageUrl = "";
-      this.form.domains[4].imageUrl = "";
+      this.form.domains[0].value = JSON.parse(this.tableData[id].prize1).name;
+      this.form.domains[1].value = JSON.parse(this.tableData[id].prize2).name;
+      this.form.domains[2].value = JSON.parse(this.tableData[id].prize3).name;
+      this.form.domains[3].value = JSON.parse(this.tableData[id].prize4).name;
+      this.form.domains[4].value = JSON.parse(this.tableData[id].prize5).name;
+      this.imgUrl1[0] = JSON.parse(this.tableData[id].prize1);
+      this.imgUrl2[0] = JSON.parse(this.tableData[id].prize2);
+      this.imgUrl3[0] = JSON.parse(this.tableData[id].prize3);
+      this.imgUrl4[0] = JSON.parse(this.tableData[id].prize4);
+      this.imgUrl5[0] = JSON.parse(this.tableData[id].prize5);
+      console.log("e imgurl", this.imgUrl1);
     },
     toStop: function(id) {
       //列表停用
@@ -559,27 +579,27 @@ export default {
     async handlePicture0(file, fileList) {
       console.log("change0", file);
       this.urlArr[0] = file.raw;
-      this.form.domains[0].imageUrl = await uploadFn(file.raw);
+      this.form.domains[0].imageUrl = (await uploadFn(file.raw))[0];
     },
     async handlePicture1(file, fileList) {
       console.log("change1", file);
       this.urlArr[1] = file.raw;
-      this.form.domains[1].imageUrl = await uploadFn(file.raw);
+      this.form.domains[1].imageUrl = (await uploadFn(file.raw))[0];
     },
     async handlePicture2(file, fileList) {
       console.log("change2", file);
       this.urlArr[2] = file.raw;
-      this.form.domains[2].imageUrl = await uploadFn(file.raw);
+      this.form.domains[2].imageUrl = (await uploadFn(file.raw))[0];
     },
     async handlePicture3(file, fileList) {
       console.log("change3", file);
       this.urlArr[3] = file.raw;
-      this.form.domains[3].imageUrl = await uploadFn(file.raw);
+      this.form.domains[3].imageUrl = (await uploadFn(file.raw))[0];
     },
     async handlePicture4(file, fileList) {
       console.log("change4", file);
       this.urlArr[4] = file.raw;
-      this.form.domains[4].imageUrl = await uploadFn(file.raw);
+      this.form.domains[4].imageUrl = (await uploadFn(file.raw))[0];
     },
     handUpSuccess: function(response, file, fileList) {
       console.log("fileList", fileList);

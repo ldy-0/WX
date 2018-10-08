@@ -1,6 +1,22 @@
 import request from '@/utils/request'
 
-export function getShopList(data) { //商家题库list
+export function getLibClassList(data) { //平台分类
+    return request({
+        url: '/api/v1/seller/getClassifyList',
+        method: 'get',
+        params: data
+    })
+}
+
+export function getLibList(data) { //平台题库
+    return request({
+        url: '/api/v1/seller/getTopicList',
+        method: 'get',
+        params: data
+    })
+}
+
+export function getShopList(data) { //商家题库
     return request({
         url: '/api/v1/seller/question',
         method: 'get',
@@ -228,9 +244,17 @@ export function postMusic(data) { //背景音乐
     })
 }
 
-export function postImportLib(data) { //批量导入
+export function postSomeList(data) {
     return request({
-        uel: '/api/v1/seller/questionImport',
+        url: '/api/v1/seller/questionImport',
+        method: 'post',
+        data
+    })
+}
+
+export function postImportList(data) {
+    return request({
+        url: '/api/v1/seller/informationImport',
         method: 'post',
         data
     })
