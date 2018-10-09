@@ -98,8 +98,7 @@
         label="操作" 
         >
         <template slot-scope="scope">
-          <el-button size="mini" type="info" @click="toDialogAdd(scope.$index)">添加</el-button>
-          <!-- <el-button size="mini" type="danger" @click="toDelete(scope.$index)">删除</el-button> -->
+          <el-button size="mini" type="primary" @click="toDialogAdd(scope.$index,scope)">添加</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -257,7 +256,7 @@ export default {
     }).then(res => {
       this.pageLength = res.data.length;
     });
-    
+
     this.getShopList_api(1, 10);
     this.getClass(1, 0);
     this.getLibraryList_api(1, 0);
@@ -311,6 +310,9 @@ export default {
       getLibList(data).then(res => {
         this.dialogTableData = res.data;
       });
+      for (var i = 0; i < this.dialogTableData.length; i++) {
+        this.dialogTableData.primary = "primary";
+      }
     },
     getShopList_api: function(page, limit) {
       //获取list
@@ -348,15 +350,18 @@ export default {
       }
       if (command === "check") {
         this.isDialogCheck = true;
+        this.primary = "primary";
       }
     },
-    toDialogAdd: function(id) {
+    toDialogAdd: function(id, column) {
       //对话框里从列表添加
-      console.log("id", id);
+      console.log("column", column);
       // this.tableData.push(this.dialogTableData[id]);
+      this.dialogTableData[id].primary = "warning";
       var data = this.dialogTableData[id];
       postAddShopList(data).then(res => {
         this.getShopList_api(1, 0);
+        this.dialogTableData.splice(id, 1);
       });
     },
     toAddSubject: function() {

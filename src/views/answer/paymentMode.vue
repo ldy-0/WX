@@ -63,11 +63,8 @@
 
     <el-dialog title="添加房间" :visible.sync="dialogFormVisible">
         <el-form  class="el-form" :model="form">
-            <el-form-item label="房间名称">
-                <el-input v-model="form.name" auto-complete="off"></el-input>
-            </el-form-item>
             <el-form-item label="题库">
-                <el-select v-model="form.libName" value-key="id" placeholder="请选择" @change="changeLibNum($event)">
+                <el-select :disabled="isAdd" v-model="form.libName" value-key="id" placeholder="请选择" @change="changeLibNum($event)">
                   <el-option v-for="item in options" :label="item.name" :key="item.id"  :value="item.name"></el-option>
                 </el-select>
             </el-form-item>
@@ -77,38 +74,8 @@
             <el-form-item label="答题数量">
                 <el-input v-model="form.awsNum" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="答题起止日期">
-              <div class="block">
-                <el-date-picker
-                  v-model="clickData"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期">
-                </el-date-picker>
-              </div>
-            </el-form-item>
-
-            <el-form-item label="答题起止时间">
-              <el-time-select
-                placeholder="起始时间"
-                v-model="form.startTime"
-                :picker-options="{
-                  start: '00:00',
-                  step: '01:00',
-                  end: '22:00'
-                }">
-              </el-time-select>
-              <el-time-select
-                placeholder="结束时间"
-                v-model="form.endTime"
-                :picker-options="{
-                  start: '00:00',
-                  step: '01:00',
-                  end: '23:00',
-                  minTime: form.startTime
-                }">
-              </el-time-select>
+            <el-form-item label="每题费用">
+                <el-input v-model="form.cost" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="活动规则">
               <el-input
@@ -119,29 +86,30 @@
               </el-input>
             </el-form-item>
 
-            <el-form-item label="奖品一">
+            <el-form-item label="奖品">
               <el-input v-model="form.domains[0].value" auto-complete="off"></el-input>
               <div style="margin: 20px 0;"></div>
               <el-upload
                     :multiple="false"
                     :auto-upload="false"
                     action=""
-                    list-type="picture-card"
                     :on-change="handlePicture0"
-                    :on-remove="handleRemove"
-                    :on-success="handUpSuccess">
+                    list-type="picture-card"
+                    :on-remove="handleRemove0"
+                    :file-list="imgUrl1">
                     <i class="el-icon-plus"></i>
                 </el-upload>
             </el-form-item>
-            <el-form-item label="奖品二">
+            <!-- <el-form-item label="奖品二">
               <el-input v-model="form.domains[1].value" auto-complete="off"></el-input>
               <div style="margin: 20px 0;"></div>
               <el-upload
                     :auto-upload="false"
                     action=""
                     list-type="picture-card"
+                    :file-list="imgUrl2"
                     :on-change="handlePicture1"
-                    :on-remove="handleRemove"
+                    :on-remove="handleRemove1"
                     :on-success="handUpSuccess">
                     <i class="el-icon-plus"></i>
                 </el-upload>
@@ -153,8 +121,9 @@
                     :auto-upload="false"
                     action=""
                     list-type="picture-card"
+                    :file-list="imgUrl3"
                     :on-change="handlePicture2"
-                    :on-remove="handleRemove"
+                    :on-remove="handleRemove2"
                     :on-success="handUpSuccess">
                     <i class="el-icon-plus"></i>
                 </el-upload>
@@ -166,8 +135,9 @@
                     :auto-upload="false"
                     action=""
                     list-type="picture-card"
+                    :file-list="imgUrl4"
                     :on-change="handlePicture3"
-                    :on-remove="handleRemove"
+                    :on-remove="handleRemove3"
                     :on-success="handUpSuccess">
                     <i class="el-icon-plus"></i>
                 </el-upload>
@@ -179,12 +149,13 @@
                     :auto-upload="false"
                     action=""
                     list-type="picture-card"
+                    :file-list="imgUrl5"
                     :on-change="handlePicture4"
-                    :on-remove="handleRemove"
+                    :on-remove="handleRemove4"
                     :on-success="handUpSuccess">
                     <i class="el-icon-plus"></i>
                 </el-upload>
-            </el-form-item>
+            </el-form-item> -->
         </el-form>
         <div slot="footer" class="dialog-footer">
             <!-- <el-button @click="dialogFormVisible = false">取 消</el-button> -->
@@ -201,23 +172,13 @@
       :data="tableData"
       style="width: 100%" >
       <el-table-column
-        label="房间名称" 
-        prop="name"
-        >
-      </el-table-column>
-      <el-table-column
-        label="开始时间" 
-        prop= "start_time"
-        >
-      </el-table-column>
-      <el-table-column
-        label="结束时间" 
-        prop= "end_time"
-        >
-      </el-table-column>
-      <el-table-column
         label="选用题库" 
         prop="library_name"
+        >
+      </el-table-column>
+      <el-table-column
+        label="每题费用" 
+        prop= "cost"
         >
       </el-table-column>
       <el-table-column
@@ -242,12 +203,12 @@
 </template>
 <script>
 import {
-  getBonusRoomInfo,
-  postAddBonusRoom,
+  getPayRoomList,
   grtLibList,
-  deleteBonusRoom,
-  putStopBonusRoom,
-  putBounsRoom
+  postAddPayRoom,
+  deletePayRoom,
+  putStopPayRoom,
+  putEditPayRoom
 } from "@/api/answer";
 import uploadFn from "@/utils/aahbs";
 
@@ -258,6 +219,12 @@ export default {
   },
   data() {
     return {
+      imgUrl1: [],
+      imgUrl2: [],
+      imgUrl3: [],
+      imgUrl4: [],
+      imgUrl5: [],
+
       clickData: null,
       dialogImageUrl: "",
       libNum: "",
@@ -266,10 +233,9 @@ export default {
       dialogVisible: false,
       isAdd: false,
       form: {
-        name: "",
+        cost: "",
         libName: "",
         awsNum: "",
-        cost: "",
         rule: "",
         domains: [
           {
@@ -318,31 +284,35 @@ export default {
         page: page,
         limit: limit
       };
-      getBonusRoomInfo(data).then(res => {
+      getPayRoomList(data).then(res => {
         console.log(res.data);
         this.tableData = res.data;
       });
     },
     toAddClass: function() {
       //新增房间入口
+      this.imgUrl1 = [];
+      // this.imgUrl2 = [];
+      // this.imgUrl3 = [];
+      // this.imgUrl4 = [];
+      // this.imgUrl5 = [];
       this.dialogFormVisible = true;
       this.isAdd = false;
       this.libNum = "";
-      this.form.name = "";
+      this.form.cost = "";
       this.form.libName = "";
       this.form.awsNum = "";
-      this.form.cost = "";
       this.form.rule = "";
       this.form.domains[0].value = "";
-      this.form.domains[0].imageUrl = "";
-      this.form.domains[1].value = "";
-      this.form.domains[1].imageUrl = "";
-      this.form.domains[2].value = "";
-      this.form.domains[2].imageUrl = "";
-      this.form.domains[3].value = "";
-      this.form.domains[3].imageUrl = "";
-      this.form.domains[4].value = "";
-      this.form.domains[4].imageUrl = "";
+      this.form.domains[0].imageUrl = [];
+      // this.form.domains[1].value = "";
+      // this.form.domains[1].imageUrl = [];
+      // this.form.domains[2].value = "";
+      // this.form.domains[2].imageUrl = [];
+      // this.form.domains[3].value = "";
+      // this.form.domains[3].imageUrl = [];
+      // this.form.domains[4].value = "";
+      // this.form.domains[4].imageUrl = [];
     },
     upImg: async function() {
       var prize = [];
@@ -363,83 +333,98 @@ export default {
           library_id = this.options[i].library_id;
         }
       }
+
       var data = {
-        name: this.form.name,
+        cost: this.form.cost,
         library_id: Number(library_id),
         number: Number(this.form.awsNum),
-        cost: Number(this.form.cost),
         regulation: this.form.rule,
         prize1: JSON.stringify({
-          title: this.form.domains[0].value,
-          src: this.form.domains[0].imageUrl
+          name: this.form.domains[0].value,
+          url: this.form.domains[0].imageUrl
         }),
         prize2: JSON.stringify({
-          title: this.form.domains[1].value,
-          src: this.form.domains[1].imageUrl
+          name: this.form.domains[1].value,
+          url: this.form.domains[1].imageUrl
         }),
         prize3: JSON.stringify({
-          title: this.form.domains[2].value,
-          src: this.form.domains[2].imageUrl
+          name: this.form.domains[2].value,
+          url: this.form.domains[2].imageUrl
         }),
         prize4: JSON.stringify({
-          title: this.form.domains[3].value,
-          src: this.form.domains[3].imageUrl
+          name: this.form.domains[3].value,
+          url: this.form.domains[3].imageUrl
         }),
         prize5: JSON.stringify({
-          title: this.form.domains[4].value,
-          src: this.form.domains[4].imageUrl
+          name: this.form.domains[4].value,
+          url: this.form.domains[4].imageUrl
         })
       };
       console.log("data", data);
-      postAddBonusRoom(data).then(res => {
+      postAddPayRoom(data).then(res => {
         console.log("res sss", res);
+        this.$message(res.error);
         this.dialogFormVisible = false;
         this.getList_api(1, 0);
       });
     },
     editClass: function() {
       //对话框确定编辑
-      console.log("editClassID", this.editId);
+      // console.log("editClassID", this.editId);
       var library_id = null;
       for (var i = 0; i < this.options.length; i++) {
         if (this.form.libName === this.options[i].name) {
           library_id = this.options[i].library_id;
         }
       }
-      this.form.startDate = Math.round(Date.parse(this.clickData[0]) / 1000);
-      this.form.endDate = Math.round(Date.parse(this.clickData[1]) / 1000);
+
       var data = {
-        room_id: this.tableData[this.editId].room_id,
-        name: this.form.name,
+        apartment_id: this.tableData[this.editId].apartment_id,
+        cost: Number(this.form.cost),
         library_id: Number(library_id),
         number: Number(this.form.awsNum),
-        start_date: this.form.startDate,
-        end_date: this.form.endDate,
-        start_time: this.form.startTime,
-        end_time: this.form.endTime,
         regulation: this.form.rule,
         prize1: JSON.stringify({
-          title: this.form.domains[0].value,
-          src: this.form.domains[0].imageUrl
+          name: this.form.domains[0].value,
+          url: this.form.domains[0].imageUrl
+          // url: this.imgUrl1
         }),
         prize2: JSON.stringify({
-          title: this.form.domains[1].value,
-          src: this.form.domains[1].imageUrl
+          name: this.form.domains[1].value,
+          url: this.form.domains[1].imageUrl
+          // url: this.imgUrl2
         }),
         prize3: JSON.stringify({
-          title: this.form.domains[2].value,
-          src: this.form.domains[2].imageUrl
+          name: this.form.domains[2].value,
+          url: this.form.domains[2].imageUrl
+          // url: this.imgUrl3
         }),
         prize4: JSON.stringify({
-          title: this.form.domains[3].value,
-          src: this.form.domains[3].imageUrl
+          name: this.form.domains[3].value,
+          url: this.form.domains[3].imageUrl
+          // url: this.imgUrl4
         }),
         prize5: JSON.stringify({
-          title: this.form.domains[4].value,
-          src: this.form.domains[4].imageUrl
+          name: this.form.domains[4].value,
+          url: this.form.domains[4].imageUrl
+          // url: this.imgUrl5
         })
       };
-      putBounsRoom(data).then(res => {
+      console.log("editdata", data);
+
+      console.log(this.imgUrl1);
+      // console.log(this.imgUrl2);
+      // console.log(this.imgUrl3);
+      // console.log(this.imgUrl4);
+      // console.log(this.imgUrl5);
+      console.log(this.form.domains[0].imageUrl);
+      // console.log(this.form.domains[1].imageUrl);
+      // console.log(this.form.domains[2].imageUrl);
+      // console.log(this.form.domains[3].imageUrl);
+      // console.log(this.form.domains[4].imageUrl);
+
+      putEditPayRoom(data).then(res => {
+        console.log("ressss",res);
         this.dialogFormVisible = false;
         this.getList_api(1, 0);
       });
@@ -447,14 +432,19 @@ export default {
     toDelete: function(id) {
       //列表单条删除
       var data = {
-        room_id: this.tableData[id].room_id
+        apartment_id: this.tableData[id].apartment_id
       };
-      deleteBonusRoom(data).then(res => {
+      deletePayRoom(data).then(res => {
         this.tableData.splice(id, 1);
       });
     },
     toEdit: function(id) {
       // 列表单条编辑
+      this.imgUrl1 = [];
+      // this.imgUrl2 = [];
+      // this.imgUrl3 = [];
+      // this.imgUrl4 = [];
+      // this.imgUrl5 = [];
       for (var i = 0; i < this.options.length; i++) {
         if (this.tableData[id].library_id === this.options[i].library_id) {
           this.libNum = this.options[i].number;
@@ -463,34 +453,67 @@ export default {
       this.editId = id;
       this.dialogFormVisible = true;
       this.isAdd = true;
-      this.form.name = this.tableData[id].name;
+      this.form.cost = this.tableData[id].cost;
       this.form.libName = this.tableData[id].library_name;
-      this.form.endTime = this.tableData[id].end_time;
-      this.form.startTime = this.tableData[id].start_time;
       this.form.awsNum = this.tableData[id].number;
       this.form.rule = this.tableData[id].regulation;
-      this.clickData = [
-        new Date(this.tableData[id].start_date * 1000),
-        new Date(this.tableData[id].end_date * 1000)
-      ];
-      this.form.domains[0].value = JSON.parse(this.tableData[id].prize1).title;
-      this.form.domains[1].value = JSON.parse(this.tableData[id].prize2).title;
-      this.form.domains[2].value = JSON.parse(this.tableData[id].prize3).title;
-      this.form.domains[3].value = JSON.parse(this.tableData[id].prize4).title;
-      this.form.domains[4].value = JSON.parse(this.tableData[id].prize5).title;
-      this.form.domains[0].imageUrl = JSON.parse(this.tableData[id].prize1).src;
-      this.form.domains[1].imageUrl = "";
-      this.form.domains[2].imageUrl = "";
-      this.form.domains[3].imageUrl = "";
-      this.form.domains[4].imageUrl = "";
+      this.form.domains[0].value = JSON.parse(this.tableData[id].prize1).name;
+
+      // this.form.domains[1].value = JSON.parse(this.tableData[id].prize2).name;
+      // this.form.domains[2].value = JSON.parse(this.tableData[id].prize3).name;
+      // this.form.domains[3].value = JSON.parse(this.tableData[id].prize4).name;
+      // this.form.domains[4].value = JSON.parse(this.tableData[id].prize5).name;
+
+      this.imgUrl1 =
+        JSON.parse(this.tableData[id].prize1).url != ""
+          ? [JSON.parse(this.tableData[id].prize1)]
+          : [];
+      // this.imgUrl2 =
+      //   JSON.parse(this.tableData[id].prize2).url != ""
+      //     ? [JSON.parse(this.tableData[id].prize2)]
+      //     : [];
+      // this.imgUrl3 =
+      //   JSON.parse(this.tableData[id].prize3).url != ""
+      //     ? [JSON.parse(this.tableData[id].prize3)]
+      //     : [];
+      // this.imgUrl4 =
+      //   JSON.parse(this.tableData[id].prize4).url != ""
+      //     ? [JSON.parse(this.tableData[id].prize4)]
+      //     : [];
+      // this.imgUrl5 =
+      //   JSON.parse(this.tableData[id].prize5).url != ""
+      //     ? [JSON.parse(this.tableData[id].prize5)]
+      //     : [];
+      console.log(JSON.parse(this.tableData[id].prize1));
+      // console.log(JSON.parse(this.tableData[id].prize2));
+      // console.log(JSON.parse(this.tableData[id].prize3));
+      // console.log(JSON.parse(this.tableData[id].prize4));
+      // console.log(JSON.parse(this.tableData[id].prize5));
+
+      console.log("e imgurl", this.imgUrl1);
+      // console.log("e imgurl", this.imgUrl2);
+      // console.log("e imgurl", this.imgUrl3);
+      // console.log("e imgurl", this.imgUrl4);
+      // console.log("e imgurl", this.imgUrl5);
+
+      this.form.domains[0].imageUrl =
+        this.imgUrl1.length === 1 ? this.imgUrl1[0].url : "";
+      // this.form.domains[1].imageUrl =
+      //   this.imgUrl2.length === 1 ? this.imgUrl2[0].url : "";
+      // this.form.domains[2].imageUrl =
+      //   this.imgUrl3.length === 1 ? this.imgUrl3[0].url : "";
+      // this.form.domains[3].imageUrl =
+      //   this.imgUrl4.length === 1 ? this.imgUrl4[0].url : "";
+      // this.form.domains[4].imageUrl =
+      //   this.imgUrl5.length === 1 ? this.imgUrl5[0].url : "";
     },
     toStop: function(id) {
       //列表停用
       var data = {
-        room_id: this.tableData[id].room_id,
+        apartment_id: this.tableData[id].apartment_id,
         switch: 1
       };
-      putStopBonusRoom(data).then(res => {
+      putStopPayRoom(data).then(res => {
         this.$message({
           showClose: true,
           message: "房间停止成功",
@@ -503,10 +526,10 @@ export default {
     toStart: function(id) {
       //列表启用
       var data = {
-        room_id: this.tableData[id].room_id,
+        apartment_id: this.tableData[id].apartment_id,
         switch: 0
       };
-      putStopBonusRoom(data).then(res => {
+      putStopPayRoom(data).then(res => {
         this.$message({
           showClose: true,
           message: "房间启用成功",
@@ -541,34 +564,51 @@ export default {
       }
     },
 
-    handleRemove(file, fileList) {
+    handleRemove0(file, fileList) {
       console.log(file, fileList);
+      this.form.domains[0].imageUrl = "";
+    },
+    handleRemove1(file, fileList) {
+      console.log(file, fileList);
+      this.form.domains[1].imageUrl = "";
+    },
+    handleRemove2(file, fileList) {
+      console.log(file, fileList);
+      this.form.domains[2].imageUrl = "";
+    },
+    handleRemove3(file, fileList) {
+      console.log(file, fileList);
+      this.form.domains[3].imageUrl = "";
+    },
+    handleRemove4(file, fileList) {
+      console.log(file, fileList);
+      this.form.domains[4].imageUrl = "";
     },
 
     async handlePicture0(file, fileList) {
       console.log("change0", file);
       this.urlArr[0] = file.raw;
-      this.form.domains[0].imageUrl = await uploadFn(file.raw);
+      this.form.domains[0].imageUrl = (await uploadFn(file.raw))[0];
     },
     async handlePicture1(file, fileList) {
       console.log("change1", file);
       this.urlArr[1] = file.raw;
-      this.form.domains[1].imageUrl = await uploadFn(file.raw);
+      this.form.domains[1].imageUrl = (await uploadFn(file.raw))[0];
     },
     async handlePicture2(file, fileList) {
       console.log("change2", file);
       this.urlArr[2] = file.raw;
-      this.form.domains[2].imageUrl = await uploadFn(file.raw);
+      this.form.domains[2].imageUrl = (await uploadFn(file.raw))[0];
     },
     async handlePicture3(file, fileList) {
       console.log("change3", file);
       this.urlArr[3] = file.raw;
-      this.form.domains[3].imageUrl = await uploadFn(file.raw);
+      this.form.domains[3].imageUrl = (await uploadFn(file.raw))[0];
     },
     async handlePicture4(file, fileList) {
       console.log("change4", file);
       this.urlArr[4] = file.raw;
-      this.form.domains[4].imageUrl = await uploadFn(file.raw);
+      this.form.domains[4].imageUrl = (await uploadFn(file.raw))[0];
     },
     handUpSuccess: function(response, file, fileList) {
       console.log("fileList", fileList);

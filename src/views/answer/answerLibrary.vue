@@ -126,7 +126,7 @@
         label="操作" 
         >
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="toDialogAdd(scope.$index,scope)">添加</el-button>
+          <el-button size="mini" type="primary" @click="toDialogAdd(scope.$index)">添加</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -553,15 +553,15 @@ export default {
       });
     },
 
-    toDialogAdd: function(id, scope) {
+    toDialogAdd: function(id) {
       this.dialogTableData_copy[id].disabled = false;
-      console.log("scope", scope);
-      scope.column.type = "info";
       var data = {
         question_id: this.dialogTableData_copy[id].question_id,
         library_id: this.tableData[this.clickindex].library_id
       };
-      postGetLibFormShop(data).then(res => {});
+      postGetLibFormShop(data).then(res => {
+        this.dialogTableData_copy.splice(id, 1);
+      });
     },
 
     formatJson(filterVal, jsonData) {

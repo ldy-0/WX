@@ -259,3 +259,43 @@ export function postImportList(data) {
         data
     })
 }
+
+export function getPayRoomList(data) { //获取付费房间列表
+    return request({
+        url: '/api/v1/seller/apartment',
+        method: 'get',
+        params: data
+    })
+}
+
+export function postAddPayRoom(data) {
+    return request({
+        url: '/api/v1/seller/apartment',
+        method: 'post',
+        data
+    })
+}
+
+export function deletePayRoom(data) {
+    return request({
+        url: '/api/v1/seller/apartment',
+        method: 'delete',
+        data
+    })
+}
+
+export function putStopPayRoom(data) {
+    return request({
+        url: '/api/v1/seller/switchApartment',
+        method: 'put',
+        data
+    })
+}
+
+export function putEditPayRoom(data) {
+    return request({
+        url: '/api/v1/seller/apartment',
+        method: 'put',
+        data
+    })
+}

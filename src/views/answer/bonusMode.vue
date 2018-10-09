@@ -128,6 +128,7 @@
                     action=""
                     :on-change="handlePicture0"
                     list-type="picture-card"
+                    :on-remove="handleRemove0"
                     :file-list="imgUrl1">
                     <i class="el-icon-plus"></i>
                 </el-upload>
@@ -141,7 +142,7 @@
                     list-type="picture-card"
                     :file-list="imgUrl2"
                     :on-change="handlePicture1"
-                    :on-remove="handleRemove"
+                    :on-remove="handleRemove1"
                     :on-success="handUpSuccess">
                     <i class="el-icon-plus"></i>
                 </el-upload>
@@ -155,7 +156,7 @@
                     list-type="picture-card"
                     :file-list="imgUrl3"
                     :on-change="handlePicture2"
-                    :on-remove="handleRemove"
+                    :on-remove="handleRemove2"
                     :on-success="handUpSuccess">
                     <i class="el-icon-plus"></i>
                 </el-upload>
@@ -169,7 +170,7 @@
                     list-type="picture-card"
                     :file-list="imgUrl4"
                     :on-change="handlePicture3"
-                    :on-remove="handleRemove"
+                    :on-remove="handleRemove3"
                     :on-success="handUpSuccess">
                     <i class="el-icon-plus"></i>
                 </el-upload>
@@ -183,7 +184,7 @@
                     list-type="picture-card"
                     :file-list="imgUrl5"
                     :on-change="handlePicture4"
-                    :on-remove="handleRemove"
+                    :on-remove="handleRemove4"
                     :on-success="handUpSuccess">
                     <i class="el-icon-plus"></i>
                 </el-upload>
@@ -424,7 +425,7 @@ export default {
     },
     editClass: function() {
       //对话框确定编辑
-      console.log("editClassID", this.editId);
+      // console.log("editClassID", this.editId);
       var library_id = null;
       for (var i = 0; i < this.options.length; i++) {
         if (this.form.libName === this.options[i].name) {
@@ -446,24 +447,42 @@ export default {
         prize1: JSON.stringify({
           name: this.form.domains[0].value,
           url: this.form.domains[0].imageUrl
+          // url: this.imgUrl1
         }),
         prize2: JSON.stringify({
           name: this.form.domains[1].value,
           url: this.form.domains[1].imageUrl
+          // url: this.imgUrl2
         }),
         prize3: JSON.stringify({
           name: this.form.domains[2].value,
           url: this.form.domains[2].imageUrl
+          // url: this.imgUrl3
         }),
         prize4: JSON.stringify({
           name: this.form.domains[3].value,
           url: this.form.domains[3].imageUrl
+          // url: this.imgUrl4
         }),
         prize5: JSON.stringify({
           name: this.form.domains[4].value,
           url: this.form.domains[4].imageUrl
+          // url: this.imgUrl5
         })
       };
+      console.log("data", data);
+
+      console.log(this.imgUrl1);
+      console.log(this.imgUrl2);
+      console.log(this.imgUrl3);
+      console.log(this.imgUrl4);
+      console.log(this.imgUrl5);
+      console.log(this.form.domains[0].imageUrl);
+      console.log(this.form.domains[1].imageUrl);
+      console.log(this.form.domains[2].imageUrl);
+      console.log(this.form.domains[3].imageUrl);
+      console.log(this.form.domains[4].imageUrl);
+
       putBounsRoom(data).then(res => {
         this.dialogFormVisible = false;
         this.getList_api(1, 0);
@@ -508,12 +527,49 @@ export default {
       this.form.domains[2].value = JSON.parse(this.tableData[id].prize3).name;
       this.form.domains[3].value = JSON.parse(this.tableData[id].prize4).name;
       this.form.domains[4].value = JSON.parse(this.tableData[id].prize5).name;
-      this.imgUrl1[0] = JSON.parse(this.tableData[id].prize1);
-      this.imgUrl2[0] = JSON.parse(this.tableData[id].prize2);
-      this.imgUrl3[0] = JSON.parse(this.tableData[id].prize3);
-      this.imgUrl4[0] = JSON.parse(this.tableData[id].prize4);
-      this.imgUrl5[0] = JSON.parse(this.tableData[id].prize5);
+
+      this.imgUrl1 =
+        JSON.parse(this.tableData[id].prize1).url != ""
+          ? [JSON.parse(this.tableData[id].prize1)]
+          : [];
+      this.imgUrl2 =
+        JSON.parse(this.tableData[id].prize2).url != ""
+          ? [JSON.parse(this.tableData[id].prize2)]
+          : [];
+      this.imgUrl3 =
+        JSON.parse(this.tableData[id].prize3).url != ""
+          ? [JSON.parse(this.tableData[id].prize3)]
+          : [];
+      this.imgUrl4 =
+        JSON.parse(this.tableData[id].prize4).url != ""
+          ? [JSON.parse(this.tableData[id].prize4)]
+          : [];
+      this.imgUrl5 =
+        JSON.parse(this.tableData[id].prize5).url != ""
+          ? [JSON.parse(this.tableData[id].prize5)]
+          : [];
+      console.log(JSON.parse(this.tableData[id].prize1));
+      console.log(JSON.parse(this.tableData[id].prize2));
+      console.log(JSON.parse(this.tableData[id].prize3));
+      console.log(JSON.parse(this.tableData[id].prize4));
+      console.log(JSON.parse(this.tableData[id].prize5));
+
       console.log("e imgurl", this.imgUrl1);
+      console.log("e imgurl", this.imgUrl2);
+      console.log("e imgurl", this.imgUrl3);
+      console.log("e imgurl", this.imgUrl4);
+      console.log("e imgurl", this.imgUrl5);
+
+      this.form.domains[0].imageUrl =
+        this.imgUrl1.length === 1 ? this.imgUrl1[0].url : "";
+      this.form.domains[1].imageUrl =
+        this.imgUrl2.length === 1 ? this.imgUrl2[0].url : "";
+      this.form.domains[2].imageUrl =
+        this.imgUrl3.length === 1 ? this.imgUrl3[0].url : "";
+      this.form.domains[3].imageUrl =
+        this.imgUrl4.length === 1 ? this.imgUrl4[0].url : "";
+      this.form.domains[4].imageUrl =
+        this.imgUrl5.length === 1 ? this.imgUrl5[0].url : "";
     },
     toStop: function(id) {
       //列表停用
@@ -572,8 +628,25 @@ export default {
       }
     },
 
-    handleRemove(file, fileList) {
+    handleRemove0(file, fileList) {
       console.log(file, fileList);
+      this.form.domains[0].imageUrl = "";
+    },
+    handleRemove1(file, fileList) {
+      console.log(file, fileList);
+      this.form.domains[1].imageUrl = "";
+    },
+    handleRemove2(file, fileList) {
+      console.log(file, fileList);
+      this.form.domains[2].imageUrl = "";
+    },
+    handleRemove3(file, fileList) {
+      console.log(file, fileList);
+      this.form.domains[3].imageUrl = "";
+    },
+    handleRemove4(file, fileList) {
+      console.log(file, fileList);
+      this.form.domains[4].imageUrl = "";
     },
 
     async handlePicture0(file, fileList) {
