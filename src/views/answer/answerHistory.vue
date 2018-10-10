@@ -33,8 +33,8 @@
 </style>
 
 <template>
-    <div class="div">
-<div class="el-div">
+<div class="div">
+  <div class="el-div">
     <!-- <el-button type="primary" icon="el-icon-edit" @click="toAddClass">添加分类</el-button> -->
     <div class="input-search">
         <div class="block">
@@ -49,10 +49,15 @@
         <el-button slot="append" icon="el-icon-search" @click="searchTime"></el-button>
     </div>
     <div style="width:20px;height: 30px;"></div>
-        <div class="input-search">
+        <div class="input-search" v-if="selectVal" >
         <el-input v-model="inputRoomTitle" placeholder="房间名搜索"></el-input>
         <div style="width:1px;height: 30px;"></div>
         <el-button slot="append" icon="el-icon-search" @click="searchRoomTitle"></el-button>
+    </div>
+    <div style="margin:0 0 0 30px;">
+      <el-select v-model="selectVal" placeholder="请选择模式" @change="toSelectMode">
+        <el-option v-for="item in options" :label="item.label" :key="item.value"  :value="item.value"></el-option>
+      </el-select>
     </div>
     <div style="width:20px;height: 30px;"></div>
     <el-dialog title="详情" :visible.sync="dialogFormVisible">
@@ -82,10 +87,7 @@
             <el-button @click="dialogFormVisible_info = false">取 消</el-button>
         </div>
     </el-dialog>
-
-        <el-table
-      :data="dialogTableData"
-      style="width: 100%" >
+    <el-table :data="dialogTableData" style="width: 100%" >
       <el-table-column
         label="昵称"
         prop="subscriber_nickname"
@@ -108,10 +110,14 @@
         prop="right"
         >
       </el-table-column>
-
       <el-table-column
         label="答错题数" 
         prop="wrong"
+        >
+      </el-table-column>
+      <el-table-column
+        label="排名" 
+        prop="top"
         >
       </el-table-column>
       <el-table-column
@@ -130,7 +136,7 @@
     <div style="width:20px;height: 30px;"></div>
     </div>
 
-<el-container class="notice">
+<el-container class="notice" v-if="selectVal">
 <el-main>
     <el-table
       :data="tableData"
@@ -170,7 +176,8 @@
   </el-pagination>
 </el-footer>
 </el-container>
-    </div>
+
+</div>
     
 </template>
 <script>
@@ -192,6 +199,17 @@ export default {
   },
   data() {
     return {
+      options: [
+        {
+          value: true,
+          label: "奖金模式"
+        },
+        {
+          value: false,
+          label: "付费模式"
+        }
+      ],
+      selectVal: true,
       tableDataLength: 0,
       inputTime: null,
       inputRoomTitle: null,
@@ -205,6 +223,9 @@ export default {
     };
   },
   methods: {
+    toSelectMode: function() {
+      console.log(this.selectVal);
+    },
     handleCurrentChange: function(val) {
       this.getHistoryList_api(val, 10);
     },

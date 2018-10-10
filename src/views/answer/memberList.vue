@@ -19,6 +19,7 @@
   align-items: center;
   justify-content: center;
   width: 320px;
+  margin: 0 0 0 30px;
 }
 
 .el-form {
@@ -30,15 +31,22 @@
   justify-content: flex-start;
   flex-wrap: nowrap;
 }
+.header-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
 </style>
-
 <template>
 <div class="div">
+  <div class="header-div" >
+    <el-button type="primary" icon="document" :loading="downloadLoading" @click="toExport">导出</el-button>
     <div class="input-search">
         <el-input v-model="inputPhoneNum" placeholder="搜索手机号"></el-input>
         <div style="width:1px;height: 30px;"></div>
         <el-button slot="append" icon="el-icon-search" @click="searchNumber"></el-button>
     </div>
+  </div>
 <el-container class="notice">
 <el-main>
     <el-table
@@ -100,6 +108,7 @@ export default {
   },
   data() {
     return {
+      downloadLoading: false,
       inputPhoneNum: "",
       tableData: []
     };
@@ -122,6 +131,40 @@ export default {
       postSearchNumber(data).then(res => {
         console.log(res.data);
         this.tableData = res.data;
+      });
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v =>
+        filterVal.map(j => {
+          if (j === "timestamp") {
+            return parseTime(v[j]);
+          } else {
+            return v[j];
+          }
+        })
+      );
+    },
+    toExport: async function() {
+      //导出
+      this.downloadLoading = true;
+      import("@/vendor/Export2Excel").then(excel => {
+        const tHeader = ["昵称", "手机号", "名字", "年龄", "年级", "所在城市"];
+        const filterVal = [
+          "subscriber_nickname",
+          "subscriber_phone",
+          "subscriber_name",
+          "subscriber_age",
+          "subscriber_grade",
+          "subscriber_city"
+        ];
+        const tableDataAll = this.tableData;
+        const data = this.formatJson(filterVal, tableDataAll);
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: "答题人员列表"
+        });
+        this.downloadLoading = false;
       });
     }
   }

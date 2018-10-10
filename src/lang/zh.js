@@ -43,6 +43,7 @@ export default {
     memberList: "人员列表",
     bonusMode: "奖金模式",
     paymentMode: "付费模式",
+    payList: "付费记录",
     answerHistory: "答题历史",
     music: "背景音乐",
 

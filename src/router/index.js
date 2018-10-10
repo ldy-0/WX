@@ -349,6 +349,11 @@ export let asyncRouterMapSeller = [
       name: 'paymentMode',
       meta: { title: 'paymentMode', noCache: true }
     },{
+      path: 'payList',
+      component: () => import('@/views/answer/payList'),
+      name: 'payList',
+      meta: { title: 'payList', noCache: true }
+    },{
       path: 'answerHistory',
       component: () => import('@/views/answer/answerHistory'),
       name: 'answerHistory',

@@ -57,6 +57,9 @@
     <el-button type="primary" icon="document" :loading="downloadLoading" @click="toExport">导出</el-button>
     
     <el-dialog title="从列表选择" :visible.sync="isDialogCheck">
+      <el-select v-model="classVal" value-key="id" placeholder="请选择" @change="toSearchClass">
+        <el-option v-for="(item,index) in options" :label="item.label" :key="item.id"  :value="item.label"></el-option>
+      </el-select>
       <el-table
       :data="dialogTableData"
       style="width: 100%" >
@@ -244,7 +247,8 @@ import {
   postAddShopList,
   deleteShopList,
   putEditShopList,
-  postLibSearchTitle
+  postLibSearchTitle,
+  getSearchAwsClass
 } from "@/api/answer";
 import uploadFn from "@/utils/aahbs";
 
@@ -290,6 +294,23 @@ export default {
     };
   },
   methods: {
+    toSearchClass: function() {
+      console.log(this.classVal);
+      var classify_id = null;
+      for (var i = 0; i < this.options.length; i++) {
+        var obj = this.options[i];
+        if (obj.label === this.classVal) {
+          classify_id = obj.id;
+        }
+      }
+      var data = {
+        classify_id: classify_id
+      };
+      getSearchAwsClass(data).then(res => {
+        console.log("res class", res);
+        this.dialogTableData = res.data;
+      });
+    },
     handleCurrentChange: function(val) {
       // console.log(`当前页: ${val}`);
       this.getShopList_api(val, 10);

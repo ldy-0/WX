@@ -275,7 +275,8 @@ import {
   deleteDialong,
   putEditDialog,
   postGetLibFormShop,
-  postImportList
+  postImportList,
+  getLibSearchClass
 } from "@/api/answer";
 import uploadFn from "@/utils/aahbs";
 
@@ -335,21 +336,8 @@ export default {
         classify_id: classify_id
       };
       getLibSearchClass(data).then(res => {
-        console.log(res);
-        this.tableData = [];
-        for (var i = 0; i < res.data.length; i++) {
-          var res_data = res.data[i];
-          this.tableData.push({
-            id: res_data.topic_id,
-            title: res_data.title,
-            awsA: res_data.answer1,
-            awsB: res_data.answer2,
-            awsC: res_data.answer3,
-            awsD: res_data.answer4,
-            aws: res_data.answers,
-            class: res_data.classify_name
-          });
-        }
+        console.log("class res", res);
+        this.dialogTableData_copy = res.data;
       });
     },
     getLibList_api: function(page, limit) {

@@ -16,6 +16,14 @@ export function getLibList(data) { //平台题库
     })
 }
 
+export function getSearchAwsClass(data) {
+    return request({
+        url: '/api/v1/seller/sortTopic',
+        method: 'get',
+        params: data
+    })
+}
+
 export function getShopList(data) { //商家题库
     return request({
         url: '/api/v1/seller/question',
@@ -141,6 +149,14 @@ export function postLibSearchTitle(data) {
         url: '/api/v1/seller/seek',
         method: 'post',
         data
+    })
+}
+
+export function getLibSearchClass(data) {
+    return request({
+        url: '/api/v1/seller/seek',
+        method: 'get',
+        params: data
     })
 }
 
