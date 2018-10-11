@@ -1,4 +1,4 @@
-import { asyncRouterMap, constantRouterMap } from '@/router'
+import { asyncRouterMapAdmin,asyncRouterMapSeller, constantRouterMap } from '@/router'
 
 /**
  * 通过meta.role判断是否与当前用户权限匹配
@@ -46,12 +46,61 @@ const permission = {
     GenerateRoutes({ commit }, data) {
       return new Promise(resolve => {
         const { roles } = data
-        let accessedRouters
+        let accessedRouters = []
+        //平台管理员
+         
         if (roles.indexOf('admin') >= 0) {
-          accessedRouters = asyncRouterMap
-        } else {
-          accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
+          accessedRouters = asyncRouterMapAdmin
+        } 
+        else if(roles.indexOf('admin2') >= 0){
+          console.log('---------------',roles)
+          accessedRouters = filterAsyncRouter(asyncRouterMapAdmin,roles)
         }
+        //商家
+        // else if (roles.indexOf('seller') >= 0) {
+        //   accessedRouters = asyncRouterMapSeller
+        // } 
+        // else if(roles.indexOf('seller2') >= 0){
+        //   console.log('---------------',roles)
+        //     accessedRouters = filterAsyncRouter(asyncRouterMapSeller,roles)
+        //     //   let authIndex = -1
+        //     // for(let i=0,len=asyncRouterMapSeller.length;i<len;i++){
+        //     // hbs:make some diff
+        //     // try{
+        //     //   if(asyncRouterMapAdmin[i].path=='/sellerAuth'){
+        //     //     authIndex = i
+        //     //     asyncRouterMapAdmin.splice(authIndex,1)
+        //     //     accessedRouters = asyncRouterMapAdmin
+        //     //   }
+        //     // }catch(e){
+        //     //   console.error(i,e,'GenerateRoutes')
+        //     // }
+            
+        //     // }
+        // }
+        // accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
+        if (roles.indexOf('agentAdmin') >= 0) {
+          console.log(roles)
+          let tempIndex = -1
+
+          accessedRouters.forEach(function(item,index){
+            if(item.path==="/agent"){
+              tempIndex = index
+            }
+          })
+          if(tempIndex>-1){
+            accessedRouters.splice(tempIndex,1)
+          }
+          accessedRouters.forEach(function(item,index){
+            if(item.path==="/manageSevice"){
+              tempIndex = index
+            }
+          })
+          if(tempIndex>-1){
+            accessedRouters.splice(tempIndex,1)
+          }
+        }
+        console.log('accessedRouters---------------',accessedRouters)
         commit('SET_ROUTERS', accessedRouters)
         resolve()
       })

@@ -1,6 +1,47 @@
 export default {
   route: {
-    dashboard: '首页',
+    //卖家
+    sellerGoods: '商品',
+    order: '订单',
+    rOrder: '实物订单',
+    vOrder: '虚拟订单',
+    appointment: '预约',
+    coupon: '优惠券',
+
+    server: '运营',
+    serverBanner: '首页轮播图',
+    serverEnrty: '商品分类',
+    serverRec: '精品推荐',
+    serverAct: '动态',
+    serverShop: '店铺介绍',
+    serverAllbuy: '团购',
+    serverKill: '砍价',
+    serverSchool: '门店',
+    serverGetFlow: '流量充值',
+    serverActivity: '活动',
+    distribution: '分销',
+    vote: '投票',
+
+
+    sellerAuth: '权限',
+
+    //平台
+    home: '首页',
+    goods: '商品',
+    notice: '公告',
+    manageShop: '店铺管理',
+    
+    library: "题库",
+    libraryList: "题目列表",
+    libraryClass: "分类",
+
+    manageSevice: '运营管理',
+    shopServer: '店铺运营',
+    flowPackages: '流量套餐',
+    industryList: '行业列表',
+    agent: "分公司",
+    auth: '授权管理',
+    dashboard: '面板',
     introduction: '简述',
     documentation: '文档',
     guide: '引导页',
@@ -59,6 +100,7 @@ export default {
     i18n: '国际化'
   },
   navbar: {
+    HSBopera: '修改密码',
     logOut: '退出登录',
     dashboard: '首页',
     github: '项目地址',
@@ -66,7 +108,8 @@ export default {
     theme: '换肤'
   },
   login: {
-    title: '系统登录',
+    title: '平台登录',
+    title2: '分公司登录',
     logIn: '登录',
     username: '账号',
     password: '密码',

@@ -6,11 +6,21 @@ const path = require('path')
 
 module.exports = {
   dev: {
-
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    // proxyTable: {
+    //   '/api':{  
+    //     target:' http://192.168.31.128/api'
+    //   },
+    //   '/api/*':{  
+    //     target:' http://192.168.31.128/api'
+    //   },
+    //   changeOrigin: true,
+    //   pathRewrite: { //路径重写 
+    //     '^/api': '/' //这里理解成用‘/api'代替target里面的地址，后面组件中我们掉接口时直接用api代替 比如我要调用'http://localhost:3002/user/add'，直接写‘/api/goods/add'即可
+    //   }
+    // },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
@@ -63,7 +73,7 @@ module.exports = {
      * then assetsPublicPath should be set to "/bar/".
      * In most cases please use '/' !!!
      */
-    assetsPublicPath: '/vue-element-admin/', // If you are deployed on the root path, please use '/'
+    assetsPublicPath: '/admin/', // If you are deployed on the root path, please use '/'
 
     /**
      * Source Maps
