@@ -278,3 +278,18 @@ export function getShopOrderList_api2(data) {
     params: data
   })
 }
+
+export function getAnswerMember_api(data) {
+  return request({
+    url: '/api/v1/admin/subscriber',
+    method: 'get',
+    params: data
+  })
+}
+export function getAnswerList_api(data) {
+  return request({
+    url: '/api/v1/admin/question',
+    method: 'get',
+    params: data
+  })
+}

@@ -40,7 +40,7 @@ export const constantRouterMap = [
       name: 'home',
       meta: { title: 'home', icon: 'dashboard', noCache: true }
     }]
-  },
+  }
   //maijia
   //pt
 ]
@@ -67,45 +67,45 @@ export let asyncRouterMapAdmin = [
     path: '/notice',
     component: Layout,
     redirect: '/notice/index',
-    meta: {roles:['affiche']},
+    meta: { roles: ['affiche'] },
     children: [{
       path: 'index',
       component: () => import('@/views/aanotice/index'),
       name: 'notice',
-      meta: { title: 'notice', icon: 'notice', noCache: true ,roles:['affiche']}
+      meta: { title: 'notice', icon: 'notice', noCache: true, roles: ['affiche'] }
     }]
   },
   {
     path: '/manageShop',
     component: Layout,
     redirect: '/manageShop/index',
-    meta: {roles:['store']},
+    meta: { roles: ['store'] },
     children: [{
       path: 'index',
       component: () => import('@/views/aamanageShop/index'),
       name: 'manageShop',
-      meta: { title: 'manageShop', icon: 'notice', noCache: true,roles:['store']} 
+      meta: { title: 'manageShop', icon: 'notice', noCache: true, roles: ['store'] }
     }]
   },
   {
     path: '/manageSevice',
     component: Layout,
     redirect: '/manageSevice/shopServer',
-    name:'manageSevice',
-    meta: { title: 'manageSevice', icon: 'notice',roles:['manage']},
+    name: 'manageSevice',
+    meta: { title: 'manageSevice', icon: 'notice', roles: ['manage'] },
     children: [
       {
-        path: 'shopServer', 
+        path: 'shopServer',
         component: () => import('@/views/aamanageSevice/shopServer'),
         name: 'shopServer',
         meta: { title: 'shopServer', noCache: true }
-      },{
-        path: 'flowPackages', 
+      }, {
+        path: 'flowPackages',
         component: () => import('@/views/aamanageSevice/flowPackages'),
         name: 'flowPackages',
         meta: { title: 'flowPackages', noCache: true }
-      },{
-        path: 'industryList', 
+      }, {
+        path: 'industryList',
         component: () => import('@/views/aamanageSevice/industryList'),
         name: 'industryList',
         meta: { title: 'industryList', noCache: true }
@@ -116,26 +116,45 @@ export let asyncRouterMapAdmin = [
     path: '/agent',
     component: Layout,
     redirect: '/agent/index',
-    meta: { roles:['agent']},
+    meta: { roles: ['agent'] },
     children: [{
       path: 'index',
       component: () => import('@/views/aaagent/index'),
       name: 'agent',
-      meta: { title: 'agent', icon: 'notice' ,roles:['agent']}
+      meta: { title: 'agent', icon: 'notice', roles: ['agent'] }
     }]
   },
   {
     path: '/auth',
     component: Layout,
     redirect: '/auth/index',
-    meta: { roles:['auth']},
+    meta: { roles: ['auth'] },
     children: [{
       path: 'index',
       component: () => import('@/views/aaauth/index'),
       name: 'auth',
-      meta: { title: 'auth', icon: 'notice' ,roles:['auth']}
+      meta: { title: 'auth', icon: 'notice', roles: ['auth'] }
     }]
   },
+  {
+    path: '/library',
+    component: Layout,
+    redirect: '/library/libraryList',
+    name: 'library',
+    meta: { title: 'library', icon: 'notice', roles: ['library'] },
+    children: [{
+      path: 'libraryList',
+      component: () => import('@/views/library/libraryList'),
+      name: 'libraryList',
+      meta: { title: 'libraryList', noCache: true }
+    },
+    {
+      path: 'libraryClass',
+      component: () => import('@/views/library/libraryClass'),
+      name: 'libraryClass',
+      meta: { title: 'libraryClass', noCache: true }
+    }]
+  }
   // { path: '*', redirect: '/404', hidden: true }
 ]
 
@@ -144,7 +163,7 @@ export let asyncRouterMapSeller = [
     path: '/sellerGoods',
     component: Layout,
     redirect: '/sellerGoods/index',
-    meta:{roles:'goods'},
+    meta: { roles: 'goods' },
     children: [{
       path: 'index',
       component: () => import('@/views/absellerGoods/index'),
@@ -156,13 +175,13 @@ export let asyncRouterMapSeller = [
     path: '/order',
     component: Layout,
     redirect: '/order/rOrder',
-    meta: { title: 'order', icon: 'goods',roles:'order'},
+    meta: { title: 'order', icon: 'goods', roles: 'order' },
     children: [{
       path: 'rOrder',
       component: () => import('@/views/aborder/rOrder'),
       name: 'rOrder',
       meta: { title: 'rOrder', noCache: true }
-    },{
+    }, {
       path: 'vOrder',
       component: () => import('@/views/aborder/vOrder'),
       name: 'vOrder',
@@ -173,7 +192,7 @@ export let asyncRouterMapSeller = [
     path: '/appointment',
     component: Layout,
     redirect: '/appointment/index',
-    meta: { roles:'appointment'},
+    meta: { roles: 'appointment' },
     children: [{
       path: 'index',
       component: () => import('@/views/abappointment/index'),
@@ -184,7 +203,7 @@ export let asyncRouterMapSeller = [
   {
     path: '/coupon',
     component: Layout,
-    meta: { roles:'coupon'},
+    meta: { roles: 'coupon' },
     redirect: '/coupon/index',
     children: [{
       path: 'index',
@@ -197,53 +216,53 @@ export let asyncRouterMapSeller = [
     path: '/server',
     component: Layout,
     redirect: '/server/serverBanner',
-    meta: { title: 'server', icon: 'goods',roles:'manage'},
+    meta: { title: 'server', icon: 'goods', roles: 'manage' },
     children: [{
       path: 'serverBanner',
       component: () => import('@/views/abserver/serverBanner'),
       name: 'serverBanner',
-      meta: { title: 'serverBanner',  noCache: true }
-    },{
+      meta: { title: 'serverBanner', noCache: true }
+    }, {
       path: 'serverEnrty',
       component: () => import('@/views/abserver/serverEnrty'),
       name: 'serverEnrty',
-      meta: { title: 'serverEnrty',  noCache: true }
-    },{
+      meta: { title: 'serverEnrty', noCache: true }
+    }, {
       path: 'serverRec',
       component: () => import('@/views/abserver/serverRec'),
       name: 'serverRec',
-      meta: { title: 'serverRec',  noCache: true }
-    },{
+      meta: { title: 'serverRec', noCache: true }
+    }, {
       path: 'serverAct',
       component: () => import('@/views/abserver/serverAct'),
       name: 'serverAct',
-      meta: { title: 'serverAct',  noCache: true }
-    },{
+      meta: { title: 'serverAct', noCache: true }
+    }, {
       path: 'serverShop',
       component: () => import('@/views/abserver/serverShop'),
       name: 'serverShop',
-      meta: { title: 'serverShop',  noCache: true }
-    },{
+      meta: { title: 'serverShop', noCache: true }
+    }, {
       path: 'serverAllbuy',
       component: () => import('@/views/abserver/serverAllbuy'),
       name: 'serverAllbuy',
-      meta: { title: 'serverAllbuy',  noCache: true }
-    },{
+      meta: { title: 'serverAllbuy', noCache: true }
+    }, {
       path: 'serverKill',
       component: () => import('@/views/abserver/serverKill'),
       name: 'serverKill',
-      meta: { title: 'serverKill',  noCache: true }
-    },{
+      meta: { title: 'serverKill', noCache: true }
+    }, {
       path: 'serverSchool',
       component: () => import('@/views/abserver/serverSchool'),
       name: 'serverSchool',
-      meta: { title: 'serverSchool',  noCache: true }
-    },{
+      meta: { title: 'serverSchool', noCache: true }
+    }, {
       path: 'serverGetFlow',
       component: () => import('@/views/abserver/serverGetFlow'),
       name: 'serverGetFlow',
-      meta: { title: 'serverGetFlow',  noCache: true }
-    },{
+      meta: { title: 'serverGetFlow', noCache: true }
+    }, {
       path: '/serverActivity',
       component: () => import('@/views/abserver/serverActivity/index'),
       meta: { title: 'serverActivity' },
@@ -252,7 +271,7 @@ export let asyncRouterMapSeller = [
         component: () => import('@/views/abserver/serverActivity/distribution'),
         name: 'distribution',
         meta: { title: 'distribution', noCache: true }
-      },{
+      }, {
         path: 'vote',
         component: () => import('@/views/abserver/serverActivity/vote'),
         name: 'vote',
@@ -264,7 +283,7 @@ export let asyncRouterMapSeller = [
     path: '/sellerAuth',
     component: Layout,
     redirect: '/sellerAuth/index',
-    meta: { roles:'auth'},
+    meta: { roles: 'auth' },
     children: [{
       path: 'index',
       component: () => import('@/views/absellerAuth/index'),
