@@ -567,7 +567,7 @@ export default {
         this.listLoading = true
         this.companyId = row.id
         this.addNewShow2 = true
-        this.getList2(row.id)
+        this.getList2(row.idA)
       },
       getList2(id){
         let sendData = Object.assign({},this.listQuery2)
