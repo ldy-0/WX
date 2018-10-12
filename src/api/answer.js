@@ -252,6 +252,38 @@ export function getSortDetails(data) { //获取对应的房间列表的详情
     })
 }
 
+export function getApatasList(data) { //获取付费房间列表
+    return request({
+        url: '/api/v1/seller/apatas',
+        method: 'get',
+        params: data
+    })
+}
+
+export function postApatasSearchTime(data) { //按时间搜索付费房间
+    return request({
+        url: '/api/v1/seller/apatas',
+        method: 'post',
+        data
+    })
+}
+
+export function getApatasSearchLib(data) { //按题库搜索付费房间
+    return request({
+        url: '/api/v1/seller/apatas',
+        method: 'get',
+        params: data
+    })
+}
+
+export function putApatasType(data) { //修改付费记录的奖品状态
+    return request({
+        url: '/api/v1/seller/apatas',
+        method: 'put',
+        data
+    })
+}
+
 export function postMusic(data) { //背景音乐
     return request({
         url: '/api/v1/seller/music',
@@ -311,6 +343,30 @@ export function putStopPayRoom(data) {
 export function putEditPayRoom(data) {
     return request({
         url: '/api/v1/seller/apartment',
+        method: 'put',
+        data
+    })
+}
+
+export function getPayOrderist(data) { //获取付费记录列表
+    return request({
+        url: '/api/v1/seller/apaorder',
+        method: 'get',
+        params: data
+    })
+}
+
+export function postPaySearchPhone(data) {
+    return request({
+        url: '/api/v1/seller/apaorder',
+        method: 'post',
+        data
+    })
+}
+
+export function putPaySearchTime(data) {
+    return request({
+        url: '/api/v1/seller/apaorder',
         method: 'put',
         data
     })

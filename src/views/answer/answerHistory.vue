@@ -54,8 +54,13 @@
         <div style="width:1px;height: 30px;"></div>
         <el-button slot="append" icon="el-icon-search" @click="searchRoomTitle"></el-button>
     </div>
+    <div style="margin:0 0 0 30px;" v-if="!selectVal" >
+      <el-select v-model="libraryId" placeholder="请选择题库" @change="toSelectLib">
+        <el-option v-for="item in libList" :label="item.name" :key="item.library_id"  :value="item.library_id"></el-option>
+      </el-select>
+    </div>
     <div style="margin:0 0 0 30px;">
-      <el-select v-model="selectVal" placeholder="请选择模式" @change="toSelectMode">
+      <el-select v-model="selectVal" placeholder="请选择模式">
         <el-option v-for="item in options" :label="item.label" :key="item.value"  :value="item.value"></el-option>
       </el-select>
     </div>
@@ -177,17 +182,61 @@
 </el-footer>
 </el-container>
 
+  <div class="payMode"  v-if="!selectVal">
+    <el-main>
+    <el-table
+      :data="apatasList"
+      style="width: 100%" >
+      <el-table-column
+        label="时间" 
+        prop="addtime"
+        >
+      </el-table-column>
+      <el-table-column
+        label="用户头像" 
+        prop="room_name"
+        >
+      </el-table-column>
+      <el-table-column
+        label="用户昵称" 
+        prop="subscriber_name"
+        >
+      </el-table-column>
+      <el-table-column
+        label="联系方式" 
+        prop="subscriber_phone"
+        >
+      </el-table-column>
+      <el-table-column
+        label="题库" 
+        prop="library_name"
+        >
+      </el-table-column>
+      <el-table-column
+        label="操作" 
+        >
+        <template slot-scope="scope">
+          <el-button size="mini" type="info" @click="toAwsInfo(scope.$index)">处理</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+</el-main>
+  </div>
 </div>
-    
 </template>
 <script>
 import {
+  grtLibList,
   getAwsHistory,
   putRoomNameSearch,
   postTimeSearch,
   getRoomAwsHistory,
   deleteHistoryList,
-  getSortDetails
+  getSortDetails,
+  getApatasList,
+  postApatasSearchTime,
+  getApatasSearchLib,
+  putApatasType
 } from "@/api/answer";
 
 export default {
@@ -196,9 +245,14 @@ export default {
       this.tableDataLength = res.data.length;
     });
     this.getHistoryList_api(1, 10);
+    this.getLibList_api(1, 0);
+    this.getHistoryPayList_api(1, 0);
   },
   data() {
     return {
+      apatasList: [],
+      libraryId: null,
+      libList: [],
       options: [
         {
           value: true,
@@ -223,13 +277,38 @@ export default {
     };
   },
   methods: {
-    toSelectMode: function() {
-      console.log(this.selectVal);
+    getLibList_api: function(page, limit) {
+      //获取题库列表
+      var data = {
+        page: page,
+        limit: limit
+      };
+      grtLibList(data).then(res => {
+        console.log(res.data);
+        this.libList = res.data;
+      });
+    },
+    getHistoryPayList_api: function(page, limit) {
+      //获取付费模式列表
+      var data = {
+        page: page,
+        limit: limit
+      };
+      getApatasList(data).then(res => {
+        this.apatasList = res.data;
+        console.log("this.apatasList", this.apatasList);
+      });
+    },
+    toSelectLib: function() {
+      //选择题库
+      console.log(this.libraryId);
     },
     handleCurrentChange: function(val) {
+      //分页
       this.getHistoryList_api(val, 10);
     },
     getHistoryList_api: function(page, limit) {
+      //获取奖金模式历史列表
       var data = {
         page: page,
         limit: limit
@@ -241,6 +320,7 @@ export default {
       });
     },
     toDelete: function(id) {
+      //删除记录
       console.log(this.tableData[id].record_id);
       var data = {
         record_id: this.tableData[id].record_id
@@ -250,6 +330,7 @@ export default {
       });
     },
     toAwsInfo: function(id) {
+      //查看详情
       this.dialogFormVisible = true;
       var data = {
         record_id: this.tableData[id].record_id
@@ -260,6 +341,7 @@ export default {
       });
     },
     toDialogInfo: function(id) {
+      //查看个人具体详情
       this.dialogFormVisible_info = true;
       var data = {
         history_id: this.dialogTableData[id].history_id
@@ -271,6 +353,7 @@ export default {
     },
 
     searchTime: function() {
+      //奖金模式时间搜索
       var data = {
         start_time: Math.round(Date.parse(this.inputTime[0]) / 1000),
         end_time: Math.round(Date.parse(this.inputTime[1]) / 1000)
@@ -281,16 +364,17 @@ export default {
       });
     },
     searchRoomTitle: function() {
+      //奖金模式房间名称搜索
       var data = {
         name: this.inputRoomTitle
       };
       putRoomNameSearch(data).then(res => {
         this.tableData = res.data;
         console.log(this.tableData);
-        // this.getHistoryList_api(1, 0);
       });
     },
     formatJson(filterVal, jsonData) {
+      //格式化
       return jsonData.map(v =>
         filterVal.map(j => {
           if (j === "timestamp") {

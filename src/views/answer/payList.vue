@@ -38,9 +38,9 @@
     </div>
     <div style="width:20px;height: 30px;"></div>
     <div class="input-search">
-        <el-input v-model="inputRoomTitle" placeholder="房间名搜索"></el-input>
+        <el-input v-model="inputPhone" placeholder="手机号搜索"></el-input>
         <div style="width:1px;height: 30px;"></div>
-        <el-button slot="append" icon="el-icon-search" @click="searchRoomTitle"></el-button>
+        <el-button slot="append" icon="el-icon-search" @click="searchPhone"></el-button>
     </div>
     </div>
 <el-main>
@@ -77,24 +77,56 @@
 </div>
 </template>
 <script>
+import {
+  getPayOrderist,
+  postPaySearchPhone,
+  putPaySearchTime
+} from "@/api/answer";
 export default {
+  created() {
+    this.getPayOrderist_api(1, 0);
+  },
   data() {
     return {
       downloadLoading: false,
-      tableData: [
-        {
-          order_id: 7, //订单id
-          subscriber_name: "微客立小苹果", //支付用户
-          cost: 10, //支付金额
-          subscriber_phone: "12345613010", //联系方式
-          addtime: 3, //时间
-          order_type: "已支付" //订单状态
-        }
-      ]
+      tableData: [],
+      inputPhone: "",
+      inputTime: ""
     };
   },
   methods: {
-    formatJson(filterVal, jsonData) {
+    getPayOrderist_api: function(page, limit) {
+      var data = {
+        page: page,
+        limit: limit
+      };
+      getPayOrderist(data).then(res => {
+        console.log(res);
+        this.tableData = [];
+        this.tableData = res.data;
+      });
+    },
+    searchPhone: function() {
+      var data = {
+        phone: this.inputPhone
+      };
+      postPaySearchPhone(data).then(res => {
+        console.log(res);
+        this.tableData = res.data;
+        this.getPayOrderist_api(1, 0);
+      });
+    },
+    searchTime: function() {
+      console.log(this.inputTime);
+      var data = {
+        start_time: "",
+        end_time: ""
+      };
+      putPaySearchTime(data).then(res => {
+        console.log(res);
+      });
+    },
+    formatJson: function(filterVal, jsonData) {
       return jsonData.map(v =>
         filterVal.map(j => {
           if (j === "timestamp") {
