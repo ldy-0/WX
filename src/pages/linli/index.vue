@@ -5,7 +5,10 @@
 
     <div class='wrap'>
 
-      <h1 class='center'>暂无</h1>
+      <div class='center'>
+        <image style='width: 360rpx; height: 300rpx;' src='/static/empty.png' mode='aspectFill' />
+        <div class='desc'>功能正在开发，敬请期待！</div>
+      </div>
       
     </div>
   </div>
@@ -99,9 +102,14 @@ export default {
 
 .center{
   position: fixed;
-  top: 50%;
+  top: 30%;
   width: 100%;
   text-align: center;
+}
+.desc{
+  margin: 20rpx 0 0;
+  font-size: 28rpx;
+  color: #6e6c6c;
 }
 
 .content{

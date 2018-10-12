@@ -14,10 +14,14 @@
     "pages/submit/main",
     "pages/payed/main",
     "pages/order/list/main",
-    "pages/order/service/main",
+    "pages/order/afterServer/main",
+    "pages/order/detail/main",
     "pages/order/assess/main",
+    "pages/order/refund/main",
     "pages/shoppingCart/main",
-    "pages/help/main"
+    "pages/help/main",
+    "pages/search/main",
+    "pages/img/main"
   ],
   "window": {
     "backgroundTextStyle": "light",

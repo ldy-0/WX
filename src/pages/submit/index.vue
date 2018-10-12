@@ -15,7 +15,11 @@
         </view> -->
         <view class="address_info" @click='changeAddress'>
           <image style='width: 23rpx; height: 33rpx; margin-right: 20rpx; flex-shrink: 0;' src='/static/address.png' />
-          <view class="grow" style='flex-grow: 1;'>
+
+          <view class="grow" style='flex-grow: 1;' v-if='!address.address_realname'>
+            <view>添加收货地址</view>
+          </view>
+          <view class="grow" style='flex-grow: 1;' v-else>
             <view class="user_info s-fc-7">
               <view class="name">收货人：{{address.address_realname}}</view>
               <view class="phone">{{address.address_mob_phone}}</view>
@@ -25,40 +29,45 @@
               收货地址：{{address.area_info}}
             </view>
           </view>
+          
           <image class='right_arrow' src='/static/my/right_arrow.png' />
         </view>
       </view>
       
-      <image style='height: 10rpx; margin: 0 0 20rpx 0;' src='/static/bar.png' />
+      <image style='width: 100%; height: 10rpx; margin: 0 0 20rpx 0;' src='/static/bar.png' />
 
-      <goods :goods='goods' :config='goodsConfig' v-if='goods'></goods>
+      <!-- <goods :goods='goods' :config='goodsConfig' v-if='!goodsList.length'></goods> -->
 
-      <goods :goods='item' :config='goodsConfig' v-for='(item, index) in goodsList' :key='index' v-if='goodsList.length'></goods>
+      <div v-for='(item, index) in list' :key='index'>
+        <goods :goods='item' :config='goodsConfig'></goods>
 
-      <div class='s-fc-8' style='display: flex; justify-content: space-between; align-items: center; height: 88rpx; margin: 2rpx 0 0; padding: 0 20rpx; background: #fff;' v-if='isVirtual'>
-        <div>定金:</div>
-        <div>¥10.00</div>
-      </div>
-      <div class='s-fc-8' style='display: flex; justify-content: space-between; align-items: center; height: 88rpx; margin: 2rpx 0 0; padding: 0 20rpx; background: #fff;'>
-        <div>运费：</div>
-        <div>¥10.00</div>
-      </div>
+        <div class='s-fc-8' style='display: flex; justify-content: space-between; align-items: center; height: 88rpx; margin: 2rpx 0 0; padding: 0 20rpx; background: #fff;' v-if='item.deposit'>
+          <div>定金:</div>
+          <div>¥{{item.deposit}}</div>
+        </div>
+        <div class='s-fc-8' style='display: flex; justify-content: space-between; align-items: center; height: 88rpx; margin: 2rpx 0 0; padding: 0 20rpx; background: #fff;' v-if='item.goods_freight'>
+          <div>运费：</div>
+          <div>¥{{item.goods_freight}}</div>
+        </div>
 
-      <div style='margin: 0 0 100rpx'>
-        <div class='row s-fc-8' v-for='(item, index) in serverList' :key='index'>
-          <div style='display: flex; align-items: center;'>
-            <div class='circle' @click='check(item)'>
-              <div :class='{ circle_sel: item.checked }'></div>
-            </div>{{item.title}}</div>
-          <div>¥10.00</div>
+        <div>
+          <div class='row s-fc-8' v-for='(server, i) in item.server' :key='i'>
+            <div style='display: flex; align-items: center;'>
+              <div class='circle' @click='check(server)'>
+                <div :class='{ circle_sel: server.checked }'></div>
+              </div>{{server.key}}</div>
+            <div>¥{{server.value}}</div>
+          </div>
         </div>
       </div>
+
+      <div style='height: 100rpx;'></div>
 
       <div class='bottom_bar'>
-        <div >
-            <div>合计：<span class='s-fc-9'>¥{{price}}</span></div>
-        </div>
-        <div class='submit_btn s-fc-1 s-bg-3' @click='submit'>结算({{count}})</div>
+        <!-- <div > -->
+            <div>合计：<span class='s-fc-9'>¥{{totalFee}}</span></div>
+        <!-- </div> -->
+        <div class='submit_btn s-fc-1 s-bg-3' @click='submitOrder'>结算({{count}})</div>
       </div>
 
     </div>
@@ -67,7 +76,6 @@
 
 <script>
 import topBar from '@/components/topBar'
-import slide from '@/components/slide'
 import goods from '@/components/goods'
 import api from '@/utils/api'
 import util from '@/utils/util'
@@ -87,59 +95,90 @@ export default {
       address: {},
       goods: {},
       goodsList: [],
-      serverList: [
-        { title: '设计服务：', price: 10.0, checked: false },
-        { title: '搬运服务：', price: 10.0, checked: false },
-        { title: '安装服务：', price: 10.0, checked: false }
-      ],
-      isVirtual: true
+      list: [],
+      freight: null, // 总运费
+      canClick: true,
+      canSubmit: true, 
+      totalFee: '',
+      order_id: null
     }
   },
 
   computed: {
-    count () {
-      return this.goods && this.goods.qty || this.goodsList.reduce((p, v) => p + v.qty, 0)
-    },
-    price () {
-      return this.goods && this.goods.qty || this.goodsList.reduce((p, v) => p + v.price, 0)
-    }
+    count () { return this.goods.qty || this.goodsList.reduce((p, v) => p + v.qty, 0) },
   },
 
   components: {
     topBar,
-    slide,
     goods
   },
 
   methods: {
-    changeAddress () {
-      wx.navigateTo({
-        url: `/pages/address/addressList/main?referer=submit`
-      })
-    },
-    check (item) {
+    changeAddress () { wx.navigateTo({ url: `/pages/address/addressList/main?referer=submit` }) },
+    async check (item) {
+      if (!this.canClick) {
+        return null
+      }
+
+      this.canClick = false
+
       item.checked = !item.checked
       console.log(item)
+      this.checkout(true)
+    },
+    submitOrder () {
+      if (!this.canSubmit) {
+        return null
+      }
+
+      this.canSubmit = false
+      this.submit()
+    },
+    async checkout (simpleUpdate) {
+      let params = {
+        cart_id: this.getCartId(),
+        ifcart: this.goodsList.length ? 1 : 0,
+        city_id: this.address.city_id,
+        extra_service: this.getServer(),
+        voucher_list: []
+      }
+      console.log('checkout --', params, this.address)
+
+      let res = await api.checkout(params)
+
+      res.store_cart_list['1'].forEach(v => {
+        if (v.extra_service) v.server = v.extra_service.map(val => { return { key: val.split(':')[0], value: val.split(':')[1], checked: false } })
+      })
+      if (!simpleUpdate) this.list = res.store_cart_list['1']
+      this.freight = res.freight_list && res.freight_list['1']
+      this.totalFee = res.store_final_order_total && res.store_final_order_total['1']
+      this.canClick = true
+      // let totalObj = res.store_final_order_total
+
+      // this.totalFee = 0
+      // for (let key in totalObj) {
+      //   this.totalFee += totalObj[key]
+      // }
     },
     async submit () {
       wx.showLoading({ title: 'Loading...' })
 
       let params = {
         cart_id: this.getCartId(),
-        address_id: this.isVirtual ? null : this.address.address_id,
+        address_id: this.address.address_id,
+        ifcart: this.goodsList.length ? 1 : 0,
         pay_name: 'online',
-        pay_message: [],
+        pay_message: this.getAppoinment(),
         order_from: 2,
-        // is_virtual: this.isVirtual,
         is_pintuan: null,
-        ifcart: this.isSingle ? 0 : 1,
+        extra_service: this.getServer()
       }
-
+      console.log('order param', params)
       let res = await api.submitOrder(params)
 
       this.order_id = res.order_id
 
-      let payres = await this.pay(res)
+      let payres = await util.pay(res)
 
       console.log('pay', this.order_id, payres)
       wx.hideLoading()
@@ -150,16 +189,40 @@ export default {
           url: '/pages/payed/main?id=' + this.order_id,
         })
       } else if (payres === 'requestPayment:fail cancel') {
-        wx.showToast({ title: '支付已取消!', icon: 'none', duration: 2000, });
+        wx.showToast({ title: '支付已取消!', icon: 'none', duration: 2000, })
       }
-
+      this.canSubmit = true
     },
-    getCartId () {
-      return this.goods ? `${this.goods.goods_id}|${this.goods.goods_num}` : this.goodsList.map(v => `${v.cart_id}|${v.goods_num}`)
+    getCartId () { return this.goodsList.length ? this.goodsList.map(v => `${v.cart_id}|${v.goods_num}`) : [`${this.goods.SKUList[0].goods_id}|${this.goods.qty}`] },
+    getServer () {
+      let obj = {}
+
+      this.list.forEach(v => {
+        if (v.server) {
+          obj[v.goods_id] = []
+          v.server.forEach(val => { if (val.checked) obj[v.goods_id].push(`${val.key}:${val.value}`) })
+        }
+      })
+
+      return obj
+    },
+    getAppoinment () {
+      let obj = {}
+
+      if (this.goodsList.length) {
+        this.goodsList.forEach(v => { if (v.remark[0] !== '') obj[v.goods_id] = v.remark })
+      } else {
+        if (this.goods.appoinment) obj[this.goods.sku.goods_id] = [this.goods.appoinment.date, this.goods.appoinment.content]
+      }
+      return obj
     },
     async getDefauleAddress () {
       let res = await api.getDefaultAddress({ address_is_default: 1 })
-      console.log(res)
+
+      console.log('default address', res)
+      this.address = res && res[0] || {}
+
+      this.checkout()
     }
   },
 
@@ -167,10 +230,10 @@ export default {
   },
 
   onLoad (params) {
-    this.goods = params.goods && JSON.parse(decodeURIComponent(params.goods))
-    this.goodsList = params.goodsList && JSON.parse(decodeURIComponent(params.goodsList))
+    this.goods = params.goods && JSON.parse(decodeURIComponent(params.goods)) || {}
+    this.goodsList = params.goodsList && JSON.parse(decodeURIComponent(params.goodsList)) || []
 
-    console.log(this.goods, this.goodsList)
+    console.log('submit onload', this.goods, this.goodsList)
 
     this.getDefauleAddress()
   },
@@ -180,14 +243,16 @@ export default {
     if (address) {
       this.address = address
       wx.removeStorageSync('address')
-    }
-  },
 
-  onPullDownRefresh () {
-    wx.reLaunch({
-      url: '/pages/index/main'
-    })
+      this.checkout()
+    }
   }
+
+  // onPullDownRefresh () {
+  //   wx.reLaunch({
+  //     url: '/pages/index/main'
+  //   })
+  // }
 
 }
 </script>

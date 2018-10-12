@@ -1,32 +1,34 @@
 <template>
   <div class="container">
 
-    <topBar :config='config' title='首页'></topBar>
+    <topBar :config='config'></topBar>
 
     <div class='wrap'>
 
       <div class='tab'>
-        <div class='tab_item s-fc-3' :class='{ checked: item.title === currentClass }' v-for='(item, index) in classList' :key='index' @click='change'>{{item.title}}</div>
+        <div class='tab_item s-fc-3' :class='{ checked: item.title === currentClass }' v-for='(item, index) in classList' :key='index' @click='change(item)'>{{item.title}}</div>
       </div>
 
       <div class='list_wrap'>
         <!-- <div class='row' v-for='(row, i) in list' :key='i'> -->
-          <div class='item' v-for='(item, index) in list' :key='index' @click='goGoods(index)'>
+          <div class='item' v-for='(item, index) in list' :key='index' @click='goGoods(item)'>
 
-            <div class='order_status s-fc-4'>待付款</div>
+            <div class='order_status s-fc-4'>{{item.order_state}}</div>
             
-            <goods :goods='item.goods' :config='goodsConfig'></goods>
+            <goods :goods='goods' :config='goodsConfig' v-for='(goods, i) in item.order_goods' :key='i'></goods>
 
             <div class='order_price'>
               <div>实付款</div>
-              <div class='s-fc-5' style='font-size: 36rpx;'>¥558.00 <span class='s-fc-2' style='font-size: 24rpx;'>运费10.00</span></div>
+              <div class='s-fc-5' style='font-size: 36rpx;'>¥{{item.order_amount}}<span class='s-fc-2' style='font-size: 24rpx;'>运费{{item.shipping_fee}}</span></div>
             </div>
 
             <div class='order_operate s-fc-6'>
-              <div class='btn'>联系客服</div>
-              <!-- <div class='btn'>支付</div> -->
-              <!-- <div class='btn'>退款</div> -->
-              <div class='btn' url='' :hover-stop-propagation='true' @click.stop='goAssess(item, $event)'>评价</div>
+              <button class='btn concat' type='concat' plain='true' @click.stop='stopPropagation'>联系客服</button>
+              <div class='btn' v-if="item.order_state === '未付款'" @click.stop="update(item, 'cancel')">取消订单</div>
+              <div class='btn' v-if="item.order_state === '未付款'" @click.stop='pay(item)'>支付</div>
+              <div class='btn' v-if="item.order_state === '已发货'" @click.stop='update(item)'>确认收货</div>
+              <div class='btn' v-if='!item.use_refund' @click.stop='goRefund(item)'>退款</div>
+              <div class='btn' :hover-stop-propagation='true' @click.stop='goAssess(item, $event)' v-if="item.order_state_id === 40 && !item.evaluation_state">评价</div>
             </div>
           </div>
         <!-- </div> -->
@@ -42,32 +44,34 @@
 import topBar from '@/components/topBar'
 import slide from '@/components/slide'
 import goods from '@/components/goods'
+import api from '@/utils/api'
+import util from '@/utils/util'
 
 export default {
   data () {
     return {
-      userInfo: {},
       config: {
         title: '全部订单',
-        color: '#fff',
-        bg: '#937d8a',
-        backImg: '/static/back_gray.png'
+        color: '#222',
+        bg: '#fff',
+        backImg: '/static/left_arrow.png'
       },
       goodsConfig: {
         padding: '20rpx 0 0'
       },
       classList: [
-        { title: '全部' },
-        { title: '待付款' },
-        { title: '待发货' },
-        { title: '待收货' },
-        { title: '待评价' }
+        { id: null, title: '全部' },
+        { id: 10, title: '待付款' },
+        { id: 20, title: '待发货' },
+        { id: 30, title: '待收货' },
+        { id: 50, title: '待评价' }
       ],
-      list: [
-        { title: 'aksfdosdfojsdfcv', goods: { name: 'sdksdfodsfkoksdf开始大幅攀升地ffsd', price: 143.45234, qty: 3455 } },
-        { title: 'aksfdosdfojsdfcv', goods: { name: 'sdksdfodsfkoksdf开始大幅攀升地ffsd', price: 143.45234, qty: 3455 } }
-      ],
-      currentClass: '全部'
+      list: [],
+      currentClass: '',
+      currentPage: 1,
+      limit: 10,
+      total: 0,
+      canLoad: true
     }
   },
 
@@ -78,41 +82,107 @@ export default {
   },
 
   methods: {
-    goGoods () {
-      wx.navigateTo({
-        url: '/pages/goods/main?id=a'
-      })
+    change (item) {
+      this.currentClass = item.title
+
+      this.total = 0
+      this.list = []
+      this.getList(this.currentPage = 1)
+    },
+    goGoods (item) {
+      wx.navigateTo({ url: `/pages/order/detail/main?id=${item.order_id}` })
+    },
+    stopPropagation () { return false },
+    async pay (item) {
+      let res = await api.payOrder(item.pay_sn)
+
+      let payres = await util.pay(res)
+      console.log('payres', payres)
+
+      if (payres.errMsg === 'requestPayment:ok') {
+        this.canLoad = true
+        this.total = 0
+        this.list = []
+        this.getList(this.currentPage = 0) 
+      } else if (payres === 'requestPayment:fail cancel') {
+        wx.showToast({ title: '支付已取消!', icon: 'none', duration: 2000, })
+      }
+
+      this.list = []
+      this.total = 0
+      this.getList(this.currentPage = 1)
+    },
+    async update (item, status) {
+      let param = {
+        order_id: item.order_id,
+        state_type: status === 'cancel' ? 'order_cancel' : 'order_receive'
+      }
+
+      if (status === 'cancel') param.pay_sn = item.pay_sn
+
+      let res = await api.setOrderStatus(item.order_id, param)
+
+      res === null ? wx.showToast({ title: '更新成功', duration: 2000 }) : wx.showToast({ title: '更新失败', icon: 'none', duration: 2000 })
+
+      this.list = []
+      this.total = 0
+      this.getList(this.currentPage = 1)
+    },
+    goRefund (item) {
+      wx.navigateTo({ url: `/pages/order/refund/main?order=${encodeURIComponent(JSON.stringify(item))}` })
     },
     goAssess (item, e) {
-      wx.navigateTo({
-        url: '/pages/order/assess/main?id=1'
-      })
+      wx.navigateTo({ url: `/pages/order/assess/main?order=${encodeURIComponent(JSON.stringify(item))}` })
     },
-    bindViewTap () {
-      const url = '../logs/main'
-      wx.navigateTo({ url })
-    },
-    getUserInfo () {
-      // 调用登录接口
-      wx.login({
-        success: () => {
-          wx.getUserInfo({
-            success: (res) => {
-              this.userInfo = res.userInfo
-            }
-          })
-        }
-      })
+    async getList (page) {
+      wx.showLoading({ title: 'Loading...' })
+
+      let param = {
+        page,
+        limit: this.limit
+      }
+      if (this.currentClass !== '全部') this.classList.forEach(v => {if (v.title === this.currentClass) param.order_state = v.id})
+
+      let res = await api.getOrderList(param)
+
+      this.list = res.data && this.list.concat(res.data)
+      this.total = res.pagination.total
+      this.canLoad = true
+      wx.hideLoading()
     }
   },
 
   created () {
   },
 
+  onLoad (param) {
+    this.currentClass = param.status
+    console.log('param --', param)
+
+    this.currentPage = 1
+    this.total = 0
+    this.list = []
+    this.canLoad = true
+
+    this.getList(this.currentPage)
+  },
+
   onPullDownRefresh () {
-    wx.reLaunch({
-      url: '/pages/index/main'
+    wx.redirectTo({
+      url: `/pages/order/list/main?status=${this.currentClass}`
     })
+  },
+
+  onReachBottom () {
+    if (this.total <= this.list.length) return wx.showModal({ title: '已经是最后一页了!', showCancel: false })
+
+    if (!this.canLoad) {
+      return null
+    }
+
+    this.canLoad = false
+
+    this.getList(++this.currentPage)
   }
 
 }
@@ -185,6 +255,12 @@ export default {
   border: 1rpx solid #333;
   border-radius: 10rpx;
   text-align: center;
+}
+
+.concat{
+  margin: 0 0 0 24rpx;
+  padding: 0;
+  font-size: 28rpx;
 }
 
 

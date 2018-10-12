@@ -122,7 +122,7 @@ export default {
       this.defaultValue = this.selectedRegion
     },
     // 这里是判断省市名称的显示
-    initAddressPicker (selected) {
+    async initAddressPicker (selected) {
       const that = this
       let provinces = []
       let cities = []
@@ -135,6 +135,10 @@ export default {
       //   provinces.push({ name: regions[i].name, zip_code: regions[i].zip_code, id: regions[i].id })
       // }
       provinces = this.region[0].map(v => { return { id: v[0], name: v[1] } })
+      // let pro = this.region
+      // for (let key in pro) {
+      //   provinces.push({ id: Number(key), name: pro[key] })
+      // }
       // 检查传入的省编码是否有，有的话，选中column第一个游标为province index
       provinces.some((item, index) => {
         if (province && item.id == province.id ) { //item.code == province.code
@@ -145,6 +149,12 @@ export default {
 
       // const rCities = regions[defaultValue[0]].cities
       cities = this.region[ provinces[defaultValue[0]].id ];
+      // let citys = await api.getAddressInfo({
+      //   level: 2,
+      //   parentId: provinces[0].id 
+      // })
+      // console.log(city)
+      // cities =
       if (cities) { 
         // 这里判断这个省级里面有没有市（如数据中的香港、澳门等就没有写市）
         cities = cities.map(v => { return { id: v[0], name: v[1] } });

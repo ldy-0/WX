@@ -6,12 +6,13 @@
     <div class='authorization s-bg-1'>
 
       <div class='company_info'>
-        <img class='logo' src='../../images/authorization/authorize_logo.png' alt='no found' />
+        <img class='logo' src='/static/authorize_logo.png' alt='no found' />
         <div class='desc s-fc-2'>Welcome !</div>
+        <div class='sub_desc s-fc-2'>易·居家居生活馆</div>
       </div>
 
       <button class='authorization_btn s-bg-2' open-type="getUserInfo" plain='true' lang="zh_CN" @getuserinfo="getUserInfo">
-        <img src='../../images/authorization/authorize_icon.png' alt='no found' class='authorization_icon' />
+        <img src='/static/authorize_icon.png' alt='no found' class='authorization_icon' />
         <div class='authorization_desc s-fc-1'>微信登入</div>
       </button>
 
@@ -47,27 +48,29 @@ export default {
 
       if (e.mp.detail.errMsg === 'getUserInfo:ok') {
         wx.showLoading({ title: 'Loading...' })
-        // let params = {}
 
         if (!code) {
           return undefined
         }
 
-        // params.code = code
-        // params.encryptedData = e.detail.encryptedData
-        // params.iv = e.detail.iv
-
         wx.setStorageSync('userInfo', e.mp.detail.userInfo)
-        // wx.setStorageSync('params', params)
 
         let user = await api.setUserInfo({
           wx_name: wx.getStorageSync('userInfo').nickName,
           wx_avatar: wx.getStorageSync('userInfo').avatarUrl
         })
         console.log('setUser', user)
+
         if (!user) {
           let userInfo = await api.getUserInfo()
           userInfo && wx.setStorageSync('userInfo', userInfo)
+
+          if (userInfo && !userInfo.phone) {
+            let res = await this.login()
+            wx.setStorageSync('code', res.code)
+            console.log('phone code--', res.code)
+          }
+
           wx.reLaunch({ url: this.referer })
         }
 
@@ -114,16 +117,21 @@ export default {
 
 .company_info{
   position: absolute;
-  top: 30%;
+  top: 18%;
   left: calc(50% - 300rpx);
   width: 600rpx;
   text-align: center;
 }
 .logo{
-  width: 185rpx;
-  height: 185rpx;
+  width: 300rpx;
+  height: 300rpx;
 }
 .desc{
+  margin: 80rpx 0 0;
+}
+.sub_desc{
+  margin: 10rpx 0 0;
+  font-size: 24rpx;
 }
 
 .authorization_btn{

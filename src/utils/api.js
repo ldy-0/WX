@@ -63,7 +63,9 @@ async function getUserInfo(params){
 // 省市区数据
 async function getAddressInfo(params){
   
-  let res =await request.get('/api/v2/admin/area', params);
+  let res =await request.get('/api/v2/admin/area', params, {
+      'token': wx.getStorageSync('token'),
+  });
 
   if(res.error !== ''){
     return wx.showModal( {title: '提示', content: res.error, showCancel: false, } );
@@ -140,8 +142,8 @@ async function deleteAddress(id){
 }
 
 // home
-async function getBanner(id){
-  let res = await request.get(`/api/v2/member/banner?store_id=${id}`, null, {
+async function getBanner(params){
+  let res = await request.get(`/api/v2/member/banner`, params, {
       'token': wx.getStorageSync('token'),
   });
 
@@ -153,60 +155,60 @@ async function getBanner(id){
 
 }
 
-async function getActive(params){
-  let res = await request.get('/api/v2/member/activity', params, {
-      'token': wx.getStorageSync('token'),
-  });
+// async function getActive(params){
+//   let res = await request.get('/api/v2/member/activity', params, {
+//       'token': wx.getStorageSync('token'),
+//   });
 
-  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res;
-}
+//   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res;
+// }
 
-async function getSeckill(params){
-  let res = await request.get('/api/v2/member/seckill', params, {
-      'token': wx.getStorageSync('token'),
-  });
+// async function getSeckill(params){
+//   let res = await request.get('/api/v2/member/seckill', params, {
+//       'token': wx.getStorageSync('token'),
+//   });
 
-  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res;
-}
+//   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res;
+// }
 
-// food
-async function getStoreClass(params){
+// goods 
+async function getGoodsClass(id, params){
 
-  let res = await request.get('/api/v2/member/storeclass', params, {
-      'token': wx.getStorageSync('token'),
-  });
-
-  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
-}
-
-async function getStoreList(params){
-
-  let res = await request.get('/api/v2/member/store', params, {
-      'token': wx.getStorageSync('token'),
-  });
-
-  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res;
-
-}
-
-async function getStore(id, params){
-
-  let res = await request.get(`/api/v2/member/storeinfo/${id}`, null, {
+  let res = await request.get(`/api/v2/member/storegc/${id}`, params, {
       'token': wx.getStorageSync('token'),
   });
 
   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
-
 }
 
-async function getBusinessCouponList(id, params){
+async function getGoodsList(params){
 
-  let res = await request.get(`/api/v2/member/Coupon/${id}`, null, {
-    'token': wx.getStorageSync('token'),
+  let res = await request.get('/api/v2/member/goodscommon', params, {
+      'token': wx.getStorageSync('token'),
   });
 
-  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res;
+
 }
+
+// async function getStore(id, params){
+
+//   let res = await request.get(`/api/v2/member/storeinfo/${id}`, null, {
+//       'token': wx.getStorageSync('token'),
+//   });
+
+//   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+
+// }
+
+// async function getBusinessCouponList(id, params){
+
+//   let res = await request.get(`/api/v2/member/Coupon/${id}`, null, {
+//     'token': wx.getStorageSync('token'),
+//   });
+
+//   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+// }
 
 
 // goods
@@ -219,14 +221,14 @@ async function getGoods(id, params){
   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
 }
 
-async function getPayMethod(id, params){
+// async function getPayMethod(id, params){
 
-  let res = await request.get(`/api/v2/member/payment/${id}`, params, {
-      'token': wx.getStorageSync('token'),
-  });
+//   let res = await request.get(`/api/v2/member/payment/${id}`, params, {
+//       'token': wx.getStorageSync('token'),
+//   });
 
-  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
-}
+//   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+// }
 
 async function submitOrder(params){
 
@@ -307,23 +309,23 @@ async function checkout(params){
 }
 
 // my
-async function getBuyInfo(params){
+// async function getBuyInfo(params){
 
-  let res = await request.get('/api/v2/member/gradeorder', params, {
-    'token': wx.getStorageSync('token'),
-  });
+//   let res = await request.get('/api/v2/member/gradeorder', params, {
+//     'token': wx.getStorageSync('token'),
+//   });
 
-  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
-}
+//   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+// }
 
-async function buy(params){
+// async function buy(params){
 
-  let res = await request.post('/api/v2/member/gradeorder', params, {
-    'token': wx.getStorageSync('token'),
-  });
+//   let res = await request.post('/api/v2/member/gradeorder', params, {
+//     'token': wx.getStorageSync('token'),
+//   });
 
-  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
-}
+//   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+// }
 
 async function getOrderList(params){
 
@@ -331,7 +333,7 @@ async function getOrderList(params){
     'token': wx.getStorageSync('token'),
   });
 
-  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res;
 }
 
 async function getOrderInfo(id, params){
@@ -342,6 +344,7 @@ async function getOrderInfo(id, params){
 
   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data[0];
 }
+
 
 async function setOrderStatus(type, params){
 
@@ -358,8 +361,75 @@ async function getCommentList(params){
     'token': wx.getStorageSync('token'),
   });
 
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res;
+
+}
+
+async function getHelp(params){
+
+  let res = await request.get('/api/v2/member/help', params, {
+    'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
+async function setCustommadeinfo(params){
+
+  let res = await request.post('/api/v2/member/custommadeinfo', params, {
+    'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
+async function getCustommadeinfo(params){
+
+  let res = await request.get('/api/v2/member/custommadeinfo', params, {
+    'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
+// refund
+async function setRefund(params){
+
+  let res = await request.post('/api/v2/member/refundreturn', params, {
+    'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+}
+
+// afterService
+async function getAfterServiceList(params){
+
+  let res = await request.get('/api/v2/member/refundreturn', params, {
+    'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res;
+
+}
+
+async function getAfterService(id, params){
+
+  let res = await request.get(`/api/v2/member/refundreturn/${id}`, params, {
+    'token': wx.getStorageSync('token'),
+  });
+
   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
 
+}
+
+async function cancelRefund(id, params){
+
+  let res = await request.put('/api/v2/member/refundreturn/' + id, params, {
+    'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
 }
 
 export default {
@@ -374,14 +444,14 @@ export default {
   updateAddress,
   deleteAddress,
   getBanner, // home
-  getActive,
-  getSeckill,
-  getStoreList, // food
-  getStoreClass,
-  getStore,
-  getBusinessCouponList,
+  // getActive,
+  // getSeckill,
+  getGoodsList, // food
+  getGoodsClass,
+  // getStore,
+  // getBusinessCouponList,
   getGoods, // goods
-  getPayMethod,
+  // getPayMethod,
   submitOrder,
   payOrder,
   assess,
@@ -390,10 +460,17 @@ export default {
   updateCart,
   deleteCart,
   checkout,
-  getBuyInfo, // my
-  buy,
+  // getBuyInfo, // my
+  // buy,
   getOrderList,
   getOrderInfo,
   setOrderStatus,
   getCommentList,
+  getHelp,
+  setCustommadeinfo,
+  getCustommadeinfo,
+  setRefund,
+  getAfterServiceList,
+  getAfterService,
+  cancelRefund,
 }

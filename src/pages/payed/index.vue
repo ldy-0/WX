@@ -7,7 +7,7 @@
 
       <div style='height: 200rpx; background: #786578; overflow: hidden;'>
         <div style='display: flex; justify-content: center; align-items: center; margin: 30rpx auto;'>
-          <image class='package_img' src='/static/package.png' />
+          <image class='package_img' src='/static/package.png' mode='aspectFill' />
           <div class='s-fc-6' style='margin-left: 60rpx; text-align: center;'>
             <div style='font-size: 32rpx;'>买家已付款</div>
             <div style='margin: 10rpx 0 0;'>您的包裹已整装待发</div>
@@ -20,82 +20,76 @@
         <view class="address_info" >
           <view class="grow" style='flex-grow: 1;'>
             <view class="user_info s-fc-7">
-              <view class="name">收货人：address.consignee</view>
-              <view class="phone">address.phone</view>
+              <view class="name">收货人：{{address.name}}</view>
+              <view class="phone">{{address.phone}}</view>
             </view>
-            <view class="active_address s-fc-7">收货地址：address.detailksdfjk士大夫可适当放宽就是东方开始大批佛龛山东分局JFKD精神科大夫就的方式时刻提防sdsfdjk</view>
+            <view class="active_address s-fc-7">收货地址：{{address.address}}</view>
           </view>
         </view>
 
       </view>
       
-      <div class='goods_info'>
-        <image class='goods_thub' />
+      <div class='goods_info' v-for='(item, index) in order.order_goods' :key='index'>
+        <image class='goods_thub' :src='item.goods_image' mode='aspectFill' />
         <div class='goods_detail'>
-          <div class='goods_name'>{{goods.name}}</div>
-          <div class='goods_price s-fc-4'>{{goods.price}}</div>
+          <div class='goods_name'>{{item.goods_name}}</div>
+          <div class='goods_price s-fc-4'>{{item.goods_pay_price}}</div>
           <div class='s-fc-5' style='margin: 20rpx 0 0; font-size: 24rpx;'>
             <span>数量</span>
-            <span style='margin-left: 170rpx;'>{{goods.qty}}</span>
+            <span style='margin-left: 170rpx;'>{{item.goods_num}}</span>
           </div>
         </div>
       </div>
-      <!-- <goods :goods='goods' :config='goodsConfig'></goods> -->
 
       <div style='height: 168rpx; margin: 2rpx 0 0; padding: 20rpx; background: #fff;'>
-        <div>合计：<span class='s-fc-9' style='font-size: 37rpx; font-weight: bold;'>¥100.00</span></div>
+        <div>合计：<span class='s-fc-9' style='font-size: 37rpx; font-weight: bold;'>¥{{order.order_amount}}</span></div>
         <div style='display: flex; justify-content: space-around; align-items: cener; margin: 50rpx 0 0;'>
           <navigator class='btn' :url='detailUrl'>查看订单</navigator>
-          <navigator class='btn' url='/pages/index/main'>返回首页</navigator>
+          <navigator class='btn' open-type='reLaunch' url='/pages/index/main'>返回首页</navigator>
         </div>
       </div> 
 
       <div class='s-fc-7' style='height: 140rpx; margin: 20rpx 0 0; padding: 20rpx; font-size: 20rpx; background: #fff;'>
-        <div style='margin-bottom: 20rpx;'>订单编号：25895490002450047</div>
-        <div style='margin-bottom: 20rpx;'>下单时间：2018-08-30  16:49</div>
-        <div style='margin-bottom: 20rpx;'>付款时间：2018-08-30  16:49</div>
+        <div style='margin-bottom: 20rpx;'>订单编号：{{order.order_sn}}</div>
+        <div style='margin-bottom: 20rpx;'>下单时间：{{order.add_time}}</div>
+        <div style='margin-bottom: 20rpx;'>付款时间：{{order.payment_time}}</div>
       </div>
 
-    <!-- <a href="/pages/counter/main" class="counter">去往Vuex示例页面</a> -->
     </div>
   </div>
 </template>
 
 <script>
 import topBar from '@/components/topBar'
-import slide from '@/components/slide'
+import api from '@/utils/api'
 
 export default {
   data () {
     return {
-      userInfo: {},
       config: {
         title: '购买完成',
         color: '#222',
         bg: '#fff'
         // backImg: '/static/left_arrow.png'
       },
-      goods: {},
-      isVirtual: true,
+      id: null, // 订单Id
+      address: {},
+      order: {},
       date: '',
       detailUrl: ''
     }
   },
 
   components: {
-    topBar,
-    slide
+    topBar
   },
 
   methods: {
-    setDate (e) {
-      this.date = e.mp.detail.value
-      console.log(e)
-    },
-    add (item) {
-      wx.navigateTo({
-        url: '/pages/address/add/main'
-      })
+    async getOrderDetail (item) {
+      let res = await api.getOrderInfo(this.id, null)
+
+      this.order = res
+      this.address = res.order_reciver_info
     }
   },
 
@@ -104,20 +98,17 @@ export default {
 
   onLoad (params) {
     console.log(params.id)
-    this.goods = {
-      name: '看到放送控股快速打开v功德佛楼盘数量大幅v哦的上空飞过v哦梵蒂冈v顺利破发v看到法国v端口sf',
-      price: 123324930,
-      qty: 192334,
-      scale: 34504935
-    }
-    this.detailUrl = '/pages/order/detail/main?id=' + this.goods.id
-  },
+    this.id = params.id
 
-  onPullDownRefresh () {
-    wx.reLaunch({
-      url: '/pages/index/main'
-    })
+    this.getOrderDetail()
+    this.detailUrl = '/pages/order/detail/main?id=' + this.id
   }
+
+  // onPullDownRefresh () {
+  //   wx.reLaunch({
+  //     url: '/pages/index/main'
+  //   })
+  // }
 
 }
 </script>

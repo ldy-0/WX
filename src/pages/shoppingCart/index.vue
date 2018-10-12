@@ -24,12 +24,12 @@
             <view class='big_circle' v-else></view>
         </view>
 
-        <image class='goods_thub' />
+        <image class='goods_thub' :src='item.goods_image' />
 
         <div class='goods_detail'>
-          <div class='goods_name s-fc-2'>{{item.name}}</div>
+          <div class='goods_name s-fc-2'>{{item.goods_name}}</div>
           <div class='goods_number'>
-            <div class='goods_price s-fc-9'>{{item.price}}</div>
+            <div class='goods_price s-fc-9'>{{item.goods_price}}</div>
             <div class='count'>
               <div class='add' @click='minus(item)'>-</div>
               <div class='number s-fc-8' v-text='item.qty'></div>
@@ -73,7 +73,7 @@ export default {
       goodsConfig: {
         margin: '20rpx 0 0'
       },
-      list: {},
+      list: [],
       isCheckAll: false,
       isEdited: true,
       canChange: true,
@@ -88,12 +88,8 @@ export default {
   },
 
   computed: {
-    count () {
-      return this.list.reduce((p, v) => v.checked ? p + v.qty : p, 0)
-    },
-    price () {
-      return this.list.reduce((p, v) => v.checked ? this.add_minus(p, v.price * v.qty) : p, 0)
-    }
+    count () { return this.list.reduce((p, v) => v.checked ? p + v.qty : p, 0) },
+    price () { return this.list.reduce((p, v) => v.checked ? this.add_minus(p, Number(v.goods_total)) : p, 0) }
   },
 
   methods: {
@@ -107,18 +103,15 @@ export default {
       this.isCheckAll = !this.isCheckAll
     },
     minus (item) {
-      if (item.qty <= 1) {
-        return wx.showModal({ title: '提示', content: '商品数量不能低于1', showCancel: false })
-      }
+      if (item.qty <= 1) return wx.showModal({ title: '提示', content: '商品数量不能低于1', showCancel: false })
 
       if (!this.canChange) {
         return null
       }
       this.canChange = false
 
-      this.update(item.qty - 1)
       item.qty--
-      this.canChange = true
+      this.update(item)
     },
     add (item) {
       if (!this.canChange) {
@@ -126,9 +119,8 @@ export default {
       }
       this.canChange = false
 
-      this.update(item.qty + 1)
       item.qty++
-      this.canChange = true
+      this.update(item)
     },
     deleteItem () {
       let _this = this
@@ -136,21 +128,7 @@ export default {
         title: '提示',
         content: '确认删除吗？',
         async success (e) {
-
-          let list = _this.list
-          for (let i = list.length - 1; i >= 0; i--) {
-            if (list[i].checked) {
-              // let res = await api.deleteCart(list[i].cart_id, {
-              //   cart_id: list[i].cart_id
-              // })
-
-              // if (!res) {
-              //   return wx.showToast({ title: '删除失败', icon: 'none', duration: 2000, })
-              // };
-
-              list.splice(i, 1)
-            }
-          }
+          _this.deleteCart()
         },
         fail (e) {console.log(e)}
       })
@@ -169,47 +147,85 @@ export default {
       m = 10 ** Math.max(len1, len2)
       return (nub1 * m + nub2 * m) / m
     },
-    update (qty) {
-      console.log('update ', qty)
+    async update (item) {
+      wx.showLoading({ title: '更新中...' })
+
+      console.log('update ', item)
+      let param = {
+        cart_id: item.cart_id,
+        quantity: item.qty,
+        store_id: 1
+      }
+      let res = await api.updateCart(item.cart_id, param)
+      res.store_cart_list ? item.goods_num = item.qty : item.qty = item.goods_num
+
+      this.canChange = true
+      wx.hideLoading()
+    },
+    async deleteCart () {
+      let list = this.list
+      for (let i = list.length - 1; i >= 0; i--) {
+        if (list[i].checked) {
+          let res = await api.deleteCart(list[i].cart_id, {
+            cart_id: list[i].cart_id,
+            store_id: 1
+          })
+
+          // if (!res) {
+          //   return wx.showToast({ title: '删除失败', icon: 'none', duration: 2000, })
+          // };
+
+          // list.splice(i, 1)
+        }
+      }
+      this.getList()
     },
     submit () {
       wx.navigateTo({
         url: `/pages/submit/main?goodsList=${encodeURIComponent(JSON.stringify(this.list.filter(v => v.checked)))}`
       })
+    },
+    async getList () {
+      wx.showLoading({ title: 'Loading...' })
+
+      let res = await api.getCartList({ store_id: 1 })
+      let list = res.store_cart_list['1']
+
+      list.forEach(v => { v.checked = false, v.qty = v.goods_num })
+      // let res = [
+      //   {
+      //     name: '看到放送控股快速打开v功德佛楼盘数量大幅v哦的上空飞过v哦梵蒂冈v顺利破发v看到法国v端口sf',
+      //     price: 123,
+      //     qty: 1,
+      //     scale: 34504935
+      //   },
+      //   {
+      //     name: '看到放送控股快速打开v功德佛楼盘数量大幅v哦的上空飞过v哦梵蒂冈v顺利破发v看到法国v端口sf',
+      //     price: 12,
+      //     qty: 19,
+      //     scale: 34504935
+      //   }
+      // ]
+
+      this.list = list
+      wx.hideLoading()
     }
   },
 
   created () {
   },
 
-  onShow () {
-    let res = [
-      {
-        name: '看到放送控股快速打开v功德佛楼盘数量大幅v哦的上空飞过v哦梵蒂冈v顺利破发v看到法国v端口sf',
-        price: 123,
-        qty: 1,
-        scale: 34504935
-      },
-      {
-        name: '看到放送控股快速打开v功德佛楼盘数量大幅v哦的上空飞过v哦梵蒂冈v顺利破发v看到法国v端口sf',
-        price: 12,
-        qty: 19,
-        scale: 34504935
-      }, {
-        name: '看到放送控股快速打开v功德佛楼盘数量大幅v哦的上空飞过v哦梵蒂冈v顺利破发v看到法国v端口sf',
-        price: 2,
-        qty: 1,
-        scale: 34504935
-      }
-    ]
+  async onShow () {
+    this.list = []
+    this.isCheckAll = false
 
-    res.forEach(v => { v.checked = false })
-    this.list = res
+    this.getList()
+    
   },
 
   onPullDownRefresh () {
     wx.reLaunch({
-      url: '/pages/index/main'
+      url: '/pages/shoppingCart/main'
     })
   }
 
@@ -224,6 +240,7 @@ export default {
 .wrap{
   width: 100%;
   height: 100%;
+  margin-bottom: 100rpx;
   font: 28rpx 'PingFang-SC-Medium'; 
   color: #000;
   background: #f5f5f5;
@@ -260,6 +277,7 @@ export default {
   background: #ccc;
 }
 .goods_detail{
+  flex-grow: 1;
   margin-left: 20rpx;
   overflow: hidden;
 }
@@ -412,34 +430,9 @@ export default {
   background: #937d8a;
 }
 
-.setting{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 149rpx;
-  padding: 0 23rpx;
-  background: #fff;
-}
-.comment{
-  margin: 22rpx 0 0;
-  font-size: 26rpx;
-}
-
 .inline{
   flex-grow: 1;
   height: 101rpx;
-}
-
-.save_btn{
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 88rpx;
-  line-height: 88rpx;
-  border-radius: 0;
-  font-size: 36rpx;
-  background: #786578;
-  text-align: center;
 }
 
 .right_arrow{

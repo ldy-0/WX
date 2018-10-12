@@ -8,50 +8,52 @@
       <slide :config='slideConfig'></slide>
 
       <div class='goods_info'>
-        <div class='goods_name'>{{goods.name}}</div>
-        <div class='goods_price s-fc-4'>{{goods.price}}</div>
-        <div style='display: flex; align-items: center;' v-if='isVirtual'>
+        <div class='goods_name'>{{goods.goods_name}}</div>
+        <div class='goods_price s-fc-4'>{{goods.goods_price}}</div>
+        <div style='display: flex; align-items: center;' v-if='isDesign'>
           <image style='width: 26rpx; height: 26rpx;' src='/static/goods/icon_pingfen@2x.png' />
-          <div>4.5</div>
+          <div class='s-fc-7'>{{goods.SKUList && goods.SKUList[0].evaluation_good_star}}</div>
         </div>
         <div class='s-fc-5' style='margin: 20rpx 0 0; font-size: 24rpx;' v-else>
-          <span>{{goods.scale}}</span>
-          <span style='margin-left: 170rpx;'>{{goods.nub}}</span>
+          <span>销量：{{getSale}}</span>
+          <span style='margin-left: 170rpx;'>库存：{{getStorage}}</span>
         </div>
       </div>
 
-      <div class='row' v-if='!isVirtual' @click='showModal'>
+      <div class='row' v-if='!isDesign' @click='showModal'>
         <div>规格</div>
         <image class='right_arrow' src='/static/my/right_arrow.png' />
       </div>
 
       <div class='comment_wrap'>
-        <div>宝贝评价(9666)</div>
+        <div>宝贝评价({{commentTotal}})</div>
         <div v-for='(item, index) in commentList' :key='index'>
           <div style='display: flex; margin: 20rpx 0 0;'>
-            <image class='user_img' src='' />
-            <div class='user_name' style='margin-left: 20rpx;'>nnamenamenamenameame</div>
+            <image class='user_img' :src='item.geval_frommemberavatar' />
+            <div class='user_name' style='margin-left: 20rpx;'>{{item.geval_frommembername}}</div>
           </div>
-          <div style='margin: 10rpx 0 0;'>产品作用很快就凸显出来了，很开心能买到这么好的产品，后期会继续购买继续关注的！</div>
-          <image class='comment_img' src='' />
+          <div style='margin: 10rpx 0 0;'>{{item.geval_content}}</div>
+          <image class='comment_img' :src='img' v-for='(img, i) in item.imgs' :key='i' />
         </div>
-        <div style='height: 100rpx; overflow: hidden;'><div class='btn s-fc-3'>查看评论</div></div>
+        <div style='height: 100rpx; overflow: hidden;'><div class='btn s-fc-3' @click='loadComment'>查看评论</div></div>
       </div>
 
       <div class='detail_wrap'>
         <div style='height: 68rpx; line-height: 68rpx; font-size: 30rpx; color: #333; text-align: center;'>商品详情</div>
-        <div style='margin-bottom: 30rpx;'>如果你无法简洁的表达你的想法，那只能够说明你还不够了解它。--阿尔伯特·爱因斯坦</div>
-        <image class='detail_img' v-for='(item, index) in slideConfig.data' :key='index' />
+        <div v-for='(item, index) in goods.goods_body' :key='index'>
+          <div style='margin-bottom: 30rpx;'>{{item.content}}</div>
+          <image class='detail_img' :src='item.img' mode='aspectFill' />
+        </div>
       </div>
 
-      <div class='bottom_bar' v-if='isVirtual'>
+      <div class='bottom_bar' v-if='isDesign'>
         <div style='flex-grow: 1; display: flex; justify-content: center;'>
           <button class='type_btn' :open-type='barList[0].type' plain='true'>
             <image class='bottom_icon' :src='barList[0].img' />
             <div style='font-size: 20rpx;'>{{barList[0].title}}</div>
           </button>
         </div>
-        <div class='appoinment_btn s-fc-1 s-bg-3' @click="showModal">立即预约</div>
+        <div class='appoinment_btn s-fc-1 s-bg-3' @click="goSubmit">立即预约</div>
       </div>
       <div class='bottom_bar' v-else>
         <div class='left'>
@@ -67,7 +69,7 @@
 
     <div class='modal' v-if='isShowModal'>
       <div class='mask' @click='hideModal'></div>
-      <div class='content_center' v-if='isVirtual'>
+      <div class='content_center' v-if='isAppoinment'>
         <div class='content_title'>
           <div>预约信息</div>
           <image style='width: 24rpx; height: 24rpx; margin-left: 220rpx;' src='/static/goods/close.png' @click='hideModal' />
@@ -82,16 +84,21 @@
 
         <div class='textarea'>
           <textarea placeholder="备注" placeholder-style='margin-left: 30px;' @input='setContent'></textarea>
-          <div class='textarea_count'>0/120</div>
+          <div class='textarea_count'>{{getContentLength}}/120</div>
         </div>
 
-        <div class='submit_btn s-fc-1 s-bg-3' @click='goSubmit'>提交</div>
+        <div class='submit_btn s-fc-1 s-bg-3' @click='submitAppoinment'>提交</div>
       </div>
       <div class='content' v-else>
         <div style='display: flex;'>
-          <image class='goods_thub' src='' />
-          <div class='s-fc-6' style='margin-left: 40rpx; font-size: 37rpx;'>1434</div>
+          <image class='goods_thub' :src='goods.goods_image' mode='aspectFill' />
+          <div class='s-fc-6' style='margin-left: 40rpx; font-size: 37rpx;'>{{getSkuPrice}}</div>
         </div>
+        <scroll-view scroll-y='true' style='height: 240rpx;'>
+          <div class='sku'>
+            <div class='sku_item' :class='{ checked: item.goods_id === sku.goods_id }' v-for='(item, index) in goods.SKUList' :key='index' @click='changeSku(item)'>{{item.goods_spec || '无'}}</div>
+          </div>
+        </scroll-view>
         <div class='modal_row'>
           <div class=''>购买数量</div>
           <div class='count'>
@@ -100,19 +107,17 @@
             <div class='number_box' @click='add'><image src='/static/add.png' style='width: 20rpx; height: 20rpx; margin-left: 20rpx;' /></div>
           </div>
         </div>
-        <div class='modal_row'>温馨提示：项目经理服务最少购买1天。</div>
+        <div class='modal_row' v-if="goods.gc_name === '项目经理' ">温馨提示：项目经理服务最少购买1天。</div>
+        <div class='modal_row' v-else-if="goods.gc_name === '施工员' ">温馨提示：施工员服务最少购买10平。</div>
+        <div class='modal_row' v-else></div>
         <div class='bottom'>
-          <div class='s-fc-1 s-bg-2'>加入购物车</div>
+          <div class='s-fc-1 s-bg-2' @click='addCart'>加入购物车</div>
           <div class='s-fc-1 s-bg-3' @click='goSubmit'>立即购买</div>
         </div>
         <image class='close' src='/static/goods/close.png' @click='hideModal' />
       </div>
     </div>
-    <!-- <form class="form-container">
-      <input type="text" class="form-control" v-model="motto" placeholder="v-model" />
-      <input type="text" class="form-control" v-model.lazy="motto" placeholder="v-model.lazy" />
-    </form> -->
-    <!-- <a href="/pages/counter/main" class="counter">去往Vuex示例页面</a> -->
+    
     </div>
   </div>
 </template>
@@ -120,6 +125,7 @@
 <script>
 import topBar from '@/components/topBar'
 import slide from '@/components/slide'
+import api from '@/utils/api'
 
 export default {
   data () {
@@ -134,30 +140,28 @@ export default {
       slideConfig: {
         height: '750rpx',
         autoplay: false,
-        data: [
-          { img: '/static/toolBar/classify.png' },
-          { img: '/static/toolBar/home.png' }
-        ]
+        data: []
       },
+      id: null,
       goods: {},
-      commentList: [
-        { title: '购物车', phone: 13211111111, img: '' },
-        { title: '我的卡劵', phone: 13111111111, address: 'sfksdfkKSDFM<lsk破开神佛考生的分数都快发送的看法实力派v感慨地说佛v觉得佛教给vi的风景sfsdfjkd', img: '' },
-        { title: '地址管理', img: '', url: 'pages/addressList/main' },
-        { title: '整居定制', img: '' },
-        { title: 'aksfdosdfojsdfcv', img: '' }
-      ],
+      sku: null,
+      commentList: [],
+      commentTotal: 0,
+      commentPage: 1,
       barList: [
-        { title: '客服', img: '/static/goods/shoppingCart.png', type: 'concat' },
-        { title: '购物车', img: '/static/goods/concat.png' }
+        { title: '客服', img: '/static/goods/concat.png', type: 'concat' },
+        { title: '购物车', img: '/static/goods/shoppingCart.png' }
       ],
-      isVirtual: false,
+      isDesign: false,
+      isAppoinment: false, // 是否为预约
+      next: '', //
       isShowModal: false,
       appoinment: {
         date: '',
         content: ''
       },
-      currentDate: ''
+      currentDate: '',
+      endDate: ''
     }
   },
 
@@ -166,45 +170,135 @@ export default {
     slide
   },
 
+  computed: {
+    getSale () { return this.goods.SKUList && this.goods.SKUList.reduce((p, v) => p + v.goods_salenum, 0) },
+    getStorage () { return this.goods.SKUList && this.goods.SKUList.reduce((p, v) => p + v.goods_storage, 0) },
+    getSkuPrice () { return this.sku && this.sku.goods_price },
+    getContentLength () { return this.appoinment.content.length }
+  },
+
   methods: {
-    showModal () {
-      this.isShowModal = true
+    showModal () { this.isShowModal = true },
+    hideModal () { this.isShowModal = false },
+    changeSku (item) {
+      this.sku = item
+      this.goods.qty = 1
     },
-    hideModal () {
-      this.isShowModal = false
+    minus () { this.goods.qty > 1 ? this.goods.qty-- : wx.showModal({ content: '商品数量至少为1', showCancel: false }) },
+    add () { this.goods.qty++ },
+    async addCart () {
+      if (this.goods.gc_name === '施工员' && this.goods.qty < 10) {
+        return wx.showModal({ content: '施工员服务最少购买10平。' })
+      }
+
+      if (!this.isAppoinment && ['家政保洁', '项目经理', '施工员'].indexOf(this.goods.gc_name) !== -1) {
+        this.isAppoinment = true
+        this.next = 'cart'
+        return this.initDate()
+      }
+      this.isAppoinment = false
+
+      let param = {
+        goods_id: this.sku.goods_id,
+        quantity: this.goods.qty,
+        remark: [this.appoinment.date, this.appoinment.content]
+      }
+
+      let res = await api.addCart(param)
+      res ? wx.showToast({ title: '添加成功', duration: 2000 }) : wx.showToast({ title: '添加失败', icon: 'none', duration: 2000 })
+      this.appoinment.date = '' // clear appoinment
+      this.appoinment.content = ''
+    },
+    goSubmit () {
+      if (this.goods.gc_name === '施工员' && this.goods.qty < 10) {
+        return wx.showModal({ content: '施工员服务最少购买10平。' })
+      }
+
+      if (!this.isAppoinment && ['家政保洁', '项目经理', '施工员'].indexOf(this.goods.gc_name) !== -1) {
+        this.isAppoinment = true
+        this.next = 'submit'
+        return this.initDate()
+      }
+      this.isAppoinment = false
+
+      this.appoinment.date = '' // clear appoinment
+      this.appoinment.content = ''
+
+      this.goods.sku = this.sku
+      console.log('sumbit', this.goods)
+      wx.navigateTo({
+        url: `/pages/submit/main?goods=${encodeURIComponent(JSON.stringify(this.goods))}`
+      })
+    },
+    submitAppoinment () {
+      console.log('appoinment', this.goods, this.appoinment)
+      if (this.appoinment.date === '' || this.appoinment.content === '') {
+        return wx.showModal({ content: '请完善预约信息', showCancel: false })
+      }
+
+      this.goods.appoinment = JSON.parse(JSON.stringify(this.appoinment))
+      this.next === 'cart' ? this.addCart() : this.goSubmit()
     },
     setDate (e) {
       this.appoinment.date = e.mp.detail.value
       console.log(this.appoinment)
     },
     setContent (e) {
+      if (this.appoinment.content.length >= 120) {
+        return wx.showModal({ content: '内容不能超过120个字符', showCancel: false })
+      }
+
       this.appoinment.content = e.mp.detail.value
       console.log(this.appoinment)
-    },
-    minus () {
-      this.goods.qty > 1 ? this.goods.qty-- : wx.showModal({ content: '商品数量至少为一', showCancel: false })
-    },
-    add () {
-      this.goods.qty++
-      console.log(this.goods)
-    },
-    goSubmit () {
-      console.log('sumbit')
-      wx.navigateTo({
-        url: `/pages/submit/main?goods=${encodeURIComponent(JSON.stringify(this.goods))}`
-      })
     },
     go (item) {
       if (item.title !== '购物车') return null
 
-      wx.navigateTo({
-        url: '/pages/shoppingCart/main'
-      })
+      wx.navigateTo({ url: '/pages/shoppingCart/main' })
     },
     initDate () {
       this.currentDate = new Date().toISOString().split('T')[0]
-      this.endDate = this.currentDate.split('-').reduce((p, v) => { return `${p}-${Number(v) > 31 ? Number(v) + 1 : v}` }, '')
+      // this.endDate = this.currentDate.split('-').reduce((p, v) => { return `${p}-${Number(v) > 31 ? Number(v) + 1 : v}` }, '')
+      let date = this.currentDate.split('-')
+      this.endDate = Number(date[1]) === 12 ? `${Number(date[0]) + 1}-1-${date[2]}` : `${date[0]}-${Number(date[1]) + 1}-${date[2]}`
       console.log(this.currentDate, this.endDate)
+    },
+    async getGoods () {
+      wx.showLoading({ title: 'Loading...' })
+
+      let res = await api.getGoods(this.id)
+
+      res.qty = 1
+      // res.appoinment = this.appoinment
+      this.goods = res
+      this.sku = this.goods.SKUList[0]
+      this.slideConfig.data = res.goodsimagesList.map(v => { return { img: v.goodsimage_url } })
+
+      this.getCommentList(this.commentPage = 1)
+
+      wx.hideLoading()
+    },
+    loadComment () {
+      this.getCommentList(++this.commentPage)
+    },
+    async getCommentList () {
+      let list = this.goods.SKUList
+
+      for (let i = 0, len = list.length; i < len; i++) {
+        let param = {
+          goods_id: list[i].goods_id,
+          page: this.commentPage,
+          limit: 2
+        }
+
+        let res = await api.getCommentList(param)
+
+        res.data.forEach(function (v) {
+          v.imgs = v.geval_image !== '' ? JSON.parse(v.geval_image) : []
+        })
+        this.commentList = this.commentList.concat(res.data)
+        this.commentTotal = res.pagination.total
+      }
     }
   },
 
@@ -218,22 +312,24 @@ export default {
   },
 
   onLoad (params) {
-    this.initDate()
-    let res = {
-      name: '看到放送控股快速打开v功德佛楼盘数量大幅v哦的上空飞过v哦梵蒂冈v顺利破发v看到法国v端口sf',
-      price: 123324930,
-      nub: 192334,
-      scale: 34504935
-    }
+    this.id = params.id
+    this.isDesign = params.isDesign
 
-    res.qty = 1
-    this.goods = res
+    this.isAppoinment = false
+    this.isShowModal = false
+    this.sku = null
+    this.commentList = []
+
+    this.getGoods()
   },
 
-  onPullDownRefresh () {
-    wx.reLaunch({
-      url: '/pages/index/main'
-    })
+  // onPullDownRefresh () {
+  //   wx.reLaunch({
+  //     url: '/pages/index/main'
+  //   })
+  // }
+  onShareAppMessage () {
+
   }
 
 }
@@ -287,7 +383,7 @@ export default {
 .comment_img{
   width: 226rpx;
   height: 226rpx;
-  margin: 20rpx 0 0;
+  margin: 20rpx 6rpx 0 0;
   background: #ccc;
 }
 .more{
@@ -359,6 +455,7 @@ export default {
   width: 560rpx;
   height: 76rpx;
   line-height: 76rpx;
+  border-radius: 10rpx;
   font-size: 30rpx;
   text-align: center;
 }
@@ -379,7 +476,7 @@ export default {
     position: fixed;
     bottom: 0;
     width: 100%;
-    height: 456rpx;
+    height: 700rpx;
     padding: 20rpx;
     background: #fff;
   }
@@ -395,6 +492,28 @@ export default {
     height: 180rpx;
     background: #ccc;
   }
+
+  .sku{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 30rpx 0 0;
+    padding: 0 30rpx;
+  }
+  .sku_item{
+    flex-shrink: 0;
+    box-sizing: border-box;
+    min-width: 150rpx;
+    margin: 10rpx 30rpx 10rpx 0;
+    padding: 15rpx 30rpx;
+    border-radius: 26rpx;
+    font-size: 22rpx;
+    text-align: center;
+  }
+  .checked{
+    background: #eee;
+  }
+
   .modal .modal_row{
     display: flex;
     justify-content: space-between;
@@ -458,6 +577,8 @@ export default {
     border-radius: 10rpx;
   }
   textarea{
+    width: 630rpx;
+    height: 200rpx;
     padding: 30rpx 0 0 30rpx;
   }
   .textarea_count{
@@ -555,6 +676,9 @@ export default {
 }
 .s-fc-6{
   color: #af0000;
+}
+.s-fc-7{
+  color: #a4a4a4;
 }
 .s-bg-2{
   background: #d6c1d2;

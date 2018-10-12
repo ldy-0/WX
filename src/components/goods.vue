@@ -2,14 +2,14 @@
   <div class='wrap'>
       <div class='goods_info' :style="{ margin: config && config.margin || '', padding: config && config.padding }">
 
-        <image class='goods_thub' />
+        <image class='goods_thub' :src='goods.goods_image' />
 
         <div class='goods_detail'>
-          <div class='goods_name s-fc-1'>{{goods.name}}</div>
-          <div class='goods_price s-fc-2'>{{config && config.hidePrice ? '' : goods.price}}</div>
+          <div class='goods_name s-fc-1'>{{goods.sku && goods.sku.goods_name || goods.goods_name}}</div>
+          <div class='goods_price s-fc-2'>{{config && config.hidePrice ? '' : goods.sku && goods.sku.goods_price || goods.goods_price}}</div>
           <div class='goods_number s-fc-3'>
             <span>数量</span>
-            <span style='margin-left: 170rpx;'>{{goods.qty}}</span>
+            <span style='margin-left: 170rpx;'>{{goods.goods_num}}</span>
           </div>
         </div>
 

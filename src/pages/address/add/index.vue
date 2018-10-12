@@ -9,10 +9,10 @@
 
           <view class='row_flex'>收件人： <input type='text' name='name' class='inline s-fc-4' @input='setName' :value='address.address_realname' /></view>
 
-          <view class='row_flex'>联系方式：<input type='text' name='phone' class='inline s-fc-4' @input='setPhone' :value='address.address_mob_phone' /></view>
+          <view class='row_flex'>联系方式：<input type='text' name='phone' class='inline s-fc-4' v-model='address.address_mob_phone' /></view>
 
           <view class="row_flex">
-              <view>所在地区：</view>
+              <view style='width: 140rpx; flex-shrink: 0;'>所在地区：</view>
               <view style='display: flex;' @click='showAddressPicker'> 
                   <view class='flex'>
                       <view>{{address.province ? address.province.name : '省'}}</view>
@@ -30,7 +30,7 @@
               <areap ref='area' @getArea='getArea'></areap>
           </view>
 
-          <view class='row_flex'>详细地址：<input type='text' name='detail' class='inline s-fc-4' @input='setStreet' :value='address.address_detail' /></view>
+          <view class='row_flex'>详细地址：<input type='text' name='detail' class='inline s-fc-4' v-model='address.address_detail' /></view>
 
           <view class='setting'>
               <view>
@@ -68,6 +68,7 @@ export default {
         address_realname: '',
         address_mob_phone: '',
         address_detail: '',
+        address_info: '',
         address_is_default: '',
         province: null,
         city: null,
@@ -84,12 +85,15 @@ export default {
 
   methods: {
     setName (e) {
-      if (e.mp.detail.value.length > 15) {
+      let v = e.mp.detail.value
+      console.log('phone', this.address)
+      if (v.length > 15) {
         wx.showToast({ title: '用户名不能超过15个字符', icon: 'none', duration: 2000, })
         return this.address.address_realname
       }
-      this.address.address_realname = e.mp.detail.value
+      this.address.address_realname = v
     },
+    // setPhone (e) { this.address.address_mob_phone = e.mp.detail.value },
     showAddressPicker () { this.$refs.area.openAddressPicker() },
     getArea (e) {
       this.address.province = e.province
@@ -105,8 +109,8 @@ export default {
       if (v.phone === '' || !phone.test(v.phone)) {
         return wx.showToast({ title: '手机号格式不正确!', icon: 'none', duration: 1000 })
       }
-      if (!this.city) {
-        // return wx.showToast({ title: '请选择所在地区!', icon: 'none', duration: 1000 })
+      if (!this.address.city) {
+        return wx.showToast({ title: '请选择所在地区!', icon: 'none', duration: 1000 })
       }
       if (!v.detail) {
         return wx.showToast({ title: '请完善详细地址!', icon: 'none', duration: 1000 })
@@ -116,16 +120,17 @@ export default {
     },
     async save (v, id) {
       console.log('info', v, id)
+      let {province, city, area} = this.address
       let param = {
         address_realname: v.name,
         address_mob_phone: v.phone,
         address_tel_phone: v.phone,
         address_detail: v.detail,
-        area_info: v.detail,
+        area_info: `${province.name}-${city.name}-${area.name}-${v.detail}`,
         address_is_default: Number(v.isDefault),
-        province_id: 1,
-        city_id: 36,
-        area_id: 535
+        province_id: province.id,
+        city_id: city.id,
+        area_id: area.id
       }
 
       let res = id ? await api.updateAddress(id, param) : await api.setAddress(param)
@@ -175,7 +180,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 180rpx;
+  width: 170rpx;
   margin-right: 20rpx;
 }
 
@@ -184,7 +189,7 @@ export default {
   align-items: center;
   height: 100rpx;
   margin-bottom: 2rpx;
-  padding-left: 23rpx;
+  padding: 0 40rpx 0 23rpx;
   background: #fff;
 }
 

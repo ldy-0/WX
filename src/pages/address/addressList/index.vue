@@ -52,13 +52,7 @@ export default {
         bg: '#fff',
         backImg: '/static/left_arrow.png'
       },
-      list: [
-        // { name: '购物车', phone: 13211111111, img: '' },
-        // { name: '我的卡劵', phone: 13111111111, address: 'sfksdfkKSDFM<lsk破开神佛考生的分数都快发送的看法实力派v感慨地说佛v觉得佛教给vi的风景sfsdfjkd', img: '' },
-        // { title: '地址管理', img: '', url: 'pages/addressList/main' },
-        // { title: '整居定制', img: '' },
-        // { title: 'aksfdosdfojsdfcv', img: '' }
-      ],
+      list: [],
       currentPage: 1,
       limit: 2
     }
@@ -71,8 +65,15 @@ export default {
 
   methods: {
     go (item) {
+      if (item) {
+        let arr = item.area_info.split('-')
+        item.province = { id: item.province_id, name: arr[0] }
+        item.city = { id: item.city_id, name: arr[1] }
+        item.area = { id: item.area_id, name: arr[2] }
+      }
+
       wx.navigateTo({
-        url: '/pages/address/add/main?item=' + encodeURIComponent(JSON.stringify(item))
+        url: `/pages/address/add/main?item=${encodeURIComponent(JSON.stringify(item))}`
       })
     },
     selectAddress (item) {
@@ -82,11 +83,13 @@ export default {
       wx.navigateBack({ detail: 1 })
     },
     deleteAddress (item) {
+      let _this = this
       wx.showModal({
         content: '确认删除该地址吗?',
         async success (e) {
-          let res = e.confirm && await api.deleteAddress(item.address_id) //FIXME: 
-          console.log(e, res)
+          let res = e.confirm && await api.deleteAddress(item.address_id)
+          console.log('del success')
+          _this.getList(_this.currentPage = 1)
         }
       })
     },
@@ -101,6 +104,7 @@ export default {
       if (!res) return null
 
       this.list = res
+      console.log('list --', this.list)
     }
   },
 

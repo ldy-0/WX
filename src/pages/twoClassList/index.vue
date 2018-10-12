@@ -17,16 +17,17 @@
         <block v-for="(row, index) in classList" :key='index'>
           <swiper-item >
             <view class='class_row'>
-              <view class='class_item checked s-fc-6' v-for='(item, i) in row' :key='i'>{{item.title}}</view>
+              <view class='class_item s-fc-6' :class='{ checked: item.id === classId }' v-for='(item, i) in row' :key='i' @click='changeClass(item)'>{{item.title}}</view>
             </view>
           </swiper-item>
         </block>
       </swiper>
+
       <swiper class='class_wrap' :indicator-dots="false" :autoplay="false" :interval="interval" :duration="2000">
-        <block v-for="(row, index) in classList" :key='index'>
+        <block v-for="(row, index) in twoClassList" :key='index'>
           <swiper-item >
             <view class='class_row'>
-              <view class='class_item checked s-fc-6' v-for='(item, i) in row' :key='i'>{{item.title}}</view>
+              <view class='class_item s-fc-6' :class='{ checked: item.id === twoClassId }' v-for='(item, i) in row' :key='i' @click='changeClass(item)'>{{item.title}}</view>
             </view>
           </swiper-item>
         </block>
@@ -34,11 +35,11 @@
 
       <div class='list_wrap'>
         <div class='row' v-for='(row, i) in list' :key='i'>
-          <div class='item' v-for='(item, index) in row' :key='index' @click='goGoods(index)'>
-            <img class='item_img' src='' />
+          <div class='item' v-for='(item, index) in row' :key='index' @click='goGoods(item)'>
+            <img class='item_img' :src='item.goods_image' />
             <div class='item_desc'>
-              <div class='item_title s-fc-4'>{{item.title}}</div>
-              <div class='item_price s-fc-5'>{{item.price}}</div>
+              <div class='item_title s-fc-4'>{{item.goods_name}}</div>
+              <div class='item_price s-fc-5'>{{item.goods_price}}</div>
             </div>
           </div>
         </div>
@@ -53,6 +54,7 @@
 import card from '@/components/card'
 import topBar from '@/components/topBar'
 import slide from '@/components/slide'
+import api from '@/utils/api'
 
 export default {
   data () {
@@ -64,20 +66,24 @@ export default {
         bg: '#fff', // '#937d8a',
         backImg: '/static/left_arrow.png'
       },
-      classList: [
-        [ { title: '餐厅系列' },
-          { title: '客厅系列' },
-          { title: '客厅系列' },
-          { title: '书房系列' } ],
-        [ { title: 'a厅系列' },
-          { title: '客b系列' },
-          { title: '客厅系列' },
-          { title: '设计师+' } ]
-      ],
+      classConfig:{
+        '设计师+': { id: 1 },
+        '易居管家': { id: 2 },
+        '整居定制': { id: 3 },
+        '集成暖通': { id: 4 },
+        '主材选购': { id: 5 },
+        '家具选购': { id: 6 },
+        '易居海外': { id: 7 }
+      },
+      classList: [],
+      twoClassList: [],
+      classId: null,
+      twoClassId: null,
       list: [],
       currentClass: '设计师+监理师',
+      categoryId: null,
       currentPage: 1,
-      limit: 2,
+      limit: 10,
       total: 0,
       canLoad: true,
       content: ''
@@ -90,35 +96,97 @@ export default {
     slide
   },
 
+  computed: {
+    getLength () { return this.list.reduce((p, v) => p + v.length, 0) }
+  },
+
   methods: {
     search (e) {
       this.content = e.mp.detail.value
       console.log('search', this.content)
+
+      this.list = []
+      this.total = 0
+      this.getList(this.currentPage = 1)
     },
-    goGoods () {
-      wx.navigateTo({
-        url: '/pages/goods/main?id=a'
-      })
+    goGoods (item) {
+      wx.navigateTo({ url: this.categoryId === 1 ? `/pages/goods/main?id=${item.goods_commonid}&isDesign=true` : `/pages/goods/main?id=${item.goods_commonid}` })
     },
-    changeArray (arr) {
+    changeArray (arr, nub) {
       let newArr = []
 
-      arr.forEach((v, i) => { i % 2 === 0 ? newArr.push([v]) : newArr[Math.floor(i / 2)].push(v) })
+      arr.forEach((v, i) => { i % nub === 0 ? newArr.push([v]) : newArr[Math.floor(i / nub)].push(v) })
 
       return newArr
     },
-    getList (page) {
-      let res = [
-        { title: '设计师+skdfj老师开发商的风控但是佛挡杀佛可是大佛国际饭店根本就没法的保密', img: '' },
-        { title: '半包定制', img: '' },
-        { title: '易居管家', img: '' },
-        { title: '整居定制', img: '' },
-        { title: 'aksfdosdfojsdfcv', img: '' }
-      ]
+    changeClass (item) {
+      this.init()
 
-      this.list = this.list.concat(this.changeArray(res))
+      item.isTwo ? this.twoClassId = item.id : this.classId = item.id
+      console.log('change', this.twoClassId, this.classId)
+      if (!item.isTwo) {
+        this.classs[this.classId] ? this.getTwoClass(this.classs[this.classId]) : this.twoClassList = []
+      }
+
+      this.getList(this.currentPage)
+    },
+    getTwoClass (twoClass) {
+      let arr = []
+      for (let key in twoClass) {
+        arr.push({ id: key, title: twoClass[key].storegc_name, isTwo: true })
+      }
+      this.twoClassList = this.changeArray(arr, 4)
+      this.twoClassId = this.twoClassList[0][0].id
+    },
+    async getClass () {
+      let res = await api.getGoodsClass(this.categoryId)
+      let arr = []
+
+      let o = res[0]
+      for (let key in o) {
+        arr.push({ id: key, title: o[key].storegc_name })
+      }
+      this.classList = this.changeArray(arr, 4)
+
+      this.classId = this.classList[0][0].id
+      this.classs = res
+
+      let twoClass = this.classs[this.classId]
+      if (twoClass) {
+        this.getTwoClass(twoClass)
+      }
+
+      wx.hideLoading()
+      this.getList(this.currentPage)
+    },
+    async getList (page) {
+      wx.showLoading({ title: 'Loading...' })
+      let param = {
+        store_id: 1,
+        gc_id_1: this.categoryId,
+        gc_id: this.twoClassId || this.classId,
+        page,
+        limit: this.limit
+      }
+      if (this.content !== '') param.name = this.content
+      console.log('param: --', param)
+
+      let res = await api.getGoodsList(param)
+
+      if (this.content !== '' && this.content !== param.name) return
+      
+      console.log(res, this.list)
+      this.list = this.list.concat(this.changeArray(res.data, 2))
+      this.total = res.pagination.total
       this.canLoad = true
       wx.hideLoading()
+    },
+    init () {
+      this.classId = this.twoClassId = null
+      this.currentPage = 1
+      this.total = 0
+      this.list = []
+      this.content = ''
     }
   },
 
@@ -127,16 +195,19 @@ export default {
   },
 
   onLoad (param) {
+    wx.showLoading({ title: 'Loading...' })
+
     let category = decodeURIComponent(param.category)
     this.config.title = category
-    console.log(category)
+    this.categoryId = this.classConfig[category].id
+    console.log('onload --', category, this.categoryId)
 
-    this.currentPage = 1
-    this.total = 0
-    this.list = []
-    this.content = ''
+    this.classList = []
+    this.twoClassList = []
+    this.init()
 
-    this.getList(this.currentPage)
+    this.getClass()
+
   },
 
   onPullDownRefresh () {
@@ -150,6 +221,11 @@ export default {
 
     if (!this.canLoad) {
       return null
+    }
+
+    if (this.getLength >= this.total) {
+      wx.hideLoading()
+      return wx.showModal({ content: '已经是最后一页了!', showCancel: false })
     }
     this.canLoad = false
 
@@ -177,7 +253,7 @@ export default {
 .search{
   width: 100%;
   height: 100%;
-  border: 1rpx solid #eee;
+  border: 1rpx solid #999;
   border-radius: 8rpx;
   font-size: 28rpx;
 }
@@ -188,7 +264,7 @@ export default {
   display: flex;
   align-items: center;
   text-align: center;
-  width: 88rpx;
+  width: 100rpx;
 }
 .search_icon{
   width: 28rpx;
@@ -200,7 +276,7 @@ export default {
 }
 
 .class_wrap{
-  height: 88rpx;
+  height: 100rpx;
 }
 .class_row{
   display: flex;
@@ -209,6 +285,8 @@ export default {
   padding: 0 30rpx;
 }
 .class_item{
+  box-sizing: border-box;
+  min-width: 150rpx;
   margin-right: 30rpx;
   padding: 15rpx 30rpx;
   border-radius: 26rpx;
@@ -258,7 +336,6 @@ export default {
 .item_img{
   width: 350rpx; 
   height: 350rpx;
-  background: #ccc;
 }
 .item_title, .item_price{
   height: 36rpx;

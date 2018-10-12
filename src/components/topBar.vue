@@ -32,7 +32,7 @@ export default {
       if (this.config.onlyLeft) {
         return undefined
       }
-      wx.navigateBack({ detail: 1 })
+      wx && wx.navigateBack({ detail: 1 })
     },
     getBg () {
       console.log(this.config)

@@ -3,9 +3,9 @@
 
     <topBar :config='config' title='首页'></topBar>
 
-    <slide :config='slideConfig'></slide>
+    <slide :config='slideConfig' @go='go'></slide>
 
-    <div class='search'>
+    <div class='search' @click='goSearch(item)'>
       <image class='search_icon' src='/static/search.png' />
       <div class='search_content s-fc-2'>搜索</div>
     </div>
@@ -20,12 +20,19 @@
       </div>
     </div>
 
-    <div class='modal' v-if='isShow'>
-      <div class='content' @touchmove.stop='preventScorll'>
+    <div class='modal' @touchmove.stop='preventScroll' v-if='isShow'>
+      <div class='content'>
         <button class='btn' open-type='getPhoneNumber' @getphonenumber='getPhone' plain='true'>
-          <div>获取手机号</div>
+          <image src='/static/authorize_phone.png' style='width: 100%; heigh:100%;' mode='aspectFill' />
+          <!-- <div style='margin: 60rpx 0 0;'>获取手机号</div> -->
+          <!-- <div class='auth_btn'>确认授权</div> -->
         </button>
       </div>
+    </div>
+    <!-- <modal :config='modalConfig' @click='test' v-if='phoneConfig.isShow'></modal> -->
+
+    <div class='cart' @click='goCart'>
+      <image src='/static/home/cart.png' style='width: 85rpx; height: 85rpx;' mode='aspectFill' />
     </div>
 
   </div>
@@ -34,6 +41,8 @@
 <script>
 import topBar from '@/components/topBar'
 import slide from '@/components/slide'
+import modal from '@/components/modal'
+import getPhone from '@/components/getPhone'
 import api from '@/utils/api'
 
 export default {
@@ -49,10 +58,14 @@ export default {
       slideConfig: {
         height: '500rpx',
         autoplay: false,
-        data: [
-          { img: '/static/toolBar/classify.png' },
-          { img: '/static/toolBar/home.png' }
-        ]
+        data: []
+      },
+      modalConfig: {
+        height: '300rpx',
+        width: '400rpx'
+      },
+      phoneConfig: {
+        isShow: true
       },
       list: [
         { title: '设计师+', img: '/static/home/design.png', url: '/pages/twoClassList/main?category=' + encodeURIComponent('设计师+') },
@@ -64,34 +77,58 @@ export default {
         { title: '家具选购', img: '/static/home/img_7@2x.png', url: '/pages/twoClassList/main?category=' + encodeURIComponent('家具选购') },
         { title: '易居海外', img: '/static/home/img_8@2x.png', url: '/pages/twoClassList/main?category=' + encodeURIComponent('易居海外') }
       ],
-      isShow: false
+      isShow: true
     }
   },
 
   components: {
     topBar,
-    slide
+    slide,
+    modal,
+    getPhone
   },
 
   methods: {
-    prenventScroll () {
+    // test (param) { console.log('test'); this.phoneConfig.isShow = false },
+    preventScroll () {
       return false
+    },
+    go (item) {
+      console.log('slide click', item.type)
+      if (item.type === 1) {
+        wx.navigateTo({ url: `/pages/img/main?url=${item.banner_url}` })
+      } else if (item.type === 2) {
+        wx.navigateTo({ url: `/pages/goods/main?id=${item.banner_url}` })
+      }
+    },
+    goCart () {
+      wx.navigateTo({ url: `/pages/shoppingCart/main` })
+    },
+    goSearch () {
+      wx.navigateTo({ url: '/pages/search/main' })
     },
     goList ({url}) {
       wx.navigateTo({
         url: url
       })
     },
-
     async getBanner () {
-      let res = await api.getBanner(9)
-      console.log(res)
+      let res = await api.getBanner({ store_id: 1 })
+      console.log('banner --', res)
+      if (res) {
+        res.forEach(v => { v.img = v.banner_pic })
+        this.slideConfig.data = res
+      }
     },
     async getPhone (e) {
+      let code = wx.getStorageSync('code')
       let o = e.mp.detail
+
       if (o.errMsg === 'getPhoneNumber:ok') {
+        wx.showLoading({ title: 'Loading...' })
+
         let param = {
-          code: wx.getStorageSync('code'),
+          code,
           encryptedData: o.encryptedData,
           iv: o.iv
         }
@@ -106,6 +143,7 @@ export default {
           this.isShow = false
         }
         console.log(param, this.isShow)
+        wx.hideLoading()
       }
     },
     login () {
@@ -119,39 +157,52 @@ export default {
   },
 
   async created () {
-    let p = new Promise(function (resolve, reject) {
-      reject('resolve')
-    })
-    let p2 = p.catch(e => console.log(Object.keys(e)))
-    setTimeout(function () {
-      let pp = new Promise(function(){}).then(() => console.log('full'), () => console.log('fail'))
-      console.log('timeout', p, p2, p === p2, p)
-    })
     console.log('index created')
+  },
+
+  async onLoad (param) {
+    if (wx.getStorageSync('userInfo').phone) {
+      this.isShow = false
+    }
+
     if (!wx.getStorageSync('userInfo')) {
       let res = await this.login()
       wx.setStorageSync('code', res.code)
 
       let data = await api.getToken(res.code)
-      // console.log('-- get Token --', data)
+      console.log('-- get Token --', data)
 
       let userInfo = await api.getUserInfo()
       if (userInfo) {
         wx.setStorageSync('userInfo', userInfo)
+
+        if (!userInfo.phone) {
+          let res = await this.login()
+          wx.setStorageSync('code', res.code)
+          console.log('phone code--', res.code)
+        }
       } else {
         return wx.redirectTo({ url: '/pages/authorization/main?referer=/pages/index/main' })
       }
     }
+
+    this.getBanner()
   },
 
-  onLoad (param) {
-    this.getBanner()
+  onHide () {
+    if (this.isShow) {
+      wx.reLaunch({ url: '/pages/index/main' })
+    }
   },
 
   onPullDownRefresh () {
     wx.reLaunch({
       url: '/pages/index/main'
     })
+  },
+
+  onShareAppMessage () {
+
   }
 
 }
@@ -170,6 +221,7 @@ export default {
   height: 76rpx;
   margin: 0 auto;
   border-radius: 8rpx;
+  box-shadow: 0rpx 4rpx 16rpx -8rpx #333;
   background: #fff;
 }
 .search_icon{
@@ -204,7 +256,7 @@ export default {
   width: 330rpx;
   height: 100rpx;
   margin: 0 auto;
-  border: 1rpx solid #fff;
+  border: 2rpx solid #fff;
 }
 .mask{
   position: absolute;
@@ -232,10 +284,11 @@ export default {
 }
 .content{
   position: absolute;
-  left: calc(50% - 200rpx);
-  top: calc(50% - 150rpx);
-  width: 400rpx;
-  height: 300rpx;
+  left: calc(50% - 300rpx);
+  top: calc(50% - 240rpx);
+  width: 600rpx;
+  height: 480rpx;
+  border-radius: 10rpx;
   background: #fff;
 }
 .btn{
@@ -243,6 +296,24 @@ export default {
   height: 100%;
   padding: 0;
   border: none;
+}
+.auth_btn{
+  width: 200rpx; 
+  height: 100rpx; 
+  line-height: 100rpx;
+  margin: 20rpx auto 0; 
+  border-radius: 10rpx; 
+  font-size: 30rpx;
+  color: #fff; 
+  background: #937d8a;
+}
+
+.cart{
+  position: fixed;
+  bottom: 18%;
+  right: 30rpx;
+  width: 85rpx;
+  height: 85rpx;
 }
 
 .s-fc-1{

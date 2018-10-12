@@ -1,17 +1,18 @@
 <template>
   <div class="container">
 
-    <topBar :config='config' title='首页'></topBar>
+    <topBar :config='config'></topBar>
 
     <div class='wrap'>
 
-      <div class='goods'>
+      <!-- <div class='goods'>
         <image class='goods_thub' src='' />
         <div class='goods_detail'>
           <div class='goods_name s-fc-6'>sdkfjsdfoPksdfksodf考的排放口双方的山坡v可是东方十六分v【判断是非判断是否sdfsdfsdkf</div>
           <div class='goods_price s-fc-5'>8345.2934</div>
         </div>
-      </div>
+      </div> -->
+      <goods :goods='order.order_goods[0]'></goods>
 
       <div class='star'>
         <div class='s-fc-4' style='margin: 0 30rpx;'>评分</div>
@@ -19,26 +20,18 @@
       </div>
 
       <div class='textarea_wrap'>
-        <textarea class='textarea' placeholder="请输入评论..." ></textarea>
+        <textarea class='textarea' placeholder="请输入评论..." v-model="content"></textarea>
         <div class='box' @click='addImg'>
-          <image src='' style='width: 54rpx; height: 60rpx; margin: 20rpx 0 0;' src='/static/goods/icon_1_xiangji@2x.png' />
+          <image style='width: 54rpx; height: 60rpx; margin: 20rpx 0 0;' src='/static/goods/icon_1_xiangji@2x.png' />
           <div>添加图片</div>
         </div>
       </div>
 
-      <div class='btn s-fc-1'>提交</div>
+      <div class='btn s-fc-1' @click='submit'>提交</div>
       
 
     </div>
 
-    <!-- <div class="userinfo" @click="bindViewTap">
-      <img class="userinfo-avatar" v-if="userInfo.avatarUrl" :src="userInfo.avatarUrl" background-size="cover" />
-      <div class="userinfo-nickname">
-        <card :text="userInfo.nickName"></card>
-      </div>
-    </div> -->
-
-    <!-- <a href="/pages/counter/main" class="counter">去往Vuex示例页面</a> -->
   </div>
 </template>
 
@@ -46,33 +39,35 @@
 import topBar from '@/components/topBar'
 import slide from '@/components/slide'
 import goods from '@/components/goods'
+import { uploadSeriesFile } from '@/utils/tencent-cos'
+import api from '@/utils/api'
 
 export default {
   data () {
     return {
-      userInfo: {},
       config: {
         title: '评价',
-        color: '#fff',
-        bg: '#937d8a',
-        backImg: '/static/back_gray.png'
+        color: '#222',
+        bg: '#fff',
+        backImg: '/static/left_arrow.png'
       },
       goodsConfig: {
         padding: '20rpx 0 0',
         hidePrice: true
       },
+      order: {},
       classList: [
         { title: '全部' },
         { title: '待退款' },
         { title: '已完成' }
       ],
-      list: [
-        { title: 'aksfdosdfojsdfcv', goods: { name: 'sdksdfodsfkoksdf开始大幅攀升地ffsd', price: 143.45234, qty: 3455 } },
-        { title: 'aksfdosdfojsdfcv', goods: { name: 'sdksdfodsfkoksdf开始大幅攀升地ffsd', price: 143.45234, qty: 3455 } }
-      ],
       currentClass: '全部',
-      level: 3,
-      levelList: [0, 0, 0, 0, 0]
+      level: 0,
+      levelList: [0, 0, 0, 0, 0],
+      content: '',
+      imgs: [],
+      canSubmit: true,
+      referer: ''
     }
   },
 
@@ -83,19 +78,75 @@ export default {
   },
 
   methods: {
-    goGoods () {
-      wx.navigateTo({
-        url: '/pages/goods/main?id=a'
-      })
-    },
     changeLevel (index) {
       console.log(index)
       this.level = index
+    },
+    async addImg () {
+      if (!this.canSubmit) return
+      this.canSubmit = false
+
+      let res = await this.getImg()
+      console.log('img --', res)
+
+      let imgs = await uploadSeriesFile(res)
+      this.imgs = this.imgs.concat(imgs)
+      console.log('img url --', imgs, this.imgs)
+      this.canSubmit = true
+    },
+    getImg () {
+      return new Promise(function (resolve, reject) {
+        wx.chooseImage({
+          count: 8,
+          sizeType: ['original', 'compressed'],
+          sourceType: ['album', 'camera'],
+          success (res) {
+            resolve(res.tempFilePaths)
+          },
+          fail (e) { resolve(e) }
+        })
+      })
+    },
+    async submit () {
+      if (!this.canSubmit) {
+        return
+      }
+
+      if (this.content === '') {
+        return wx.showModal({ title: '请输入评论信息', showCancel: false })
+      }
+
+      let param = {
+        goods_id: this.order.order_goods[0].goods_id,
+        order_id: this.order.order_id,
+        order_no: this.order.order_sn,
+        score: this.level,
+        content: this.content,
+        goods_image: this.imgs
+      }
+      console.log('param --', param)
+      let res = await api.assess(param)
+
+      if (res.geval_id) {
+        // wx.redirectTo({ url: `${this.referer.url}?${this.referer.param}` })
+        wx.navigateBack({ detail: 1 })
+      }
     }
   },
 
   created () {
-    
+
+  },
+
+  onLoad (param) {
+    this.order = JSON.parse(decodeURIComponent(param.order))
+    this.referer = JSON.parse(decodeURIComponent(param.referer))
+    this.imgs = []
+    this.content = ''
+    this.level = 0
+    this.canSubmit = true
+
+    console.log(this.referer, this.order)
   },
 
   onPullDownRefresh () {

@@ -41,7 +41,7 @@ export default {
 
   methods: {
     click (item) {
-      this.$emit('click', item)
+      this.$emit('go', item)
       console.log('emit click event', this.config)
     }
   }

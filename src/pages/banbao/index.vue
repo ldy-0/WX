@@ -5,12 +5,12 @@
 
     <div class='wrap'>
 
-      <div class=''>
-        <div class='title s-fc-3'>半包材料展示</div>
-        <div class='content s-fc-2'>前有一位王子，他想找一位公主结婚，但是她必须是一位真正的公主。他走遍了全世界，想要寻找到一位真正的公主，但不论走到什么地方，总碰到一些障碍。公主倒有的是，但王子无法判断她们究竟是不是真正的公主，因为她们总有一些地方不</div>
+      <div class='title s-fc-3'>半包材料展示</div>
+      <div class='' v-for='(item, index) in info' :key='index'>
+        <div class='content s-fc-2'>{{item.content}}</div>
+        <image class='info_img' :src='item.img' mode='aspectFill' />
       </div> 
       
-      <image class='info_img' src='' />
 
       <div class="">
         <div class='form_title s-fc-5'>
@@ -18,34 +18,34 @@
           <div style='font-size: 14rpx;'>DECORATION</div>
         </div>
         <div class='form_item s-fc-8'>
-          <div class='form_key'>姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名</div>
-          <input class='form_value' placeholder="请输入姓名" placeholder-style='margin-left: 20rpx;' />
+          <div class='form_key'><div>姓</div><div>名</div></div>
+          <input class='form_value' placeholder="请输入姓名" placeholder-style='margin-left: 20rpx;' @input='setName' />
           <div class='star'>*</div>
         </div>
         <div class='form_item s-fc-8'>
           <div class='form_key'>联系方式</div>
-          <input class='form_value' placeholder="请输入手机号" placeholder-style='margin-left: 20rpx;'/>
+          <input class='form_value' placeholder="请输入手机号" placeholder-style='margin-left: 20rpx;' v-model='form.telephone' />
           <div class='star'>*</div>
         </div>
         <div class='form_item s-fc-8'>
           <div class='form_key'>小区地址</div>
-          <input class='form_value' placeholder="请输入小区地址" placeholder-style='margin-left: 20rpx;'/>
+          <input class='form_value' placeholder="请输入小区地址" placeholder-style='margin-left: 20rpx;' v-model='form.address' />
           <div class='star'>*</div>
         </div>
         <div class='form_item s-fc-8'>
-          <div class='form_key'>面&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;积</div>
-          <input class='form_value' placeholder="请输入房屋面积" placeholder-style='margin-left: 20rpx;'/>
+          <div class='form_key'><div>面</div><div>积</div></div>
+          <input class='form_value' placeholder="请输入房屋面积(只保留二位小数)" placeholder-style='margin-left: 20rpx;' v-model='form.acreage' />
         </div>
         <div class='form_item s-fc-8'>
           <div class='form_key'>意向风格</div>
-          <input class='form_value' placeholder="请输入意向风格" placeholder-style='margin-left: 20rpx;'/>
+          <input class='form_value' placeholder="请输入意向风格" placeholder-style='margin-left: 20rpx;' v-model='form.style' />
         </div>
         <div class='textarea_wrap s-fc-8'>
-          <div class='form_key'>备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注</div>
-          <textarea class='textarea' placeholder="请输入备注" placeholder-style='margin-left: 20rpx;'></textarea>
+          <div class='form_key'><div>备</div><div>注</div></div>
+          <textarea class='textarea' placeholder="请输入备注" placeholder-style='margin-left: 20rpx;' v-model='form.remark'></textarea>
         </div>
 
-        <div class='form_btn s-fc-1'>提交</div>
+        <div class='form_btn s-fc-1' @click='submit'>提交</div>
       </div>
       
     </div>
@@ -55,7 +55,8 @@
 <script>
 import topBar from '@/components/topBar'
 import slide from '@/components/slide'
-import goods from '@/components/goods'
+import api from '@/utils/api'
+import util from '@/utils/util'
 
 export default {
   data () {
@@ -65,7 +66,7 @@ export default {
         title: '半包定制',
         color: '#222',
         bg: '#fff',
-        backImg: '/static/back_gray.png'
+        backImg: '/static/left_arrow.png'
       },
       slideConfig: {
         height: '750rpx',
@@ -75,65 +76,77 @@ export default {
           { img: '/static/toolBar/home.png' }
         ]
       },
-      goodsConfig: {
-        margin: '20rpx 0 0'
-      },
-      goods: {},
-      commentList: [
-        { title: '购物车', phone: 13211111111, img: '' },
-        { title: '我的卡劵', phone: 13111111111, address: 'sfksdfkKSDFM<lsk破开神佛考生的分数都快发送的看法实力派v感慨地说佛v觉得佛教给vi的风景sfsdfjkd', img: '' },
-        { title: '地址管理', img: '', url: 'pages/addressList/main' },
-        { title: '整居定制', img: '' },
-        { title: 'aksfdosdfojsdfcv', img: '' }
-      ],
-      serverList: [
-        { title: '设计服务：', img: '' },
-        { title: '搬运服务：', img: '' },
-        { title: '安装服务：', img: '' }
-      ],
-      isVirtual: true,
-      isShowModal: false,
+      info: [],
+      form: {},
       date: ''
     }
   },
 
   components: {
     topBar,
-    slide,
-    goods
+    slide
   },
 
   methods: {
-    submit () {
-      wx.reLaunch({
-        url: '/pages/payed/main'
-      })
+    setName (e) {
+      let v = e.mp.detail.value
+
+      if (v.length > 15) {
+        wx.showModal({ content: '姓名不能超过15个字符!', showCancel: false })
+        return this.form.name
+      }
+      this.form.name = v
+      console.log(v)
     },
-    add (item) {
-      wx.navigateTo({
-        url: '/pages/address/add/main'
-      })
+    submit () {
+      if (!this.form.name || this.form.name === '') {
+        return wx.showModal({ content: '姓名不能为空!', showCancel: false })
+      }
+
+      if (!util.isPhone(this.form.telephone)) {
+        return wx.showModal({ content: '手机格式不正确!', showCancel: false })
+      }
+
+      if (this.form.address === '') {
+        return wx.showModal({ content: '地址不能为空!', showCancel: false })
+      }
+
+      if (this.form.acreage && isNaN(Number(this.form.acreage))) {
+        return wx.showModal({ content: '面积必须为数字', showCancel: false })
+      }
+      this.form.acreage = Number(this.form.acreage).toFixed(2)
+      console.log('form --', this.form)
+      this.submitCustomMode()
+    },
+    async submitCustomMode () {
+      let res = await api.setCustommadeinfo(this.form)
+
+      res === null && wx.showModal({ content: '提交成功!', showCancel: false })
+    },
+    async getCustomMode () {
+      let res = await api.getCustommadeinfo()
+
+      this.info = res
+      console.log(this.info)
+      wx.hideLoading()
     }
   },
 
   created () {
-    if (!wx.getStorageSync('userInfo')) {
-    }
-    console.log('')
+    console.log('banbao create')
   },
 
   onLoad (params) {
-    this.goods = {
-      name: '看到放送控股快速打开v功德佛楼盘数量大幅v哦的上空飞过v哦梵蒂冈v顺利破发v看到法国v端口sf',
-      price: 123324930,
-      qty: 192334,
-      scale: 34504935
-    }
+    wx.showLoading({ title: 'Loading...' })
+
+    this.form = {}
+
+    this.getCustomMode()
   },
 
   onPullDownRefresh () {
     wx.reLaunch({
-      url: '/pages/index/main'
+      url: '/pages/banbao/main'
     })
   }
 
@@ -156,6 +169,7 @@ export default {
 .title{
   padding: 36rpx 40rpx;
   font-size: 34rpx;
+  font-weight: bold;
 }
 .content{
   padding: 0 40rpx;
@@ -183,7 +197,10 @@ export default {
   margin: 0 auto 30rpx;
 }
 .form_key{
-  white-space: pre;
+  width: 112rpx;
+  display: flex;
+  justify-content: space-between;
+  /* white-space: pre; */
 }
 .form_value{
   width: 530rpx;
@@ -199,8 +216,10 @@ export default {
   margin: 0 auto 30rpx;
 }
 .textarea{
+  box-sizing: border-box;
   width: 530rpx;
   height: 150rpx;
+  padding: 20rpx;
   border: 1rpx solid #c9c8d0; 
   border-radius: 5rpx;
 }
