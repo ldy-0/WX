@@ -178,8 +178,8 @@ export default {
             text:'店铺管理'
           },
           // {
-          //   label:'manage',
-          //   text:'运营管理'
+          //   label:'library',
+          //   text:'题库'
           // },
           // {
           //   label:'agent',
