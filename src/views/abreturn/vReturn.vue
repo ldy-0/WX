@@ -178,8 +178,7 @@
       <!-- <el-table-column
         label="类别" 
         prop="buyType"
-        > -->
-      </el-table-column>
+      </el-table-column>> -->
       <el-table-column
         label="退款时间" 
         prop="time"

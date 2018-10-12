@@ -80,6 +80,5 @@ let upLoadFile = function (allFile){
     upLoadAllFile(allFile)
   })
     
-
 }
 export default upLoadFile
