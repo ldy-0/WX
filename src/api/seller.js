@@ -1,5 +1,12 @@
 import request from '@/utils/request'
-
+//会员管理
+export function getMember_api(data) {
+	return request({
+		url: '/api/v1/seller/member',
+		method: 'get',
+		params: data
+	})
+}
 // test
   export function test2(data) {
     return request({

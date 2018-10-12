@@ -84,6 +84,14 @@
         </template>
       </el-table-column>
       <el-table-column 
+        label="退款"
+        >
+        <template slot-scope="scope">
+          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('return')!==-1)" class="el-icon-check big-icon"></i>
+          <i v-else class="el-icon-close big-icon-no"></i>
+        </template>
+      </el-table-column>
+      <el-table-column 
         label="预约"
         >
         <template slot-scope="scope">
@@ -96,6 +104,14 @@
         >
         <template slot-scope="scope">
           <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('coupon')!==-1)" class="el-icon-check big-icon"></i>
+          <i v-else class="el-icon-close big-icon-no"></i>
+        </template>
+      </el-table-column>
+      <el-table-column 
+        label="会员列表"
+        >
+        <template slot-scope="scope">
+          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('memberList')!==-1)" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
@@ -189,8 +205,16 @@ export default {
             text:'订单'
           },
           {
+            label:'return',
+            text:'退款'
+          },
+          {
             label:'coupon',
             text:'优惠券'
+          },
+          {
+            label:'memberList',
+            text:'会员列表'
           },
           {
             label:'appointment',

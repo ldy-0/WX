@@ -161,7 +161,7 @@ export let asyncRouterMapSeller = [
     path: '/return',
     component: Layout,
     redirect: '/return/rReturn',
-    meta: { title: 'return', icon: 'goods'},
+    meta: { title: 'return', icon: 'goods',roles:'return'},
     children: [{
       path: 'rReturn', 
       component: () => import('@/views/abreturn/rReturn'),
@@ -186,6 +186,25 @@ export let asyncRouterMapSeller = [
       meta: { title: 'appointment', icon: 'goods', noCache: true }
     }]
   },
+	{
+	    path: '/memberList', //人员列表
+	    component: Layout,
+	    redirect: '/memberList/index',
+	    meta: {
+	      roles: 'memberList'
+	    },
+	    children: [{
+	      path: 'memberList',
+	      component: () =>
+	        import('@/views/memberList/index'),
+	      name: 'memberList',
+	      meta: {
+	        title: '会员列表',
+          noCache: true,
+          icon: 'goods'
+	      }
+	    }]
+	  },
   {
     path: '/coupon',
     component: Layout,
