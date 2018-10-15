@@ -27,7 +27,7 @@
               <div class='btn' v-if="item.order_state === '未付款'" @click.stop="update(item, 'cancel')">取消订单</div>
               <div class='btn' v-if="item.order_state === '未付款'" @click.stop='pay(item)'>支付</div>
               <div class='btn' v-if="item.order_state === '已发货'" @click.stop='update(item)'>确认收货</div>
-              <div class='btn' v-if='!item.use_refund' @click.stop='goRefund(item)'>退款</div>
+              <div class='btn' v-if="item.order_state !== '未付款' && !item.use_refund" @click.stop='goRefund(item)'>退款</div>
               <div class='btn' :hover-stop-propagation='true' @click.stop='goAssess(item, $event)' v-if="item.order_state_id === 40 && !item.evaluation_state">评价</div>
             </div>
           </div>

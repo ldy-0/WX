@@ -13,9 +13,17 @@
         </div>
       </div>
 
-      <swiper class='class_wrap' :indicator-dots="false" :autoplay="false" :interval="interval" :duration="2000">
+      <scroll-view class='class_container' scroll-x='true'>
+        <view class='class_item s-fc-6' :class='{ checked: item.id === classId }' v-for='(item, index) in classList' :key='index' @click='changeClass(item)'>{{item.title}}</view>
+      </scroll-view>
+
+      <scroll-view class='class_container' scroll-x='true'>
+        <view class='class_item s-fc-6' :class='{ checked: item.id === twoClassId }' v-for='(item, index) in twoClassList' :key='index' @click='changeClass(item)'>{{item.title}}</view>
+      </scroll-view>
+
+      <!-- <swiper class='class_wrap' :indicator-dots="false" :autoplay="false" :interval="interval" :circular='true' :duration="2000">
         <block v-for="(row, index) in classList" :key='index'>
-          <swiper-item >
+          <swiper-item>
             <view class='class_row'>
               <view class='class_item s-fc-6' :class='{ checked: item.id === classId }' v-for='(item, i) in row' :key='i' @click='changeClass(item)'>{{item.title}}</view>
             </view>
@@ -31,7 +39,7 @@
             </view>
           </swiper-item>
         </block>
-      </swiper>
+      </swiper> -->
 
       <div class='list_wrap'>
         <div class='row' v-for='(row, i) in list' :key='i'>
@@ -135,8 +143,10 @@ export default {
       for (let key in twoClass) {
         arr.push({ id: key, title: twoClass[key].storegc_name, isTwo: true })
       }
-      this.twoClassList = this.changeArray(arr, 4)
-      this.twoClassId = this.twoClassList[0][0].id
+      // this.twoClassList = this.changeArray(arr, 4)
+      // this.twoClassId = this.twoClassList[0][0].id
+      this.twoClassList = arr
+      this.twoClassId = this.twoClassList[0].id
     },
     async getClass () {
       let res = await api.getGoodsClass(this.categoryId)
@@ -146,9 +156,11 @@ export default {
       for (let key in o) {
         arr.push({ id: key, title: o[key].storegc_name })
       }
-      this.classList = this.changeArray(arr, 4)
+      // this.classList = this.changeArray(arr, 4)
+      this.classList = arr
 
-      this.classId = this.classList[0][0].id
+      // this.classId = this.classList[0][0].id
+      this.classId = this.classList[0].id
       this.classs = res
 
       let twoClass = this.classs[this.classId]
@@ -273,6 +285,17 @@ export default {
 }
 .search_content{
   font-size: 28rpx;
+}
+
+.class_container{
+  width: 100%; 
+  height: 100rpx;
+  white-space: nowrap; 
+  margin: 30rpx 0 0;
+  padding: 0 30rpx;
+}
+.class_container .class_item{
+  display: inline-block;
 }
 
 .class_wrap{

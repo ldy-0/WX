@@ -28,6 +28,7 @@
 
         <div class='goods_detail'>
           <div class='goods_name s-fc-2'>{{item.goods_name}}</div>
+          <div class='appoinment s-fc-11' v-if="item.appoinmentInfo">预约时间：{{item.appoinmentInfo}}</div>
           <div class='goods_number'>
             <div class='goods_price s-fc-9'>{{item.goods_price}}</div>
             <div class='count'>
@@ -171,16 +172,17 @@ export default {
             store_id: 1
           })
 
-          // if (!res) {
-          //   return wx.showToast({ title: '删除失败', icon: 'none', duration: 2000, })
-          // };
-
-          // list.splice(i, 1)
+          this.isCheckAll = false
+          this.list = []
         }
       }
       this.getList()
     },
     submit () {
+      if (this.count === 0) {
+        return wx.showModal({ content: '请选择商品！', showCancel: false })
+      }
+
       wx.navigateTo({
         url: `/pages/submit/main?goodsList=${encodeURIComponent(JSON.stringify(this.list.filter(v => v.checked)))}`
       })
@@ -189,23 +191,14 @@ export default {
       wx.showLoading({ title: 'Loading...' })
 
       let res = await api.getCartList({ store_id: 1 })
+
+      if (res.store_cart_list.length === 0) {
+        return wx.hideLoading()
+      }
+
       let list = res.store_cart_list['1']
 
-      list.forEach(v => { v.checked = false, v.qty = v.goods_num })
-      // let res = [
-      //   {
-      //     name: '看到放送控股快速打开v功德佛楼盘数量大幅v哦的上空飞过v哦梵蒂冈v顺利破发v看到法国v端口sf',
-      //     price: 123,
-      //     qty: 1,
-      //     scale: 34504935
-      //   },
-      //   {
-      //     name: '看到放送控股快速打开v功德佛楼盘数量大幅v哦的上空飞过v哦梵蒂冈v顺利破发v看到法国v端口sf',
-      //     price: 12,
-      //     qty: 19,
-      //     scale: 34504935
-      //   }
-      // ]
+      list.forEach(v => { v.checked = false; v.qty = v.goods_num; v.appoinmentInfo = v.remark[0] !== ',' && v.remark[0].split(',')[0] })
 
       this.list = list
       wx.hideLoading()
@@ -220,7 +213,6 @@ export default {
     this.isCheckAll = false
 
     this.getList()
-    
   },
 
   onPullDownRefresh () {
@@ -278,7 +270,12 @@ export default {
 }
 .goods_detail{
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 160rpx;
   margin-left: 20rpx;
+  padding: 10rpx 0;
   overflow: hidden;
 }
 .goods_name{
@@ -295,7 +292,11 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 70rpx 0 0;
+  /* margin: 70rpx 0 0; */
+  font-size: 24rpx;
+}
+
+.appoinment{
   font-size: 24rpx;
 }
 
@@ -480,6 +481,10 @@ export default {
 .s-fc-10{
   color: #010101; 
 }
+.s-fc-11{
+  color: #999;
+}
+
 .s-bg-2{
   background: #d6c1d2;
 }

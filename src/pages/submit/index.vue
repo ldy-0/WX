@@ -176,6 +176,11 @@ export default {
       console.log('order param', params)
       let res = await api.submitOrder(params)
 
+      if (!res) {
+        this.canSubmit = true
+        return wx.hideLoading()
+      }
+
       this.order_id = res.order_id
 
       let payres = await util.pay(res)
