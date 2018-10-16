@@ -89,9 +89,9 @@ export default {
   data() {
     return {
       downloadLoading: false,
-      tableData: [],
-      inputPhone: "",
-      inputTime: ""
+      tableData: null,
+      inputPhone: null,
+      inputTime: null
     };
   },
   methods: {
@@ -102,7 +102,6 @@ export default {
       };
       getPayOrderist(data).then(res => {
         console.log(res);
-        this.tableData = [];
         this.tableData = res.data;
       });
     },
@@ -113,17 +112,19 @@ export default {
       postPaySearchPhone(data).then(res => {
         console.log(res);
         this.tableData = res.data;
-        this.getPayOrderist_api(1, 0);
+        // this.getPayOrderist_api(1, 0);
       });
     },
     searchTime: function() {
       console.log(this.inputTime);
       var data = {
-        start_time: "",
-        end_time: ""
+        start_time: Math.round(Date.parse(this.inputTime[0]) / 1000),
+        end_time: Math.round(Date.parse(this.inputTime[1]) / 1000)
       };
       putPaySearchTime(data).then(res => {
-        console.log(res);
+        console.log("time search", res);
+        this.tableData = res.data;
+        // this.getPayOrderist_api(1, 0);
       });
     },
     formatJson: function(filterVal, jsonData) {

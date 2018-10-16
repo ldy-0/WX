@@ -1,46 +1,44 @@
 <style>
 @import url("//unpkg.com/element-ui@2.4.6/lib/theme-chalk/index.css");
-.div {
-  margin: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.div-1 {
-  width: 1500px;
-  height: 400px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-}
+@import "element-ui/lib/theme-chalk/display.css";
+
 .title {
   font-size: 30px;
-  margin: 20rpx;
-  width: 200px;
+  margin: 0px 20px 0 10px;
   height: 40px;
 }
+
 .lab {
+  font-size: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
   margin: 20rpx;
-  width: 600px;
-  height: 40px;
+  min-width: 400px;
+  max-width: 600px;
+  height: 36px;
   border: 1px solid #9a9a9a;
+  border-radius: 4px;
+}
+
+el-col {
+  border-radius: 4px;
+}
+.row {
+  margin: 20px 0 20px 50px;
 }
 </style>
 
 <template>
-<div class="div">
-    <div class="div-1">
-    <div class="title">背景音乐</div>
-    <div class="lab">{{fliename}}</div>
-    <div style="width:40px;height:40px;"></div>
+<el-main>
+  <div style="width:600px;height:200px;"></div>
+<el-row class="row" :gutter="20">
+  <el-col :span="6"><div class="title">背景音乐</div></el-col>
+  <el-col :span="6"><div class="lab">{{fliename}}</div></el-col>
+  <el-col :span="6">
     <el-upload
-        :auto-upload="false"
+        :auto-upload="true"
         action=""
         :on-change="handlePicture"
         :on-remove="handleRemove"
@@ -48,9 +46,10 @@
         :show-file-list="false">
         <el-button type="primary" size="medium" >选择</el-button>
     </el-upload>
-    </div>
-    <el-button type="primary" size="medium" @click="addMusic" >确定</el-button>
-</div>
+</el-col>
+  <el-col :span="6"><el-button type="primary" size="medium" @click="addMusic">确定</el-button></el-col>
+</el-row>
+</el-main>
 </template>
 
 <script>
@@ -61,23 +60,32 @@ export default {
   data() {
     return {
       fliename: "",
-      url: ""
+      url: null,
+      raw: null
     };
   },
   methods: {
-    addMusic: function() {
+    addMusic: async function() {
+      this.url = await uploadFn(this.raw);
       console.log(this.url);
       var data = {
         bg_music: this.url[0]
       };
       postMusic(data).then(res => {
         console.log(res.data);
+        console.log("res", res);
+        if (!res.status) {
+          this.$message({
+            message: res.error,
+            type: "success"
+          });
+        }
       });
     },
-    async handlePicture(file, fileList) {
+    handlePicture(file, fileList) {
       console.log("change0", file);
       this.fliename = file.name;
-      this.url = await uploadFn(file.raw);
+      this.raw = file.raw;
     },
     handleRemove(file, fileList) {
       console.log(file, fileList);

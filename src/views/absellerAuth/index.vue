@@ -231,6 +231,10 @@ export default {
           text: "预约"
         },
         {
+          label: "memberList",
+          text: "会员列表"
+        },
+        {
           label: "answer",
           text: "答题"
         },
