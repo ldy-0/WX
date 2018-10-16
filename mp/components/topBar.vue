@@ -1,6 +1,6 @@
 <template>
   <div class='topBar' 
-      :style="{height: config.height, color: config.color, background: config.bg}">
+      :style="{height: config.height, paddingTop: isIos && '66rpx', color: config.color, background: config.bg}">
 
     <div class='left' @click='goBack'>
       <image class='back' :src='config.backImg' alt='no found' v-if='config.backImg' />
@@ -24,6 +24,7 @@ export default {
 
   data () {
     return {
+      isIos: false
     }
   },
 
@@ -37,13 +38,19 @@ export default {
     getBg () {
       console.log(this.config)
     }
+  },
+
+  created () {
+    let system = wx.getSystemInfoSync()
+    console.log('system', system)
+    if (/iOS/.test(system.system)) this.isIos = true
   }
 }
 </script>
 
 <style>
 .topBar{
-  box-sizing: border-box;
+  /* box-sizing: border-box; */
   position: fixed;
   top: 0;
   left: 0;
@@ -51,7 +58,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  width: calc(100% - 40rpx);
   height: 130rpx;
   padding: 0 20rpx;
   overflow: hidden;
@@ -64,6 +71,7 @@ export default {
 .left{
   display: flex;
   align-items: center;
+  padding: 30rpx 0; /* 兼容iphoneX点击 */
 }
 
 .back{

@@ -1,17 +1,18 @@
 <template>
-  <div class="container">
+  <div class='container' :class='{ ios: isIos }'>
 
     <topBar :config='config'></topBar>
 
     <div class='authorization s-bg-1'>
 
       <div class='company_info'>
-        <img class='logo' src='../../images/authorization/authorize_logo.png' alt='no found' />
+        <img class='logo' :src='authConfig.logo' alt='no found' />
         <div class='desc s-fc-2'>Welcome !</div>
+        <div class='sub_desc s-fc-2'>{{authConfig.name}}</div>
       </div>
 
       <button class='authorization_btn s-bg-2' open-type="getUserInfo" plain='true' lang="zh_CN" @getuserinfo="getUserInfo">
-        <img src='../../images/authorization/authorize_icon.png' alt='no found' class='authorization_icon' />
+        <img src='/static/authorize_icon.png' alt='no found' class='authorization_icon' />
         <div class='authorization_desc s-fc-1'>微信登入</div>
       </button>
 
@@ -33,7 +34,11 @@ export default {
         bg: '#937d8a'
       },
       userInfo: {},
-      referer: null
+      referer: null,
+      authConfig: {
+        name: '易·居家居生活馆',
+        logo: '/static/authorize_logo.png'
+      }
     }
   },
 
@@ -41,11 +46,20 @@ export default {
     topBar
   },
 
+  computed: {
+    isIos () { return wx.getStorageSync('isIos') }
+  },
+
   methods: {
     async getUserInfo (e) {
+      let code = wx.getStorageSync('code')
 
       if (e.mp.detail.errMsg === 'getUserInfo:ok') {
         wx.showLoading({ title: 'Loading...' })
+
+        if (!code) {
+          return undefined
+        }
 
         wx.setStorageSync('userInfo', e.mp.detail.userInfo)
 
@@ -111,16 +125,21 @@ export default {
 
 .company_info{
   position: absolute;
-  top: 30%;
+  top: 18%;
   left: calc(50% - 300rpx);
   width: 600rpx;
   text-align: center;
 }
 .logo{
-  width: 185rpx;
-  height: 185rpx;
+  width: 300rpx;
+  height: 300rpx;
 }
 .desc{
+  margin: 80rpx 0 0;
+}
+.sub_desc{
+  margin: 10rpx 0 0;
+  font-size: 24rpx;
 }
 
 .authorization_btn{

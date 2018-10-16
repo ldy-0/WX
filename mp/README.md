@@ -1,11 +1,15 @@
 # mpvue 
 `常用`
 
-## 
+[TOC]
 
-## 组件 / component
+## 目录
+[轮播图](#slide)
+
+## component
   
-  + 轮播图 / slide
+  + slide
+    > 轮播图 
     ### 属性
       - config : Object  
       
@@ -21,18 +25,35 @@
       - go : [Function] 
         > 点击回调函数
 
-
     #### 例子 
     ```js
-    <!--  -->
-    <slider :config.sync='swiperConfig' @go='callback'></slider>
-    <!-- 配置对象 -->
-    swiperConfig: {
-      data: [
-        { img: '', }
-      ],
-    },
+
+      <!--  -->
+      <slider :config.sync='swiperConfig' @go='callback'></slider>
+      <!-- 配置对象 -->
+      swiperConfig: {
+        data: [
+          { img: '', }
+        ],
+      },
+
     ```
+
+  + 顶部栏 / topBar
+    ### 属性
+      - config: object
+      
+        #### 配置属性 
+      
+          |属性名|类型|默认|描述|
+          |------|-----|------|-------|
+          | `onlyLeft` | Boolean | false | 设置顶部栏内容排列方式(onlyLeft为true时，顶部栏内容左对齐，否则居中对齐) |
+          | `title` | String | '' | 设置顶部栏的主内容(当onlyLeft为true时，主内容居左) |
+          | `leftTitle` | String | '' | 设置顶部栏的左端内容(仅在onlyLeft为true时有效) |
+          | `rightTitle` | String | '' | 设置顶部栏的右端内容 |
+          | `height` | String | '130rpx' | 设置顶部栏高度 |
+          | `color` | String | 无 | 设置顶部栏字体颜色 |
+          | `bg` | String | 无 | 设置顶部栏背景颜色 |
  
 ## 获取/Get 
 `git clone https://github.com/person-0/wx.git`
