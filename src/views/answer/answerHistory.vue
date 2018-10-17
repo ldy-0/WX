@@ -365,6 +365,8 @@ export default {
       //查看个人具体详情
       this.dialogFormVisible_info = true;
       var data = {
+        page: 1,
+        limit: 0,
         history_id: this.dialogTableData[id].history_id
       };
       getSortDetails(data).then(res => {
