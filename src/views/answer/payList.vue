@@ -89,7 +89,7 @@ export default {
   data() {
     return {
       downloadLoading: false,
-      tableData: null,
+      tableData: [],
       inputPhone: null,
       inputTime: null
     };
@@ -101,9 +101,28 @@ export default {
         limit: limit
       };
       getPayOrderist(data).then(res => {
-        console.log(res);
+        console.log("rees", res.data);
+        for (let i = 0; i < res.data.length; i++) {
+          res.data[i].addtime = this.timetrans(res.data[i].addtime);
+        }
         this.tableData = res.data;
+        console.log(this.tableData);
       });
+    },
+    timetrans: function(date) {
+      var date = new Date(date * 1000); //如果date为13位不需要乘1000
+      var Y = date.getFullYear() + "-";
+      var M =
+        (date.getMonth() + 1 < 10
+          ? "0" + (date.getMonth() + 1)
+          : date.getMonth() + 1) + "-";
+      var D =
+        (date.getDate() < 10 ? "0" + date.getDate() : date.getDate()) + " ";
+      var h =
+        (date.getHours() < 10 ? "0" + date.getHours() : date.getHours()) + ":";
+      var m =
+        date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+      return Y + M + D + h + m;
     },
     searchPhone: function() {
       var data = {
@@ -111,6 +130,9 @@ export default {
       };
       postPaySearchPhone(data).then(res => {
         console.log(res);
+        for (let i = 0; i < res.data.length; i++) {
+          res.data[i].addtime = this.timetrans(res.data[i].addtime);
+        }
         this.tableData = res.data;
         // this.getPayOrderist_api(1, 0);
       });
@@ -123,6 +145,9 @@ export default {
       };
       putPaySearchTime(data).then(res => {
         console.log("time search", res);
+        for (let i = 0; i < res.data.length; i++) {
+          res.data[i].addtime = this.timetrans(res.data[i].addtime);
+        }
         this.tableData = res.data;
         // this.getPayOrderist_api(1, 0);
       });
