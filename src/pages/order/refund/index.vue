@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" :class='{ ios: isIos }'>
 
     <topBar :config='config'></topBar>
 
@@ -89,6 +89,10 @@ export default {
     slide,
     goods,
     customModal: modal
+  },
+
+  computed: {
+    isIos () { return wx.getStorageSync('isIos') }
   },
 
   methods: {

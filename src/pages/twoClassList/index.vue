@@ -1,67 +1,64 @@
 <template>
-  <div class="container">
+  <!-- <pagecontent> -->
+    <div class='container' :class='{ ios: isIos }'>
+      <topBar :config='config' title='首页'></topBar>
 
-    <topBar :config='config' title='首页'></topBar>
+      <div class='wrap'>
 
-    <div class='wrap'>
+        <search :config='searchConfig' :content='content' @search='search' @clear='clearSearch'></search>
 
-      <div class='search_wrap'>
-        <input class='search s-fc-2' @input='search' />
-        <div class='search_desc s-fc-2' v-if='!content'>
-          <image class='search_icon' src='/static/search.png' />
-          <div class='search_content'>搜索</div>
-        </div>
-      </div>
+        <scroll-view class='class_container' scroll-x='true'>
+          <view class='class_item s-fc-6' :class='{ checked: item.id === classId }' v-for='(item, index) in classList' :key='index' @click='changeClass(item)'>{{item.title}}</view>
+        </scroll-view>
 
-      <scroll-view class='class_container' scroll-x='true'>
-        <view class='class_item s-fc-6' :class='{ checked: item.id === classId }' v-for='(item, index) in classList' :key='index' @click='changeClass(item)'>{{item.title}}</view>
-      </scroll-view>
+        <scroll-view class='class_container' scroll-x='true' v-if='twoClassId'>
+          <view class='class_item s-fc-6' :class='{ checked: item.id === twoClassId }' v-for='(item, index) in twoClassList' :key='index' @click='changeClass(item)'>{{item.title}}</view>
+        </scroll-view>
 
-      <scroll-view class='class_container' scroll-x='true'>
-        <view class='class_item s-fc-6' :class='{ checked: item.id === twoClassId }' v-for='(item, index) in twoClassList' :key='index' @click='changeClass(item)'>{{item.title}}</view>
-      </scroll-view>
+        <!-- <swiper class='class_wrap' :indicator-dots="false" :autoplay="false" :interval="interval" :circular='true' :duration="2000">
+          <block v-for="(row, index) in classList" :key='index'>
+            <swiper-item>
+              <view class='class_row'>
+                <view class='class_item s-fc-6' :class='{ checked: item.id === classId }' v-for='(item, i) in row' :key='i' @click='changeClass(item)'>{{item.title}}</view>
+              </view>
+            </swiper-item>
+          </block>
+        </swiper>
 
-      <!-- <swiper class='class_wrap' :indicator-dots="false" :autoplay="false" :interval="interval" :circular='true' :duration="2000">
-        <block v-for="(row, index) in classList" :key='index'>
-          <swiper-item>
-            <view class='class_row'>
-              <view class='class_item s-fc-6' :class='{ checked: item.id === classId }' v-for='(item, i) in row' :key='i' @click='changeClass(item)'>{{item.title}}</view>
-            </view>
-          </swiper-item>
-        </block>
-      </swiper>
+        <swiper class='class_wrap' :indicator-dots="false" :autoplay="false" :interval="interval" :duration="2000">
+          <block v-for="(row, index) in twoClassList" :key='index'>
+            <swiper-item >
+              <view class='class_row'>
+                <view class='class_item s-fc-6' :class='{ checked: item.id === twoClassId }' v-for='(item, i) in row' :key='i' @click='changeClass(item)'>{{item.title}}</view>
+              </view>
+            </swiper-item>
+          </block>
+        </swiper> -->
 
-      <swiper class='class_wrap' :indicator-dots="false" :autoplay="false" :interval="interval" :duration="2000">
-        <block v-for="(row, index) in twoClassList" :key='index'>
-          <swiper-item >
-            <view class='class_row'>
-              <view class='class_item s-fc-6' :class='{ checked: item.id === twoClassId }' v-for='(item, i) in row' :key='i' @click='changeClass(item)'>{{item.title}}</view>
-            </view>
-          </swiper-item>
-        </block>
-      </swiper> -->
-
-      <div class='list_wrap'>
-        <div class='row' v-for='(row, i) in list' :key='i'>
-          <div class='item' v-for='(item, index) in row' :key='index' @click='goGoods(item)'>
-            <img class='item_img' :src='item.goods_image' />
-            <div class='item_desc'>
-              <div class='item_title s-fc-4'>{{item.goods_name}}</div>
-              <div class='item_price s-fc-5'>{{item.goods_price}}</div>
+        <div class='list_wrap'>
+          <div class='row' v-for='(row, i) in list' :key='i'>
+            <div class='item' v-for='(item, index) in row' :key='index' @click='goGoods(item)'>
+              <img class='item_img' :src='item.goods_image' />
+              <div class='item_desc'>
+                <div class='item_title s-fc-4'>{{item.goods_name}}</div>
+                <div class='item_price s-fc-5'>{{item.goods_price}}</div>
+              </div>
             </div>
           </div>
         </div>
+
       </div>
 
     </div>
-
-  </div>
+  <!-- </pagecontent> -->
 </template>
 
 <script>
 import card from '@/components/card'
+// import pageContent from '@/components/pageContent'
 import topBar from '@/components/topBar'
 import slide from '@/components/slide'
+import search from '@/components/search'
 import api from '@/utils/api'
 
 export default {
@@ -74,7 +71,14 @@ export default {
         bg: '#fff', // '#937d8a',
         backImg: '/static/left_arrow.png'
       },
-      classConfig:{
+      searchConfig: {
+        canClear: true,
+        size: 28,
+        placeholder: '请输入商品名称',
+        searchImg: '/static/search.png',
+        closeImg: '/static/search_close.png'
+      },
+      classConfig: {
         '设计师+': { id: 1 },
         '易居管家': { id: 2 },
         '整居定制': { id: 3 },
@@ -100,21 +104,32 @@ export default {
 
   components: {
     card,
+    // pagecontent: pageContent,
     topBar,
-    slide
+    slide,
+    search
   },
 
   computed: {
-    getLength () { return this.list.reduce((p, v) => p + v.length, 0) }
+    getLength () { return this.list.reduce((p, v) => p + v.length, 0) },
+    isIos () { return wx.getStorageSync('isIos') }
   },
 
   methods: {
-    search (e) {
-      this.content = e.mp.detail.value
-      console.log('search', this.content)
+    search (v) {
+      this.content = v
+      console.log(`search-${this.content}-`)
 
-      this.list = []
       this.total = 0
+      this.list = []
+      this.getList(this.currentPage = 1)
+    },
+    clearSearch () {
+      this.content = ''
+
+      this.total = 0
+      this.list = []
+
       this.getList(this.currentPage = 1)
     },
     goGoods (item) {
@@ -187,8 +202,8 @@ export default {
 
       if (this.content !== '' && this.content !== param.name) return
       
-      console.log(res, this.list)
       this.list = this.list.concat(this.changeArray(res.data, 2))
+      console.log('list --', res, this.list)
       this.total = res.pagination.total
       this.canLoad = true
       wx.hideLoading()
@@ -219,7 +234,6 @@ export default {
     this.init()
 
     this.getClass()
-
   },
 
   onPullDownRefresh () {
@@ -272,7 +286,8 @@ export default {
 .search_desc{
   position: absolute;
   top: 25rpx;
-  left: calc(50% - 44rpx);
+  left: 20rpx;
+  /* left: calc(50% - 44rpx); */
   display: flex;
   align-items: center;
   text-align: center;
@@ -343,6 +358,7 @@ export default {
   background: #fff;
 }
 .row{
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;

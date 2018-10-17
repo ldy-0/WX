@@ -7,6 +7,9 @@ export default {
     // wx.setStorageSync('logs', logs)
 
     // console.log('app created and cache logs by setStorageSync')
+    let system = wx.getSystemInfoSync()
+    console.log('system', system)
+    if (/iOS/.test(system.system)) wx.setStorageSync('isIos', true)
   }
 }
 </script>
@@ -22,8 +25,13 @@ page{
   /* flex-direction: column; */
   /* align-items: center; */
   /* justify-content: space-between; */
-  padding: 130rpx 0 0;
+  /* padding: 130rpx 0 0; */
+  margin: 130rpx 0 0;
   box-sizing: border-box;
+}
+/* 兼容iphoneX顶部栏 */
+.ios{
+  margin: 180rpx 0 0;
 }
 /* this rule will be remove */
 * {

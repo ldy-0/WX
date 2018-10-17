@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" :class='{ ios: isIos}'>
 
     <topBar :config='config'></topBar>
 
@@ -106,6 +106,7 @@ export default {
 
   computed: {
     count () { return this.goods.qty || this.goodsList.reduce((p, v) => p + v.qty, 0) },
+    isIos () { return wx.getStorageSync('isIos') }
   },
 
   components: {
@@ -198,7 +199,7 @@ export default {
       }
       this.canSubmit = true
     },
-    getCartId () { return this.goodsList.length ? this.goodsList.map(v => `${v.cart_id}|${v.goods_num}`) : [`${this.goods.SKUList[0].goods_id}|${this.goods.qty}`] },
+    getCartId () { return this.goodsList.length ? this.goodsList.map(v => `${v.cart_id}|${v.goods_num}`) : [`${this.goods.sku.goods_id}|${this.goods.qty}`] },
     getServer () {
       let obj = {}
 
@@ -225,7 +226,7 @@ export default {
       let res = await api.getDefaultAddress({ address_is_default: 1 })
 
       console.log('default address', res)
-      this.address = res && res[0] || {}
+      this.address = res.address_id && res || {}
 
       this.checkout()
     }

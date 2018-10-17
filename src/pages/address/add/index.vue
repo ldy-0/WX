@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class='container' :class='{ ios: isIos }'>
 
     <topBar :config='config'></topBar>
 
@@ -37,7 +37,7 @@
                   <view>设为默认地址</view>
                   <view class='comment s-fc-2'>注：每次下单时会使用该地址</view>
               </view>
-              <switch name='isDefault' :checked='Number(address.address_is_default)'></switch>
+              <switch name='isDefault' :checked='address.address_is_default'></switch>
           </view>
 
           <button class='save_btn s-fc-1' formType='submit'>保存</button>
@@ -81,6 +81,10 @@ export default {
     topBar,
     slide,
     areap: area
+  },
+
+  computed: {
+    isIos () { return wx.getStorageSync('isIos') }
   },
 
   methods: {

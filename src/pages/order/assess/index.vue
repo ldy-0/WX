@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" :class='{ ios: isIos }'>
 
     <topBar :config='config'></topBar>
 
@@ -21,10 +21,15 @@
 
       <div class='textarea_wrap'>
         <textarea class='textarea' placeholder="请输入评论..." v-model="content"></textarea>
-        <div class='box' @click='addImg'>
-          <image style='width: 54rpx; height: 60rpx; margin: 20rpx 0 0;' src='/static/goods/icon_1_xiangji@2x.png' />
-          <div>添加图片</div>
+        
+        <div class='box_wrap'>
+          <image class='box' :src='item' @click='addImg(index)' v-for='(item, index) in imgs' :key='index' />
+          <div class='box' @click='addImg'>
+            <image style='width: 54rpx; height: 60rpx; margin: 20rpx 0 0;' src='/static/goods/icon_1_xiangji@2x.png' />
+            <div>添加图片</div>
+          </div>
         </div>
+
       </div>
 
       <div class='btn s-fc-1' @click='submit'>提交</div>
@@ -77,22 +82,33 @@ export default {
     goods
   },
 
+  computed: {
+    isIos () { return wx.getStorageSync('isIos') }
+  },
+
   methods: {
     changeLevel (index) {
       console.log(index)
       this.level = index
     },
-    async addImg () {
-      if (!this.canSubmit) return
+    async addImg (index) {
+      if (this.imgs.length >= 8) return wx.showModal({ content: '最多可上传8张图片', showCancel: false })
+
+      if (!this.canSubmit) return wx.showModal({ content: '正在上传中...，请稍等', showCancel: false })
       this.canSubmit = false
 
       let res = await this.getImg()
+      if (res.errMsg) return
       console.log('img --', res)
 
       let imgs = await uploadSeriesFile(res)
-      this.imgs = this.imgs.concat(imgs)
+      typeof index === 'number' ? this.imgs[index] = imgs[0] : this.imgs = this.imgs.concat(imgs)
       console.log('img url --', imgs, this.imgs)
+
       this.canSubmit = true
+    },
+    async changeImg (index) {
+      console.log('change img --', index)
     },
     getImg () {
       return new Promise(function (resolve, reject) {
@@ -210,16 +226,21 @@ export default {
 .textarea{
   padding: 30rpx 0 0 30rpx;
 }
-.box{
+.box_wrap{
   position: absolute;
   left: 30rpx;
   bottom: 30rpx;
+  display: flex;
+  flex-wrap: wrap;
+}
+.box{
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 162rpx;
   height: 162rpx;
+  margin-right: 20rpx;
   border: 1rpx dashed #d9d9d9;
   border-radius: 3rpx;
 }

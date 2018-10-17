@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" :class='{ ios: isIos }'>
 
     <topBar :config='config'></topBar>
 
@@ -174,7 +174,8 @@ export default {
     getSale () { return this.goods.SKUList && this.goods.SKUList.reduce((p, v) => p + v.goods_salenum, 0) },
     getStorage () { return this.goods.SKUList && this.goods.SKUList.reduce((p, v) => p + v.goods_storage, 0) },
     getSkuPrice () { return this.sku && this.sku.goods_price },
-    getContentLength () { return this.appoinment.content.length }
+    getContentLength () { return this.appoinment.content.length },
+    isIos () { return wx.getStorageSync('isIos') }
   },
 
   methods: {

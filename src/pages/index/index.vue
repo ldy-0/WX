@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" :class='{ ios: isIos }'>
 
     <topBar :config='config' title='首页'></topBar>
 
@@ -7,7 +7,7 @@
 
     <div class='search' @click='goSearch(item)'>
       <image class='search_icon' src='/static/search.png' />
-      <div class='search_content s-fc-2'>搜索</div>
+      <div class='search_content s-fc-2'>请输入商品名称</div>
     </div>
 
     <div class='list_wrap'>
@@ -86,6 +86,10 @@ export default {
     slide,
     modal,
     getPhone
+  },
+
+  computed: {
+    isIos () { return wx.getStorageSync('isIos') }
   },
 
   methods: {
@@ -215,7 +219,7 @@ export default {
   top: -30rpx;
   z-index: 1;
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   width: 610rpx;
   height: 76rpx;
@@ -223,10 +227,12 @@ export default {
   border-radius: 8rpx;
   box-shadow: 0rpx 4rpx 16rpx -8rpx #333;
   background: #fff;
+  vertical-align: baseline;
 }
 .search_icon{
   width: 28rpx;
   height: 28rpx;
+  margin: 0 20rpx;
 }
 .search_content{
   font-size: 28rpx;

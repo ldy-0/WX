@@ -1,17 +1,24 @@
 <template>
-  <div class="container">
+  <div class="container" :class='{ ios: isIos }'>
 
     <topBar :config='config'></topBar>
 
     <div class='wrap'>
 
-      <div class='search_wrap'>
-        <input class='search s-fc-2' @input='search' />
-        <div class='search_desc s-fc-2' v-if='!content'>
-          <image class='search_icon' src='/static/search.png' />
-          <div class='search_content'>搜索</div>
+      <!-- <div class='search_wrap'>
+        <input class='search s-fc-2' @input='search' v-model="content" />
+        <div class='search_desc s-fc-2'>
+          <div class='search_main' >
+            <image class='search_icon' src='/static/search.png' v-if='!content'/>
+            <div class='search_content' v-if='!content'>请输入商品名称</div>
+          </div>
+          <div class='search_close_wrap' @click='clearSearch'>
+            <image class='search_close' src='/static/search_close.png' />
+          </div>
         </div>
-      </div>
+      </div> -->
+
+      <search :config='searchConfig' :content='content' @search='search' @clear='clearSearch'></search>
 
       <div class='list_wrap'>
         <div class='row' v-for='(row, i) in list' :key='i'>
@@ -32,6 +39,7 @@
 
 <script>
 import topBar from '@/components/topBar'
+import search from '@/components/search'
 import api from '@/utils/api'
 
 export default {
@@ -43,6 +51,13 @@ export default {
         bg: '#fff', // '#937d8a',
         backImg: '/static/left_arrow.png'
       },
+      searchConfig: {
+        canClear: true,
+        size: 28,
+        placeholder: '请输入商品名称',
+        searchImg: '/static/search.png',
+        closeImg: '/static/search_close.png'
+      },
       list: [],
       currentPage: 1,
       limit: 10,
@@ -53,21 +68,29 @@ export default {
   },
 
   components: {
-    topBar
+    topBar,
+    search
   },
 
   computed: {
-    getLength () { return this.list.reduce((p, v) => p + v.length, 0) }
+    getLength () { return this.list.reduce((p, v) => p + v.length, 0) },
+    isIos () { return wx.getStorageSync('isIos') }
   },
 
   methods: {
-    search (e) {
-      this.content = e.mp.detail.value
-      console.log('search', this.content)
+    search (v) {
+      this.content = v
+      console.log(`search-${this.content}-`)
 
       this.total = 0
       this.list = []
-      this.getList(this.currentPage = 1)
+      this.content !== '' && this.getList(this.currentPage = 1)
+    },
+    clearSearch () {
+      this.content = ''
+
+      this.total = 0
+      this.list = []
     },
     goGoods (item) {
       wx.navigateTo({ url: item.gc_id_1 === 1 ? `/pages/goods/main?id=${item.goods_commonid}&isDesign=true` : `/pages/goods/main?id=${item.goods_commonid}` })
@@ -83,20 +106,21 @@ export default {
       wx.showLoading({ title: 'Loading...' })
       let param = {
         store_id: 1,
+        name: this.content,
         page,
         limit: this.limit
       }
-      if (this.content !== '') param.name = this.content
       console.log('param: --', param)
 
       let res = await api.getGoodsList(param)
 
-      if (this.content !== '' && this.content !== param.name) return
-      
+      if (this.content !== param.name) return
+
       this.list = this.list.concat(this.changeArray(res.data, 2))
       this.total = res.pagination.total
       this.canLoad = true
       console.log(res, this.list)
+
       wx.hideLoading()
     }
   },
@@ -155,22 +179,39 @@ export default {
   width: 610rpx;
   height: 76rpx;
   margin: 30rpx auto 0;
-}
-.search{
-  width: 100%;
-  height: 100%;
   border: 1rpx solid #eee;
   border-radius: 8rpx;
   font-size: 28rpx;
 }
+.search{
+  width: calc(100% - 50rpx);
+  height: 100%;
+}
 .search_desc{
   position: absolute;
-  top: 25rpx;
-  left: calc(50% - 44rpx);
+  /* top: 25rpx; */
+  /* left: calc(50% - 44rpx); */
+  top: 0;
+  left: 20rpx;
+  z-index: 1;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* width: 100rpx; */
+  width: calc(100% - 20rpx);
+  height: 100%;
+}
+.search_main{
   display: flex;
   align-items: center;
-  text-align: center;
-  width: 100rpx;
+}
+.search_close_wrap{
+  padding-right: 20rpx;
+}
+.search_close{
+  width: 30rpx;
+  height: 30rpx;
 }
 .search_icon{
   width: 28rpx;

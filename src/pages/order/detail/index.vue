@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" :class='{ ios: isIos}'>
 
     <topBar :config='config'></topBar>
 
@@ -60,6 +60,7 @@
         <div class='btn' v-if="order.order_state === '未付款'" @click='pay(order)'>支付</div>
         <div class='btn' v-if="order.order_state === '已发货'" @click.stop='confirm(order)'>确认收货</div>
         <div class='btn' :hover-stop-propagation='true' @click.stop='goAssess(order)' v-if="order_state_id === 40 && !item.evaluation_state">评价</div>
+        <!-- <div class='btn' :hover-stop-propagation='true' @click.stop='goAssess(order)'>评价</div> -->
         <div class='btn' v-if="referer === 'afterService' ? order.refund_state === '待退款' : !order.use_refund" @click='goRefund(order)'>退款</div>
       </div>
 
@@ -94,6 +95,10 @@ export default {
   components: {
     topBar,
     slide
+  },
+
+  computed: {
+    isIos () { return wx.getStorageSync('isIos') }
   },
 
   methods: {

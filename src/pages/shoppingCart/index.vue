@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" :class='{ ios: isIos }'>
 
     <topBar :config='config'></topBar>
 
@@ -90,7 +90,8 @@ export default {
 
   computed: {
     count () { return this.list.reduce((p, v) => v.checked ? p + v.qty : p, 0) },
-    price () { return this.list.reduce((p, v) => v.checked ? this.add_minus(p, Number(v.goods_total)) : p, 0) }
+    price () { return this.list.reduce((p, v) => v.checked ? this.add_minus(p, Number(v.goods_total)) : p, 0) },
+    isIos () { return wx.getStorageSync('isIos') }
   },
 
   methods: {

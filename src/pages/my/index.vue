@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container" :class='{ ios: isIos }'>
 
     <topBar :config='config' title='首页'></topBar>
 
@@ -106,6 +106,10 @@ export default {
     topBar,
     slide,
     row
+  },
+
+  computed: {
+    isIos () { return wx.getStorageSync('isIos') }
   },
 
   methods: {

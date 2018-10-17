@@ -1,6 +1,7 @@
 
-const DOMAIN = 'http://132.232.75.240:88'
-// const DOMAIN = 'http://www.yijulifehall.com'
+const DOMAIN = process.env.NODE_ENV === 'development' ? 'http://132.232.75.240:88' : 'http://www.yijulifehall.com';
+
+console.log('process.env', process.env.NODE_ENV, DOMAIN)
 
 async function get (url, params, header, responseType) {
   let query = ''

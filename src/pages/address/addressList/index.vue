@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class='container' :class='{ ios: isIos }'>
 
     <topBar :config='config' title='首页'></topBar>
 
@@ -17,7 +17,7 @@
               <view class='address_info'>{{item.area_info}}</view>
             </view>
               <view class='other_info'>
-                <view class='default' v-if='Number(item.address_is_default)'>[默认地址]</view>
+                <view class='default' v-if='item.address_is_default'>[默认地址]</view>
                 <view v-else></view>
                 <view class='operate_info'>
                     <view class='operate_btn' @click='go(item)'>
@@ -103,9 +103,14 @@ export default {
 
       if (!res) return null
 
+      res.forEach(v => { v.address_is_default = Number(v.address_is_default) })
       this.list = res
       console.log('list --', this.list)
     }
+  },
+
+  computed: {
+    isIos () { return wx.getStorageSync('isIos') }
   },
 
   created () {
