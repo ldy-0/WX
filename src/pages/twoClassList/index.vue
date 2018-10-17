@@ -47,6 +47,8 @@
           </div>
         </div>
 
+        <end-bar></end-bar> 
+
       </div>
 
     </div>
@@ -57,6 +59,7 @@
 import card from '@/components/card'
 // import pageContent from '@/components/pageContent'
 import topBar from '@/components/topBar'
+import endBar from '@/components/endBar'
 import slide from '@/components/slide'
 import search from '@/components/search'
 import api from '@/utils/api'
@@ -106,6 +109,7 @@ export default {
     card,
     // pagecontent: pageContent,
     topBar,
+    endBar,
     slide,
     search
   },
@@ -250,8 +254,8 @@ export default {
     }
 
     if (this.getLength >= this.total) {
-      wx.hideLoading()
-      return wx.showModal({ content: '已经是最后一页了!', showCancel: false })
+      return wx.hideLoading()
+      // return wx.showModal({ content: '已经是最后一页了!', showCancel: false })
     }
     this.canLoad = false
 
@@ -268,6 +272,7 @@ export default {
 
 .wrap{
   font-family: 'PingFang-SC-Medium';
+  overflow: hidden;
 }
 
 .search_wrap{
@@ -305,9 +310,10 @@ export default {
 .class_container{
   width: 100%; 
   height: 100rpx;
-  white-space: nowrap; 
   margin: 30rpx 0 0;
   padding: 0 30rpx;
+  white-space: nowrap; 
+  overflow: hidden;
 }
 .class_container .class_item{
   display: inline-block;
@@ -350,7 +356,7 @@ export default {
   font-weight: bold;
 }
 .checked{
-  border-bottom: 2rpx solid #937d8a;
+  /* border-bottom: 2rpx solid #937d8a; */
 }
 
 .list_wrap{
@@ -384,6 +390,8 @@ export default {
   overflow: hidden;
 }
 
+
+
 .s-fc-1{
   color: #fff;
 }
@@ -401,5 +409,15 @@ export default {
 }
 .s-fc-6{
   color: #131313;
+}
+.s-fc-7{
+  color: #dedede; 
+}
+
+.s-bg-7{
+  background: #dedede; 
+}
+.test_merge{
+
 }
 </style>
