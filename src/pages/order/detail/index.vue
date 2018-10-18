@@ -56,7 +56,7 @@
       </div>
 
       <div class='bottom_bar'>
-        <button class='btn concat' type='concat' plain='true'>联系客服</button>
+        <button class='btn concat' open-type='contact' plain='true'>联系客服</button>
         <div class='btn' v-if="order.order_state === '未付款'" @click='pay(order)'>支付</div>
         <div class='btn' v-if="order.order_state === '已发货'" @click.stop='confirm(order)'>确认收货</div>
         <div class='btn' :hover-stop-propagation='true' @click.stop='goAssess(order)' v-if="order_state_id === 40 && !item.evaluation_state">评价</div>

@@ -9,7 +9,7 @@
 
       <div class='goods_info'>
         <div class='goods_name'>{{goods.goods_name}}</div>
-        <div class='goods_price s-fc-4'>{{goods.goods_price}}</div>
+        <div class='goods_price s-fc-4'>{{goods.goods_price}}{{goods.unit}}</div>
         <div style='display: flex; align-items: center;' v-if='isDesign'>
           <image style='width: 26rpx; height: 26rpx;' src='/static/goods/icon_pingfen@2x.png' />
           <div class='s-fc-7'>{{goods.SKUList && goods.SKUList[0].evaluation_good_star}}</div>
@@ -29,11 +29,11 @@
         <div>宝贝评价({{commentTotal}})</div>
         <div v-for='(item, index) in commentList' :key='index'>
           <div style='display: flex; margin: 20rpx 0 0;'>
-            <image class='user_img' :src='item.geval_frommemberavatar' />
+            <image class='user_img' :src='item.geval_frommemberavatar' mode='aspectFill' />
             <div class='user_name' style='margin-left: 20rpx;'>{{item.geval_frommembername}}</div>
           </div>
           <div style='margin: 10rpx 0 0;'>{{item.geval_content}}</div>
-          <image class='comment_img' :src='img' v-for='(img, i) in item.imgs' :key='i' />
+          <image class='comment_img' :src='img' v-for='(img, i) in item.imgs' :key='i' mode='aspectFill' />
         </div>
         <div style='height: 100rpx; overflow: hidden;'><div class='btn s-fc-3' @click='loadComment'>查看评论</div></div>
       </div>
@@ -149,7 +149,7 @@ export default {
       commentTotal: 0,
       commentPage: 1,
       barList: [
-        { title: '客服', img: '/static/goods/concat.png', type: 'concat' },
+        { title: '客服', img: '/static/goods/concat.png', type: 'contact' },
         { title: '购物车', img: '/static/goods/shoppingCart.png' }
       ],
       isDesign: false,

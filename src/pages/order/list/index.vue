@@ -23,7 +23,7 @@
             </div>
 
             <div class='order_operate s-fc-6'>
-              <button class='btn concat' type='concat' plain='true' @click.stop='stopPropagation'>联系客服</button>
+              <button class='btn concat' open-type='contact' plain='true' @click.stop='stopPropagation'>联系客服</button>
               <div class='btn' v-if="item.order_state === '未付款'" @click.stop="update(item, 'cancel')">取消订单</div>
               <div class='btn' v-if="item.order_state === '未付款'" @click.stop='pay(item)'>支付</div>
               <div class='btn' v-if="item.order_state === '已发货'" @click.stop='update(item)'>确认收货</div>

@@ -7,13 +7,13 @@
                   borderRadius: config.borderRadius || '8rpx'
                  }">
 
-        <input class='search' @input='search' @focus='focus' v-model="content" />
+        <input class='search' @input='search' @focus='focus' @blur='blur' v-model="content" />
 
         <div class='search_desc' :style="{ justifyContent: config.canClear && 'space-between' }">
 
           <div class='search_main'>
-            <image class='search_icon' :src='config.searchImg' v-if='!isFocus' />
-            <div class='search_content' v-if='!isFocus' >{{config.placeholder}}</div>
+            <image class='search_icon' :src='config.searchImg' v-if='!content && !isFocus' />
+            <div class='search_content' v-if='!content && !isFocus' >{{config.placeholder}}</div>
           </div>
 
           <div class='search_close_wrap' @click='clear' v-if='config.canClear && content'>
@@ -50,10 +50,22 @@ export default {
       console.log('focus ---')
       this.isFocus = true
     },
+    blur () {
+      console.log('blur ---')
+      this.isFocus = false
+    },
     clear () {
       console.log(`emit search clear`)
+      this.interval && clearInterval(this.interval)
       this.$emit('clear')
+    },
+    init () {
+      console.log('init search component--')
     }
+  },
+
+  created () {
+    console.log('created search component --')
   }
 }
 </script>

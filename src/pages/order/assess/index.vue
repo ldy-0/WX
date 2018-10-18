@@ -23,7 +23,7 @@
         <textarea class='textarea' placeholder="请输入评论..." v-model="content"></textarea>
         
         <div class='box_wrap'>
-          <image class='box' :src='item' @click='addImg(index)' v-for='(item, index) in imgs' :key='index' />
+          <image class='box' :src='item' @click='addImg(index)' v-for='(item, index) in imgs' :key='index' mode='aspectFill' />
           <div class='box' @click='addImg'>
             <image style='width: 54rpx; height: 60rpx; margin: 20rpx 0 0;' src='/static/goods/icon_1_xiangji@2x.png' />
             <div>添加图片</div>

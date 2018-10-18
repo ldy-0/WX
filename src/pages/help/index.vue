@@ -70,6 +70,7 @@ export default {
   font: 30rpx 'PingFang-SC-Medium'; 
   color: #000;
   background: #fff;
+  overflow: hidden;
 }
 
 .content{

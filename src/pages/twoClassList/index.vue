@@ -38,7 +38,7 @@
         <div class='list_wrap'>
           <div class='row' v-for='(row, i) in list' :key='i'>
             <div class='item' v-for='(item, index) in row' :key='index' @click='goGoods(item)'>
-              <img class='item_img' :src='item.goods_image' />
+              <img class='item_img' :src='item.goods_image' mode='aspectFill' />
               <div class='item_desc'>
                 <div class='item_title s-fc-4'>{{item.goods_name}}</div>
                 <div class='item_price s-fc-5'>{{item.goods_price}}</div>
@@ -47,7 +47,7 @@
           </div>
         </div>
 
-        <end-bar></end-bar> 
+        <end-bar v-if='list.length > 0'></end-bar> 
 
       </div>
 

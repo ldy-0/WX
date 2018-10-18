@@ -7,10 +7,10 @@
 
       <div class='user_info'>
         <div class='user_bg_wrap'>
-          <image class='user_bg' :src='userInfo.wx_avatar' />
+          <image class='user_bg' :src='userInfo.wx_avatar' mode='aspectFill' />
         </div>
         <div class='user'>
-          <image class='user_img' :src='userInfo.wx_avatar' />
+          <image class='user_img' :src='userInfo.wx_avatar' mode='aspectFill' />
           <div class='user_name s-fc-1' v-text='userInfo.wx_name'></div>
         </div>
       </div>
@@ -47,7 +47,7 @@
       <div class='class_wrap'>
         <!-- <row class='s-fc-3' :config='rowConfig' :leftImg='item.img' :leftTitle='item.title' v-for='(item, index) in classList' :key='index'></row> -->
         <div class='class_item_wrap' v-for='(item, index) in classList' :key='index' @click='go(item, $event)'>
-          <button class='concat' type='concat' plain='true' v-if='item.isButton'>
+          <button class='concat' open-type='contact' plain='true' v-if='item.isButton'>
             <div style='display: flex; align-items: center;'>
               <image class='class_item_icon' :src='item.img' />
               <div class='class_item_title s-fc-3'>{{item.title}}</div>

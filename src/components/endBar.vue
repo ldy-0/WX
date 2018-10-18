@@ -61,7 +61,7 @@ export default {
 
 .line{
   width: 210rpx;
-  height: 4rpx;
+  height: 2rpx;
 }
 
 .s-fc-2{

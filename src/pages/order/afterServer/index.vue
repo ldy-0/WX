@@ -23,7 +23,7 @@
             </div>
 
             <div class='order_operate s-fc-6'>
-              <button class='btn concat' type='concat' plain='true' @click.stop='stopPropagation'>联系客服</button>
+              <button class='btn concat' open-type='contact' plain='true' @click.stop='stopPropagation'>联系客服</button>
               <!-- <div class='btn' v-if="item.order_state === '未付款'" @click.stop='pay(item)'>支付</div> -->
               <div class='btn' v-if="item.order_state === '待退款'" @click.stop='cancel(item)'>取消退款</div>
               <!-- <div class='btn' v-if="item.order_state === '未退款'" @click='goRefund(item)'>退款</div> -->

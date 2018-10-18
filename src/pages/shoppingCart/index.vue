@@ -24,7 +24,7 @@
             <view class='big_circle' v-else></view>
         </view>
 
-        <image class='goods_thub' :src='item.goods_image' />
+        <image class='goods_thub' :src='item.goods_image' mode='aspectFill' />
 
         <div class='goods_detail'>
           <div class='goods_name s-fc-2'>{{item.goods_name}}</div>

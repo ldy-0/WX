@@ -23,7 +23,7 @@
       <div class='list_wrap'>
         <div class='row' v-for='(row, i) in list' :key='i'>
           <div class='item' v-for='(item, index) in row' :key='index' @click='goGoods(item)'>
-            <img class='item_img' :src='item.goods_image' mode='aspectFill' />
+            <image class='item_img' :src='item.goods_image' mode='aspectFill' />
             <div class='item_desc'>
               <div class='item_title s-fc-4'>{{item.goods_name}}</div>
               <div class='item_price s-fc-5'>{{item.goods_price}}</div>
