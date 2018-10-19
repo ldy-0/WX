@@ -162,8 +162,6 @@
 </div>
 </template>
 <script>
-// getList 接口 获取
-// addNotice 接口 添加
 
 import {getAuthList_api,deleteAuth_api,addAuth_api,editAuth_api} from '@/api/seller' 
 const formForNotive = { //此页面 静态数据

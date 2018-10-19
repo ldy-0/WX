@@ -17,7 +17,8 @@ const user = {
     roles: [],
     setting: {
       articlePlatform: []
-    }
+    },
+    storeId: '' // 堂食 food storeId
   },
 
   mutations: {
@@ -52,7 +53,8 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
-    }
+    },
+    setStoreId(s, id){ s.storeId = id} // 堂食 food storeId 
   },
 
   actions: {
@@ -110,10 +112,12 @@ const user = {
       return new Promise((resolve, reject) => {
         loginByUsername(userInfo).then(response => {
           const data = response
+          console.log('login --', data)
           if(data&&data.status===0){
             //把getuserinfo的事情做完
             const sessionID = data.data['token']
             commit('SET_TOKEN', sessionID)
+            commit('setStoreId', data.data['store_id']) // 堂食 food storeId
             setToken(sessionID)
             let roles = data.data.permission
             if(data.data.is_admin===1){

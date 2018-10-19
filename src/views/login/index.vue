@@ -107,7 +107,7 @@ export default {
       loginForm: {
         // username: 'admin',
         // password: '1111111'
-        username: '13297528280',
+        username: 'yuan',
         password: '123456'
       },
       loginRules: {
@@ -152,6 +152,7 @@ export default {
           loginPromise.then(() => {
             this.loading = false
             this.$router.push({ path: '/' })
+            console.log('$store---',this.$store.state.user)
           }).catch((e) => {
             console.log('no', e)
             this.loading = false

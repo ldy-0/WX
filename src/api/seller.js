@@ -488,6 +488,17 @@ console.log('res', res);
   return res.data.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.data.error })// res.data; 
 }
 
+async function updateTeacher(data, _this){
+
+  let res = await request({
+    url: '/api/v1/teacher/edit',
+    methods: 'post',
+    data,
+  });
+
+  return res.data.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.data.error })// res.data; 
+}
+
 async function deleteTeacher(data, _this){
 
   let res = await request({
@@ -569,12 +580,95 @@ async function getStudentList(params){
   return res.data.error !== '' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res.data; 
 }
 
+// food
+async function getDeskList(params, _this){
+  let res = await request({
+    url: '/api/v1/seller/getdiningtable',
+    methods: 'get',
+    params,
+  });
+
+  return res.error !== '查询成功' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res; 
+}
+
+async function createQRcode(data, _this){
+  let res = await request({
+    url: '/api/v1/seller/wxcode',
+    method: 'post',
+    data,
+  }); 
+
+  return res.error !== '' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : res.data; 
+}
+
+async function addDesk(data, _this){
+  let res = await request({
+    url: '/api/v1/seller/adddiningtable',
+    method: 'post',
+    // headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    data,
+  }); 
+console.log('res',res)
+  return res.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error, }); 
+}
+
+async function deleteDesk(params){
+  let res = await request({
+    url: '/api/v1/seller/deldiningtable',
+    methods: 'get',
+    params,
+  });
+
+  return res.error !== '删除成功' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : this.$notify.success({ title: '提示', message: res.error, }); 
+}
+
+async function updateDesk(data, _this){
+  let res = await request({
+    url: '/api/v1/seller/editdiningtable',
+    method: 'post',
+    data,
+  }); 
+
+  return res.error !== '修改成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error, }); 
+}
+
+async function getOrderList(params, _this){
+  let res = await request({
+    url: '/api/v1/seller/order',
+    methods: 'get',
+    params,
+  });
+
+  return res.error !== '' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res; 
+}
+
+async function getOrderDetail(params){
+  let res = await request({
+    url: '/api/v1/seller/order',
+    methods: 'get',
+    params,
+  });
+
+  return res.error !== '' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res; 
+}
+
+async function updateOrderState(data, _this){
+  let res = await request({
+    url: '/api/v1/seller/orderstate',
+    method: 'put',
+    data,
+  }); 
+
+  return res.error !== '' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error, }); 
+}
+
 export default {
   setAddress,
   updateAddress,
   deleteAddress,
   getAddressList,
   setTeacher,
+  updateTeacher,
   deleteTeacher,
   getTeacherList,
   setCoulse,
@@ -582,4 +676,12 @@ export default {
   deleteCoulse,
   getRealCoulseList,
   getStudentList,
+  getDeskList,
+  createQRcode,
+  addDesk,
+  updateDesk,
+  deleteDesk,
+  getOrderList,
+  getOrderDetail,
+  updateOrderState,
 }

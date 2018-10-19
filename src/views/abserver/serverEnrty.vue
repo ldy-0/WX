@@ -155,8 +155,9 @@ export default {
       getList() {
         this.listLoading = true
         let sendData = Object.assign({},this.listQuery)
-        getEntryList_api(sendData).then(data=>{
-        this.listLoading = false
+        getEntryList_api(sendData).then(data =>{
+          this.listLoading = false
+        console.log('data --', data)
           if(data.status===0){
             let tempData = []
             for(let i = 0 ,len = data.data.length;i<len;i++){
@@ -199,6 +200,7 @@ export default {
         }
         if(this.formForNotive.fileList1[0].raw){
             let urls1 = await uploadFn(this.formForNotive.fileList1[0].raw)
+            console.log('upload img --', urls1)
             sendData.storegc_pic = urls1[0]
         }else{
             sendData.storegc_pic = this.formForNotive.fileList1[0].url

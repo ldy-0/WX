@@ -278,6 +278,24 @@ export let asyncRouterMapSeller = [
     }]
   },
   {
+    path: '/food',
+    component: Layout,
+    redirect: '/food/index',
+    meta: { title: 'food', icon: 'goods', roles:'food'},
+    children: [{
+      path: 'index',
+      component: () => import('@/views/food/desk'),
+      name: 'desk',
+      meta: { title: 'desk', noCache: true }
+    },
+    {
+      path: 'order',
+      component: () => import('@/views/food/orderList'),
+      name: 'foodOrder',
+      meta: { title: 'order', noCache: true }
+    }]
+  },
+  {
     path: '/signIn',
     component: Layout,
     // redirct: '/signIn/index',

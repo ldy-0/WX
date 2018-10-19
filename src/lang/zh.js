@@ -27,7 +27,12 @@ export default {
     serverActivity:'活动',
     distribution:'分销',
     vote:'投票',
-    // test
+
+    // food
+    food: '餐饮',
+    desk: '餐桌',
+
+    // signIn
     signIn: '签到列表',
     signin: '签到列表',
     coulse: '课程列表',

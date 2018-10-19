@@ -75,19 +75,19 @@
     <el-form-item label="商品编号" :label-width="formLabelWidth" prop="goodsNum">
       <el-input v-model="formForNotive.goodsNum" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="门店" :label-width="formLabelWidth" prop="school">
-      <!-- <el-select  v-model="formForNotive.school" placeholder="请选择门店">
+    <!-- <el-form-item label="门店" :label-width="formLabelWidth" prop="school">
+      <el-select  v-model="formForNotive.school" placeholder="请选择门店">
         <el-option
           v-for="item in schoolList"
           :key="item.value"
           :label="item.label"
           :value="item.value">
         </el-option>
-      </el-select> -->
+      </el-select>
     <el-checkbox-group v-model="formForNotive.school">
       <el-checkbox-button v-for="item in schoolList" :label="item.value" :key="item.value">{{item.label}}</el-checkbox-button>
     </el-checkbox-group>
-    </el-form-item>
+    </el-form-item> -->
     <!-- <el-form-item label="商品库存" :label-width="formLabelWidth" prop="goodsTotal">
       <el-input v-model="formForNotive.goodsTotal" auto-complete="off"></el-input>
     </el-form-item> -->
@@ -820,7 +820,8 @@ export default {
         // 运费
         sendData.goods_freight= this.formForNotive.goodsTrans
 
-        addGoods_api(sendData).then(data=>{
+        addGoods_api(sendData).then(res =>{
+          let data = res;
           this.waitAddNotice = false
           this.addNewShow = false
           if(data.status===0){
@@ -1025,7 +1026,8 @@ export default {
         // 运费
         sendData.goods_freight= this.formForNotive.goodsTrans
 
-        editGoods_api(sendData).then(data=>{
+        editGoods_api(sendData).then(res =>{
+          let data = res;
           this.waitAddNotice = false
           this.addNewShow = false
           if(data.status===0){
@@ -1079,7 +1081,8 @@ export default {
         let sendData = {
           goods_commonid:id
         }
-        getGoods_api(sendData).then(data=>{
+        getGoods_api(sendData).then(res =>{
+          let data = res;
           this.editLoading = false
           this.waitAddNotice = false
           if(data.status===0){
@@ -1213,7 +1216,8 @@ export default {
             type:wantUp===0?'offline':'online'
           }
         }
-        upDownGoods_api(sendData).then(res=>{
+        upDownGoods_api(sendData).then(data =>{
+          let res = data.data;
           if(res&&res.status===0){
               this.$notify({
               title: '成功',
@@ -1267,7 +1271,8 @@ export default {
         // if(!sendData.time){
         //   delete sendData.time
         // }
-        getGoodsList_api(sendData).then(response => {
+        getGoodsList_api(sendData).then(res => {
+          let response = res;
           // 这里由于结构做了调整，导致编辑页面需要的数据无法从列表获取，这里只需要给tableData额外传一个id
           if(response&&response.status==0){
             let result = response.data

@@ -169,8 +169,6 @@
 </div>
 </template>
 <script>
-// getList 接口 获取
-// addNotice 接口 添加
 
 import api from '@/api/seller' 
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
@@ -253,12 +251,9 @@ export default {
         }],
       formInline: {},
       listLoading: false,
-      // footer
       listQuery: {
         page: 1,
         limit: 10,
-        search:"",
-        time:""
       },
       total: 0,
     }
@@ -278,87 +273,20 @@ export default {
       if(!res){
         return 
       }
+
       this.waitAddNotice = true
-      
-      if(this.isAddItem){
-        var addres = await api.setTeacher(this.formForNotive);
+      this.update()
+    },
+    async update(){
+      let param = {
+
       }
-      // let sendData = {
-      //   seller_nick:this.formForNotive.username,
-      //   seller_name:this.formForNotive.account,
-      //   seller_password:this.formForNotive.password,
-      //   sellergroup_id:0,
-      // }
-      console.log('formForNotive', this.formForNotive);
+      console.log('param --', this.formForNotive);
+      var addres = this.isAddItem ? await api.setTeacher(this.formForNotive, this) : await api.updateTeacher(htis.formForNotive, this);
+
       this.waitAddNotice = false
       this.addNewShow = false;
-      // addAuth_api(sendData).then(data=>{
-      //   this.waitAddNotice = false
-      //   this.addNewShow = false
-      //   if(data.status===0){
-      //     this.$notify.success({ title: '成功', message: '添加成功' })
-      //     this.getList()
-      //   }else{
-      //     this.$notify({
-      //       title: '失败',
-      //       message: '操作失败',
-      //       type: 'error'
-      //     })
-      //   }
-      // }).catch(e=>{
-      //   this.waitAddNotice = false
-      //   this.addNewShow = false
-      //   console.error('appointmentShop:addIndustry_api 接口错误')
-      // })
-    },
-      
-      async editAuth(formName){
-        let res = await new Promise((res,rej)=>{
-        this.$refs[formName].validate((valid) => {
-            if (valid) {
-              res(true)
-            } else {
-              res(false)
-            }
-          })
-        })
-        if(!res){
-          return 
-        }
-        this.waitAddNotice = true
-        let sendData = {
-          // 后端生成
-          seller_id:this.formForNotive.id,
-          // 前段统一
-          seller_nick:this.formForNotive.username,
-          // seller_name:this.formForNotive.account,
-          seller_password:this.formForNotive.password,
-          seller_limits:this.formForNotive.checkboxGroup1,
-          sellergroup_id:0,
-        }
-        editAuth_api(sendData).then(data=>{
-          this.waitAddNotice = false
-          this.addNewShow = false
-          if(data.status===0){
-            this.$notify({
-              title: '成功',
-              message: '操作成功',
-              type: 'success'
-            })
-            this.getList()
-          }else{
-            this.$notify({
-              title: '失败',
-              message: '操作失败',
-              type: 'error'
-            })
-          }
-        }).catch(e=>{
-          this.waitAddNotice = false
-          this.addNewShow = false
-          console.error('editAuth_api 接口错误')
-        })
-      },
+    }, 
       async showCoulse(index, rowData){
         console.log(rowData)
 
@@ -413,6 +341,7 @@ export default {
         this.listLoading = true
         
         let res = await api.getTeacherList(this.listQuery);
+        console.log(res)
         this.tableData = res.data;
         this.total = res.pagination.total;
         this.listLoading = false
