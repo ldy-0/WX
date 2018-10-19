@@ -1,7 +1,7 @@
 <template>
   <div class="container" :class='{ ios: isIos }'>
 
-    <topBar :config='config'></topBar>
+    <!-- <topBar :config='config'></topBar> -->
 
     <div class='wrap'>
 
@@ -44,6 +44,7 @@
           <div style='margin-bottom: 30rpx;'>{{item.content}}</div>
           <image class='detail_img' :src='item.img' mode='aspectFill' />
         </div>
+        <div style='height: 110rpx;'></div>
       </div>
 
       <div class='bottom_bar' v-if='isDesign'>
@@ -103,7 +104,9 @@
           <div class=''>购买数量</div>
           <div class='count'>
             <div class='number_box' @click='minus'><image src='/static/minus.png' style='width: 20rpx; height: 2rpx; margin-right: 20rpx;' /></div>
-            <div class='number'>{{goods.qty}}</div>
+            <div class='number'>
+              <input v-model='goods.qty' />
+            </div>
             <div class='number_box' @click='add'><image src='/static/add.png' style='width: 20rpx; height: 20rpx; margin-left: 20rpx;' /></div>
           </div>
         </div>
@@ -345,13 +348,15 @@ export default {
 }
 
 .goods_info{
+  box-sizing: border-box;
   width: 100%;
   height: 186rpx;
-  padding: 20rpx 20rpx 0;
+  padding: 20rpx 20rpx;
   background: #fff;
 }
 .goods_name{
   font-size: 32rpx;
+  line-height: 32rpx;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -359,6 +364,7 @@ export default {
 .goods_price{
   margin: 30rpx 0 0;
   font-size: 37rpx;
+  line-height: 37rpx;
 }
 
 .row{
@@ -372,6 +378,8 @@ export default {
 }
 
 .comment_wrap{
+  box-sizing: border-box;
+  width: 100%;
   margin: 20rpx 0 0;
   padding: 20rpx 20rpx 0;
   background: #fff;
@@ -403,7 +411,7 @@ export default {
 }
 
 .detail_wrap{
-  margin: 20rpx 0 100rpx;
+  margin: 20rpx 0 0;
   padding: 0 20rpx;
   background: #fff;
 }

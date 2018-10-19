@@ -1,7 +1,7 @@
 <template>
   <div class="container" :class='{ ios: isIos }'>
 
-    <topBar :config='config'></topBar>
+    <!-- <topBar :config='config'></topBar> -->
 
     <div class='wrap'>
 
@@ -136,7 +136,7 @@ export default {
       wx.navigateTo({ url: `/pages/order/refund/main?order=${encodeURIComponent(JSON.stringify(item))}` })
     },
     goAssess (item, e) {
-      wx.navigateTo({ url: `/pages/order/assess/main?order=${encodeURIComponent(JSON.stringify(item))}` })
+      wx.navigateTo({ url: `/pages/order/assess/main?order=${encodeURIComponent(JSON.stringify(item))}&referer=${JSON.stringify('/pages/order/list/main')}` })
     },
     async getList (page) {
       wx.showLoading({ title: 'Loading...' })

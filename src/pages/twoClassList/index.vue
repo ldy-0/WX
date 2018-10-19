@@ -1,7 +1,7 @@
 <template>
   <!-- <pagecontent> -->
     <div class='container' :class='{ ios: isIos }'>
-      <topBar :config='config' title='首页'></topBar>
+      <!-- <topBar :config='config' title='首页'></topBar> -->
 
       <div class='wrap'>
 
@@ -38,9 +38,9 @@
         <div class='list_wrap'>
           <div class='row' v-for='(row, i) in list' :key='i'>
             <div class='item' v-for='(item, index) in row' :key='index' @click='goGoods(item)'>
-              <img class='item_img' :src='item.goods_image' mode='aspectFill' />
+              <img class='item_img' :src='isArticle ? item.pic : item.goods_image' mode='aspectFill' />
               <div class='item_desc'>
-                <div class='item_title s-fc-4'>{{item.goods_name}}</div>
+                <div class='item_title s-fc-4'>{{isArticle ? item.title : item.goods_name}}</div>
                 <div class='item_price s-fc-5'>{{item.goods_price}}</div>
               </div>
             </div>
@@ -63,6 +63,7 @@ import endBar from '@/components/endBar'
 import slide from '@/components/slide'
 import search from '@/components/search'
 import api from '@/utils/api'
+import pageConfig from './main.json'
 
 export default {
   data () {
@@ -101,7 +102,9 @@ export default {
       limit: 10,
       total: 0,
       canLoad: true,
-      content: ''
+      canChange: true,
+      content: '',
+      isArticle: false
     }
   },
 
@@ -137,6 +140,7 @@ export default {
       this.getList(this.currentPage = 1)
     },
     goGoods (item) {
+      if (this.isArticle) return wx.navigateTo({ url: `/pages/article/main?id=${item.id}` })
       wx.navigateTo({ url: this.categoryId === 1 ? `/pages/goods/main?id=${item.goods_commonid}&isDesign=true` : `/pages/goods/main?id=${item.goods_commonid}` })
     },
     changeArray (arr, nub) {
@@ -147,7 +151,13 @@ export default {
       return newArr
     },
     changeClass (item) {
+      if (!this.canChange) return
+      this.canChange = false
       this.init()
+
+      if (item.title === '设计师+易居学院') {
+        this.isArticle = true
+      }
 
       item.isTwo ? this.twoClassId = item.id : this.classId = item.id
       console.log('change', this.twoClassId, this.classId)
@@ -202,14 +212,15 @@ export default {
       if (this.content !== '') param.name = this.content
       console.log('param: --', param)
 
-      let res = await api.getGoodsList(param)
+      let res = this.isArticle ? await api.getArticleList(param) : await api.getGoodsList(param)
 
       if (this.content !== '' && this.content !== param.name) return
-      
+
       this.list = this.list.concat(this.changeArray(res.data, 2))
       console.log('list --', res, this.list)
       this.total = res.pagination.total
       this.canLoad = true
+      this.canChange = true
       wx.hideLoading()
     },
     init () {
@@ -218,6 +229,7 @@ export default {
       this.total = 0
       this.list = []
       this.content = ''
+      this.isArticle = false
     }
   },
 
@@ -230,6 +242,8 @@ export default {
 
     let category = decodeURIComponent(param.category)
     this.config.title = category
+    // pageConfig.navigationBarTitleText = category
+    wx.setNavigationBarTitle({ title: category })
     this.categoryId = this.classConfig[category].id
     console.log('onload --', category, this.categoryId)
 
@@ -260,6 +274,10 @@ export default {
     this.canLoad = false
 
     this.getList(++this.currentPage)
+  },
+
+  onShareAppMessage () {
+
   }
 }
 </script>

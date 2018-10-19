@@ -1,7 +1,7 @@
 <template>
   <div class="container" :class='{ ios: isIos }'>
 
-    <topBar :config='config' title='首页'></topBar>
+    <!-- <topBar :config='config' title='首页'></topBar> -->
 
     <slide :config='slideConfig' @go='go'></slide>
 

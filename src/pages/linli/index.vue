@@ -1,7 +1,7 @@
 <template>
   <div class="container">
 
-    <topBar :config='config'></topBar>
+    <!-- <topBar :config='config'></topBar> -->
 
     <div class='wrap'>
 

@@ -5,7 +5,20 @@
 
     <div class='wrap'>
 
-     <div class='content s-fc-2' v-text='content'></div> 
+      <image class='article_img' :src='detail.pic' mode='aspectFill' />
+
+      <div class='article'>
+
+        <div class='title s-fc-3' v-text='detail.title'></div>
+
+        <div class='time s-fc-4' v-text='detail.add_time'></div>
+
+        <div class='content s-fc-2' v-for='(item, index) in detail.body' :key='index'>
+          <div style='margin-bottom: 30rpx;'>{{item.content}}</div>
+          <image class='detail_img' :src='item.img' mode='aspectFill' />
+        </div>
+
+      </div>
       
     </div>
   </div>
@@ -20,12 +33,14 @@ export default {
     return {
       userInfo: {},
       config: {
-        title: '帮助',
+        title: '详情',
         color: '#222',
         bg: '#fff',
         backImg: '/static/left_arrow.png'
       },
-      content: ''
+      content: '',
+      detail: {},
+      id: null
     }
   },
 
@@ -46,8 +61,11 @@ export default {
   },
 
   async onLoad (params) {
-    let res = await api.getHelp()
-    this.content = res
+    this.id = params.id
+
+    let res = await api.getArticle(this.id, null, this)
+    console.log('article detail --', res)
+    this.detail = res
   },
 
   onPullDownRefresh () {
@@ -70,11 +88,31 @@ export default {
   font: 30rpx 'PingFang-SC-Medium'; 
   color: #000;
   background: #fff;
-  overflow: hidden;
 }
 
+.article_img{
+  width: 100%;
+  height: 350rpx;
+  background: #ccc;
+}
+
+.article{
+  width: 670rpx;
+  margin: 30rpx auto 0;
+}
+
+.title{
+  font-size: 34rpx;
+}
+.time{
+  margin: 24rpx 0 0;
+  font-size: 26rpx;
+}
 .content{
-  margin: 40rpx;
+  margin: 24rpx 0 0;
+}
+.detail_img{
+  width: 100%;
 }
 
 .s-fc-1{
@@ -87,7 +125,7 @@ export default {
   color: #786578;
 }
 .s-fc-4{
-  color: #ff4444;
+  color: #a9a9a9;
 }
 .s-fc-3{
   color: #333;
@@ -104,6 +142,7 @@ export default {
 .s-fc-9{
   color: #fc5a4f; 
 }
+
 .s-bg-2{
   background: #d6c1d2;
 }

@@ -1,4 +1,7 @@
 {
+  "navigationBarBackgroundColor": "#fff",
+  "navigationBarTextStyle": "black",
+  "navigationBarTitleText": "易居置换",
   "enablePullDownRefresh": false,
   "disableScroll": false 
 }

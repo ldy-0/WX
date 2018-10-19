@@ -1,4 +1,7 @@
 {
+  "navigationBarBackgroundColor": "#fff",
+  "navigationBarTextStyle": "black",
+  "navigationBarTitleText": "易居邻里",
   "enablePullDownRefresh": false,
   "disableScroll": false 
 }

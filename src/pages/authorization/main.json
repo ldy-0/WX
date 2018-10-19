@@ -1,4 +1,7 @@
 {
+  "navigationBarBackgroundColor": "#937d8a",
+  "navigationBarTextStyle": "white",
+  "navigationBarTitleText": "授权",
   "enablePullDownRefresh": false,
   "disableScroll": true 
 }

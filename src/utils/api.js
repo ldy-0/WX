@@ -432,6 +432,27 @@ async function cancelRefund(id, params){
   return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
 }
 
+// article
+async function getArticleList(params){
+
+  let res = await request.get('/api/v2/member/academy', params, {
+    'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res;
+
+}
+
+async function getArticle(id, params){
+
+  let res = await request.get(`/api/v2/member/academy/${id}`, params, {
+    'token': wx.getStorageSync('token'),
+  });
+
+  return res.error !== '' ? wx.showModal({ title: '提示', content: res.error, showCancel: false, }) : res.data;
+
+}
+
 export default {
   getToken,
   setUserInfo,
@@ -473,4 +494,6 @@ export default {
   getAfterServiceList,
   getAfterService,
   cancelRefund,
+  getArticleList,
+  getArticle,
 }

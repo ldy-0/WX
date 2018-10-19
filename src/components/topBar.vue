@@ -1,5 +1,6 @@
 <template>
   <div class='topBar' 
+      :class='{ otherIos: isOtherIos }'
       :style="{height: config.height, paddingTop: isIos && '66rpx', color: config.color, background: config.bg}">
 
     <div class='left' @click='goBack'>
@@ -24,7 +25,8 @@ export default {
 
   data () {
     return {
-      isIos: false
+      isIos: false,
+      isOtherIos: false
     }
   },
 
@@ -43,7 +45,9 @@ export default {
   created () {
     let system = wx.getSystemInfoSync()
     console.log('system', system)
-    if (/iOS/.test(system.system)) this.isIos = true
+    // if (/iOS/.test(system.system)) this.isIos = true
+    if (/iPhone X/.test(system.model)) this.isIos = true
+    if (/iOS/.test(system.system) && !/iPhone X/.test(system.model)) this.isOtherIos = true
   }
 }
 </script>
@@ -62,6 +66,11 @@ export default {
   height: 130rpx;
   padding: 0 20rpx;
   overflow: hidden;
+}
+
+.otherIos{
+  height: 90rpx;
+  padding: 30rpx 0 0;
 }
 
 .left, .right{

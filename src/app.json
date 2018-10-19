@@ -21,13 +21,14 @@
     "pages/shoppingCart/main",
     "pages/help/main",
     "pages/search/main",
-    "pages/img/main"
+    "pages/img/main",
+    "pages/article/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "WeChat",
-    "navigationStyle": "custom",
+    "navigationBarTitleText": "易·居家居生活馆",
+    "navigationStyle": "default",
     "navigationBarTextStyle": "black"
   },
   "tabBar": {
