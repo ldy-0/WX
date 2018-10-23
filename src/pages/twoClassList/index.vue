@@ -224,7 +224,7 @@ export default {
       wx.hideLoading()
     },
     init () {
-      this.classId = this.twoClassId = null
+      this.twoClassId = null
       this.currentPage = 1
       this.total = 0
       this.list = []
@@ -348,8 +348,9 @@ export default {
 }
 .class_item{
   box-sizing: border-box;
-  min-width: 150rpx;
-  margin-right: 30rpx;
+  min-width: 200rpx;
+  /* min-width: 150rpx; */
+  /* margin-right: 10rpx; */
   padding: 15rpx 30rpx;
   border-radius: 26rpx;
   font-size: 22rpx;

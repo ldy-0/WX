@@ -5,10 +5,17 @@
 
     <slide :config='slideConfig' @go='go'></slide>
 
-    <div class='search' @click='goSearch(item)'>
-      <image class='search_icon' src='/static/search.png' />
-      <div class='search_content s-fc-2'>请输入商品名称</div>
+    <!-- search -->
+    <div class='search_wrap s-bg-1'>
+      <search :config='searchConfig' :content='searchContent' @search='search' @clear='clearSearch' @confirm='confirm'></search>
     </div>
+    <!-- <div class='search_wrap s-bg-1'>
+      <input class='search_input' v-model="searchContent" @focus='focus' @blur='blur' /> 
+      <div class='search' v-if="isShowPlaceholder">
+        <image class='search_icon' src='/static/search.png' />
+        <div class='search_content s-fc-2'>请输入商品名称</div>
+      </div>
+    </div> -->
 
     <div class='list_wrap'>
       <div class='item' v-for='(item, index) in list' :key='index' @click='goList(item, $event)'>
@@ -41,6 +48,7 @@
 <script>
 import topBar from '@/components/topBar'
 import slide from '@/components/slide'
+import search from '@/components/search'
 import modal from '@/components/modal'
 import getPhone from '@/components/getPhone'
 import api from '@/utils/api'
@@ -60,6 +68,15 @@ export default {
         autoplay: false,
         data: []
       },
+      searchConfig: {
+        canClear: true,
+        size: 28,
+        placeholder: '请输入商品名称',
+        searchImg: '/static/search.png',
+        closeImg: '/static/search_close.png',
+        border: 'none',
+        margin: '0'
+      },
       modalConfig: {
         height: '300rpx',
         width: '400rpx'
@@ -77,6 +94,8 @@ export default {
         { title: '家具选购', img: '/static/home/img_7@2x.png', url: '/pages/twoClassList/main?category=' + encodeURIComponent('家具选购') },
         { title: '易居海外', img: '/static/home/img_8@2x.png', url: '/pages/twoClassList/main?category=' + encodeURIComponent('易居海外') }
       ],
+      searchContent: '',
+      isShowPlaceholder: true,
       isShow: true
     }
   },
@@ -84,6 +103,7 @@ export default {
   components: {
     topBar,
     slide,
+    search,
     modal,
     getPhone
   },
@@ -108,9 +128,15 @@ export default {
     goCart () {
       wx.navigateTo({ url: `/pages/shoppingCart/main` })
     },
-    goSearch () {
-      wx.navigateTo({ url: '/pages/search/main' })
+    goSearch () { wx.navigateTo({ url: `/pages/search/main?content=${this.searchContent}` }) },
+    search (v) {
+      this.searchContent = v
+      console.log(`search-${this.content}-`)
     },
+    clearSearch () {
+      this.searchContent = ''
+    },
+    confirm () { this.goSearch() },
     goList ({url}) {
       wx.navigateTo({
         url: url
@@ -194,6 +220,8 @@ export default {
   },
 
   onHide () {
+    this.searchContent = ''
+
     if (this.isShow) {
       wx.reLaunch({ url: '/pages/index/main' })
     }
@@ -214,20 +242,32 @@ export default {
 
 <style scoped>
 
-.search{
+.search_wrap{
   position: relative;
   top: -30rpx;
   z-index: 1;
-  display: flex;
-  /* justify-content: center; */
-  align-items: center;
-  width: 610rpx;
+  width: 670rpx;
   height: 76rpx;
   margin: 0 auto;
   border-radius: 8rpx;
   box-shadow: 0rpx 4rpx 16rpx -8rpx #333;
-  background: #fff;
+  font-size: 28rpx;
   vertical-align: baseline;
+}
+.search_input{
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding-left: 30rpx;
+}
+.search{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
 }
 .search_icon{
   width: 28rpx;
@@ -327,5 +367,9 @@ export default {
 }
 .s-fc-2{
   color: #999;
+}
+
+.s-bg-1{
+  background: #fff;
 }
 </style>

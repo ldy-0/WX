@@ -136,7 +136,7 @@ export default {
     this.list = []
     this.content = ''
 
-    // this.getList(this.currentPage)
+    param.content && this.search(param.content)
   },
 
   // onPullDownRefresh () {

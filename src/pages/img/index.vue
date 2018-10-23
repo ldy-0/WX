@@ -6,19 +6,8 @@
     <div class='wrap'>
 
       <div style='width: 100%; height: 100%;'>
-        <image style='width: 100%; height: 100%;' mode='aspectFill' :src='url' />
+        <image :style="{ width: getWidth, height: getHeight }" mode="aspectFill" :src='url' @load='getImg' />
       </div>
-      <!-- <div class='list_wrap'>
-        <div class='row' v-for='(row, i) in list' :key='i'>
-          <div class='item' v-for='(item, index) in row' :key='index' @click='goGoods(index)'>
-            <img class='item_img' src='' />
-            <div class='item_desc'>
-              <div class='item_title s-fc-4'>{{item.title}}</div>
-              <div class='item_price s-fc-5'>{{item.price}}</div>
-            </div>
-          </div>
-        </div>
-      </div> -->
 
     </div>
 
@@ -40,7 +29,9 @@ export default {
         bg: '#fff', // '#937d8a',
         backImg: '/static/left_arrow.png'
       },
-      url: null
+      url: null,
+      img: {},
+      screen: {}
     }
   },
 
@@ -51,10 +42,18 @@ export default {
   },
 
   computed: {
-    isIos () { return wx.getStorageSync('isIos') }
+    isIos () { return wx.getStorageSync('isIos') },
+    getWidth () { return this.img.width < this.screen.width ? '100%' : `${this.img.width}px` },
+    getHeight () { return this.img.height < this.screen.width ? '100%' : `${this.img.height}px` }
   },
 
   methods: {
+    getImg (e) {
+      let v = e.mp.detail
+
+      console.log('load img:', v, this.screen)
+      this.img = v
+    },
     search (e) {
       this.content = e.mp.detail.value
       console.log('search', this.content)
@@ -87,30 +86,33 @@ export default {
   },
 
   created () {
-    console.log('search created')
+    console.log('img created')
   },
 
   onLoad (param) {
     console.log(param)
     this.url = param.url
+
+    let system = wx.getSystemInfoSync()
+    this.screen = { width: system.windowWidth, height: system.windowHeight }
   },
 
   onPullDownRefresh () {
     wx.reLaunch({
       url: `/pages/twoClassList/main`
     })
-  },
-
-  onReachBottom () {
-    wx.showLoading({ title: 'Loading...' })
-
-    if (!this.canLoad) {
-      return null
-    }
-    this.canLoad = false
-
-    this.getList(++this.currentPage)
   }
+
+  // onReachBottom () {
+  //   wx.showLoading({ title: 'Loading...' })
+
+  //   if (!this.canLoad) {
+  //     return null
+  //   }
+  //   this.canLoad = false
+
+  //   this.getList(++this.currentPage)
+  // }
 }
 </script>
 
