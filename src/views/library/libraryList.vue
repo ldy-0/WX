@@ -167,11 +167,15 @@
       </el-table-column>
     </el-table>
 </el-main>
-<!-- <el-footer>
-  <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
-  </el-pagination>
-</el-footer> -->
 </el-container>
+<el-footer>
+  <el-pagination
+    layout="prev, pager, next"
+    :total="total"
+    :page-size="10"
+     @current-change="handleCurrentChange">
+  </el-pagination>
+</el-footer>
     </div>
     
 </template>
@@ -192,11 +196,15 @@ import UploadExcelComponent from "@/components/UploadExcel/index.vue";
 export default {
   components: { UploadExcelComponent },
   created() {
-    this.getLibraryList_api();
+    this.getLibraryList_api(1, 10);
+    getLibList({ page: 1, limit: 0 }).then(res => {
+      this.total = res.data.length;
+    });
     this.getClass();
   },
   data() {
     return {
+      total: 0,
       inputFile: "",
       downloadLoading: false,
       isShowEdit: false,
@@ -221,13 +229,18 @@ export default {
     };
   },
   methods: {
+    handleCurrentChange: function(val) {
+      // console.log(`当前页: ${val}`);
+      this.getLibraryList_api(val, 10);
+    },
     getLibraryList_api: function(page, limit) {
       var data = {
-        page: 1,
-        limit: 0
+        page: page,
+        limit: limit
       };
       getLibList(data).then(res => {
         console.log("res", res);
+        this.tableData = [];
         for (var i = 0; i < res.data.length; i++) {
           var res_data = res.data[i];
           this.tableData.push({
@@ -344,7 +357,7 @@ export default {
       postLibAddList(data).then(res => {
         console.log(res);
         this.tableData = [];
-        this.getLibraryList_api();
+        this.getLibraryList_api(1, 0);
       });
     },
     yesEdit: function() {
@@ -371,7 +384,7 @@ export default {
       putLibEditList(data).then(res => {
         console.log("edit res", res);
         this.tableData = [];
-        this.getLibraryList_api();
+        this.getLibraryList_api(1, 0);
       });
     },
     // toGetSubList: function() {
@@ -467,7 +480,7 @@ export default {
         .then(res => {
           console.log("res", res);
           this.tableData = [];
-          this.getLibraryList_api();
+          this.getLibraryList_api(1, 0);
         })
         .catch(err => {
           this.$notify.error({
@@ -476,7 +489,7 @@ export default {
           });
           console.log("err", err);
           this.tableData = [];
-          this.getLibraryList_api();
+          this.getLibraryList_api(1, 0);
         });
     }
     // async handleSuccess({ results, header }) {

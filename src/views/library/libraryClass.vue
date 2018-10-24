@@ -72,13 +72,16 @@
       </el-table-column>
     </el-table>
 </el-main>
-<!-- <el-footer>
-  <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
-  </el-pagination>
-</el-footer> -->
 </el-container>
+<el-footer>
+  <el-pagination
+    layout="prev, pager, next"
+    :total="total"
+    :page-size="10"
+     @current-change="handleCurrentChange">
+  </el-pagination>
+</el-footer>
     </div>
-    
 </template>
 <script>
 import {
@@ -90,10 +93,14 @@ import {
 
 export default {
   created() {
-    this.getClassList_api();
+    this.getClassList_api(1, 10);
+    getClassList({ page: 1, limit: 0 }).then(res => {
+      this.total = res.data.length;
+    });
   },
   data() {
     return {
+      total: 0,
       editId: null,
       dialogFormVisible: false,
       isAdd: false,
@@ -103,13 +110,18 @@ export default {
     };
   },
   methods: {
+    handleCurrentChange: function(val) {
+      // console.log(`当前页: ${val}`);
+      this.getClassList_api(val, 10);
+    },
     getClassList_api: function(page, limit) {
       var data = {
-        page: 1,
-        limit: 0
+        page: page,
+        limit: limit
       };
       getClassList(data).then(res => {
         console.log("class list res", res.data);
+        // this.total = res.data.length;
         this.tableData = [];
         this.tableData = res.data;
       });
@@ -125,7 +137,7 @@ export default {
       };
       postAddClass(data).then(res => {
         console.log("add", res);
-        this.getClassList_api();
+        this.getClassList_api(1, 0);
         this.dialogFormVisible = false;
       });
     },

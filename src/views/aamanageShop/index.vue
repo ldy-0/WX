@@ -254,6 +254,14 @@
             <el-table-column property="answer4" label="答案四"></el-table-column>
             <el-table-column property="answers" label="正确答案"></el-table-column>
           </el-table>
+            <!-- <el-footer>
+              <el-pagination
+              layout="prev, pager, next"
+              :total="total"
+              :page-size="10"
+              @current-change="diologcurrentChange">
+              </el-pagination>
+            </el-footer> -->
         </el-dialog>
         <el-button size="mini" type="primary" @click="getAnswerMember">答题人员</el-button>
         <el-button size="mini" type="primary" @click="getAnswerList">题目列表</el-button>
@@ -335,6 +343,7 @@ export default {
   },
   data() {
     return {
+      total: 0,
       gridData: [],
       gridData_s: [],
       outerVisible: false,
@@ -505,6 +514,10 @@ export default {
     //   console.log(row)
     // },
     //out
+    diologcurrentChange: function(val) {
+      // console.log(`当前页: ${val}`);
+      this.getAnswerMember(val, 10);
+    },
     getIndustryList() {
       //获取 行业列表
       return new Promise((res, rej) => {
@@ -1110,7 +1123,6 @@ export default {
         limit: 0,
         store_id: this.rowData_s.id
       };
-      // console.log("data", data);
       getAnswerMember_api(data).then(res => {
         console.log(res);
         this.gridData = res.data;
