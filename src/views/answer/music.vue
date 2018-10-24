@@ -26,7 +26,20 @@ el-col {
   border-radius: 4px;
 }
 .row {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   margin: 20px 0 20px 50px;
+}
+.button {
+  padding-top: 100px;
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 </style>
 
@@ -47,8 +60,11 @@ el-col {
         <el-button type="primary" size="medium" >选择</el-button>
     </el-upload>
 </el-col>
-  <el-col :span="6"><el-button type="primary" size="medium" @click="addMusic">确定</el-button></el-col>
 </el-row>
+<div class="button">
+  <el-button type="primary" size="medium" @click="addMusic">确定</el-button>
+  <el-button type="primary" size="medium" @click="deleteMusic">删除音乐</el-button>
+</div>
 </el-main>
 </template>
 
@@ -65,6 +81,21 @@ export default {
     };
   },
   methods: {
+    deleteMusic: function() {
+      var data = {
+        bg_music: " "
+      };
+      postMusic(data).then(res => {
+        console.log(res.data);
+        console.log("res", res);
+        if (!res.status) {
+          this.$message({
+            message: res.error,
+            type: "success"
+          });
+        }
+      });
+    },
     addMusic: async function() {
       this.url = await uploadFn(this.raw);
       console.log(this.url);
