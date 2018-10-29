@@ -72,15 +72,15 @@
       <el-button type='primary' @click='showDialog'>{{className}}</el-button>
     </el-form-item>
 
-    <!-- <el-form-item v-if='showSearchByKeyword'>
+    <el-form-item v-if='showSearchByKeyword'>
       <el-input style="width: 340px;" placeholder="请输入联系方式" v-model="searchKeyWord"></el-input>
       <el-button type="primary" icon="el-icon-search" @click="searchByPhone">查询</el-button>
-    </el-form-item> -->
+    </el-form-item>
 
-    <el-form-item v-if='showSearchByOrder'>
+    <!-- <el-form-item v-if='showSearchByOrder'>
       <el-input style="width: 340px;" placeholder="请输入订单号" v-model="searchSN"></el-input>
       <el-button type="primary" icon="el-icon-search" @click="searchBySN">查询</el-button>
-    </el-form-item>
+    </el-form-item> -->
 
     <!-- <el-form-item label="时间" v-if='showSearchByDate'>
         <el-date-picker style="width:340px" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
@@ -152,7 +152,9 @@
 
       <img class='detail_img' :src='detail[item.value]' v-if='item.isImg' />
 
-      <img class='detail_imgs' :src='v' v-for='(v, i) in detail[item.value]' :key='i' v-if='item.isImgs' />
+      <div v-if='item.isImgs'>
+        <img class='detail_imgs' :src='v' v-for='(v, i) in detail[item.value]' :key='i' />
+      </div>
 
       <el-input type='textarea' v-model="detail[item.value]" auto-complete="off" :disabled='true' v-if='item.isTexts'></el-input>
 
@@ -186,6 +188,7 @@ export default {
   },
 
   created(){
+    this.showSearchByKeyword = true;
     this.showSearchByOrder = true;
     this.showSelect = true;
     this.showExport = true;
@@ -295,7 +298,7 @@ export default {
   methods: {
     showDialog(index, row){
 
-      this.detailClassList = row ? this.detailConfig[this.category] : this.detailConfig[this.category].slice(0, 2);
+      // this.detailClassList = row ? this.detailConfig[this.category] : this.detailConfig[this.category].slice(0, 2);
 
       this.initDetail(row);
 
@@ -305,7 +308,7 @@ export default {
     },
     searchByPhone(){
       console.log('search ----', this.searchKeyWord);
-      this.listQuery.search = this.searchKeyWord;
+      this.listQuery.order_sn = this.searchKeyWord;
       this.getList();
     },
     searchBySN(){

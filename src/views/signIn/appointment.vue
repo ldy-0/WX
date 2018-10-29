@@ -17,10 +17,10 @@
 <el-container class="notice">
 
   <el-main>
-    <el-form :inline="true"  class="form"> <!--:model="formInline" -->
+    <el-form :inline="true"  class="form"> 
 
       <el-form-item label="">
-        <el-input style="width: 340px;" placeholder="请输入手机号" v-model="studentConfig.keyword"></el-input>
+        <el-input style="width: 340px;" placeholder="请输入手机号" v-model="keyword"></el-input>
         <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
       </el-form-item>
 
@@ -53,38 +53,13 @@
   <!-- coulse List -->
   <el-dialog :visible.sync='canShowStudent'>
 
-    <el-form :inline="true" class="form">
-      <!-- <el-form-item>
-          <el-input style="width: 340px;" placeholder="请输入手机号" v-model="studentConfig.keyword"></el-input>
-          <el-button type="primary" icon="el-icon-search" @click="searchStudent">查询</el-button>
-      </el-form-item> -->
-
-      <!-- <el-form-item>
-        <el-button type="primary" icon="el-icon-edit-outline" @click="exportXLS">导出</el-button>
-      </el-form-item> -->
-    </el-form>
-
-    <!-- <el-table :data="studentList" stripe v-loading="loadStudent" element-loading-text="给我一点时间" style="width: 100%" >
-
-      <el-table-column :label="item.key" :prop="item.value" v-for='(item, index) in formList' :key='index'></el-table-column>
-
-    </el-table> -->
-    <el-form :data="studentList" stripe v-loading="loadStudent" element-loading-text="给我一点时间" style="width: 100%" >
+    <el-form :data="detail" stripe v-loading="loadStudent" element-loading-text="给我一点时间" style="width: 100%" :disabled='true'>
 
       <el-form-item :label="item.key" :prop="item.value" v-for='(item, index) in formList' :key='index'>
-          <el-input style="width: 340px;" v-model="studentList[item.value]" disabled='true'></el-input>
+          <el-input style="width: 340px;" v-model="detail[item.value]"></el-input>
       </el-form-item>
 
     </el-form>
-
-    <!-- <el-pagination background 
-                    @size-change="studentSizeChange" 
-                    @current-change="studentPageChange" 
-                    :current-page="studentConfig.page" 
-                    :page-sizes="[10, 2, 30, 50]" 
-                    :page-size="studentConfig.limit" 
-                    layout="total, sizes, prev, pager, next" :total="studentTotal">
-    </el-pagination> -->
 
     <span slot="footer" class="dialog-footer">
       <el-button @click="canShowStudent=false">取消</el-button>
@@ -95,7 +70,7 @@
 </template>
 <script>
 
-import {getAuthList_api,deleteAuth_api,addAuth_api,editAuth_api} from '@/api/seller' 
+import api from '@/api/seller' 
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 
 export default {
@@ -126,18 +101,13 @@ export default {
         parentName: '',
         parentPhone: 1,
       },
+      keyword: '',
       loadList: false,
       list: [],
       listTotal: null,
       canShowStudent: false,
       loadStudent: false,
-      studentConfig: {
-        page: 1,
-        limit: 10,
-        keyword: '',
-      },
-      studentList: [],
-      studentTotal: null,
+      detail: {},
       formList: [
         { key: '预 约 人 ', value: 'name' },
         { key: '联系方式', value: 'phone' },
@@ -151,28 +121,26 @@ export default {
   },
   methods: {
       search(){
-        console.log('search', this.listConfig.keyword);
+        this.listConfig.keyword = this.keyword;
+        console.log('search', this.listConfig);
       },
       showItem(index, row){
         this.canShowStudent = true;
-        this.studentList = { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' };
-        this.studentTotal = this.studentList.length;
+
+        this.getDetail(row.id)
       },
       deleteItem(index,row){
         let id = row.id
         this.$confirm(`此操作将删除该条目, 是否继续?`, '提示', {
-          // confirmButtonText: '确定',
-          // cancelButtonText: '取消',
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          console.log('delete student');
+          this.deleteItem(id);
         }).catch(()=>{
           console.log('delete student cancel');
           this.$notify.info({ title: '消息', message: '已取消' });
         })
-      },
-      searchStudent(){
-        console.log('search', this.studentConfig.keyword);
       },
       //
       getList() { //获取列表
@@ -187,45 +155,19 @@ export default {
         this.listTotal = this.list.length;
         this.loadList = false;
       },
-      delete(id){
-        let sendData = {
-          seller_id:id,
-        }
-        deleteAuth_api(sendData).then(res=>{
-          if(res&&res.status===0){
-              this.$notify({
-              title: '成功',
-              message: '操作成功',
-              type:'success'
-            });
-            this.getList()
-          }else{
-            this.$notify({
-              title: '错误',
-              message: '操作失败',
-              type:'error'
-            });
-          }
-        }).catch(err=>{
-          console.error('deleteseller_api')
-        })
-          
-        
+      getDetail(id){
+        this.detail = { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' };
       },
-    studentSizeChange(val) {
-      this.student.limit = val
-      this.getList()
-    },
-    studentPageChange(val) {
-      this.student.page = val
-      this.getList()
-    },
+      deleteItem(id){
+        console.log('delete id:', id);
+      },
     sizeChange(val){
-      console.log('size change', val);
+      this.listConfig.search = val;
+      console.log('size change', this.listConfig);
     },
     pageChange(val){
-      
-      console.log('page change', val);
+      this.listConfig.search = val;
+      console.log('page change', this.listConfig);
     }
     
   }

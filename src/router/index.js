@@ -314,10 +314,10 @@ export let asyncRouterMapSeller = [
         meta: { title: 'teacher', }
       },
       {
-        path: 'coulse',
-        component: () => import('@/views/signIn/coulse'),
-        name: 'coulse',
-        meta: { title: 'coulse', }
+        path: 'course',
+        component: () => import('@/views/signIn/course'),
+        name: 'course',
+        meta: { title: 'course', }
       },
       { path: 'signin',
         component: () => import('@/views/signIn/signin'),

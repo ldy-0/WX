@@ -439,115 +439,136 @@ export function editAllBuy_api(data){
 // signIn
 async function setAddress(data, _this){
   let res = await request({
-    url: '/api/v1/teachaddress/add',
+    url: '/api/v1/seller/addteachaddr',
     method: 'post',
     data,
   });
-console.log('res ', res);
-  return res.data.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.data.error })// res.data; 
+  console.log('res ', res);
+  return res.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : _this.$notify.success({ title: '提示', message: res.error })// res.data; 
 }
 
 async function updateAddress(data, _this){
   let res = await request({
-    url: '/api/v1/teachaddress/edit',
+    url: '/api/v1/seller/editteachaddr',
+    method: 'post',
+    // headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    data
+  });
+  console.log('update address', res);
+  return res.error !== '修改成功' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : _this.$notify.success({ title: '提示', message: res.error })// res.data; 
+}
+
+async function deleteAddress(data, _this){
+  let res = await request({
+    url: '/api/v1/seller/deleteteachaddr',
     method: 'post',
     data,
   });
-console.log('update address', res);
-  return res.data.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.data.error })// res.data; 
-}
-
-async function deleteAddress(params, _this){
-  let res = await request({
-    url: '/api/v1/teachaddress/delete',
-    method: 'get',
-    params,
-  });
 console.log('delete address', res);
-  return res.data.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.data.error })// res.data; 
+  return res.error !== '删除成功' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : _this.$notify.success({ title: '提示', message: res.error })// res.data; 
 }
 
 async function getAddressList(params, _this){
   let res = await request({
-    url: '/api/v1/teachaddress/getList',
+    url: '/api/v1/seller/gettcaddrlist',
     methods: 'get',
     params,
   });
 
-  return res.data.error !== '' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : res.data; 
+  return res.error !== '' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : res; 
 }
-
-async function setTeacher(params, _this){
+// teacher
+async function setTeacher(data, _this){
 
   let res = await request({
-    url: '/api/v1/teacher/add',
-    methods: 'get',
-    params,
+    url: '/api/v1/seller/addteacher',
+    method: 'post',
+    data,
   });
-console.log('res', res);
-  return res.data.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.data.error })// res.data; 
+
+  return res.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error })// res.data; 
 }
 
 async function updateTeacher(data, _this){
 
   let res = await request({
     url: '/api/v1/teacher/edit',
-    methods: 'post',
+    method: 'post',
     data,
   });
 
-  return res.data.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.data.error })// res.data; 
+  return res.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error })// res.data; 
 }
 
 async function deleteTeacher(data, _this){
 
   let res = await request({
-    url: '/api/v1/teacher/delete',
-    methods: 'post',
+    url: '/api/v1/seller/deleteteacher',
+    method: 'post',
     data,
   });
 
-  return res.data.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.data.error })// res.data; 
+  return res.error !== '删除成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error })// res.data; 
 }
 
-async function getTeacherList(params){
+async function getTeacherList(params, _this){
   let res = await request({
-    url: '/api/v1/teacher/getList',
+    url: '/api/v1/seller/getteacherlist/getlist',
     methods: 'get',
     params,
   });
 
-  return res.data.error !== '' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res.data; 
+  return res.error !== '' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : res; 
 }
 
-async function setCoulse(data){
+async function getTeacherCoulse(params, _this){
   let res = await request({
-    url: '/api/v1/course/add',
-    methods: 'post',
+    url: '/api/v1/seller/getteacourse',
+    methods: 'get',
+    params,
+  });
+
+  return res.error !== '' ? this.$notify.error({ title: '错误信息', message: res.error, }) : res; 
+}
+
+async function getTeacherItemCourse(params, _this){
+  let res = await request({
+    url: '/api/v1/seller/getcsemesterlist',
+    methods: 'get',
+    params,
+  });
+
+  return res.error !== '' ? this.$notify.error({ title: '错误信息', message: res.error, }) : res; 
+}
+
+async function setCoulse(data, _this){
+  let res = await request({
+    url: '/api/v1/seller/addcourse',
+    method: 'post',
     data,
   }); 
 
-  return res.data.error !== '' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res.data; 
+  return res.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error }); 
 }
 
-async function getCoulseList(params){
+async function getCoulseList(params, _this){
   let res = await request({
-    url: '/api/v1/course/getcourselist',
+    url: '/api/v1/seller/getcourselist',
     methods: 'get',
     params,
   });
 
-  return res.data.error !== '' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res.data; 
+  return res.error !== '' ? this.$notify.error({ title: '错误信息', message: res.error, }) : res; 
 }
 
-async function deleteCoulse(data){
+async function deleteCoulse(params, _this){
   let res = await request({
-    url: '/api/v1/course/delete',
-    methods: 'post',
-    data,
+    url: '/api/v1/seller/deletecourse',
+    method: 'get',
+    params,
   });
 
-  return res.data.error !== '' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res.data; 
+  return res.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error }); 
 }
 
 async function setRealCoulse(data){
@@ -671,6 +692,8 @@ export default {
   updateTeacher,
   deleteTeacher,
   getTeacherList,
+  getTeacherCoulse,
+  getTeacherItemCourse,
   setCoulse,
   getCoulseList,
   deleteCoulse,

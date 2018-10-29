@@ -17,16 +17,9 @@
 <el-container class="notice">
 
   <el-header class='header'>
-    <el-form :inline="true" class="form">
-      <el-form-item>
-        <el-button type="primary" icon="el-icon-edit-outline" @click="showForm">添加教学点</el-button>
-      </el-form-item>
+    
+    <customHead :config='headConfig' @add='showForm' @searchByKeyWord='searchByKeyWord'></customHead>
 
-      <el-form-item>
-          <el-input style="width: 340px;" placeholder="请输入教学点" v-model="addressListConfig.keyword"></el-input>
-          <el-button type="primary" icon="el-icon-search" @click="searchAddress">查询</el-button>
-      </el-form-item>
-    </el-form>
   </el-header>
 
   <el-main>
@@ -37,7 +30,7 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" @click="showForm(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="deleteItem(scope.$index, scope.row)">删除</el-button>
+          <el-button size="mini" type="danger" @click="showDelete(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -45,9 +38,9 @@
     <el-pagination background 
                   @size-change="addressSizeChange" 
                   @current-change="addressPageChange" 
-                  :current-page="addressListConfig.page" 
+                  :current-page="listParam.page" 
                   :page-sizes="[10,2,30, 50]" 
-                  :page-size="addressListConfig.limit" 
+                  :page-size="listParam.limit" 
                   layout="total, sizes, prev, pager, next" :total="addressTotal">
     </el-pagination>
 
@@ -55,7 +48,7 @@
 
 </el-container>
 <!-- form -->
-<el-dialog :title="isAdd ? '新增教学点' : '修改教学点' " :visible.sync="canShowForm" width="30%" :before-close='clearForm'>
+<el-dialog :title="isAdd ? '新增教学点' : '修改教学点' " :visible.sync="canShowForm" width="60%" :before-close='clearForm'>
 
   <el-form :model="addressForm"  ref="ruleForm" :rules="rules">
     <!-- 名称 -->
@@ -71,9 +64,8 @@
   </el-form>
 
   <span slot="footer" class="dialog-footer">
-    <el-button @click="canShowForm = false; addressForm = {};" >取消</el-button>
-    <el-button type="primary" :disabled="!canSubmit" :loading="!canSubmit" @click="addAddress('ruleForm')" v-if='isAdd'>确 定</el-button>
-    <el-button type="primary" :disabled="!canSubmit" :loading="!canSubmit" @click="editAddress('ruleForm')" v-else>确认修改</el-button>
+    <el-button @click="clearForm" >取消</el-button>
+    <el-button type="primary" :disabled="!canSubmit" :loading="!canSubmit" @click="saveAddress('ruleForm')">确 定</el-button>
   </span>
 </el-dialog>
 
@@ -83,10 +75,12 @@
 
 import api from '@/api/seller' 
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
+import customHead from '@/components/customHead/index.vue'
 
 export default {
   components: {
-    UploadExcelComponent
+    UploadExcelComponent,
+    customHead,
   },
   created(){
     this.getList()
@@ -94,22 +88,29 @@ export default {
   data() {
     return {
       formLabelWidth:'80px',
-      isAdd: true,
+      headConfig: {
+        showAdd: true,
+        showSearchByKeyWord: true,
+        title: '添加教学点',
+        inputWidth: '300px',
+        placeholder: '请输入地址点',
+      },
       canSubmit: true,
+      canShowForm: false,
+      isAdd: true, // 区别添加和修改
       rules: {
-        address_name: [ { required: true, message: '请输入名称' } ],
-        address_detail: [ { required: true, message: '请输入地址详情' } ],
+        address_name: [ { required: true, message: '请输入名称', trigger: 'blur' } ],
+        address_detail: [ { required: true, message: '请输入地址详情', trigger: 'blur' } ],
       },
       addressForm: {
         address_name: '',
         address_detail: '',
       },
-      addressListConfig: { 
+      listParam: { 
         page: 1,
         limit: 10,
-        keyword: '',
+        address_name: '',
       },
-      canShowForm: false,
       loadAddress: false,
       addressList: [],
       addressTotal: null,
@@ -117,61 +118,68 @@ export default {
     }
   },
   methods: {
-      searchAddress(){
-        console.log('search ', this.addressListConfig.keyword);
+      searchByKeyWord(v){
+        this.listParam.address_name = v;
+        console.log('address search :', this.listParam);
+
+        this.getList();
       },
       showForm(index, row){
         this.canShowForm = true;
+        this.canSubmit = true;
+        this.initForm();
 
-        if(typeof index !== 'number'){
-          return this.isAdd = true;
-        } 
+        if(typeof index !== 'number') return this.isAdd = true;
 
         this.isAdd = false;
-        this.addressForm = row;
+        this.initForm(row);
       },
       clearForm(done){
-        this.addressForm = {
-          address_name: '',
-          address_detail: '',
-        };
-        done();
+        this.initForm();
+        this.canShowForm = false;
+        // done && done();
       },
-      async addAddress(rule){
-        let res = await this.$refs[rule].validate().catch(e => e);
-        if(!res){
-          return 
-        }
-        this.canSubmit = false;
-        await api.setAddress(this.addressForm, this); 
-        this.canSubmit = true;
-      },
-      async editAddress(rule){
-        let res = await this.$refs[rule].validate().catch(e => e);
-        if(!res){
-          return 
-        }
-        this.canSubmit = false;
-        await api.updateAddress(this.addressForm, this);
-        console.log('edit address', this.addressForm);
-        this.canSubmit = true;
-      },
-      deleteItem(index, row){
-        let id = row.address_id;
+      initForm(item){
+        let detail = {};
 
-        this.$confirm(`此操作将删除该条目, 是否继续?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(async () => {
-          await api.deleteAddress({address_id: id});
+        for(let key in (item || this.addressForm)){ detail[key] = item ? item[key] : '' }
+        console.log(detail);
+        this.addressForm = detail;
+      },
+      async saveAddress(rule){
+        let res = await this.$refs[rule].validate().catch(e => e);
+        if(!res) return 
+
+        this.canSubmit = false;
+        console.log('save address :', this.addressForm);
+        if(this.isAdd){
+          await api.setAddress(this.addressForm, this) 
+        }else{
+          delete this.addressForm.store_id; 
+          await api.updateAddress(this.addressForm, this); 
+        }
+
+        this.canShowForm = false;
+        this.clearForm();
+        this.getList();
+      },
+      showDelete(index, row){
+        this.$confirm(`此操作将删除该条目, 是否继续?`, '提示', { type: 'warning' }).then(async () => {
+
+          this.deleteAddress(row);
+
         }).catch(()=>{ this.$notify.info({ title: '消息', message: '已取消' }); })
+      },
+      async deleteAddress(item){
+        await api.deleteAddress({address_id: item.address_id}, this); 
+
+        this.getList();
       },
       //
       async getList() { //获取列表
         this.loadAddress = true;
 
-        let res = await api.getAddressList(this.addressListConfig, this);
+        let res = await api.getAddressList(this.listParam, this);
         
         this.addressList = res.data;
         this.addressTotal = res.pagination.total;
@@ -179,19 +187,12 @@ export default {
       },
       
     addressSizeChange(val) {
-      this.addressListConfig.limit = val
+      this.listParam.limit = val
       this.getList()
     },
     addressPageChange(val) {
-      this.addressListConfig.page = val
+      this.listParam.page = val
       this.getList()
-    },
-    coulseSizeChange(val){
-      console.log('coulse size change', val);
-    },
-    coulsePageChange(val){
-      
-      console.log('coulse page change', val);
     },
      
   }

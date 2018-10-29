@@ -1,0 +1,362 @@
+<style lang="stylus">
+  .notice
+    .header
+      margin-top 20px
+    .big-icon
+      font-size 30px
+      color #409EFF
+    .big-icon-no
+      font-size 30px
+      color #b19999
+
+.time{
+  display: flex; 
+  align-items: center;
+}
+
+.f-fs{
+ font-size: 12px; 
+}
+
+</style>
+
+<template>
+<div>
+
+<custom-dialog :config='dialogConfig' :visible='canShowForm' :detail='formData' @cancel='clearForm' @submit='saveCoulse'>
+</custom-dialog>
+
+<el-container class="notice">
+
+<el-header class="header">
+  <customHead :config='headConfig' @add='showForm' @searchByKeyWord='searchByKeyWord'></customHead>
+</el-header>
+
+<el-main>
+  
+  <custom-table :config='tableConfig'
+                :data='tableData'
+                :classList='tableClass'
+                :total='total'
+                :isLoading='listLoading'
+                @update='update'
+                @delete='deleteCourse'
+                @showStudent='showStudent'
+                @change='change'></custom-table>
+
+</el-main>
+<el-footer></el-footer>
+</el-container>
+
+<!-- edit coulse --> 
+  <el-dialog :visible.sync='canShowStudent' width='60%'>
+    <el-form :inline="true" :model="formInline" class="form">
+
+      <el-form-item>
+        <el-input style="width: 340px;" placeholder="请输入联系方式" v-model="studentKeyword"></el-input>
+        <el-button type="primary" icon="el-icon-search" @click="searchStudent">查询</el-button>
+      </el-form-item>
+
+      <!-- <el-form-item>
+        <upload-excel-component :on-success='importDone' :before-upload="beforeUpload"></upload-excel-component>
+      </el-form-item> -->
+
+    </el-form>
+
+    <custom-table :config='studentConfig'
+                  :data='studentList'
+                  :classList='studentClass'
+                  :total='studentTotal'
+                  :isLoading='loadStudent'
+                  @showAdd='showAdd'
+                  @showMinus='showMinus'
+                  @delete='deleteStudent'
+                  @change='changeStudent'>
+
+    </custom-table>
+
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="canShowStudent=false">取消</el-button>
+    </span>
+  </el-dialog>
+
+</div>
+</template>
+<script>
+
+import api from '@/api/seller' 
+import customHead from '@/components/customHead/index.vue' 
+import customTable from '@/components/customTable/index.vue' 
+import customDialog from '@/components/customDialog/index.vue' 
+
+export default {
+  created(){
+    this.getList()
+  },
+
+  components: {
+    customHead,
+    customTable,
+    customDialog,
+  },
+
+  data() {
+    return {
+      headConfig: {
+        showAdd: true,
+        showSearchByKeyWord: true,
+        title: '添加课程',
+        inputWidth: '300px',
+        placeholder: '请输入课程名',
+      },
+      rules: {
+          name: [
+              { required: true, message: '请输入昵称', trigger: 'blur',min: 1 }
+          ],
+          
+          datetime: [
+              { type: 'date', required: true, message: '请设置时间段', trigger: 'change' }
+          ],
+          address: [ { required: true, message: '请选择地址' } ],
+          teacher: [ { required: true, message: '请选择老师' } ],
+          num: [ 
+            { required: true, message: '请输入可预约人数' },
+            { type: 'number', message: '值必须为数字',  },
+          ]
+      },
+      listLoading: false,
+      tableConfig: {
+        showOperate: true,
+        showUpdate: true,
+        showStudent: true,
+        showDelete: true,
+      },
+      tableData: [],
+      tableClass: [
+        { key: '姓名', value: 'course_name' },
+        { key: '总期数', value: 'course_semester' },
+        { key: '价格', value: 'price' },
+        { key: '可预约人数', value: 'max_stunum' },
+        { key: '已预约人数', value: 'stu_num' },
+        { key: '老师', value: 'teacher', isMulti: true, }, // 
+        { key: '教学点', value: 'address_name', },
+        { key: '时间段', value: 'times', isMulti: true, },
+      ],
+      listQuery: {
+        page: 1,
+        limit: 10,
+      },
+      total:1,
+      formLabelWidth:'100px',
+      dialogConfig: {
+        width: '60%',
+        labelWidth: '100px',
+        canSubmit: true,
+        classList: [
+          { key: '课程名称', value: 'course_name', isText: true, },
+          { key: '期数', value: 'course_semester', isInteger: true, },
+          { key: '上课时间', value: 'course_time', isDates: true, },
+          { key: '教学点', value: 'teach_address', placeholder: '请选择教学点(可多选)', list: [], id: 'address_id', name: 'address_name', isMultiSelect: true, },
+          { key: '教师', value: 'teacher', placeholder: '请选择教学点(可多选)', list: [], id: 'teacher_id', name: 'teacher_name', isMultiSelect: true, },
+          { key: '可预约人数', value: 'max_stunum', isInteger: true, },
+        ],
+        rules: {
+          'course_name': [
+            { required: true, message: '请输入名字', trigger: 'blur' },
+          ],
+          'course_semester': [
+              { required: true, message: '请输入期数', trigger: 'blur' },
+              { type: 'number', message: '周期值必须为数字', trigger: 'blur' },
+              { type: 'number', min: 1, message: '周期值必须大于0', trigger: 'blur' },
+          ],
+          'teach_address': [
+            { required: true, message: '请选择教学点', trigger: 'change' }
+          ],
+          'teacher': [
+            { required: true, message: '请选择老师', trigger: 'change' }
+          ],
+          'max_stunum': [
+              { required: true, message: '请输入可预约人数', trigger: 'blur' },
+              { type: 'number', message: '可预约人数必须为数字', trigger: 'blur' },
+              { type: 'number', min: 1, message: '可预约人数必须大于0', trigger: 'blur' },
+          ],
+        }
+      },
+      canShowForm: false,
+      canSubmit:false,
+      isAddItem:true,
+      formData: {
+        course_time: [],
+        teacher: [],
+      },
+      formInline: {},
+      keys: ['课程', '期数', '时间', '地点', '老师', '可预约人数'],
+      addressList: [],
+      teacherList: [],
+      canShowStudent: false, // student
+      studentConfig: {
+        showOperate: true,
+        showAdd: true,
+        showMinus: true,
+        showDelete: true,
+      },
+      loadStudent: false,
+      studentKeyword: null,
+      studentList: [],
+      studentClass: [
+        { key: '学生姓名', value: 'name' },
+        { key: '家长姓名', value: 'name' },
+        { key: '家长手机', value: 'name' },
+        { key: '总期数', value: 'name' },
+        { key: '已上期数', value: 'name' },
+      ],
+      student: {
+        page: 1,
+        limit: 10,
+      },
+      studentTotal: 0,
+    }
+  },
+  methods: {
+    searchByKeyWord(v){
+      this.listQuery.course_name = v;
+      console.log('address search :', this.listQuery);
+
+      this.getList();
+    },
+    showForm(index, row){
+      this.canShowForm = true;
+      this.dialogConfig.canSubmit = true;
+      this.initForm();
+
+      this.getTeacherList();
+      this.getAddressList();
+
+      if(typeof index !== 'number') return this.isAddItem = true;
+
+      this.isAddItem = false;
+      this.initForm(row);
+
+    },
+    clearForm(done){ this.canShowForm = false; },
+    initForm(item){
+      let detail = {};
+
+      for(let key in (item || this.formData)){ detail[key] = item ? item[key] : Array.isArray(this.formData[key]) ? [] : '' }
+      console.log(detail);
+      this.formData = detail;
+    },
+    deleteDate(index){
+      console.log('delete date', index);
+      this.formData.times.splice(index, 1);
+    },
+    addDate(e){
+      console.log('add date', e, this.formData.times);
+      this.formData.times.push({ start: e[0].toLocaleString(), end: e[1].toLocaleString() });
+    },
+    getDateTemp(t){
+      return t.getTime() - ( t.getHours() * 3600 + t.getMinutes() * 60 + t.getSeconds() ) * 1000;
+    },
+    async saveCoulse () {
+
+      this.dialogConfig.canSubmit = false;
+
+      let times = this.formData.course_time;
+      times.forEach((v, i) => {
+        let start = new Date(times[i].startTemp),
+            end = new Date(times[i].endTemp);
+
+        times[i] = `${this.getDateTemp(start)}|${start.getHours()}:${start.getMinutes()}-${end.getHours()}:${end.getMinutes()}` 
+      });
+      console.log('save course param:', this.formData)
+      
+      let res = await api.setCoulse(this.formData, this);
+
+      this.canShowForm = false;
+      this.getList();
+      
+    },
+      async editCoulse(index, rowData){
+        // get teacher list 
+        let res = await this.getTeacherList();
+
+        console.log('edit coulse', rowData)
+        this.formData = rowData// Object.assign({},rowData)
+        this.isAddItem = false
+        this.canShowForm = true
+      },
+      
+      async deleteCoulse(index, rowData){
+
+      },
+      
+    async getList() { 
+      this.listLoading = true
+
+      let res = await api.getCoulseList(this.listQuery);
+      res.data.forEach(v =>  v.times = Array.isArray(v.time) ? v.time.map(t => `${new Date(t[0] * 1000).toLocaleDateString()} ${t[1]}`) : [''] );
+
+      this.tableData = res.data;
+      this.total = res.pagination.total;
+      console.log('get course', this.tableData, this.total);
+      this.listLoading = false
+    },
+    update(item){
+      this.canShowForm = true;
+      console.log('update course', item);
+    },
+    async deleteCourse(item){
+      let res = await api.deleteCoulse({ cschedule_id: item.cschedule_id }, this);
+      console.log('delete course', item);
+    },
+    showStudent(){
+      this.canShowStudent = true;
+
+      this.getStudentList();
+    },
+    change(v){
+      console.log('change', v);
+      this.listQuery = v 
+      this.getList()
+    },
+    searchStudent(){
+      console.log('search student', this.studentKeyword);
+    },
+    async getStudentList(index, rowData){
+      this.studentList = [
+        { name: 'k1', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
+        { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
+      ];
+    },
+    showAdd(item){
+      console.log('add ', item);
+    },
+    showMinus(item){
+      console.log('minus', item);
+    },
+    deleteStudent(item){
+      console.log('delete student:', item);
+    },
+    changeStudent(v){
+      console.log('change', v);
+      this.student = v 
+      this.getStudentList()
+    },
+    // 
+    async getTeacherList(){
+      let res = await api.getTeacherList(null, this);
+      console.log('teacher list:', res.data);
+      
+      this.dialogConfig.classList[4].list = res.data;
+    },
+    async getAddressList(){
+      let res = await api.getAddressList(null, this);
+      console.log('address list:', res);
+      
+      // this.addressList = res.data;
+      this.dialogConfig.classList[3].list = res.data;
+    },
+    
+  }
+}
+</script>

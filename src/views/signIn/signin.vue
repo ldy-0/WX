@@ -17,22 +17,8 @@
 <el-container class="notice">
 
   <el-main>
-    <el-form :inline="true"  class="form"> <!--:model="formInline" -->
 
-      <el-form-item label="时间">
-        <el-date-picker
-          style="width:400px"
-          v-model="listConfig.time"
-          type="datetimerange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期">
-        </el-date-picker>
-
-        <el-button type="primary" icon="el-icon-search" @click="searchByDate">查询</el-button>
-      </el-form-item>
-
-    </el-form>
+    <customHead :config='headConfig' @searchByDate='searchByDate'></customHead>
 
     <el-table :data="list" stripe v-loading="loadList" element-loading-text="给我一点时间" style="width: 100%" >
       <el-table-column :label='item.key' :prop='item.value' v-for='(item, index) in classList' :key='index'></el-table-column>
@@ -61,31 +47,15 @@
   <!-- coulse List -->
   <el-dialog :visible.sync='canShowStudent'>
 
-    <el-form :inline="true" class="form">
-      <el-form-item>
-          <el-input style="width: 340px;" placeholder="请输入手机号" v-model="studentConfig.keyword"></el-input>
-          <el-button type="primary" icon="el-icon-search" @click="searchStudent">查询</el-button>
-      </el-form-item>
+    <customHead :config='studentHeadConfig' @searchByKeyWord='searchStudent' @exportFile='exportXLS'></customHead>
 
-      <el-form-item>
-        <el-button type="primary" icon="el-icon-edit-outline" @click="exportXLS">导出</el-button>
-      </el-form-item>
-    </el-form>
-
-    <el-table :data="studentList" stripe v-loading="loadStudent" element-loading-text="给我一点时间" style="width: 100%" >
-
-      <el-table-column :label="item.key" :prop="item.value" v-for='(item, index) in formList' :key='index'></el-table-column>
-
-    </el-table>
-
-    <el-pagination background 
-                    @size-change="studentSizeChange" 
-                    @current-change="studentPageChange" 
-                    :current-page="studentConfig.page" 
-                    :page-sizes="[10, 2, 30, 50]" 
-                    :page-size="studentConfig.limit" 
-                    layout="total, sizes, prev, pager, next" :total="studentTotal">
-    </el-pagination>
+    <custom-table :config='studentConfig' 
+                  :data='studentList' 
+                  :classList='studentClass' 
+                  :isLoading='loadStudent' 
+                  :total='studentTotal'
+                  @change='changeStudent'>
+    </custom-table>
 
     <span slot="footer" class="dialog-footer">
       <el-button @click="canShowStudent=false">取消</el-button>
@@ -98,12 +68,17 @@
 
 import api from '@/api/seller' 
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
+import customHead from '@/components/customHead/index.vue'
+import customTable from '@/components/customTable/index.vue'
 
 export default {
   components: {
-    UploadExcelComponent
+    UploadExcelComponent,
+    customHead,
+    customTable,
   },
   created(){
+    console.log('create');
     this.getList()
   },
   data() {
@@ -111,6 +86,18 @@ export default {
       formLabelWidth:'80px',
       address: null,
       addressList: [],
+      headConfig: {
+        showSearchByDate: true,
+        // title: '添加教学点',
+        inputWidth: '300px',
+        // placeholder: '请输入地址点',
+      },
+      studentHeadConfig: {
+        showSearchByKeyWord: true,
+        showExport: true,
+        inputWidth: '300px',
+        placeholder: '请输入手机号',
+      },
       classList: [
         { key: '课程名称', value: 'name' },
         { key: '总期数', value: 'num_total' },
@@ -122,67 +109,61 @@ export default {
       listConfig: { // student
         page: 1,
         limit: 10,
-        coulseId: 0,
-        teacherId: 0,
-        parentName: '',
-        parentPhone: 1,
       },
       loadList: false,
       list: [],
       listTotal: null,
+
       canShowStudent: false,
       loadStudent: false,
+      studentKeyword: null,
       studentConfig: {
-        page: 1,
-        limit: 10,
-        keyword: '',
+        showOperate: true,
+        showUpdate: true,
+        showDelete: true,
       },
-      studentList: [],
-      studentTotal: null,
-      formList: [
+      studentClass: [
         { key: '学生姓名', value: 'name' },
-        { key: '学生家长', value: 'parentName' },
+        { key: '家长姓名', value: 'name' },
         { key: '家长手机号', value: 'phone' },
         { key: '签到老师', value: 'teacher' },
-      ]
+      ],
+      studentList: [],
+      student: {
+        page: 1,
+        limit: 10,
+      },
+      studentTotal: 0,
     }
   },
   methods: {
-      searchByDate(){
-        console.log('search', this.listConfig.time);
+      searchByDate(v){
+        console.log('search', v);
+      },
+      searchStudent(v){
+        console.log('search', v);
       },
       showIn(index, row){
         this.canShowStudent = true;
         let signin = { key: '签到时间', value: 'signinTime' };
-        this.formList.some(v => v.key === '签到时间') ? void(0) : this.formList.push(signin);
-        this.studentList = [
-          { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-          { name: 'k1s', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-          { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-        ];
-        this.studentTotal = this.studentList.length;
+        this.studentClass.some(v => v.key === '签到时间') ? void(0) : this.studentClass.push(signin);
+
+        this.getStudentList();
       },
       showOut(){
         this.canShowStudent = true;
         let signout = { key: '离开时间', value: 'signoutTime' };
-        this.formList.some(v => v.key === '离开时间') ? void(0) : this.formList.push(signout);
-        this.studentList = [
-          { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-          { name: 'k1s', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-          { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-        ];
-        this.studentTotal = this.studentList.length;
+        this.studentClass.some(v => v.key === '离开时间') ? void(0) : this.studentClass.push(signout);
+
+        this.getStudentList();
       },
-      searchStudent(){
-        console.log('search', this.studentConfig.keyword);
-      },
-      exportXLS(){
+      exportXLS(loading){
 
         import('@/vendor/Export2Excel').then(excel => {
           console.log('import', excel);
-          const tHeader = this.formList.map(v => v.key); 
-          const values = this.formList.map(v => v.value); 
-          const data = this.list.map(o => values.map(v => o[v]) );
+          const tHeader = this.studentClass.map(v => v.key); 
+          const values = this.studentClass.map(v => v.value); 
+          const data = this.studentList.map(o => values.map(v => o[v]) );
 
           excel.export_json_to_excel({
             header: tHeader,
@@ -190,24 +171,21 @@ export default {
             filename: this.filename,
             autoWidth: this.autoWidth
           })
+
+          loading.close();
         })
 
       },
-      sizeChange(val){
-        console.log('size change', val);
-      },
-      pageChange(val){
-        
-        console.log('page change', val);
-      },
+      
       //
       async getList() { //获取列表
         this.loadList = true;
+        console.log('----');
 
-        let coulseList = await api.getCoulseList(this.listConfig);
-        // this.list = coulseList.data;
-        // this.listTotal = coulseList.pagination.total;
-        console.log('coulse list', coulseList);
+        // let res = await api.getCoulseList(this.listConfig); //FIXME: api
+        // this.list = res.data;
+        // this.listTotal = res.pagination.total;
+        // console.log('coulse list', res);
         
         this.list = [
           { name: 'k1', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
@@ -216,41 +194,30 @@ export default {
         this.listTotal = this.list.length;
         this.loadList = false;
       },
-      deleteStudent(index,row){
-        let id = row.id
-        this.$confirm(`此操作将删除该条目, 是否继续?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          console.log('delete student');
-        }).catch(()=>{
-          console.log('delete student cancel');
-          this.$notify.info({ title: '消息', message: '已取消' });
-        })
-      },
-      delete(id){
-        let sendData = {
-          seller_id:id,
-        }
-        deleteAuth_api(sendData).then(res=>{
-          if(res&&res.status===0){
-            this.$notify({ title: '成功', message: '操作成功', type:'success' });
-            this.getList()
-          }else{
-            this.$notify({ title: '错误', message: '操作失败', type:'error' });
-          }
-        }).catch(err=>{
-          console.error('deleteseller_api')
-        })
-      },
-    studentSizeChange(val) {
-      this.student.limit = val
-      this.getList()
+    sizeChange(val){
+      this.listConfig.limit = val;
+      console.log('size change', this.listConfig);
+      this.getList();
     },
-    studentPageChange(val) {
-      this.student.page = val
-      this.getList()
+    pageChange(val){
+      this.listConfig.page = val;
+      console.log('page change', this.listConfig);
+      this.getList();
+    },
+    getStudentList(){
+      this.loadStudent = true;
+
+      this.studentList = [
+        { name: 'k1', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
+        { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
+      ];
+      this.student.total = this.studentList.length;
+      this.loadStudent = false;
+    },
+    changeStudent(v){
+      console.log('change student list:', v);
+      this.student = v;
+      this.getStudentList();
     },
     
   }
