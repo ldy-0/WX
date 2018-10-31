@@ -7,15 +7,23 @@ let uploadFile = async filePath => {
   try {
     // let myDate = new Date();
     // let ossPath = "seekings/" + myDate.getFullYear();
-    let aliyunInfo = wx.getStorageSync("aliyunInfo");
-    if (aliyunInfo) {
-      console.log(aliyunInfo);
+
+    // let aliyunInfo = wx.getStorageSync("aliyunInfo");
+    // if (aliyunInfo) {
+    //   console.log(aliyunInfo);
+    // } else {
+    //   const accessInfo = await shttp.get(OSSALIYUN).end();
+    //   if (accessInfo.status === 0) {
+    //     wx.setStorageSync("aliyunInfo", accessInfo.data);
+    //     aliyunInfo = accessInfo.data;
+    //   }
+    // }
+    let aliyunInfo = null;
+    const accessInfo = await shttp.get(OSSALIYUN).end();
+    if (accessInfo.status === 0) {
+      aliyunInfo = accessInfo.data;
     } else {
-      const accessInfo = await shttp.get(OSSALIYUN).end();
-      if (accessInfo.status === 0) {
-        wx.setStorageSync("aliyunInfo", accessInfo.data);
-        aliyunInfo = accessInfo.data;
-      }
+      console.log(accessInfo.error);
     }
     let filenameurl = filePath;
     let index1 = filenameurl.lastIndexOf(".");
