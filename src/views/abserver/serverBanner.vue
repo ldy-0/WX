@@ -507,6 +507,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.deleteBanner(id)
+        this.videoInfo = null
       }).catch(()=>{
         this.$notify.info({
           title: '消息',

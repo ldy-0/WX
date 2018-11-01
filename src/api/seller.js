@@ -442,4 +442,11 @@ export function editAllBuy_api(data){
       data: data
     })
   }
+  export function deleteGoods_api(data) {
+    return request({
+      url: '/api/v1/seller/goodscommon',
+      method: 'delete',
+      data: data
+    })
+  }
 // ----------------------------------------------
