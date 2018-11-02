@@ -28,8 +28,8 @@
     <el-form-item  label="商品图片"  :label-width="formLabelWidth"  prop="fileList1">
           <el-upload 
             :auto-upload="false" 
-              action="" 
-              :limit="imgLimit1"
+            action="" 
+            :limit="imgLimit1"
             list-type="picture-card" 
             :on-success="onsuccess"
             :on-preview="preview" 
@@ -54,7 +54,6 @@
         </el-option>
       </el-select>
     </el-form-item>
-    {{formForNotive.is_virtual}}
     <!-- 普通、预售 -->
     <el-form-item label="商品类型" :label-width="formLabelWidth" prop="goodsType">
       <el-select v-model="formForNotive.goodsType" placeholder="请选择">
@@ -315,6 +314,7 @@
         <el-button size="mini" type="primary" @click="editItem(scope.$index, scope.row)">编辑和查看</el-button>
         <el-button size="mini" type="danger" v-if="scope.row.isUp" @click="downItem(scope.$index, scope.row,0)">下架商品</el-button>
         <el-button size="mini" v-else type="success" @click="downItem(scope.$index, scope.row,1)">上架商品</el-button>
+        <el-button size="mini" type="danger" @click="deleteItem(scope.$index, scope.row)">删除商品</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -327,7 +327,7 @@
 </div>
 </template>
 <script>
-import {addGoods_api,getGoodsList_api,getSchoolList_api,getGoods_api,upDownGoods_api,editGoods_api,getEntryList_api} from '@/api/seller'
+import {addGoods_api,getGoodsList_api,getSchoolList_api,getGoods_api,upDownGoods_api,editGoods_api,getEntryList_api,deleteGoods_api} from '@/api/seller'
 import uploadFn from '@/utils/aahbs'
 
 const formForNotive = {
@@ -1236,6 +1236,29 @@ export default {
           console.error('upDownShop')
         })
       },
+      async deleteGoods(id) {
+       let sendData = {
+            goods_commonid: id
+          }
+        deleteGoods_api(sendData).then(res=>{
+          if(res&&res.status===0){
+              this.$notify({
+              title: '成功',
+              message: '操作成功',
+              type:'success'
+            });
+            this.getList()
+          }else{
+            this.$notify({
+              title: '错误',
+              message: '操作失败',
+              type:'error'
+            });
+          }
+        }).catch(err=>{
+          console.error('upDownShop')
+        })
+      },
       async downMutilItem(wantUp){
         this.$confirm(`此操作将${wantUp===1?'批量上架':'批量下架'}该商品, 是否继续?`, '提示', {
           confirmButtonText: '确定',
@@ -1258,6 +1281,21 @@ export default {
           type: 'warning'
         }).then(() => {
           this.downShop(id,wantUp)
+        }).catch(()=>{
+          this.$notify.info({
+            title: '消息',
+            message: '已取消'
+          });
+        })
+      },
+      async deleteItem(index,data){
+        let id = data.id
+        this.$confirm(`此操作将删除该商品, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.deleteGoods(id)
         }).catch(()=>{
           this.$notify.info({
             title: '消息',

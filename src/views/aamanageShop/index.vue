@@ -784,9 +784,10 @@ export default {
       this.addNewShow = true
       this.formForNotive = Object.assign({},formForNotive)
     },
-    search(){ // 此时listQuery已经改变
-      this.getList()
-    },
+      search(){ // 此时listQuery已经改变
+        this.listQuery.page = 1
+        this.getList()
+      },
     //body
     deleteNewNotice(id){
         let sendData = {

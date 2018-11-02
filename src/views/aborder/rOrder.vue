@@ -192,8 +192,8 @@
       <!-- <el-table-column
         label="类别" 
         prop="buyType"
-        > -->
-      </el-table-column>
+        > 
+      </el-table-column>-->
       <el-table-column
         label="下单时间" 
         prop="time"
@@ -322,8 +322,8 @@ export default {
           return console.log('获取数据失败:handleDownload')
         }
         import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '交易日期']
-          const filterVal = ['id', 'money', 'num', 'state', 'time']
+          const tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '交易日期','商品名','商品价格']
+          const filterVal = ['id', 'money', 'num', 'state', 'time','goods_name','goods_price']
           const tableDataAll = this.tableDataAll
           const data = this.formatJson(filterVal, tableDataAll)
           excel.export_json_to_excel({
@@ -335,7 +335,8 @@ export default {
           this.downloadLoading = false
         })
       },
-      search(){
+      search(){ // 此时listQuery已经改变
+        this.listQuery.page = 1
         this.getList()
       },
     // body
@@ -492,8 +493,9 @@ export default {
                 time:aData.add_time,
                 state:aData.order_state,
                 stateID:aData.order_state_id,
-                orderTypeTXT :this.getOrderType(aData.order_type) 
-                
+                orderTypeTXT :this.getOrderType(aData.order_type) ,
+                goods_name:aData.order_goods[0].goods_name,
+                goods_price:aData.order_goods[0].goods_price
                 // goodsList:aData.order_goods,
               })
             })

@@ -178,8 +178,8 @@
       <!-- <el-table-column
         label="类别" 
         prop="buyType"
-        > -->
-      </el-table-column>
+        > 
+      </el-table-column>-->
       <el-table-column
         label="退款时间" 
         prop="time"
@@ -301,7 +301,8 @@ export default {
           this.downloadLoading = false
         })
       },
-      search(){
+      search(){ // 此时listQuery已经改变
+        this.listQuery.page = 1
         this.getList()
       },
     // body

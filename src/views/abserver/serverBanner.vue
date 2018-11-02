@@ -1,7 +1,9 @@
 <style lang="stylus">
-  .notice
-    .header
-      margin-top 20px
+.notice {
+  .header {
+    margin-top: 20px;
+  }
+}
 </style>
 
 <template>
@@ -9,15 +11,15 @@
   <!-- 编辑和添加共用 -->
   <!-- out -->
 <el-dialog
-  :title="isAddItem?'新增轮播图':'编辑轮播图'"
+  :title="isAddItem?'新增':'编辑'"
   :visible.sync="addNewShow"
   width="80%" 
   >
-  <el-dialog :visible.sync="dialogVisible" append-to-body>
+  <el-dialog :visible.sync="dialogVisible" append-to-body v-if="typeIndex==1">
     <img width="100%" :src="dialogImageUrl" alt="">
   </el-dialog>
   <el-form :model="formForNotive" ref="ruleForm" :rules="rules" >
-    <el-form-item  label="图片"  :label-width="formLabelWidth" prop="fileList1">
+    <el-form-item v-if="typeIndex==1" :label="typeIndex==1?'图片':'视频'"  :label-width="formLabelWidth" prop="fileList1">
           <el-upload 
           :auto-upload="false"
             action=""
@@ -34,8 +36,25 @@
           <i class="el-icon-plus"></i>
         </el-upload>
     </el-form-item>
-    <p class="hbs-margin-left80">请选择一张图片,建议尺寸： 宽750*高376</p>
-    <el-form-item label="跳转类型" :label-width="formLabelWidth">
+    <el-form-item v-if="typeIndex==2" :label="typeIndex==1?'图片':'视频'"  :label-width="formLabelWidth" prop="fileList1">
+          <el-upload 
+          :auto-upload="false"
+            action=""
+          :limit="imgLimit1"
+          list-type="text" 
+          :on-success="onsuccess" 
+          :on-preview="preview"
+          :on-remove="remove1" 
+          :on-change="change1" 
+          :before-upload="beforeup" 
+          :before-remove="beforere" 
+          >
+          <i class="el-icon-plus"></i>
+        </el-upload>
+    </el-form-item>
+    <p class="hbs-margin-left80" v-if="typeIndex==1">请选择一张图片,建议尺寸： 宽750*高376</p>
+    <p class="hbs-margin-left80" v-if="typeIndex==2">只能添加一个视频，若添加了视频则小程序端首页的轮播图变为该视频</p>
+    <el-form-item label="跳转类型" :label-width="formLabelWidth" v-if="typeIndex==1">
         <el-select v-model="rules.fileList2[0].required" placeholder="请选择">
             <el-option
             v-for="item in jumpTypeOptions"
@@ -45,7 +64,7 @@
             </el-option>
         </el-select>
     </el-form-item>
-    <el-form-item v-if="rules.fileList2[0].required" label="跳转图片" :label-width="formLabelWidth" prop="fileList2">
+    <el-form-item v-if="rules.fileList2[0].required&&typeIndex==1" label="跳转图片" :label-width="formLabelWidth" prop="fileList2">
       <el-upload 
               :auto-upload="false"
                 action=""
@@ -80,6 +99,9 @@
     <el-form-item>
       <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增轮播图</el-button>
     </el-form-item>
+    <el-form-item>
+      <el-button type="primary" icon="el-icon-edit-outline" @click="addItem2">新增视频</el-button>
+    </el-form-item>
   </el-form>       
 </el-header>
 <el-main>
@@ -87,7 +109,7 @@
       :data="tableData"
       stripe 
       v-loading="listLoading" element-loading-text="给我一点时间"
-      style="width: 100%" >
+      style="width: 100%" v-if="typeIndex==1">
       <el-table-column label="图片">
         <template slot-scope="scope">
           <div style="width:100px;height:100px;align-items:center;display:flex;">
@@ -112,9 +134,16 @@
       </el-table-column>
     </el-table>
 
+    <el-form v-if="typeIndex==2&&videoInfo!=null">
+      <video :src="videoInfo.banner_pic" alt="" style="width:300px;height:200px" controls="controls" />
+      <div>
+        <el-button size="mini" type="primary" @click="editItem2()">编辑</el-button>
+        <el-button size="mini" type="danger" @click="deleteItem2()">删除</el-button>
+      </div>
+    </el-form>   
 <!-- footer     -->
 </el-main>
-<el-footer>
+<el-footer v-if="typeIndex==1">
   <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
   </el-pagination>
 </el-footer>
@@ -175,6 +204,8 @@ export default {
         limit: 20
       },
       total:1,
+      typeIndex: 1,
+      videoInfo: null,
     }
   },
   created(){
@@ -227,11 +258,22 @@ export default {
     addItem(){
       this.isAddItem = true,
       this.addNewShow = true,
+      this.typeIndex = 1
       this.formForNotive = Object.assign({},formForNotive)
+    },
+    addItem2(){
+      if(this.videoInfo == null){
+       this.isAddItem = true,
+       this.addNewShow = true,
+       this.formForNotive = Object.assign({},formForNotive)
+      }
+      this.typeIndex = 2
+      
     },
     async addNewBanner(formName){
       let res = await new Promise((res,rej)=>{
         this.$refs[formName].validate((valid) => {
+          console.log(valid);
           if (valid) {
             // alert('submit!');
             res(true)
@@ -254,12 +296,15 @@ export default {
       sendData.banner_pic = allUrl1[0]
 
       // 跳转 图二
-      if(jumpType){
+      if(jumpType&&this.typeIndex==1){
         let allUrl2 =  await uploadFn(this.formForNotive.fileList2[0].raw)
         sendData.banner_url = allUrl2[0]
       }
       // 默认上传
       sendData.banner_order = 1
+      if(this.typeIndex == 2){
+       sendData.is_vedio = '1'
+      }
       addBanner_api(sendData).then((data)=>{
         this.waitAddNotice = false
         this.addNewShow = false
@@ -294,6 +339,7 @@ export default {
           let tempTableData = []
   
           result.forEach((aData)=>{
+          if(aData.is_vedio == '0'){
             let temp_fileList1 =[]
             let temp_fileList2 =[]
             if(aData.banner_pic){
@@ -309,6 +355,10 @@ export default {
               id:aData.banner_id,
               order:aData.banner_order
             })
+          } else if(aData.is_vedio == '1'){
+              this.videoInfo = aData
+          }
+            
           })
           this.tableData = tempTableData
           this.total = response.pagination&&response.pagination.total?response.pagination.total:1
@@ -342,6 +392,29 @@ export default {
       }
       this.isAddItem = false
       this.addNewShow = true
+    },
+    editItem2(){
+     if(this.videoInfo == null){
+       this.$message({
+        message: '请先添加视频',
+        type: 'faile'
+      })
+     } else {
+      let id = this.videoInfo.banner_id
+      let fileList1 = [{url:this.videoInfo.banner_pic}]
+      let fileList2 = this.videoInfo.banner_url?[{url:this.videoInfo.banner_url}]:[]
+      let order = this.videoInfo.banner_order
+      this.rules.fileList2[0].required = !!this.videoInfo.banner_url
+      this.formForNotive ={
+        fileList1,
+        fileList2,
+        order,
+        id
+      }
+      this.isAddItem = false
+      this.addNewShow = true
+     }
+      
     },
 
     async editNewBanner(formName){
@@ -419,6 +492,22 @@ export default {
         type: 'warning'
       }).then(() => {
         this.deleteBanner(id)
+      }).catch(()=>{
+        this.$notify.info({
+          title: '消息',
+          message: '已取消'
+        });
+      })
+    },
+    deleteItem2(){
+      let id = this.videoInfo.banner_id
+      this.$confirm(`此操作将删除该条目, 是否继续?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.deleteBanner(id)
+        this.videoInfo = null
       }).catch(()=>{
         this.$notify.info({
           title: '消息',

@@ -13,9 +13,20 @@
       color #ffffff
       & *
         font-size 18px
+.forget-password
+  font-size: 10px
+  color: #ffffff
+  text-align: right
+  margin-bottom: 10px
+  cursor: pointer
+.v-modal
+  width: 0 !important
+.codebox
+  display: flex         
 </style>
 
 <template>
+<div>
   <div class="login-container">
     <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
       <div class="title-container">
@@ -48,6 +59,7 @@
         active-text="我是平台"
         inactive-text="我是商家">
       </el-switch> -->
+      <div class="forget-password" @click="centerDialogVisible = true">忘记密码</div>
       <el-button type="primary" style="width:100%;margin-bottom:30px;" :loading="loading" @click.native.prevent="handleLogin">{{$t('login.logIn')}}</el-button>
 
       <!-- <div class="tips">
@@ -71,7 +83,34 @@
       <social-sign />
     </el-dialog> 
    -->
-
+  </div>
+  <el-dialog
+        title="重置密码"
+        :visible.sync="centerDialogVisible"
+        width="30%"
+        center>
+        <el-form :model="findForm">
+          <el-form-item label="账号手机号" label-width="90px">
+            <el-input type='text' v-model="findForm.phone" autoComplete="on" placeholder="手机号码" />
+          </el-form-item>
+          <div class="codebox">
+            <el-form-item label="验证码" label-width="90px">
+              <el-input v-model="findForm.code" autoComplete="on" placeholder="验证码" />
+            </el-form-item>
+            <el-button type="primary" style="width:30%;height:36px;margin-left:10px" @click="sendCode">{{codetimeShow?codetime+'秒后获取':'获取验证码'}}</el-button>
+          </div>
+          <el-form-item label="输入新密码" label-width="90px">
+            <el-input v-model="findForm.password1" type='password' autoComplete="on" placeholder="新密码" />
+          </el-form-item>
+          <el-form-item label="确认新密码" label-width="90px">
+            <el-input v-model="findForm.password2" type='password' autoComplete="on" placeholder="确认密码" />
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="centerDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="resetPassword">确 定</el-button>
+        </div>
+      </el-dialog>
   </div>
 </template>
 
@@ -79,7 +118,7 @@
 import { isvalidUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 // import SocialSign from './socialsignin'
-
+import { getVerificationCode, resetPassword } from "@/api/login";
 export default {
   components: { LangSelect },
   // components: { LangSelect, SocialSign },
@@ -115,7 +154,16 @@ export default {
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       passwordType: 'password',
-      loading: false
+      loading: false,
+      findForm: {
+        phone: "",
+        code: "",
+        password1: "",
+        password2: ""
+      },
+      codetimeShow: false,
+      codetime: 60,
+      centerDialogVisible: false,
       // showDialog: false
     }
   },
@@ -162,6 +210,57 @@ export default {
           return false
         }
       })
+    },
+    /**
+     * 获取验证码
+     */
+    sendCode() {
+      if (!this.codetimeShow) {
+        let phoneReg = /^[1][0-9][0-9]{9}$/;
+        if (this.findForm.phone == "") {
+          return this.$message("请输入手机号");
+        }
+        if (!phoneReg.test(this.findForm.phone)) {
+          return this.$message("请输入正确手机号");
+        }
+        getVerificationCode({ phone: this.findForm.phone }).then(response => {
+        });
+        let that = this;
+        that.codetimeShow = true;
+        let interval = setInterval(() => {
+          if (that.codetime-- <= 0) {
+            that.codetime = 60;
+            that.codetimeShow = false;
+            clearInterval(interval);
+          }
+        }, 1000);
+      }
+    },
+    /**
+     * 重置密码
+     */
+    resetPassword() {
+      if (this.findForm.phone == "") {
+        return this.$message("请输入手机号");
+      } else if (this.findForm.code == "") {
+        return this.$message("请输入短信验证码");
+      } else if (this.findForm.password1 == "") {
+        return this.$message("请输入密码");
+      } else if (this.findForm.password2 == "") {
+        return this.$message("请确认密码");
+      } else if (this.findForm.password1 != this.findForm.password2) {
+        return this.$message("两次密码不一致");
+      }
+      resetPassword({
+        phone: this.findForm.phone,
+        code: this.findForm.code,
+        pass: this.findForm.password2
+      }).then(response => {
+        if(response.status == 0){
+          this.$message(response.data.message);
+          this.centerDialogVisible = false
+        }
+      });
     },
     afterQRScan() {
       // const hash = window.location.hash.slice(1)
