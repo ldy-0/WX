@@ -428,7 +428,7 @@ export default {
       return data;
     },
     async getOrder(item){
-      this.listQuery.order_state = item || null;
+      this.listQuery.order_state = item === 0 ? 0 : item;
       this.listQuery.order_type = 10;
       
       let res = await api.getOrderList(this.listQuery, this);

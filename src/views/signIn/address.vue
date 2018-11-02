@@ -39,7 +39,7 @@
                   @size-change="addressSizeChange" 
                   @current-change="addressPageChange" 
                   :current-page="listParam.page" 
-                  :page-sizes="[10,2,30, 50]" 
+                  :page-sizes="[10,20,30, 50]" 
                   :page-size="listParam.limit" 
                   layout="total, sizes, prev, pager, next" :total="addressTotal">
     </el-pagination>
@@ -188,6 +188,7 @@ export default {
       
     addressSizeChange(val) {
       this.listParam.limit = val
+      this.listParam.page = 1;
       this.getList()
     },
     addressPageChange(val) {
