@@ -4,10 +4,6 @@
       margin-top 20px
   .margin-btm20
     margin-bottom 20px
-// #app    
-//   .out-dialog
-//     .el-dialog
-//       padding-right 10%
       
 </style>
 
@@ -21,10 +17,12 @@
   width="70%" 
   class="out-dialog"
   > -->
+  <custom-dialog :visible='canShowDialog' :config='dialogConfig' :detail='formData' @cancel='hideForm'></custom-dialog>
+
   <el-dialog :visible.sync="dialogVisible" append-to-body>
     <img width="100%" :src="dialogImageUrl" alt="">
   </el-dialog>
-  <el-form :model="formForNotive" v-loading="editLoading" ref="ruleForm" :rules="rules" size="medium" >
+  <!-- <el-form :model="formForNotive" v-loading="editLoading" ref="ruleForm" :rules="rules" size="medium" >
     <el-form-item  label="商品图片"  :label-width="formLabelWidth"  prop="fileList1">
           <el-upload 
             :auto-upload="false" 
@@ -42,9 +40,9 @@
           <i class="el-icon-plus"></i>
         </el-upload>
     </el-form-item>
-    <p class="hbs-margin-left140">最多可选择6张图,建议像素 ：宽750*高750</p>
+    <p class="hbs-margin-left140">最多可选择6张图,建议像素 ：宽750*高750</p> -->
     <!-- 虚拟 -->
-    <el-form-item label="商品属性" :label-width="formLabelWidth" prop="is_virtual">
+    <!-- <el-form-item label="商品属性" :label-width="formLabelWidth" prop="is_virtual">
       <el-select v-model="formForNotive.is_virtual" placeholder="请选择" @change="formForNotiveIs_virtual_fn">
         <el-option
           v-for="item in is_virtualList"
@@ -53,9 +51,9 @@
           :value="item.value">
         </el-option>
       </el-select>
-    </el-form-item>
+    </el-form-item> -->
     <!-- 普通、预售 -->
-    <el-form-item label="商品类型" :label-width="formLabelWidth" prop="goodsType">
+    <!-- <el-form-item label="商品类型" :label-width="formLabelWidth" prop="goodsType">
       <el-select v-model="formForNotive.goodsType" placeholder="请选择">
         <el-option
           v-for="item in goodsTypehbsList" 
@@ -64,16 +62,13 @@
           :value="item.value">
         </el-option>
       </el-select>
-    </el-form-item>
-    <el-form-item label="商品名称" :label-width="formLabelWidth" prop="goodsName">
+    </el-form-item> -->
+    <!-- <el-form-item label="商品名称" :label-width="formLabelWidth" prop="goodsName">
       <el-input v-model="formForNotive.goodsName" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item label="课程" :label-width="formLabelWidth" prop="coulse">
       <el-input v-model="formForNotive.coulse" auto-complete="off"></el-input>
     </el-form-item>
-    <!-- <el-form-item label="商品价格" :label-width="formLabelWidth" prop="goodsPrice">
-      <el-input v-model="formForNotive.goodsPrice" auto-complete="off"></el-input>
-    </el-form-item> -->
     <el-form-item label="商品编号" :label-width="formLabelWidth" prop="goodsNum">
       <el-input v-model="formForNotive.goodsNum" auto-complete="off"></el-input>
     </el-form-item>
@@ -82,9 +77,6 @@
         <el-checkbox-button v-for="item in schoolList" :label="item.value" :key="item.value">{{item.label}}</el-checkbox-button>
       </el-checkbox-group>
     </el-form-item>
-    <!-- <el-form-item label="商品库存" :label-width="formLabelWidth" prop="goodsTotal">
-      <el-input v-model="formForNotive.goodsTotal" auto-complete="off"></el-input>
-    </el-form-item> -->
     <el-form-item label="商品分类" :label-width="formLabelWidth" prop="industry">
       <el-select v-model="formForNotive.industry" placeholder="请选择商品分类">
         <el-option
@@ -96,17 +88,6 @@
       </el-select>
     </el-form-item>
     
-    <!-- <el-form-item label="商品属性" :label-width="formLabelWidth">
-      <el-select v-model="formForNotive.goodsElement"
-       placeholder="请选择行业">
-          <el-option
-            v-for="item in goodsElementList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-      </el-select>
-    </el-form-item> -->
     <el-form-item label="商品描述" :label-width="formLabelWidth" prop="goodsDescribe">
       <el-input v-model="formForNotive.goodsDescribe" type="textarea" auto-complete="off"></el-input>
     </el-form-item>
@@ -183,13 +164,13 @@
      <el-button v-else type="primary" @click="editNewNotice('ruleForm')"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确认修改</el-button>
-  </span>
+  </span> -->
 <!-- </el-dialog> -->
-<el-container class="notice">
-<!-- <el-header class="header" style="height:auto;">
+<!-- <el-container class="notice"> -->
+<el-header class="header" style="height:auto;">
   <el-form :inline="true" :model="formInline" class="form">
     <el-form-item>
-      <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增商品</el-button>
+      <el-button type="primary" icon="el-icon-edit-outline" @click="showForm">新增商品</el-button>
     </el-form-item>
   </el-form>
   <el-form :inline="true"  class="form">
@@ -224,7 +205,7 @@
       <el-button type="danger" round @click="downMutilItem(0)" :disabled="selectedItem.length<1">批量下架</el-button>
     </el-form-item>
   </el-form>        
-</el-header> -->
+</el-header>
 <el-main>
     <el-table
       :data="tableData"
@@ -281,12 +262,13 @@
   <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
   </el-pagination>
 </el-footer> -->
-</el-container>
+<!-- </el-container> -->
 </div>
 </template>
 <script>
 import {addGoods_api,getGoodsList_api,getSchoolList_api,getGoods_api,upDownGoods_api,editGoods_api,getEntryList_api} from '@/api/seller'
 import uploadFn from '@/utils/aahbs'
+import customDialog from '@/components/customDialog/index.vue'
 
 const formForNotive = {
         fileList1:[],
@@ -315,9 +297,33 @@ export default {
     this.getList()
   },
 
+  components: {
+    customDialog,
+  },
 
   data() {
     return {
+      canShowDialog: false,
+      dialogConfig: {
+        canSubmit: true,
+        width: '80%',
+        labelWidth: '100px',
+        classList: [
+          { key: '商品图片', value: 'imgs', isImg: true, },
+          { key: '商品名称', value: 'goodsName', isText: true, },
+          { key: '商品编号', value: 'goodsNum', isText: true, },
+          { key: '商品价格', value: 'goodsType', isText: true, },
+          { key: '商品属性', value: '', isSelect: true, },
+          { key: '商品分类', value: '', isSelect: true, },
+          { key: '课程', value: 'goodsType', isSelect: true, list: [] },
+          { key: '商品描述', value: 'goodsType', isText: true, },
+          { key: '规格', value: 'goodsType', isText: true, },
+          { key: '商品详情', value: 'goodsType', isImg: true, },
+        ]
+      },
+      formData: {
+
+      },
       // out
         editLoading:false,//此页面的编辑页为 获取单条详情方式，故添加loading
         imgLimit1:6,
@@ -700,9 +706,6 @@ export default {
         sendData.is_virtual = this.formForNotive.is_virtual
 
         // 商品图片
-          // let urls1 = await uploadFn(this.formForNotive.fileList1[0].raw)
-          // sendData.goods_image = urls1[0]
-          // console.log('urls1',urls1,'-------------------------')
         let fileAndUrl0 = this.getFiles(this.formForNotive.fileList1)
         let files0 = fileAndUrl0.files
         let urls0Piece1 = await uploadFn(files0)
@@ -745,10 +748,6 @@ export default {
           if(this.formForNotive.school.indexOf(this.schoolList[i].value)>=0){
               tempArray.push({id:this.schoolList[i].value,name:this.schoolList[i].label})
           }
-          // if(this.schoolList[i].value===this.formForNotive.school){
-          //   sendData.school_name = this.schoolList[i].label
-          //   break
-          // }
         }
         sendData.school_name = JSON.stringify(tempArray)
         //库存 放在规格里 sendData.goodsTotal= this.formForNotive.goodsTotal
@@ -852,12 +851,9 @@ export default {
         let res = await new Promise((res,rej)=>{
           this.$refs[formName].validate((valid) => {
               if (valid) {
-                // alert('submit!');
                 res(true)
               } else {
                 res(false)
-                // console.log('error submit!!');
-                // return false;
               }
             })
           })
@@ -895,14 +891,6 @@ export default {
         sendData.is_virtual = this.formForNotive.is_virtual
 
         // 商品图片
-        // console.log(this.formForNotive.fileList1[0],'商品图片-----')
-        // if(this.formForNotive.fileList1[0].raw){
-        //   let urls1 = await uploadFn(this.formForNotive.fileList1[0].raw)
-        //   sendData.goods_image = urls1[0]
-        //   console.log('urls1',urls1,'-------------------------')
-        // }else{
-        //    sendData.goods_image = this.formForNotive.fileList1[0].url
-        // }
         let fileAndUrl0 = this.getFiles(this.formForNotive.fileList1)
         let files0 = fileAndUrl0.files
         let urls0Piece1 = await uploadFn(files0)
@@ -1016,13 +1004,18 @@ export default {
         this.listQuery.page = 1
         this.getList()
       },
-      addItem(){ //显示 弹框
-        this.isAddItem = true
-        this.addNewShow = true
-        this.formForNotive = Object.assign({},formForNotive)
-        this.formForNotiveChild1 = Object.assign({},formForNotiveChild1)
-        this.formForNotiveChild2List = Object.assign([],formForNotiveChild2List)
+      showForm(){
+        this.canShowDialog = true;
+        this.dialogConfig.canSubmit = true;
       },
+      hideForm(){ this.canShowDialog = false; },
+      // addItem(){ //显示 弹框
+      //   this.isAddItem = true
+      //   this.addNewShow = true
+      //   this.formForNotive = Object.assign({},formForNotive)
+      //   this.formForNotiveChild1 = Object.assign({},formForNotiveChild1)
+      //   this.formForNotiveChild2List = Object.assign([],formForNotiveChild2List)
+      // },
     //body
       handleSelectionChange(row){ //批量处理
         this.selectedItem = row

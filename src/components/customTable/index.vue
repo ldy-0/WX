@@ -43,6 +43,7 @@
           <el-button size="mini" type="text" @click="showAdd(scope.$index, scope.row)" v-if='config.showAdd'>增加期数</el-button>
           <el-button size="mini" type="text" @click="showMinus(scope.$index, scope.row)" v-if='config.showMinus'>减少期数</el-button>
           <el-button size="mini" type="text" @click="showDeleteDialog(scope.$index, scope.row)" v-if='config.showDelete'>删除</el-button>
+          <el-button size="mini" type="text" @click="showCome(scope.$index, scope.row)" v-if='config.showCome'>未到岗</el-button>
           <!-- <slot name='scope.row'></slot> -->
         </template>
       </el-table-column>
@@ -84,7 +85,7 @@ export default {
   data() {
     return {
       query: {
-        limit: null,
+        limit: 10,
         page: 1,
         keyWord: '',
       }
@@ -118,11 +119,15 @@ export default {
     showMinus(index, row){
       this.$emit('showMinus', row);
     },
+    showCome(index, row){
+      this.$meit('uncome', row);
+    },
     changeState(index, row){
       this.$emit('changeState', row);
     },
     changeSize(val){
       this.query.limit = val;
+      this.query.page = 1;
       this.$emit('change', this.query);
     },
     changePage(val){

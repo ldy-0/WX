@@ -10,6 +10,7 @@
         <el-input v-model="detail[item.value]" auto-complete="off" v-if='item.isText'></el-input>
         <el-input v-model="detail[item.value]" auto-complete="off" v-if='item.isNumber' @input='input(item)'></el-input>
         <el-input v-model="detail[item.value]" auto-complete="off" v-if='item.isInteger' @input='input(item)'></el-input>
+        <el-input v-model="detail[item.value]" auto-complete="off" v-if='item.isPhone' @input='input(item)'></el-input>
 
         <!-- textarea -->
         <el-input type='textarea' v-model="detail[item.value]" auto-complete="off" :disabled='true' v-if='item.isTexts'></el-input>
@@ -46,6 +47,10 @@
         </el-radio-group>
 
         <!-- select -->
+        <el-select v-model="detail[item.value]" :placeholder="item.placeholder" v-if='item.isSelect'>
+          <el-option v-for="option in item.list" :key="option[item.id]" :label="option[item.name]" :value="option[item.id]"></el-option>
+        </el-select>
+
         <el-select v-model="detail[item.value]" multiple :placeholder="item.placeholder" v-if='item.isMultiSelect'>
           <el-option v-for="option in item.list" :key="option[item.id]" :label="option[item.name]" :value="option[item.id]"></el-option>
         </el-select>
@@ -60,6 +65,11 @@
             <div class='f-fs' v-text='item.start'></div>-<div class='f-fs' v-text='item.end'></div>
             <el-button style='margin-left: 20px;' @click='deleteDate(index)' type='danger' size='mini'>删除</el-button>
           </div>
+        </div>
+
+        <div v-if='item.isDetail'>
+          <el-button @click="addDetail(item.value)" v-text='item.key'></el-button>
+          <slot></slot>
         </div>
 
         <!-- slot -->
@@ -106,6 +116,7 @@ export default {
       imgs: [],
       date: '',  
       timeKey: '', // 时间段字段名 
+      error: null, // 暂存错误
       canSubmit: true,
       interval: null,
       // rules: {
@@ -131,7 +142,9 @@ export default {
 
       if(!this.canSubmit)return ;
 
-      if(!this.detail[this.timeKey].length)return this.$message({ message: '请添加日期' });
+      if(this.detail[this.timeKey] && !this.detail[this.timeKey].length)return this.$message({ message: '请添加日期' });
+
+      if(this.error)return this.$message(this.error);
 
       console.log('submit dialog --', this.detail);
       this.$emit('submit', this.imgs);
@@ -155,27 +168,49 @@ export default {
 
     // dates
     addDate(key, e){
+      let dateList = this.detail[key],
+          time = e[0].getTime(),
+          newTime = { start: e[0].toLocaleString(), startTemp: e[0].getTime(), end: e[1].toLocaleString(), endTemp: e[1].getTime() };
+
       this.timeKey = key;
-      // this.detail[key].push({ start: e[0].toLocaleString(), end: e[1].toLocaleString() });
-      this.detail[key].push({ start: e[0].toLocaleString(), startTemp: e[0].getTime(), end: e[1].toLocaleString(), endTemp: e[1].getTime() });
+
+      if(time < Date.now()) return this.$message({ message: '选择时间无效' });
+
+      // this.detail[key].push({ start: e[0].toLocaleString(), startTemp: e[0].getTime(), end: e[1].toLocaleString(), endTemp: e[1].getTime() });
+      for(var i = 0, len = dateList.length; i < len; i++){
+
+        if(dateList[i].startTemp >= time){
+          this.detail[key] = dateList.concat(newTime, dateList.splice(i));
+          break;
+        }
+      }
+      this.detail[key].length === i && this.detail[key].push(newTime);
+
       console.log('add date', key, this.detail[key], e);
     },
     deleteDate(index){
       console.log('delete date', index);
       this.detail[this.timeKey].splice(index, 1);
     },
-
+    addDetail(key){
+      this.$emit('addDetail');
+    },
     blur(v){
       if(!v) this.$message.error({ message: '内容不能为空!' })
     },
     input(item){
-      let v = this.detail[item.value];
+      let v = this.detail[item.value],
+          phonePattern = /^((13[0-9])|(14[5|7|9])|(15([0-3]|[5-9]))|(17[0,1,3,5,6,7,8])|(18[0-9]))\d{8}$/;
+
       console.log('input --', item, v)
       if(isNaN(Number(v)))return ;
 
       if(item.isInteger && v % 1 !== 0)return this.$message({ message: '值必须为整数' });
 
-      this.detail[item.value] = Number(v)
+      if(item.isPhone && !phonePattern.test(v)) return this.$message(this.error = { message: '手机号不合法!' });
+
+      this.error = null; // clear error
+      this.detail[item.value] = item.isPhone ? v : Number(v);
 
     } 
   }

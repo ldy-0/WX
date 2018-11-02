@@ -1,14 +1,15 @@
-<style lang="stylus">
-  .notice
-    .header
-      margin-top 20px
-    .big-icon
-      font-size 30px
-      color #409EFF
-    .big-icon-no
-      font-size 30px
-      color #b19999
-      // color #F56C6C
+<style lang="css">
+  .header{
+    margin-top: 20px;
+  }
+  
+  .upload{
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    border: 1px dashed #000;
+    text-align: center;
+  }
 </style>
 
 <template>
@@ -56,8 +57,8 @@
 </el-container>
 
   <!-- coulse List -->
-  <el-dialog :visible.sync='canShowCoulse'>
-    <el-select v-model="address" placeholder="请选择教学点">
+  <el-dialog :visible.sync='canShowCoulse' width='60%'>
+    <el-select v-model="address" placeholder="请选择教学点" @change='changeCourseAddress'>
         <el-option v-for="item in addressList" :key="item.address_id" :label="item.address_name" :value="item.address_id"></el-option>
     </el-select>
 
@@ -80,17 +81,51 @@
     </span>
   </el-dialog>
 
+  <!-- coulse item List -->
+  <el-dialog :visible.sync='canShowCoulseItems' width='60%'>
+    <el-select v-model="courseItemsAddress" placeholder="请选择教学点" @change='changeCourseItemsAddress'>
+        <el-option v-for="item in addressList" :key="item.address_id" :label="item.address_name" :value="item.address_id"></el-option>
+    </el-select>
+
+    <custom-table :config='courseItemsConfig' 
+                  :data='courseItemsList' 
+                  :classList='courseItemsClass' 
+                  :isLoading='loadCourseItems' 
+                  :total='courseItemsTotal'
+                  @uncome='uncome'
+                  @change='changeCourseItems'>
+    </custom-table>
+
+    <span slot="footer" class="dialog-footer">
+      <el-button @click="canShowCoulseItems=false">取消</el-button>
+    </span>
+  </el-dialog>
+
   <!-- student List -->
-  <el-dialog :visible.sync='canShowStudent'>
+  <el-dialog :visible.sync='canShowStudent' width='60%'>
     <el-form :inline="true" :model="formInline" class="form">
 
       <el-form-item>
-        <el-input style="width: 340px;" placeholder="请输入联系方式" v-model="studentKeyword"></el-input>
+        <el-input style="width: 300px;" placeholder="请输入联系方式" v-model="studentKeyword"></el-input>
         <el-button type="primary" icon="el-icon-search" @click="searchStudent">查询</el-button>
       </el-form-item>
 
       <el-form-item>
-        <upload-excel-component :on-success='importDone' :before-upload="beforeUpload"></upload-excel-component>
+        <el-upload action=''
+            :auto-upload="false"
+            :show-file-list='false'
+            :on-remove='removeFiles'
+            :on-change="changeFiles">
+
+            <el-button>导入学生</el-button>
+        </el-upload>
+        <!-- <upload-excel-component :on-success='importDone' ></upload-excel-component> -->
+      </el-form-item>
+
+      <el-form-item label="分类" label-width="80px"> 
+          <el-select placeholder="请选择" v-model='student.student_state' @change='changeStudentStatus'> <!-- multiple  -->
+            <el-option v-for="item in categories" :key="item.id" :label="item.title" :value="item.id"></el-option>
+          </el-select>
       </el-form-item>
 
     </el-form>
@@ -110,20 +145,25 @@
     </span>
   </el-dialog>
 
+  <custom-dialog :visible='canShowUpdateStudent' :config='updateConfig' :detail='updateParam' @cancel='cancelUpdateStudent' @submit='submitUpdate'></custom-dialog>
+
 </div>
 </template>
 <script>
 
 import api from '@/api/seller' 
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
+import upLoadFile from '@/utils/aahbs.js'
 import customHead from '@/components/customHead/index.vue'
 import customTable from '@/components/customTable/index.vue'
+import customDialog from '@/components/customDialog/index.vue'
 
 export default {
   components: {
     UploadExcelComponent,
     customHead,
     customTable,
+    customDialog,
   },
   created(){
     this.getList()
@@ -173,6 +213,7 @@ export default {
         limit: 10,
       },
       total: 0,
+      // course
       canShowCoulse: false,
       courseConfig: {
         showOperate: true,
@@ -183,39 +224,84 @@ export default {
         { key: '课程名称', value: 'course_name' },
         { key: '总期数', value: 'course_semester' },
         { key: '已上期数', value: 'finished_semester' },
+        { key: '总人数', value: 'stu_num' },
         { key: '教学点', value: 'address_name' },
-        { key: '时间点', value: '' },
       ],
       loadCourse: false,
       courseList: [],
-      coulse: {
+      course: {
         page: 1,
         limit: 10,
       },
       courseTotal: 0,
       address: null,
       addressList: [],
-      
+      // course item
+      canShowCoulseItems: false,
+      courseItemsConfig: {
+        showOperate: true,
+        showCome: true,
+      },
+      courseItemsClass: [
+        { key: '课程名称', value: 'course_name' },
+        { key: '总期数', value: 'course_semester' },
+        { key: '已上期数', value: 'finished_semester' },
+        { key: '总人数', value: 'stu_num' },
+        { key: '实到人数', value: 'real_stunum' },
+        { key: '教学点', value: 'address_name' },
+        { key: '时间点', value: 'date' },
+        { key: '备注', value: 'remark' },
+      ],
+      loadCourseItems: false,
+      courseItemsList: [],
+      courseItems: {
+        page: 1,
+        limit: 10,
+      },
+      courseItemsTotal: 0,
+      courseItemsAddress: null,
+      courseItemsAddressList: [],
+      // student 
       canShowStudent: false,
       loadStudent: false,
       studentKeyword: null,
+      categories: [
+        { id: 0, title: '不匹配', },
+        { id: 1, title: '匹配', },
+      ],
       studentConfig: {
         showOperate: true,
         showUpdate: true,
         showDelete: true,
       },
       studentClass: [
-        { key: '学生姓名', value: 'name' },
-        { key: '家长姓名', value: 'name' },
-        { key: '家长手机', value: 'name' },
-        { key: '分类', value: 'name' },
+        { key: '学生姓名', value: 'student_name' },
+        { key: '家长姓名', value: 'parent_name' },
+        { key: '家长手机', value: 'parent_mobile' },
+        { key: '分类', value: 'status' },
       ],
       studentList: [],
       student: {
         page: 1,
         limit: 10,
+        cschedule_id: null,
+        student_state: 0,
       },
       studentTotal: 0,
+      // update ma
+      canShowUpdateStudent: false,
+      updateConfig: {
+        labelWidth: '100px',
+        isDisable: false,
+        canSubmit: true,
+        classList: [
+          { key: '手机号', value: 'parent_mobile', isPhone: true, },
+        ], 
+      },
+      updateParam: {
+        student_id: null,
+        parent_mobile: '',
+      },
       formInline: {},
     }
   },
@@ -226,6 +312,35 @@ export default {
 
       this.getList();
     },
+    searchStudent(){
+      console.log('search student', this.studentKeyword);
+      this.student.search = this.studentKeyword;
+
+      this.getStudentList();
+    },
+    // importDone({ results, header }) { // upload xls success
+    //   this.tableData = results
+    //   this.tableHeader = header
+    //   console.log('-- import success', this.tableData, this.tableHeader)
+    // },
+    async changeFiles(file, list){
+      console.log('change file:', file, list);
+      let urls =  await upLoadFile(file.raw);
+      console.log('uploda files', res);
+      if(!urls[0]) return ;
+
+      let param = {
+        cschedule_id: this.student.cschedule_id,
+        excel_url: urls[0],
+      };
+      let res = await api.importStudent(param, this);
+
+      this.getStudentList();
+    },
+    removeFiles(){},
+    changeCourseAddress(){ console.log('change address:', this.course); this.getCourseList(); },
+    changeCourseItemsAddress(){ this.getCourseItemsList(); },
+    changeStudentStatus(v){ this.getStudentList(); },
     showForm(index, row){
       this.canShow = true;
       this.canSubmit = true;
@@ -270,36 +385,15 @@ export default {
       // get coulse 
       this.canShowCoulse = true;
 
-      this.coulse.teacher_id = row.teacher_id;
+      this.course.teacher_id = row.teacher_id;
       this.getCourseList(); 
     },
-      searchStudent(){
-        console.log('search student', this.studentKeyword);
-      },
-      importDone({ results, header }) { // upload xls success
-        this.tableData = results
-        this.tableHeader = header
-        console.log('-- import success', this.tableData, this.tableHeader)
-      },
-      beforeUpload(file) { // before upload xls
-        const isLt2M = file.size / 1024 / 1024 < 1
-
-        if (isLt2M) {
-          return true
-        }
-        this.$message({
-          message: 'Please do not upload files larger than 2m in size.',
-          type: 'warning'
-        })
-        return false
-      },
-      
-      // 
+    // 
     async getList() { //获取列表
       this.listLoading = true
       
       let res = await api.getTeacherList(this.listQuery, this);
-      console.log(res)
+
       this.tableData = res.data;
       this.total = res.pagination ? res.pagination.total : 0;
       this.listLoading = false
@@ -324,51 +418,113 @@ export default {
     async getCourseList(){
       this.loadCourse = true;
 
-      let courseList = await api.getTeacherCoulse(this.coulse); 
-      this.courseList = courseList.data;
+      let res = await api.getTeacherCoulse(this.course);
+      this.courseList = res.data;
       
-      console.log('get coulse', this.courseList);
-      this.courseTotal = courseList.pagination.total;
+      this.courseTotal = res.pagination ? res.pagination.total : this.courseList.length;
       this.loadCourse = false;
     },
     async showItemCourse(item){
+      this.canShowCoulseItems = true;
       console.log('item course', item);
-      let res = await api.getTeacherItemCourse({teacher_id: item.teacher_id, cschedule_id: item.cschedule_id}, this);
       
+      this.courseItems.teacher_id = item.teacher_id;
+      this.courseItems.cschedule_id = item.cschedule_id;
+      console.log('course Item', this.courseItems);
+      this.getCourseItemsList(); 
     },
     showStudent(row){
       console.log('student', row);
       this.canShowStudent = true;
 
+      this.student.cschedule_id = row.cschedule_id;
       this.getStudentList();
     },
     changeCourse(v){
       console.log('change course list:', v);
-      this.course = v;
+      this.course.page = v.page;
+      this.course.limit = v.limit;
       this.getCourseList();
     },
-    // 课程对应的学生 
-    getStudentList(){
+    // 课程（每期）
+    async getCourseItemsList(){
+      let res = await api.getTeacherItemCourse(this.courseItems, this);
+      console.log('item course', this.courseItems, res);
+
+      res.data.forEach(v => {
+        v.date = `${new Date(Number(v.course_date)).toLocaleDateString()} ${v.course_time}`;
+        v.remark = v.is_sign ? '到岗' : '未到岗';
+      });
+
+      this.courseItemsList = res.data;
+      this.courseItemsTotal = res.pagination.total;
+    },
+    uncome(){
+       
+    },
+    changeCourseItems(v){
+      console.log('change course item list:', v);
+      this.courseItems.page = v.page;  
+      this.courseItems.limit = v.limit;  
+      this.getCourseItemsList();
+    },
+    // 课程对应的学生
+      // beforeUpload(file) { // before upload xls
+      //   const isLt2M = file.size / 1024 / 1024 < 1
+
+      //   if (isLt2M) {
+      //     return true
+      //   }
+      //   this.$message({
+      //     message: 'Please do not upload files larger than 2m in size.',
+      //     type: 'warning'
+      //   })
+      //   return false
+      // },
+    async getStudentList(){
       this.loadStudent = true;
 
-      this.studentList = [
-        { name: 'k1', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-        { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-      ];
-      this.student.total = this.studentList.length;
+      let res = await api.getCourseStudent(this.student, this);
+
+      res.data.forEach(v => v.status = v.student_state ? '匹配' : '不匹配');
+      
+      this.studentList = res.data;
+      this.studentTotal = res.pagination ? res.pagination.total : this.studentList.length; // res.pagination.total;
       this.loadStudent = false;
     },
     updatePhone(item){
+      this.canShowUpdateStudent = true;
+      this.updateConfig.canSubmit = true;
       console.log('update student:', item);
+
+      this.updateParam.student_id = item.student_id;
+      this.updateParam.parent_mobile = item.parent_mobile;
     },
-    deleteStudent(item){
+    async deleteStudent(item){
       console.log('delete student:', item);
+      let res = await api.deleteStudent({ student_id: item.student_id }, this);
+
+      this.getStudentList();
     },
     changeStudent(v){
       console.log('change student list:', v);
-      this.student = v;
+      this.student.page = v.page;
+      this.student.limit = v.limit;
       this.getStudentList();
     },
+    // update student
+    cancelUpdateStudent(){
+      this.canShowUpdateStudent = false;
+    },
+    async submitUpdate(){
+      this.updateConfig.canSubmit = false;
+      console.log('update phone', this.updateParam);
+      let res = await api.updatePhone(this.updateParam, this);
+      console.log('update phone res:', res);
+
+      this.canShowUpdateStudent = false;
+      this.getStudentList();
+    }
     
   }
 }

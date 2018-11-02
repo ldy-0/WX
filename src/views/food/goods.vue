@@ -14,13 +14,13 @@
 <template>
 <div>
   <!-- 编辑和添加共用 -->
-<!-- <el-dialog
+<el-dialog
   :title="isAddItem?'新增商品':'编辑商品'"
   :visible.sync="addNewShow" 
    
   width="70%" 
   class="out-dialog"
-  > -->
+  >
   <el-dialog :visible.sync="dialogVisible" append-to-body>
     <img width="100%" :src="dialogImageUrl" alt="">
   </el-dialog>
@@ -68,24 +68,30 @@
     <el-form-item label="商品名称" :label-width="formLabelWidth" prop="goodsName">
       <el-input v-model="formForNotive.goodsName" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="课程" :label-width="formLabelWidth" prop="coulse">
-      <el-input v-model="formForNotive.coulse" auto-complete="off"></el-input>
-    </el-form-item>
     <!-- <el-form-item label="商品价格" :label-width="formLabelWidth" prop="goodsPrice">
       <el-input v-model="formForNotive.goodsPrice" auto-complete="off"></el-input>
     </el-form-item> -->
     <el-form-item label="商品编号" :label-width="formLabelWidth" prop="goodsNum">
       <el-input v-model="formForNotive.goodsNum" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="门店" :label-width="formLabelWidth" prop="school">
-      <el-checkbox-group v-model="formForNotive.school">
-        <el-checkbox-button v-for="item in schoolList" :label="item.value" :key="item.value">{{item.label}}</el-checkbox-button>
-      </el-checkbox-group>
-    </el-form-item>
+    <!-- <el-form-item label="门店" :label-width="formLabelWidth" prop="school">
+      <el-select  v-model="formForNotive.school" placeholder="请选择门店">
+        <el-option
+          v-for="item in schoolList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+    <el-checkbox-group v-model="formForNotive.school">
+      <el-checkbox-button v-for="item in schoolList" :label="item.value" :key="item.value">{{item.label}}</el-checkbox-button>
+    </el-checkbox-group>
+    </el-form-item> -->
     <!-- <el-form-item label="商品库存" :label-width="formLabelWidth" prop="goodsTotal">
       <el-input v-model="formForNotive.goodsTotal" auto-complete="off"></el-input>
     </el-form-item> -->
     <el-form-item label="商品分类" :label-width="formLabelWidth" prop="industry">
+      <!-- <el-input v-model="formForNotive.industry" auto-complete="off"></el-input> -->
       <el-select v-model="formForNotive.industry" placeholder="请选择商品分类">
         <el-option
           v-for="item in industryList"
@@ -111,7 +117,9 @@
       <el-input v-model="formForNotive.goodsDescribe" type="textarea" auto-complete="off"></el-input>
     </el-form-item>
 
+    <!-- {{formForNotive.size}} -->
     <el-form-item label="规格" :label-width="formLabelWidth" >
+      <!-- size 和 size2xxx 都是单独的属性 -->
         <el-tabs v-model="formForNotive.size" style="margin-top:-3px;margin-left:10px">
             <el-tab-pane label="统一规格" name="one" 
               :disabled="!isAddItem&&formForNotive.size!=='one'" >
@@ -131,6 +139,7 @@
                :disabled="!isAddItem&&formForNotive.size!=='mutil'"  >
               <div  v-for="(formItem,index) of formForNotiveChild2List"  :key="index" class="margin-btm20">
                 <el-form :inline="true"  :model="formItem"  ref="ruleFormChild2" :rules="rulesChild2">
+                <!-- <el-form :inline="true"  :model="formItem" > -->
                   <el-form-item label="名称"  prop="name">
                     <el-input v-model="formItem.name" auto-complete="off" ></el-input>
                   </el-form-item>
@@ -184,13 +193,30 @@
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确认修改</el-button>
   </span>
-<!-- </el-dialog> -->
+</el-dialog>
 <el-container class="notice">
-<!-- <el-header class="header" style="height:auto;">
+<el-header class="header" style="height:auto;">
   <el-form :inline="true" :model="formInline" class="form">
     <el-form-item>
       <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增商品</el-button>
     </el-form-item>
+    <!-- 2018/7/12 取消搜索 -->
+    <!-- <el-form-item>
+      <el-input style="width: 340px;" placeholder="请输入商品名称、编码" v-model="listQuery.search"></el-input>
+      <el-button type="primary" icon="el-icon-search" @click="searchByDate">查询</el-button>
+    </el-form-item> -->
+    <!-- 在listQuery中添加 ？ -->
+    <!-- <el-form-item>
+      <el-select v-model="industry" placeholder="请选择行业">
+        <el-option
+          v-for="item in industryList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
+    </el-form-item>
+    <el-button type="primary" icon="el-icon-search" @click="searchByDate">查询</el-button> -->
   </el-form>
   <el-form :inline="true"  class="form">
     <el-form-item>
@@ -224,7 +250,7 @@
       <el-button type="danger" round @click="downMutilItem(0)" :disabled="selectedItem.length<1">批量下架</el-button>
     </el-form-item>
   </el-form>        
-</el-header> -->
+</el-header>
 <el-main>
     <el-table
       :data="tableData"
@@ -260,11 +286,26 @@
         prop="goodsNum"
         >
       </el-table-column>
+        <!-- <el-table-column
+        label="状态" 
+        prop="goodsState"
+        >
+      </el-table-column> -->
       <el-table-column
         label="价格" 
         prop="goodsPrice"
         >
       </el-table-column>
+      <!-- <el-table-column
+        label="库存" 
+        prop="goodsTotal"
+        >
+      </el-table-column> -->
+      <!-- <el-table-column
+        label="销量" 
+        prop="goodsSell"
+        >
+      </el-table-column> -->
       <el-table-column
         label="操作" 
         min-width='300px'
@@ -277,10 +318,10 @@
       </el-table-column>
     </el-table>
 </el-main>
-<!-- <el-footer>
+<el-footer>
   <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
   </el-pagination>
-</el-footer> -->
+</el-footer>
 </el-container>
 </div>
 </template>
@@ -314,8 +355,6 @@ export default {
     this.getSchoolList()
     this.getList()
   },
-
-
   data() {
     return {
       // out
@@ -344,9 +383,6 @@ export default {
           goodsName: [
               { required: true, message: '请输入商品名', trigger: 'blur' },
               { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
-          ],
-          coulse: [
-              { required: true, message: '请输入课程名', trigger: 'blur' },
           ],
           // goodsPrice: [
           //     { type:"string",required: true, message: '请输入商品价格', trigger: 'blur',min: 1},
@@ -783,7 +819,8 @@ export default {
         // 运费
         sendData.goods_freight= this.formForNotive.goodsTrans
 
-        addGoods_api(sendData).then(data=>{
+        addGoods_api(sendData).then(res =>{
+          let data = res;
           this.waitAddNotice = false
           this.addNewShow = false
           if(data.status===0){
@@ -988,7 +1025,8 @@ export default {
         // 运费
         sendData.goods_freight= this.formForNotive.goodsTrans
 
-        editGoods_api(sendData).then(data=>{
+        editGoods_api(sendData).then(res =>{
+          let data = res;
           this.waitAddNotice = false
           this.addNewShow = false
           if(data.status===0){
@@ -1042,7 +1080,8 @@ export default {
         let sendData = {
           goods_commonid:id
         }
-        getGoods_api(sendData).then(data=>{
+        getGoods_api(sendData).then(res =>{
+          let data = res;
           this.editLoading = false
           this.waitAddNotice = false
           if(data.status===0){
@@ -1176,7 +1215,8 @@ export default {
             type:wantUp===0?'offline':'online'
           }
         }
-        upDownGoods_api(sendData).then(res=>{
+        upDownGoods_api(sendData).then(data =>{
+          let res = data.data;
           if(res&&res.status===0){
               this.$notify({
               title: '成功',
@@ -1230,7 +1270,8 @@ export default {
         // if(!sendData.time){
         //   delete sendData.time
         // }
-        getGoodsList_api(sendData).then(response => {
+        getGoodsList_api(sendData).then(res => {
+          let response = res;
           // 这里由于结构做了调整，导致编辑页面需要的数据无法从列表获取，这里只需要给tableData额外传一个id
           if(response&&response.status==0){
             let result = response.data

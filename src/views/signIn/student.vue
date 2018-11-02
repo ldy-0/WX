@@ -2,13 +2,6 @@
   .notice
     .header
       margin-top 20px
-    .big-icon
-      font-size 30px
-      color #409EFF
-    .big-icon-no
-      font-size 30px
-      color #b19999
-      // color #F56C6C
 </style>
 
 <template>
@@ -24,9 +17,9 @@
         <el-button type="primary" icon="el-icon-search" @click="searchStudent">查询</el-button>
       </el-form-item>
 
-      <!-- <el-form-item>
-        <upload-excel-component :on-success='importDone' :before-upload="beforeUpload"></upload-excel-component>
-      </el-form-item> -->
+      <el-select v-model="student.student_state" placeholder="分类" @change='changeState'>
+          <el-option v-for="item in categoies" :key="item.id" :label="item.name" :value="item.id"></el-option>
+      </el-select>
 
     </el-form>
 
@@ -47,28 +40,21 @@
 
   <!-- coulse List -->
   <el-dialog :visible.sync='canShowCoulse'>
-    <!-- <el-select v-model="address" placeholder="请选择教学点">
-        <el-option
-          v-for="item in addressList"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id">
-        </el-option>
-    </el-select> -->
 
     <custom-table :config='courseConfig' 
                   :data='courseList' 
                   :classList='courseClass' 
                   :isLoading='loadCourse' 
                   :total='courseTotal'
-                  @change='changeCourse'>
-
-    </custom-table>   
+                  @change='changeCourse'></custom-table>   
 
     <span slot="footer" class="dialog-footer">
       <el-button @click="canShowCoulse=false">取消</el-button>
     </span>
   </el-dialog>
+
+  <!-- update phone -->
+  <custom-dialog :visible='canShowUpdateStudent' :config='updateConfig' :detail='updateParam' @cancel='cancelUpdateStudent' @submit='submitUpdate'></custom-dialog>
 
 </div>
 </template>
@@ -77,11 +63,13 @@
 import api from '@/api/seller' 
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 import customTable from '@/components/customTable/index.vue'
+import customDialog from '@/components/customDialog/index.vue'
 
 export default {
   components: {
     UploadExcelComponent,
     customTable,
+    customDialog,
   },
   created(){
     this.getStudentList()
@@ -89,14 +77,6 @@ export default {
   data() {
     return {
       formLabelWidth:'80px',
-      canShowCoulse: false,
-      loadCoulse: false,
-      coulse: {
-        page: 1,
-        limit: 10,
-      },
-      coulseList: [],
-      coulseTotal: '',
       address: null,
       addressList: [],
       canShowStudent: false,
@@ -108,86 +88,134 @@ export default {
         showDelete: true,
       },
       studentClass: [
-        { key: '学生姓名', value: 'name' },
-        { key: '家长姓名', value: 'name' },
-        { key: '家长手机', value: 'name' },
-        { key: '分类', value: 'name' },
+        { key: '学生姓名', value: 'student_name' },
+        { key: '家长姓名', value: 'parent_name' },
+        { key: '家长手机', value: 'parent_mobile' },
+        { key: '分类', value: 'status' },
       ],
       studentList: [],
       student: {
         page: 1,
         limit: 10,
+        student_state: 0,
       },
       studentTotal: 0,
       keyword: '',
-      courseConfig: {
-      },
+      categoies: [
+        { id: 1, name: '匹配' },
+        { id: 0, name: '不匹配' }
+      ],
+      // course
+      canShowCoulse: false,
+      courseConfig: {},
       courseClass: [
-        { key: '课程名称', value: 'name' },
-        { key: '总期数', value: '' },
-        { key: '已上期数', value: '' },
-        { key: '教学点', value: 'address' },
-        { key: '时间点', value: '' },
+        { key: '课程名称', value: 'course_name' },
+        { key: '总期数', value: 'course_semester' },
+        { key: '已上期数', value: 'finished_semester' },
+        { key: '老师', value: 'teacher', isMulti: true, },
+        { key: '教学点', value: 'address_name' },
+        { key: '时间点', value: 'times', isMulti: true, },
       ],
       loadCourse: false,
       courseList: [],
-      coulse: {
+      course: {
         page: 1,
         limit: 10,
+        student_id: null,
       },
       courseTotal: 0,
+      // update ma
+      canShowUpdateStudent: false,
+      updateConfig: {
+        labelWidth: '100px',
+        isDisable: false,
+        canSubmit: true,
+        classList: [
+          { key: '手机号', value: 'parent_mobile', isPhone: true, },
+        ], 
+      },
+      updateParam: {
+        student_id: null,
+        parent_mobile: '',
+      },
     }
   },
   methods: {
     searchStudent(){
       console.log('search student', this.keyword);
+      this.student.search = this.keyword;
+      this.getStudentList();
     },
-    getStudentList(){
+    changeState(v){ 
+      this.studentConfig.showUpdate = !v;
+      this.getStudentList();
+    },
+    async getStudentList(){
       this.loadStudent = true;
 
-      this.studentList = [
-        { name: 'k1', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-        { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-      ];
-      this.student.total = this.studentList.length;
+      let res = await api.getStudentList(this.student, this);
+      res.data.forEach(v => v.status = v.student_state ? '匹配' : '不匹配');
+      
+      this.studentList = res.data;
+      this.studentTotal = res.pagination ? res.pagination.total : this.studentList.length;
       this.loadStudent = false;
     },
     updatePhone(item){
+      this.canShowUpdateStudent = true;
+      this.updateConfig.canSubmit = true;
       console.log('update student:', item);
+
+      this.updateParam.student_id = item.student_id;
+      this.updateParam.parent_mobile = item.parent_mobile;
     },
-    showCourse(index, rowData){
-      console.log(rowData)
-      
+    showCourse(item){
+      console.log('student item:', item)
       this.canShowCoulse = true;
+      
+      this.course.student_id = item.student_id;
       this.getCourseList();
     },
-    deleteStudent(item){
+    async deleteStudent(item){
       console.log('delete student:', item);
+      let res = await api.deleteStudent({ student_id: item.student_id }, this);
+
+      this.getStudentList();
     },
     changeStudent(v){
       console.log('change student list:', v);
-      this.student = v;
+      this.student.page = v.page;
+      this.student.limit = v.limit;
+      this.getStudentList();
+    },
+    // update phone
+    cancelUpdateStudent(){
+      this.canShowUpdateStudent = false;
+    },
+    async submitUpdate(){
+      this.updateConfig.canSubmit = false;
+      console.log('update phone', this.updateParam);
+      let res = await api.updatePhone(this.updateParam, this);
+      console.log('update phone res:', res);
+
+      this.canShowUpdateStudent = false;
       this.getStudentList();
     },
     // course
     async getCourseList(){
       this.loadCourse = true;
 
-      // let courseList = await api.getCoulseList(this.coulse); //FIXME: api error
-      // this.courseList = courseList.data;
-      this.courseList = [
-        { name: 'k1', num: 10, numed: 2, address: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就', time: new Date().toLocaleString() },
-        { name: 'k1', num: 10, numed: 2, address: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就', time: new Date().toLocaleString() },
-        { name: 'k1', num: 10, numed: 2, address: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就', time: new Date().toLocaleString() },
-        { name: 'k1', num: 10, numed: 2, address: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就', time: new Date().toLocaleString() }
-      ];
+      let res = await api.getCoulseList(this.course);
+      res.data.forEach(v =>  v.times = Array.isArray(v.time) ? v.time.map(t => `${new Date(Number(t[0])).toLocaleDateString()} ${t[1]}`) : [''] );
+
+      this.courseList = res.data;
       console.log('get coulse', this.courseList);
-      this.courseTotal = this.courseList.length; // courseList.pagination.total;
+      this.courseTotal = res.pagination ? res.pagination.total : this.courseList.length; // courseList
       this.loadCourse = false;  
     },
     changeCourse(v){
       console.log('change course list:', v);
-      this.course = v;
+      this.course.page = v.page;
+      this.course.limit = v.limit;
       this.getCourseList();
     },
     

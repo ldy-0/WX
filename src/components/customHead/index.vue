@@ -18,7 +18,7 @@
             <el-button type="primary" icon="el-icon-search" @click="searchByDate">查询</el-button>
         </el-form-item>
 
-        <el-form-item label="订单状态" :label-width="config.selectWidth" v-if='config.showSelect'> 
+        <el-form-item :label="config.selectLabel" :label-width="config.selectWidth" v-if='config.showSelect'> 
           <el-select placeholder="请选择" v-model='orderState' @change='changeStatus'> <!-- multiple  -->
             <el-option v-for="item in config.categories" :key="item.id" :label="item.title" :value="item.id"></el-option>
           </el-select>
@@ -45,6 +45,7 @@ export default {
           inputWidth: '340px',
           dateWidth: '400px',
           placeholder: '请输入联系方式',
+          selectLabel: '订单状态',
           // categories: [
           //   { id: null, title: '全部' },
           //   { id: 0, title: '已取消' },

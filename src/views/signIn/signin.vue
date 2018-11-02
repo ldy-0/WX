@@ -176,13 +176,11 @@ export default {
         })
 
       },
-      
       //
-      async getList() { //获取列表
+      async getList() { 
         this.loadList = true;
-        console.log('----');
 
-        // let res = await api.getCoulseList(this.listConfig); //FIXME: api
+        let res = await api.getSignList(this.listConfig, this); //FIXME: api
         // this.list = res.data;
         // this.listTotal = res.pagination.total;
         // console.log('coulse list', res);

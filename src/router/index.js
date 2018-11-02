@@ -282,7 +282,14 @@ export let asyncRouterMapSeller = [
     component: Layout,
     redirect: '/food/index',
     meta: { title: 'food', icon: 'goods', roles:'food'},
-    children: [{
+    children: [
+    {
+      path: 'goods',
+      component: () => import('@/views/food/goods'),
+      name: 'foodGoods',
+      meta: { title: 'goods', noCache: true }
+    },
+    {
       path: 'index',
       component: () => import('@/views/food/desk'),
       name: 'desk',
@@ -299,14 +306,8 @@ export let asyncRouterMapSeller = [
     path: '/signIn',
     component: Layout,
     // redirct: '/signIn/index',
-    meta: { title: 'signIn', icon: 'goods' },
+    meta: { title: 'signIn', icon: 'goods', roles: 'signIn' },
     children: [
-      // {
-      //   path: 'caller',
-      //   component: () => import('@/views/signIn/caller'),
-      //   name: 'teach',
-      //   meta: { title: '老师', icon: 'goods' }
-      // },
       {
         path: 'teacher',
         component: () => import('@/views/signIn/index'),
@@ -341,7 +342,7 @@ export let asyncRouterMapSeller = [
         meta: { title: 'appointment' }
       },
       { path: 'addGoods',
-        component: () => import('@/views/signIn/goods'),
+        component: () => import('@/views/signIn/course_goods'),
         name: 'appointment',
         meta: { title: 'addGoods' }
       },
