@@ -200,6 +200,12 @@
     <el-form-item>
       <el-button type="primary" icon="el-icon-edit-outline" @click="addItem">新增商品</el-button>
     </el-form-item>
+    <el-form  :inline="true" class="form">
+			<el-form-item label="导出Excel">
+			<el-button  type="primary" icon="document" @click="handleDownload" :loading="downloadLoading">{{exportExcelStatus}}</el-button>
+			<span class="hbs-inline-tips">导出所有数据，这个过程可能会需要花费  <span class="hbs-hot">几分钟</span> 的时间，请耐心等待</span>
+			</el-form-item>
+		</el-form>
     <!-- 2018/7/12 取消搜索 -->
     <!-- <el-form-item>
       <el-input style="width: 340px;" placeholder="请输入商品名称、编码" v-model="listQuery.search"></el-input>
@@ -474,11 +480,11 @@ export default {
       detailShow:false,
       detailTableData:[
         {
-          time:'2014.1.2',
-          username: '张三',
-          phone: '123456',
-          detail: '一个汉堡',
-          type: '餐饮',
+          time:'',
+          username: '',
+          phone: '',
+          detail: '',
+          type: '',
         }
       ],
       cityOptions:[
@@ -521,6 +527,11 @@ export default {
         time:""
       },
       total:1,
+
+      //excel
+          filename:'会员列表Excel',
+          exportExcelStatus:'导出',
+          downloadLoading:false,
     }
   },
   methods: {
@@ -1438,7 +1449,77 @@ export default {
       this.listQuery.page = val
       this.getList()
     },
-    
+    //excel
+	async handleDownload() {
+        this.downloadLoading = true
+        getGoodsList_api({
+			limit: 0
+		}).then(res => {
+        if (res.status == 0) {
+            let result = res.data
+            let tempTableData = []
+            result.forEach((aData)=>{
+              
+              let temp_fileList1 =[]
+              let temp_fileList2 =[]
+              if(aData.goods_image){
+                temp_fileList1.push({url:aData.goods_image})
+              }
+              if(aData.id_card_front){
+                temp_fileList2.push({url:aData.id_card_front})
+              }
+              if(aData.id_card_behind){
+                temp_fileList2.push({url:aData.id_card_behind})
+              }
+              // goodstotal 库存 前后端不一致 需要特殊处理
+              let goodsTotal = 0
+              if(aData.spec_name==='one'){
+                goodsTotal = aData.goods_storage
+              }else{
+                goodsTotal = aData.goods_storage
+              }              
+              tempTableData.push({
+                //后端生成
+                id:aData.goods_commonid,
+                isUp:aData.goods_state,
+                //前后统一
+                goodsImage:aData.goods_image,//显示
+                goodsType:aData.is_appoint?1:0,
+                is_virtualTXT:aData.is_virtual?'虚拟':'实体',//显示补充，实际无用
+                goodsName:aData.goods_name,//显示
+                goodsPrice:aData.goods_price,//显示
+                goodsNum:aData.goods_serial,//显示
+              })
+            })
+		  import('@/vendor/Export2Excel').then(excel => {
+          const tHeader = ['商品图片', '商品名','类型','编号','价格']
+          const filterVal = ['goodsImage', 'goodsName', 'is_virtualTXT', 'goodsNum','goodsPrice']
+          const tableDataAll = tempTableData
+          
+          const data = this.formatJson(filterVal, tableDataAll)
+          excel.export_json_to_excel({
+            header: tHeader,
+            data,
+            filename: this.filename,
+            autoWidth: this.autoWidth
+          })
+          this.downloadLoading = false
+        })
+		  
+        }
+      });
+        
+        
+	  },
+	  formatJson(filterVal, jsonData) {
+        return jsonData.map(v => filterVal.map(j => {
+          if (j === 'timestamp') {
+            return parseTime(v[j])
+          } else {
+            return v[j]
+          }
+        }))
+      },
   }
 }
 </script>

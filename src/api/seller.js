@@ -449,4 +449,28 @@ export function editAllBuy_api(data){
       data: data
     })
   }
+  export function getNotice_api(data) {
+    return request({
+      url: '/api/v1/seller/affiche',
+      method: 'get',
+      data: data
+    })
+  }
+  //获取店铺剩余浏览量
+  export function getStoreview_api(data){
+    return request({
+        url: '/api/v1/seller/storeview',
+        method: 'get',
+        params: data
+    })
+  }
+  //Home
+export function getHomeData_api(data){
+  return request({
+      url: '/api/v1/seller/salesstats',
+      method: 'get',
+      params: data
+  })
+}
+
 // ----------------------------------------------

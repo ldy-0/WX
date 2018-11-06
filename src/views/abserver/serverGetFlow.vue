@@ -104,7 +104,7 @@
 </div>
 </template>
 <script>
-import {getFlowList_api,buyFlow_api,buyFlowState_api,getIntroForm_api} from '@/api/seller'
+import {getFlowList_api,buyFlow_api,buyFlowState_api,getStoreview_api} from '@/api/seller'
 // import QRobj from '@/utils/Qcode'
 
 const formForNotive = {}
@@ -160,7 +160,7 @@ export default {
   methods: {
     getFlowInfo(){
       let sendData = {}
-       getIntroForm_api(sendData).then(response=>{
+       getStoreview_api(sendData).then(response=>{
         if(response&&response.status == 0){
           this.lastFlow = response.data.view
         }
