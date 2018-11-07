@@ -1,13 +1,15 @@
 <template>
-    <div class='search_wrap s-fc-2' 
+    <div class='search_wrap s-fc-2'
         :style="{ fontSize: config.size + 'rpx',
                   width: config.width || '610rpx',
                   height: config.height || '76rpx',
+                  padding: '0 0 0 30rpx',
+                  margin: config.margin || '30rpx auto 0',
                   border: config.border || '1rpx solid #eee',
                   borderRadius: config.borderRadius || '8rpx'
                  }">
 
-        <input class='search' @input='search' @focus='focus' @blur='blur' v-model="content" />
+        <input class='search' @input='search' @focus='focus' @blur='blur' @confirm='confirm' v-model="content" />
 
         <div class='search_desc' :style="{ justifyContent: config.canClear && 'space-between' }">
 
@@ -54,6 +56,10 @@ export default {
       console.log('blur ---')
       this.isFocus = false
     },
+    confirm () {
+      console.log('--confirm--')
+      this.$emit('confirm')
+    },
     clear () {
       console.log(`emit search clear`)
       this.interval && clearInterval(this.interval)
@@ -74,7 +80,6 @@ export default {
 
 .search_wrap{
   position: relative;
-  margin: 30rpx auto 0;
 }
 
 .search{

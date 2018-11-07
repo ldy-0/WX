@@ -55,5 +55,20 @@
           | `color` | String | 无 | 设置顶部栏字体颜色 |
           | `bg` | String | 无 | 设置顶部栏背景颜色 |
  
+  + modal 
+    ### 属性
+      - config: object
+      
+        #### 配置属性 
+
+          |属性名|类型|默认|描述|
+          |------|-----|------|-------|
+          | `width` | String | '' | 设置弹窗宽度(当设置width时，弹窗居中对齐，否则底部对齐) |
+          | `height` | String | '' | 设置弹窗高度 |
+          | `noClose` | Boolean | false | 设置点击弹窗遮罩层时是否触发click事件 |
+
+      - click: [Function]
+        > 点击遮罩层时触发
+
 ## 获取/Get 
 `git clone https://github.com/person-0/wx.git`
