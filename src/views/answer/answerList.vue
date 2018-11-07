@@ -304,6 +304,8 @@ export default {
         }
       }
       var data = {
+        page: 1,
+        limit: 0,
         classify_id: classify_id
       };
       getSearchAwsClass(data).then(res => {
