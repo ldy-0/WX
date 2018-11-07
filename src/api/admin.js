@@ -293,3 +293,11 @@ export function getAnswerList_api(data) {
     params: data
   })
 }
+export function getHomeData_api(data) {
+  return request({
+    url: '/api/v1/admin/salesstats',
+    method: 'get',
+    params: data
+  })
+}
+
