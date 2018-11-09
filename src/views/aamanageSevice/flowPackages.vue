@@ -69,6 +69,11 @@
           <el-tag size="medium" >{{ scope.row.price}}</el-tag>
         </template>
       </el-table-column>
+      <el-table-column 
+        label="销量"
+         prop="count"
+        >
+      </el-table-column>
       <!-- <el-table-column 
         label="密码" 
         prop="password"
@@ -311,6 +316,7 @@ export default {
                 //前后统一
                 value:Number(aData.flowpackage_value),
                 price:Number(aData.flowpackage_price),
+                count:Number(aData.count),
               })
             })
             this.tableData = tempTableData

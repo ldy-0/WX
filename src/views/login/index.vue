@@ -72,6 +72,10 @@
     </el-dialog> 
    -->
 
+    <div class="putOnRecords">
+        © 2017 - 2018 南京俊宁文化传媒有限公司   <a href="http://www.miitbeian.gov.cn">苏ICP备18029153号</a>
+    </div>
+
   </div>
 </template>
 
@@ -305,6 +309,14 @@ $light_gray:#eee;
     position: absolute;
     right: 35px;
     bottom: 28px;
+  }
+  .putOnRecords{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    color: #ffffff;
+    font-size: 14px;
   }
 }
 </style>

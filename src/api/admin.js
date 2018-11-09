@@ -300,4 +300,12 @@ export function getHomeData_api(data) {
     params: data
   })
 }
+//平台浏览量
+export function getFlowstats_api(data) {
+  return request({
+    url: '/api/v1/admin/flowstats',
+    method: 'get',
+    params: data
+  })
+}
 

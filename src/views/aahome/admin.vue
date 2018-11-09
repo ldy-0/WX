@@ -37,19 +37,41 @@
           <el-button type='primary' @click="getHomeDate" icon="el-icon-search">查询</el-button>
     </el-row>
     <el-row style="background:#fff;margin:20px">
-      <chart v-if="chartFlag" :data='data' :xData='xData' :xData2='xData2'></chart>
+      <chart v-if="chartFlag1" :id="'1'" :data='data' :xData='xData' :xData2='xData2'></chart>
+    </el-row>
+
+    <el-row :gutter="20" style="margin:20px;">
+      <el-col :span="6"><div class="box">昨日浏览量:{{this.yerPageView}}</div></el-col>
+      <el-col :span="6"><div class="box">总浏览量:{{this.pageView}}</div></el-col>
+    </el-row>
+    <el-row style="margin:20px;">
+        <el-date-picker
+          v-model="daterange"
+          type="daterange"
+          align="center"
+          range-separator="至"
+          :start-placeholder="startDate"
+          :end-placeholder="endDate"
+          value-format="yyyy-MM-dd"
+          :picker-options="pickerOptions">
+        </el-date-picker>
+          <el-button type='primary' @click="getHomeDate2" icon="el-icon-search">查询</el-button>
+    </el-row>
+    <el-row style="background:#fff;margin:20px">
+      <chart2 v-if="chartFlag2" :id="'2'" :data='FlowstatsDate' :xData='FlowstatsxData'></chart2>
     </el-row>
   </div>
 </template>
 
 <script>
 import { getAgent } from '@/utils/auth' // getToken from cookie
-import {getHomeData_api} from '@/api/admin'
+import {getHomeData_api,getFlowstats_api} from '@/api/admin'
 import Chart from '@/views/aahome/lineMarker'
+import Chart2 from '@/views/aahome/lineMarker2'
 import Moment from '@/utils/moment'
 export default {
   name: 'lineChart',
-  components: { Chart },
+  components: { Chart: Chart,Chart2: Chart2 },
   data(){
     return{
       role:'',  
@@ -90,7 +112,7 @@ export default {
       data:[],
       xData:[],
       xData2:[],
-      chartFlag:false,
+      chartFlag1:false,
       //
       Yorder:'',
       YorderMoney:'',
@@ -98,6 +120,12 @@ export default {
       AorderMoney:'',
       centerDialogVisible: false,
       noticeInfo: '',
+      //
+      chartFlag2: false,
+      pageView:'',
+      yerPageView:'',
+      FlowstatsDate:null,
+      FlowstatsxData:null
     }
   },
   created(){
@@ -114,6 +142,9 @@ export default {
     this.getData()
     this.getYesterdayData()
     this.getAllData()
+    this.getFlowstats()
+    this.getYerFlowstats()
+    this.getFlowstatsData()
   },
   methods:{
     async getData(){
@@ -125,7 +156,7 @@ export default {
           this.xData2 = res.sales
         }
       })
-      this.chartFlag = true
+      this.chartFlag1 = true
     },
     async getAllData(){
       await getHomeData_api().then(response=>{
@@ -135,7 +166,7 @@ export default {
           this.AorderMoney = res.sales_sum
         }
       })
-      this.chartFlag = true
+      this.chartFlag1 = true
     },
     async getYesterdayData(){
       await getHomeData_api({start_time:this.yesterday,end_time:this.nowDay}).then(response=>{
@@ -145,7 +176,7 @@ export default {
           this.YorderMoney = res.sales_sum
         }
       })
-      this.chartFlag = true
+      this.chartFlag1 = true
     },
     async getHomeDate(){
       let startTime = Moment(new Date(this.daterange[0]).getTime()).format('yyyy-MM-dd')
@@ -162,8 +193,48 @@ export default {
           this.xData2 = res.sales
         }
       })
-    }
-
+    },
+    async getHomeDate2(){
+      let startTime = Moment(new Date(this.daterange[0]).getTime()).format('yyyy-MM-dd')
+      let endTime = Moment(new Date(this.daterange[1]).getTime()).format('yyyy-MM-dd')
+      let sendData = {
+        start_time:startTime,
+        end_time:endTime
+      }
+       await getFlowstats_api(sendData).then(response=>{
+        if(response && response.status == 0){
+          let res = response.data
+          this.FlowstatsDate = res.date
+          this.FlowstatsxData = res.flow
+        }
+      })
+    },
+    async getFlowstats(){
+      await getFlowstats_api().then(response=>{
+      if(response && response.status == 0){
+          let res = response.data
+          this.pageView = res.flow_sum
+        }
+      })
+    },
+    async getYerFlowstats(){
+      await getFlowstats_api({start_time:this.yesterday,end_time:this.nowDay}).then(response=>{
+      if(response && response.status == 0){
+          let res = response.data
+          this.yerPageView = res.flow_sum
+        }
+      })
+    },
+    async getFlowstatsData(){
+      await getFlowstats_api({start_time:this.startDate,end_time:this.endDate}).then(response=>{
+        if(response && response.status == 0){
+          let res = response.data
+          this.FlowstatsDate = res.date
+          this.FlowstatsxData = res.flow
+        }
+      })
+      this.chartFlag2 = true
+    },
   },
 }
 </script>
