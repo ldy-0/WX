@@ -414,6 +414,12 @@ export default {
       changeItem(index,raw){
         this.postExpressageId= raw.id
         this.centerDialogVisible = true
+        this.findForm = {
+          companyName: "",
+          expressNumber: "",
+          linkmanName: "",
+          linkmanPhone: "",
+        }
       },
       postExpressage() {
       this.changeNewNotice(this.postExpressageId,this.findForm)
