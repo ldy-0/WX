@@ -307,11 +307,11 @@
         prop="goodsTotal"
         >
       </el-table-column> -->
-      <!-- <el-table-column
+      <el-table-column
         label="销量" 
-        prop="goodsSell"
+        prop="goods_salenum"
         >
-      </el-table-column> -->
+      </el-table-column>
       <el-table-column
         label="操作" 
         min-width='300px'
@@ -1358,6 +1358,7 @@ export default {
                 goodsName:aData.goods_name,//显示
                 goodsPrice:aData.goods_price,//显示
                 goodsNum:aData.goods_serial,//显示
+                goods_salenum:aData.goods_salenum
                 // goodsState:'在售',//显示 ！！！ 掩耳盗铃
                 // goodsSell:Math.floor(Math.random()*1000),//显示 ！！！ 掩耳盗铃
                 // school:aData.school_id,
@@ -1489,11 +1490,12 @@ export default {
                 goodsName:aData.goods_name,//显示
                 goodsPrice:aData.goods_price,//显示
                 goodsNum:aData.goods_serial,//显示
+                goods_salenum:aData.goods_salenum
               })
             })
 		  import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['商品图片', '商品名','类型','编号','价格']
-          const filterVal = ['goodsImage', 'goodsName', 'is_virtualTXT', 'goodsNum','goodsPrice']
+          const tHeader = ['商品图片', '商品名','类型','编号','价格','销量']
+          const filterVal = ['goodsImage', 'goodsName', 'is_virtualTXT', 'goodsNum','goodsPrice','goods_salenum']
           const tableDataAll = tempTableData
           
           const data = this.formatJson(filterVal, tableDataAll)
