@@ -261,6 +261,24 @@
   </el-pagination>
 </el-footer>
 </el-container>
+<el-dialog
+  title="发货信息"
+  :visible.sync="centerDialogVisible"
+  width="30%"
+  center>
+  <el-form :model="findForm">
+    <el-form-item label="联系人" label-width="100px">
+      <el-input v-model="findForm.linkmanName" autoComplete="on" placeholder="姓名" />
+    </el-form-item>
+    <el-form-item label="联系电话" label-width="100px">
+      <el-input v-model="findForm.linkmanPhone" autoComplete="on" placeholder="电话号码" />
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="centerDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="postExpressage">确 定</el-button>
+  </div>
+</el-dialog>
 </div>
 </template>
 <script>
@@ -337,6 +355,12 @@ export default {
         },
         total:1,
       // -------------------------
+       findForm: {
+        linkmanName: "",
+        linkmanPhone: "",
+      },
+       centerDialogVisible: false,
+       postExpressageId: null,
     }
   },
   methods: {
@@ -401,11 +425,12 @@ export default {
       changeNewNotice(id,num){
         let sendData = {
           order_id : id,
-          shipping_code : '',
+          shipping_code : num,
           state_type:'deliver_goods'
         }
         changeVOrder_api(sendData).then((res)=>{
           if(res&&res.status===0){
+            this.centerDialogVisible = false
               this.$notify({
               title: '成功',
               message: '操作成功',
@@ -425,19 +450,16 @@ export default {
         })
       },  
       changeItem(index,raw){
-        let id = raw.id
-        this.$confirm(`请确认您已发货`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.changeNewNotice(id)
-        }).catch(()=>{
-          this.$notify.info({
-            title: '消息',
-            message: '已取消'
-          });
-        })
+        this.postExpressageId= raw.id
+        this.centerDialogVisible = true
+        this.findForm = {
+          linkmanName: "",
+          linkmanPhone: "",
+        }
+      },
+      postExpressage() {
+        this.changeNewNotice(this.postExpressageId,this.findForm)
+        console.log(this.findForm); 
       },
       lookItem(index,raw) {
         if(!raw||!raw.id){
