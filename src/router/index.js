@@ -180,7 +180,7 @@ export let asyncRouterMapSeller = [
     path: '/return',
     component: Layout,
     redirect: '/return/rReturn',
-    meta: { title: 'return', icon: 'goods',roles:'return'},
+    meta: { title: 'return', icon: 'goods', roles: 'return' },
     children: [{
       path: 'rReturn',
       component: () => import('@/views/abreturn/rReturn'),
@@ -205,25 +205,25 @@ export let asyncRouterMapSeller = [
       meta: { title: 'appointment', icon: 'goods', noCache: true }
     }]
   },
-	{
-	    path: '/memberList', //人员列表
-	    component: Layout,
-	    redirect: '/memberList/index',
-	    meta: {
-	      roles: 'memberList'
-	    },
-	    children: [{
-	      path: 'memberList',
-	      component: () =>
-	        import('@/views/memberList/index'),
-	      name: 'memberList',
-	      meta: {
-	        title: '会员列表',
-          noCache: true,
-          icon: 'goods'
-	      }
-	    }]
-	  },
+  {
+    path: '/memberList', //人员列表
+    component: Layout,
+    redirect: '/memberList/index',
+    meta: {
+      roles: 'memberList'
+    },
+    children: [{
+      path: 'memberList',
+      component: () =>
+        import('@/views/memberList/index'),
+      name: 'memberList',
+      meta: {
+        title: '会员列表',
+        noCache: true,
+        icon: 'goods'
+      }
+    }]
+  },
   {
     path: '/coupon',
     component: Layout,
@@ -357,31 +357,56 @@ export let asyncRouterMapSeller = [
       component: () => import('@/views/answer/memberList'),
       name: 'memberList',
       meta: { title: 'memberList', noCache: true }
-    },{
+    }, {
       path: 'bonusMode',
       component: () => import('@/views/answer/bonusMode'),
       name: 'bonusMode',
       meta: { title: 'bonusMode', noCache: true }
-    },{
+    }, {
       path: 'paymentMode',
       component: () => import('@/views/answer/paymentMode'),
       name: 'paymentMode',
       meta: { title: 'paymentMode', noCache: true }
-    },{
+    }, {
       path: 'payList',
       component: () => import('@/views/answer/payList'),
       name: 'payList',
       meta: { title: 'payList', noCache: true }
-    },{
+    }, {
       path: 'answerHistory',
       component: () => import('@/views/answer/answerHistory'),
       name: 'answerHistory',
       meta: { title: 'answerHistory', noCache: true }
-    },{
+    }, {
       path: 'music',
       component: () => import('@/views/answer/music'),
       name: 'music',
       meta: { title: 'music', noCache: true }
+    }]
+  },
+  {
+    path: "/distribution",
+    component: Layout,
+    redirect: '/distribution/distributionMenber',
+    name: 'distribution',
+    meta: { title: 'distribution', icon: 'notice', roles: ['distribution'] },
+    children: [{
+      path: 'distributionMenber',
+      component: () => import('@/views/distribution/distributionMenber'),
+      name: 'distributionMenber',
+      meta: { title: 'distributionMenber', noCache: true }
+    },
+    {
+      path: 'withdrawalsRecord',
+      component: () => import('@/views/distribution/withdrawalsRecord'),
+      name: 'withdrawalsRecord',
+      meta: { title: 'withdrawalsRecord', noCache: true }
+    },
+    {
+      path: 'Setting',
+      component: () => import('@/views/distribution/Setting'),
+      name: 'Setting',
+      meta: { title: 'Setting', noCache: true }
     }]
   }
 ]

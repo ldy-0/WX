@@ -47,6 +47,10 @@ export default {
     answerHistory: "答题历史",
     music: "背景音乐",
 
+    distribution: "分销",
+    distributionMenber: "人员列表",
+    withdrawalsRecord: "提现列表",
+    Setting: "设置",
     //平台
     home: '首页',
     goods: '商品',
