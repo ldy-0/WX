@@ -72,17 +72,9 @@
       </div> -->
     </el-form>
 
-  <!-- 
-        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{$t('login.thirdparty')}}</el-button>
-
-    <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog" append-to-body>
-      {{$t('login.thirdpartyTips')}}
-      <br/>
-      <br/>
-      <br/>
-      <social-sign />
-    </el-dialog> 
-   -->
+      <div class="putOnRecords">
+        © 2017 - 2018 南京俊宁文化传媒有限公司   <a href="http://www.miitbeian.gov.cn">苏ICP备18029153号</a>
+      </div>
   </div>
   <el-dialog
         title="重置密码"
@@ -389,6 +381,14 @@ $light_gray:#eee;
     position: absolute;
     right: 35px;
     bottom: 28px;
+  }
+   .putOnRecords{
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    color: #ffffff;
+    font-size: 14px;
   }
 }
 </style>
