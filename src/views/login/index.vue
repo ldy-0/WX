@@ -312,7 +312,7 @@ $light_gray:#eee;
   }
   .putOnRecords{
     position: absolute;
-    bottom: 0;
+    bottom: 20px;
     width: 100%;
     text-align: center;
     color: #ffffff;
