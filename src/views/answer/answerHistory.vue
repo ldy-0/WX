@@ -192,11 +192,12 @@
         prop="addtime"
         >
       </el-table-column>
-      <el-table-column
-        label="用户头像" 
-        prop="room_name"
-        >
-      </el-table-column>
+          <el-table-column
+        label="头像">
+        <template slot-scope="scope">
+        <img :src="scope.row.subscriber_avatar" alt="" style="width:50px;height:50px;">
+      </template>
+    </el-table-column>
       <el-table-column
         label="用户昵称" 
         prop="subscriber_name"
@@ -216,7 +217,8 @@
         label="操作" 
         >
         <template slot-scope="scope">
-          <el-button size="mini" type="info" @click="toAwsInfo(scope.$index)">处理</el-button>
+          <el-button size="mini" type="danger" v-if="apatasList[scope.$index].apatas_type === 1" @click="toTag(scope.$index)">处理</el-button>
+          <el-button size="mini" type="primary" v-if="apatasList[scope.$index].apatas_type === 0" >已处理</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -300,9 +302,28 @@ export default {
       });
     },
     toSelectLib: function() {
-      //选择题库
+      //选择题库搜索付费对房间
       console.log(this.libraryId);
+      var data = {
+        page: 1,
+        limit: 0,
+        library_id: this.libraryId
+      };
+      getApatasSearchLib(data).then(res => {
+        console.log("ressss", res);
+        this.apatasList = res.data;
+      });
     },
+    toTag: function(index) {
+      var data = {
+        apatas_type: 0,
+        apatas_id: this.apatasList[index].apatas_id
+      };
+      putApatasType(data).then(res => {
+        this.getHistoryPayList_api(1, 0);
+      });
+    },
+
     handleCurrentChange: function(val) {
       //分页
       this.getHistoryList_api(val, 10);
@@ -344,6 +365,8 @@ export default {
       //查看个人具体详情
       this.dialogFormVisible_info = true;
       var data = {
+        page: 1,
+        limit: 0,
         history_id: this.dialogTableData[id].history_id
       };
       getSortDetails(data).then(res => {
@@ -354,14 +377,25 @@ export default {
 
     searchTime: function() {
       //奖金模式时间搜索
-      var data = {
-        start_time: Math.round(Date.parse(this.inputTime[0]) / 1000),
-        end_time: Math.round(Date.parse(this.inputTime[1]) / 1000)
-      };
-      postTimeSearch(data).then(res => {
-        this.tableData = res.data;
-        console.log(this.tableData);
-      });
+      if (this.selectVal) {
+        var data = {
+          start_time: Math.round(Date.parse(this.inputTime[0]) / 1000),
+          end_time: Math.round(Date.parse(this.inputTime[1]) / 1000)
+        };
+        postTimeSearch(data).then(res => {
+          this.tableData = res.data;
+          console.log(this.tableData);
+        });
+      } else {
+        var data = {
+          start_time: Math.round(Date.parse(this.inputTime[0]) / 1000),
+          end_time: Math.round(Date.parse(this.inputTime[1]) / 1000)
+        };
+        postApatasSearchTime(data).then(res => {
+          this.apatasList = res.data;
+          console.log(this.apatasList);
+        });
+      }
     },
     searchRoomTitle: function() {
       //奖金模式房间名称搜索

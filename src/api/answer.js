@@ -358,7 +358,7 @@ export function getPayOrderist(data) { //获取付费记录列表
 
 export function postPaySearchPhone(data) {
     return request({
-        url: '/api/v1/seller/apaorder',
+        url: '/api/v1/seller/apaorder?page=1&limit=0',
         method: 'post',
         data
     })
@@ -366,7 +366,7 @@ export function postPaySearchPhone(data) {
 
 export function putPaySearchTime(data) {
     return request({
-        url: '/api/v1/seller/apaorder',
+        url: '/api/v1/seller/apaorder?page=1&limit=0',
         method: 'put',
         data
     })
