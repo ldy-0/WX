@@ -227,7 +227,8 @@
         min-width='200px'
         >
         <template slot-scope="scope">
-        <el-button size="mini" type="primary" @click="editItem(scope.$index, scope.row)">查看和编辑</el-button>
+        <el-button size="mini" type="primary" @click="editItem(scope.$index, scope.row)">编辑</el-button>
+        <el-button size="mini" type="primary" @click="showAuthorize(scope.$index, scope.row)">权限管理</el-button>
         <el-button size="mini" type="primary" @click="getAnswerInfo(scope.$index, scope.row)">查看答题详情</el-button>
 
         <el-dialog title="答题详情" :visible.sync="outerVisible">
@@ -288,6 +289,18 @@
   <el-pagination background @size-change="handleSizeChange"  @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
   </el-pagination>
 </el-footer>
+
+<!-- authorize manage -->
+<el-dialog :visible='isShowAuth' :before-close='hideAuth'>
+  <div>权限管理</div>
+  <el-checkbox :label='item.label' v-model="item.entitle" v-for='(item, index) in authClassList' :key='index'></el-checkbox>
+
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="isShowAuth = false">取 消</el-button>
+    <el-button type="primary" @click="changeAuth">确 定</el-button>
+  </span> 
+</el-dialog>
+
 </el-container>
 </div>
 </template>
@@ -304,6 +317,7 @@ import {
   deleteShop_api,
   getROrderList_api
 } from "@/api/admin";
+import api from "@/api/admin";
 import { getAnswerMember_api, getAnswerList_api } from "@/api/libraryList";
 import uploadFn from "@/utils/aahbs";
 
@@ -343,6 +357,12 @@ export default {
   },
   data() {
     return {
+      // auth 
+      isShowAuth: false,
+      authList: [],
+      authClassList: [
+        { label: '签到', value: 'class_sign', entitle: false },
+      ],
       total: 0,
       gridData: [],
       gridData_s: [],
@@ -1107,6 +1127,38 @@ export default {
       }
       this.isAddItem = false;
       this.addNewShow = true;
+    },
+    // 2018/11/13 店铺权限管理
+    showAuthorize(index, item){
+      this.isShowAuth = true;
+      this.store_id = item.id;
+
+      this.getAuth();
+    },
+    hideAuth(){ this.isShowAuth = false; },
+    changeAuth(){
+      this.isShowAuth = false;
+      console.log('change auth', this.authClassList);
+
+      this.setAuth(this.authClassList.map(v => `${v.value}|${Number(v.entitle)}`));
+    },
+    async getAuth(){
+      let res = await api.getAuth({ store_id: this.store_id }, this);
+
+      if(!res.module_list){
+        return this.authClassList.forEach(v => v.entitle = false)
+      }
+
+      res.module_list.forEach(v => { 
+        let arr = v.split('|'); 
+        this.authClassList.some(item => item.entitle = item.value === arr[0] && arr[1] == 1 ? true : false );
+      });
+      console.log('get auth: ', this.authClassList);
+    },
+    async setAuth(module_list){
+      let res = await api.setAuth({ store_id: this.store_id, module_list }, this);
+
+      console.log('get auth: ', res);
     },
     getAnswerInfo(index, rowData) {
       console.log(index, rowData);

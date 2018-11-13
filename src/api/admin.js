@@ -309,3 +309,29 @@ export function getFlowstats_api(data) {
   })
 }
 
+// auth
+async function getAuth(params, _this) {
+  const res = await request({
+    url: '/api/v1/admin/storeinfo',
+    method: 'get',
+    params
+  })
+
+  return res.error !== '' ? _this.$message.error({ message: res.error }) : res.data
+}
+
+async function setAuth(data, _this) {
+  const res = await request({
+    url: '/api/v1/admin/editmodulelist',
+    method: 'PUT',
+    data
+  })
+
+  return res.error !== '修改成功' ? _this.$message.error({ message: res.error }) : _this.$message.success({ message: '修改成功' })
+}
+
+export default {
+  getAuth,
+  setAuth
+}
+
