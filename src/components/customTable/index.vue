@@ -37,13 +37,15 @@
           <el-button size="mini" type="text" @click="showDetail(scope.$index, scope.row)" v-if='config.showDetail'>详情</el-button>
           <el-button size="mini" type="text" @click="showUpdate(scope.$index, scope.row)" v-if='config.showUpdate'>修改</el-button>
           <el-button size="mini" type="text" @click="showDetail(scope.$index, scope.row)" v-if='config.showLook'>查看</el-button>
-          <el-button size="mini" type="text" @click="showAuthShow(scope.$index, scope.row)" v-if='config.showAuthUpdate'>授权修改</el-button>
-          <el-button size="mini" type="text" @click="showAuthUpdate(scope.$index, scope.row)" v-if='config.showAuthShow'>授权查看</el-button>
+          <el-button size="mini" type="text" @click="showAuthUpdate(scope.$index, scope.row)" v-if='config.showAuthUpdate'>{{scope.row.canUpdate ? '取消修改权限' : '授权修改'}}</el-button>
+          <el-button size="mini" type="text" @click="showAuthShow(scope.$index, scope.row)" v-if='config.showAuthShow'>{{scope.row.canShow ? '取消查看权限' : '授权查看'}}</el-button>
           <el-button size="mini" type="text" @click="showStudent(scope.$index, scope.row)" v-if='config.showStudent'>查看学生</el-button>
           <el-button size="mini" type="text" @click="showAdd(scope.$index, scope.row)" v-if='config.showAdd'>增加期数</el-button>
           <el-button size="mini" type="text" @click="showMinus(scope.$index, scope.row)" v-if='config.showMinus'>减少期数</el-button>
           <el-button size="mini" type="text" @click="showDeleteDialog(scope.$index, scope.row)" v-if='config.showDelete'>删除</el-button>
           <el-button size="mini" type="text" @click="showCome(scope.$index, scope.row)" v-if='config.showCome'>未到岗</el-button>
+          <el-button size="mini" type="text" @click="showSignIn(scope.$index, scope.row)" v-if='config.showSignIn'>查看签到</el-button>
+          <el-button size="mini" type="text" @click="showSignOut(scope.$index, scope.row)" v-if='config.showSignOut'>查看离开</el-button>
           <!-- <slot name='scope.row'></slot> -->
         </template>
       </el-table-column>
@@ -105,10 +107,10 @@ export default {
       this.$confirm(`此操作将删除该条目, 是否继续?`, '提示', config).then(() => this.$emit('delete', row)).catch(e => this.$notify.info(e))
     },
     showAuthUpdate(index, row){
-      this.$emit('authUpdate', row);
+      this.$emit('authUpdate', 'update', row);
     },
     showAuthShow(index, row){
-      this.$emit('authShow', row);
+      this.$emit('authShow', 'show', row);
     },
     showStudent(index, row){
       this.$emit('showStudent', row);
@@ -119,9 +121,9 @@ export default {
     showMinus(index, row){
       this.$emit('showMinus', row);
     },
-    showCome(index, row){
-      this.$meit('uncome', row);
-    },
+    showCome(index, row){ this.$emit('uncome', row); },
+    showSignIn(index, row){ this.$emit('signIn', row); },
+    showSignOut(index, row){ this.$emit('signOut', row); },
     changeState(index, row){
       this.$emit('changeState', row);
     },

@@ -10,8 +10,8 @@
 
 .custom_detail{
   position: relative;
-  width: 50%;
-  height: 200px;
+  width: 80%;
+  /* height: 300px; */
   margin: 20px 0;
   padding: 30px 10px;
   border: 1px solid gray;
@@ -26,13 +26,24 @@
 <template>
 <div>
 
-<custom-dialog :config='dialogConfig' :visible='canShowForm' :detail='formData' @cancel='clearForm' @submit='saveCoulse' @addDetail='addTeacher'>
-  <div class='custom_detail' v-for='(item, index) in detailList' :key='index'>
-    <el-form label-width="100px"  :model='item' ref='detailForm' :rules='detailRule' >
-      <i class='el-icon-close close' @click='deleteDetail(index)'></i>
+<custom-dialog :config='dialogConfig' :visible='canShowForm' :detail='formData' @cancel='clearForm' @submit='saveCourse' @addDetail='addTeacher'>
+  <div class='custom_detail' v-for='(item, index) in formData.detailList' :key='index'>
+    <el-form label-width="100px" :model='item' ref='detailForm' :rules='detailRule' >
+      <i class='el-icon-close close' @click='deleteDetail(index)' v-if='isAddItem'></i>
 
-      <el-form-item label="老师" prop='teacher'>
-        <el-select v-model='item.teacher' placeholder="请选择老师">
+      <el-form-item label="上课时间" prop='date'>
+        <el-date-picker style="width:400px" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" 
+                            v-model="item.date"
+                            @change='addDate(index, $event)'>
+        </el-date-picker>
+        <div class='time' v-for='(item, i) in item.dateList' :key='i'>
+            <div class='f-fs' v-text='item.value'></div>
+            <el-button style='margin-left: 20px;' @click='deleteDate(index, i)' type='danger' size='mini'>删除</el-button>
+        </div>
+      </el-form-item>
+
+      <el-form-item label="老师" prop='teacher' style='margin: 20px 0 0;'>
+        <el-select v-model='item.teacher' placeholder="请选择老师" > <!--@focus='setTeacherList(index)' --> 
             <el-option v-for="option in teacherList" :key="option.teacher_id" :label="option.teacher_name" :value="option.teacher_id"></el-option>
         </el-select>
       </el-form-item>
@@ -83,7 +94,6 @@
       <!-- <el-form-item>
         <upload-excel-component :on-success='importDone' :before-upload="beforeUpload"></upload-excel-component>
       </el-form-item> -->
-
     </el-form>
 
     <custom-table :config='studentConfig'
@@ -91,8 +101,8 @@
                   :classList='studentClass'
                   :total='studentTotal'
                   :isLoading='loadStudent'
-                  @showAdd='showAdd'
-                  @showMinus='showMinus'
+                  @showAdd='editSemester("add", $event)'
+                  @showMinus='editSemester("minus", $event)'
                   @delete='deleteStudent'
                   @change='changeStudent'>
     </custom-table>
@@ -130,6 +140,7 @@ export default {
     return {
       detailList: [],
       detailRule: {
+          // 'date': [ { required: true, message: '请选择时间', trigger: 'change' }, ],
           'teacher': [ { required: true, message: '请选择类别', trigger: 'change' }, ],
           'address': [ { required: true, message: '请选择教学点', trigger: 'change' } ],
           'max_stunum': [ { required: true, message: '请输入可预约人数', trigger: 'blur' } ],
@@ -156,7 +167,7 @@ export default {
         { key: '价格', value: 'price' },
         { key: '可预约人数', value: 'max_stunum' },
         { key: '已预约人数', value: 'stu_num' },
-        { key: '老师', value: 'teacher', isMulti: true, }, // 
+        { key: '老师', value: 'teacher_name', }, //isMulti: true,
         { key: '教学点', value: 'address_name', },
         { key: '时间段', value: 'times', isMulti: true, },
       ],
@@ -173,13 +184,12 @@ export default {
         canSubmit: true,
         classList: [
           { key: '课程名称', value: 'course_name', isText: true, },
-          { key: '课程分类', value: 'course_class', isSelect: true, list: [], id: 'storegc_id', name: 'storegc_name' },
           { key: '期数', value: 'course_semester', isInteger: true, },
-          { key: '上课时间', value: 'course_time', isDates: true, },
+          // { key: '上课时间', value: 'times', isDates: true, },
           // { key: '教学点', value: 'teach_address', placeholder: '请选择教学点(可多选)', list: [], id: 'address_id', name: 'address_name', isMultiSelect: true, },
           // { key: '教师', value: 'teacher', placeholder: '请选择教学点(可多选)', list: [], id: 'teacher_id', name: 'teacher_name', isMultiSelect: true, },
-          { key: '可预约人数', value: 'max_stunum', isInteger: true, },
-          { key: '添加老师', value: 'detail', isDetail: true, },
+          // { key: '可预约人数', value: 'max_stunum', isInteger: true, },
+          { key: '添加老师', value: 'detailList', isDetail: true, },
         ],
         rules: {
           'course_name': [ { required: true, message: '请输入名字', trigger: 'blur' }, ],
@@ -202,14 +212,14 @@ export default {
       canSubmit:false,
       isAddItem:true, // 是否是添加课程
       formData: {
-        course_time: [],
-        teacher: [],
+        detailList: [], // 老师,地址 
       },
       formInline: {},
       addressList: [],
       teacherList: [],
       // student
       canShowStudent: false, 
+      canEditSemester: true,
       studentConfig: {
         showOperate: true,
         showAdd: true,
@@ -223,19 +233,20 @@ export default {
         { key: '学生姓名', value: 'student_name' },
         { key: '家长姓名', value: 'parent_name' },
         { key: '家长手机', value: 'parent_mobile' },
-        { key: '总期数', value: 'name' },
-        { key: '已上期数', value: 'name' },
-        { key: '剩余期数', value: 'name' },
+        { key: '总期数', value: 'buy_semester' },
+        { key: '已上期数', value: 'over_semester' },
+        // { key: '剩余期数', value: '' },
       ],
       student: {
         page: 1,
         limit: 10,
         cschedule_id: null,
-        student_state: 0,
+        student_state: 1,
       },
       studentTotal: 0,
     }
   },
+
   methods: {
     searchByKeyWord(v){
       this.listQuery.course_name = v;
@@ -258,81 +269,115 @@ export default {
       for(let key in (item || this.formData)){ detail[key] = item ? item[key] : Array.isArray(this.formData[key]) ? [] : '' }
 
       if(item){
-        let addressConfig = this.dialogConfig.classList[3];
-        // addressConfig.placeholder = '请选择教学点';
-        // addressConfig.isMultiSelect = false;
-        // addressConfig.isSelect = true;
-        // detail.teach_address = item.address_id;
-        detail.course_time = Array.isArray(item.time) ? item.time.map(t => { 
-          let date = new Date(Number(t[0])),
-              dateStr = date.toLocaleDateString(),
-              times = t[1].split('-'),
-              startTimes = times[0].split(':'),
-              endTimes = times[1].split(':');
+        let dateList = detail.time ? detail.time.map(v => { 
+            let times = v[1].split('-'),
+                start = `${v[0]} ${times[0]}`,
+                end = `${v[0]} ${times[0]}`;
 
-          return { start: `${dateStr} ${times[0]}`,
-                   end: `${dateStr} ${times[1]}`,
-                   startTemp: `${date.getTime() + (Number(startTimes[0]) * 3600 + Number(startTimes[1]) * 60) * 1000}`,
-                   endTemp: `${date.getTime() + (Number(endTimes[0]) * 3600 + Number(endTimes[1]) * 60) * 1000}`,
-                  };
-        }) : ['']
+            return { startdate: v[0], enddate: v[0], starttime: times[0], endtime: times[1],
+                    startStamp: new Date(start).getTime(), 
+                    endStamp: new Date(end).getTime(),
+                    value: `${start}-${end}` };
+          }).reverse() : [];
+
+        detail.detailList = [{
+          teacherList: null,
+          teacher: detail.teacher_id,
+          address: detail.address_id,
+          max_stunum: detail.max_stunum, 
+          dateList,
+        }];
+        
       }
 
       console.log('init form data done', detail);
       this.formData = detail;
     },
-    deleteDate(index){
-      console.log('delete date', index);
-      this.formData.times.splice(index, 1);
-    },
-    addDate(e){
-      console.log('add date', e, this.formData.times);
-      this.formData.times.push({ start: e[0].toLocaleString(), end: e[1].toLocaleString() });
-    },
     // detail
     addTeacher(){
-      console.log();
-      this.detailList.push({ teacher: '', address: '', max_stunum: '', }); 
+      if(!this.isAddItem) return ;
+
+      let detail = { date: '', dateList: [], teacher: '', teacherList: null, address: '', max_stunum: '', };
+      
+      this.formData.detailList.push(detail); 
     },
-    deleteDetail(index){
-      this.detailList.splice(index, 1);
+    deleteDetail(index){ this.formData.detailList.splice(index, 1); },
+    setTeacherList(index){
+      let o = this.formData.detailList;
+
+      // o[index].teacherList = this.teacherList.filter(v => o.every(detail => v.teacher_id !== detail.teacher) );
+      o[index].teacherList = this.teacherList;
+    },
+    getTime(temp){ return new Date(temp).toTimeString().split(' ')[0].substr(0, 5) },
+    deleteDate(index, i){ this.formData.detailList[index].dateList.splice(i, 1); },
+    addDate(index, e){
+      let o = this.formData.detailList[index],
+          dateList = o.dateList,
+          startdate= e[0].toLocaleDateString(), 
+          starttime= this.getTime(e[0]),
+          enddate= e[1].toLocaleDateString(),
+          endtime= this.getTime(e[1]),
+          date = { startdate, starttime, enddate, endtime, startStamp: e[0].getTime(), endStamp: e[1].getTime(), value: `${startdate} ${starttime}-${enddate} ${endtime}` };
+
+      if(date.startStamp < Date.now()) return this.$message.error({ message: '选择时间无效' });
+
+      if(dateList.length >= this.formData.course_semester) return this.$message.error({ message: '上课时间数量超过指定期数' });
+
+      // sort
+      for(var i = 0, len = dateList.length; i < len; i++){
+        if(dateList[i].startStamp >= date.startStamp){
+          o.dateList = dateList.concat(date, dateList.splice(i));
+          break;
+        }
+      }
+      o.dateList.length === i && o.dateList.push(date);
+      console.log('add date: ', date);
     },
     inputSum(v){
       console.log('input sum', v); 
       
-      if(isNaN(Number(v)))return this.error = { message: '值必须为数字' };
-
       if(v <= 0 || v % 1 !== 0)return this.error = { message: '值必须为正整数' };
 
       this.error = null;
     },
-    getDateTemp(t){ return t.getTime() - ( t.getHours() * 3600 + t.getMinutes() * 60 + t.getSeconds() ) * 1000; },
-    async saveCoulse () {
-      let times = this.formData.course_time;
+    async saveCourse () {
+      let detailList = this.formData.detailList,
+          csch_data = [],
+          time_data = [];
+
+      if(!detailList.length) return this.$message.error({ message: '至少设置一名老师！' });
 
       for(let i = 0, len = this.$refs[`detailForm`].length; i < len; i++){
-        console.log(this.$refs);
         let res = await this.$refs[`detailForm`][i].validate().catch(e => e);
         if(!res) return ;
       }
 
       if(this.error) return this.$message.error(this.error);
 
-      // if(this.formData.course_semester !== times.length) return this.$message.error({ message: '课程期数必须和上课时间数量一致!' });
-
-      // if(){};
-
       this.dialogConfig.canSubmit = false;
 
-      times.forEach((v, i) => {
-        let start = new Date(times[i].startTemp),
-            end = new Date(times[i].endTemp);
+        detailList.forEach((v, i) => {
 
-        times[i] = `${this.getDateTemp(start)}|${start.getHours()}:${start.getMinutes()}-${end.getHours()}:${end.getMinutes()}` 
-      });
-      console.log('save course param:', this.formData, this.detailList)
+          if(this.isAddItem){
+            csch_data.push(`${i + 1}|${v.teacher}|${v.address}|${v.max_stunum}`);
+            time_data = time_data.concat(v.dateList.map((date, index) => `${i + 1}|${date.startdate}|${date.starttime}-${date.endtime}`));
+          }else{
+            csch_data = `${v.teacher}|${v.address}|${v.max_stunum}`;
+            time_data = v.dateList.map((date, index) => `${date.startdate}|${date.starttime}-${date.endtime}`);
+          }
+        });
       
-      let res = this.isAddItem ? await api.setCoulse(this.formData, this) : await api.updateCourse(this.formData, this);
+      let param = {
+        course_name: this.formData.course_name,
+        course_semester: this.formData.course_semester,
+        csch_data,
+        time_data,
+      };
+      if(!this.isAddItem) param.cschedule_id = this.formData.cschedule_id;
+
+      console.log('save course param:', this.formData, param);
+      
+      let res = this.isAddItem ? await api.setCoulse(param, this) : await api.updateCourse(param, this);
 
       this.canShowForm = false;
       this.getList();
@@ -342,7 +387,7 @@ export default {
       this.listLoading = true
 
       let res = await api.getCoulseList(this.listQuery);
-      res.data.forEach(v =>  v.times = Array.isArray(v.time) ? v.time.map(t => `${new Date(Number(t[0])).toLocaleDateString()} ${t[1]}`) : [''] );
+      res.data.forEach(v =>  v.times = Array.isArray(v.time) ? v.time.map(t => `${new Date(t[0]).toLocaleDateString()} ${t[1]}`).reverse() : [''] );
 
       this.tableData = res.data;
       this.total = res.pagination.total;
@@ -352,11 +397,14 @@ export default {
     async deleteCourse(item){
       let res = await api.deleteCoulse({ cschedule_id: item.cschedule_id }, this);
       console.log('delete course', item);
+
+      this.getList();
     },
     showStudent(row){
       this.canShowStudent = true;
 
       this.student.cschedule_id = row.cschedule_id;
+      this.student.course_semester = row.course_semester;
       this.getStudentList();
     },
     change(v){
@@ -381,21 +429,27 @@ export default {
 
       this.loadstudent = false;
     },
-    async showAdd(item){
-      console.log('add ', item);
+    async editSemester(str, item){
+      if(str === 'add' && item.buy_semester === this.student.course_semester) return this.$message.error({ message: '购买期数已达课程最大期数' });
+      if(str === 'minus' && item.buy_semester <= 1) return this.$message.error({ message: '购买期数不能低于一期' });
+      if(!this.canEditSemester) return ;
+      this.canEditSemester = false;
+
       let param = {
-        stucourse_id: 1,
-        buy_semester: 1,
+        stucourse_id: item.stucourse_id,
+        buy_semester: str === 'add' ? ++item.buy_semester : --item.buy_semester,
       };
+      console.log(`${str} semester: `, param, item);
 
       let res = await api.changeSemester(param, this);
+      this.canEditSemester = true;
+      this.getStudentList();
     },
-    showMinus(item){
-      console.log('minus', item);
-    },
-    deleteStudent(item){
+    async deleteStudent(item){
       console.log('delete student:', item);
 
+      let res = await api.deleteStucourse({ stucourse_id: item.stucourse_id }, this);
+      this.getStudentList();
     },
     changeStudent(v){
       this.student.page = v.page;

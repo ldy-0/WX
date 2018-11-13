@@ -17,7 +17,12 @@
   width="70%" 
   class="out-dialog"
   > -->
-  <custom-dialog :visible='canShowDialog' :config='dialogConfig' :detail='formData' @cancel='hideForm'></custom-dialog>
+  <custom-dialog :visible='canShowDialog' 
+                  :config='dialogConfig' 
+                  :detail='formData' 
+                  @goodsTypeChange='changeTeacher' 
+                  @cancel='hideForm' 
+                  @submit='submitForm'></custom-dialog>
 
   <el-dialog :visible.sync="dialogVisible" append-to-body>
     <img width="100%" :src="dialogImageUrl" alt="">
@@ -170,7 +175,7 @@
 <el-header class="header" style="height:auto;">
   <el-form :inline="true" :model="formInline" class="form">
     <el-form-item>
-      <el-button type="primary" icon="el-icon-edit-outline" @click="showForm">新增商品</el-button>
+      <el-button type="primary" icon="el-icon-edit-outline" @click="showForm()">新增商品</el-button>
     </el-form-item>
   </el-form>
   <el-form :inline="true"  class="form">
@@ -251,7 +256,7 @@
         min-width='300px'
         >
         <template slot-scope="scope">
-        <el-button size="mini" type="primary" @click="editItem(scope.$index, scope.row)">编辑和查看</el-button>
+        <el-button size="mini" type="primary" @click="showForm(scope.row)">编辑和查看</el-button>
         <el-button size="mini" type="danger" v-if="scope.row.isUp" @click="downItem(scope.$index, scope.row,0)">下架商品</el-button>
         <el-button size="mini" v-else type="success" @click="downItem(scope.$index, scope.row,1)">上架商品</el-button>
         </template>
@@ -267,6 +272,7 @@
 </template>
 <script>
 import {addGoods_api,getGoodsList_api,getSchoolList_api,getGoods_api,upDownGoods_api,editGoods_api,getEntryList_api} from '@/api/seller'
+import api from '@/api/seller'
 import uploadFn from '@/utils/aahbs'
 import customDialog from '@/components/customDialog/index.vue'
 
@@ -309,17 +315,22 @@ export default {
         width: '80%',
         labelWidth: '100px',
         classList: [
-          { key: '商品图片', value: 'imgs', isImg: true, },
+          { key: '商品图片', value: 'goodsImage', isGoodsImg: true, },
           { key: '商品名称', value: 'goodsName', isText: true, },
           { key: '商品编号', value: 'goodsNum', isText: true, },
-          { key: '商品价格', value: 'goodsType', isText: true, },
-          { key: '商品属性', value: '', isSelect: true, },
-          { key: '商品分类', value: '', isSelect: true, },
-          { key: '课程', value: 'goodsType', isSelect: true, list: [] },
-          { key: '商品描述', value: 'goodsType', isText: true, },
-          { key: '规格', value: 'goodsType', isText: true, },
-          { key: '商品详情', value: 'goodsType', isImg: true, },
-        ]
+          { key: '商品价格', value: 'goodsPrice', isNumber: true, },
+          { key: '商品属性', value: '', isSelect: true, list: [ { id: 1, name: '课程'}, { id: 2, name: '预约课程' } ], id: 'id', name: 'name' },
+          { key: '商品分类', value: 'storegc_id', isSelect: true, list: [], id: 'storegc_id', name: 'storegc_name' },
+          { key: '课程', value: 'goodsType', isSelect: true, list: [], id: 'course_id', name: 'course_name', isShowDetail: true, detailList: [], },
+          { key: '商品描述', value: 'goodsDescribe', isText: true, },
+          { key: '规格', value: 'size', list: [], name: 'teacher_name', sub_name: 'time', isTagList: true, },
+          { key: '商品详情', value: 'goodsBody', isImg: true, },
+        ],
+        rules: {
+          goodsPrice: [ { type:"number", required: true, message: '请输入商品价格', trigger: 'blur',min: 1}, ],         
+          // 'imgs': [ { required: true, message: '请选择图片', type: 'array' } ],
+          // 'goodsImgs': [ { required: true, message: '请选择图片', type: 'array' } ],
+        },
       },
       formData: {
 
@@ -379,19 +390,10 @@ export default {
               { type:"number",required: true, message: '请输入运费', trigger: 'blur'},
           ],
           fileList1:[
-            {
-              type: "array", required: true, min: 1,
-              message: '至少选择一张图片',
-              // fields: {
-              //   0: {required: true}
-              // }
-            }
+            { type: "array", required: true, min: 1, message: '至少选择一张图片', }
           ],
           fileList2:[
-            {
-              type: "array", required: true, min: 1,
-              message: '至少选择一张图片',
-            }
+            { type: "array", required: true, min: 1, message: '至少选择一张图片', }
           ],
           
         },
@@ -493,6 +495,88 @@ export default {
     }
   },
   methods: {
+      // course dialog
+      search(){
+        this.listQuery.page = 1
+        this.getList()
+      },
+      showForm(row){
+        this.canShowDialog = true;
+        this.dialogConfig.canSubmit = true;
+
+        this.isAddItem = !row;
+        this.initForm(row);
+
+        this.getClassList();
+        this.getCourseList();
+      },
+      hideForm(){ this.canShowDialog = false; },
+      initForm(item){
+        let detail = {};
+
+        for(let key in (item || this.formData)){ detail[key] = item ? item[key] : Array.isArray(this.formData[key]) ? [] : '' }
+        // img formmat
+        if(item){
+          detail.goodsImage.forEach((v, i) => detail.goodsImage[i] = { url: v } );
+          detail.goodsBody.forEach((v, i) => detail.goodsBody[i] = { url: v } );
+        }
+       
+        console.log('init form data done', detail);
+        this.formData = detail;
+      },
+      async submitForm(goodsimg, imgs){
+        //
+        console.log('submit form:', goodsimg, imgs);
+        let goodsList = [], // 待上传列表
+            detailList = [],
+            goodsedList = [], // 已上传列表
+            detailedList = [];
+
+        goodsimg.forEach(v => v.raw ?  goodsList.push(v.raw) : goodsedList.push(v.url));
+        imgs.forEach(v => v.raw ?  detailList.push(v.raw) : detailedList.push(v.url));
+        let goods = await uploadFn(goodsList);
+        let detail = await uploadFn(detailList);
+
+        goodsedList = goodsedList.concat(goods);
+        detailedList = detailedList.concat(detail);
+        console.log('img:', goodsedList, detailedList, this.formData);
+
+        let param = {
+          goods_name: this.formData.goods_name, 
+          goods_price: this.formData.goods_price,
+        }
+
+        // let res = await api.
+      },
+      changeTeacher(id){
+        let o = this.dialogConfig.classList[6];
+        
+        o.list.forEach(v => v.course_id === id ? o.detailList = this.dialogConfig.classList[8].list = v.skuList : null);
+        console.log(this.dialogConfig.classList[8]);
+      },
+      async getClassList(){
+        let res = await api.getClassList(null, this);
+        console.warn('class List: ', res);
+        this.dialogConfig.classList[5].list = res.data;
+      },
+      async getCourseList(){
+        let o = this.dialogConfig.classList[6];
+
+        let res = await api.getCoulseList(null, this);
+        console.log('course list: ', res);
+        // 转为课程列表
+        res.data.forEach(v => { 
+          let index = null;
+
+          if(o.list.every((v2, i) => { if(v2.course_id !== v.course_id) return true; index = i; return false; }) ){
+            v.skuList = [v];
+            o.list.push(v);
+          }else{
+            o.list[index].skuList.push(v);
+          }
+        });
+        console.log('course List:', o.list);
+      },
     // out
       //初始化数据
       getSchoolList(){ //获取 行业列表 
@@ -1000,15 +1084,7 @@ export default {
         })
       },
     //head
-      search(){
-        this.listQuery.page = 1
-        this.getList()
-      },
-      showForm(){
-        this.canShowDialog = true;
-        this.dialogConfig.canSubmit = true;
-      },
-      hideForm(){ this.canShowDialog = false; },
+      
       // addItem(){ //显示 弹框
       //   this.isAddItem = true
       //   this.addNewShow = true
@@ -1258,13 +1334,14 @@ export default {
                 isUp:aData.goods_state,
                 //前后统一
                 
-                goodsImage:aData.goods_image,//显示
+                goodsImage: typeof aData.goods_image === 'string' ? [aData.goods_image] : aData.goods_image,//显示
                 goodsType:aData.is_appoint?1:0,
                 is_virtualTXT:aData.is_virtual?'虚拟':'实体',//显示补充，实际无用
 
                 goodsName:aData.goods_name,//显示
                 goodsPrice:aData.goods_price,//显示
                 goodsNum:aData.goods_serial,//显示
+                goodsBody: JSON.parse(aData.goods_body),
                 // goodsState:'在售',//显示 ！！！ 掩耳盗铃
                 // goodsSell:Math.floor(Math.random()*1000),//显示 ！！！ 掩耳盗铃
                 // school:aData.school_id,

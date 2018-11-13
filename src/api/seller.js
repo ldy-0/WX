@@ -450,7 +450,7 @@ export function editAllBuy_api(data){
     })
   }
 // ----------------------------------------------
-// signIn
+// signIn 签到
 async function setAddress(data, _this){
   let res = await request({
     url: '/api/v1/seller/addteachaddr',
@@ -506,12 +506,12 @@ async function setTeacher(data, _this){
 async function updateTeacher(data, _this){
 
   let res = await request({
-    url: '/api/v1/teacher/edit',
+    url: '/api/v1/seller/editteacher',
     method: 'post',
     data,
   });
 
-  return res.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error })// res.data; 
+  return res.error !== '修改成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error })// res.data; 
 }
 
 async function deleteTeacher(data, _this){
@@ -527,7 +527,7 @@ async function deleteTeacher(data, _this){
 
 async function getTeacherList(params, _this){
   let res = await request({
-    url: '/api/v1/seller/getteacherlist/getlist',
+    url: '/api/v1/seller/getteacherlist',
     methods: 'get',
     params,
   });
@@ -625,17 +625,17 @@ async function setCoulse(data, _this){
     data,
   }); 
 
-  return res.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error }); 
+  return res.error !== '课程添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error }); 
 }
 
 async function updateCourse(data, _this){
   let res = await request({
-    url: '/api/v1/course/edit',
+    url: '/api/v1/seller/editcourse',
     method: 'post',
     data,
   }); 
 
-  return res.error !== '' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error }); 
+  return res.error !== '更新完成' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : _this.$notify.success({ title: '提示', message: res.error }); 
 }
 
 async function getCoulseList(params, _this){
@@ -645,7 +645,7 @@ async function getCoulseList(params, _this){
     params,
   });
 
-  return res.error !== '' ? this.$notify.error({ title: '错误信息', message: res.error, }) : res; 
+  return res.error !== '' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : res; 
 }
 
 async function deleteCoulse(params, _this){
@@ -655,7 +655,7 @@ async function deleteCoulse(params, _this){
     params,
   });
 
-  return res.error !== '添加成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error }); 
+  return res.error !== '删除成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error }); 
 }
 
 async function changeSemester(params, _this){
@@ -665,7 +665,17 @@ async function changeSemester(params, _this){
     params,
   });
 
-  return res.error !== '' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error }); 
+  return res.error !== '修改成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error }); 
+}
+
+async function deleteStucourse(params, _this){
+  let res = await request({
+    url: '/api/v1/seller/deletestucourse',
+    method: 'get',
+    params,
+  });
+
+  return res.error !== '删除成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error }); 
 }
 
 // student
@@ -690,14 +700,24 @@ async function getStudentCourse(params){
 }
 
 // signIn
+async function getSignCourseList(params){
+  let res = await request({
+    url: '/api/v1/seller/getcourselistbytime',
+    methods: 'get',
+    params,
+  });
+
+  return res.error && res.error !== '' ? this.$notify.error({ title: '错误信息', message: res.error, }) : res.data.error ? res.data : res; 
+}
+
 async function getSignList(params){
   let res = await request({
     url: '/api/v1/seller/getsignlist',
     methods: 'get',
     params,
   });
-
-  return res.error !== '' ? this.$notify.error({ title: '错误信息', message: res.error, }) : res; 
+  console.log('get sign list', res);
+  return res.error && res.error !== '未查询到数据' ? this.$notify.error({ title: '错误信息', message: res.error, }) : res.data.error === '查询成功' ? res.data : res; 
 }
 
 // food
@@ -803,9 +823,11 @@ export default {
   getCoulseList,
   deleteCoulse,
   changeSemester,
+  deleteStucourse,
   getStudentList, // student
   getStudentCourse,
-  getSignList, // sign
+  getSignCourseList, // sign
+  getSignList, 
   getDeskList,
   createQRcode,
   addDesk,

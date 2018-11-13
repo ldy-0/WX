@@ -39,7 +39,7 @@
 </el-container>
 
   <!-- coulse List -->
-  <el-dialog :visible.sync='canShowCoulse'>
+  <el-dialog :visible.sync='canShowCoulse' width='80%'>
 
     <custom-table :config='courseConfig' 
                   :data='courseList' 
@@ -112,7 +112,7 @@ export default {
         { key: '课程名称', value: 'course_name' },
         { key: '总期数', value: 'course_semester' },
         { key: '已上期数', value: 'finished_semester' },
-        { key: '老师', value: 'teacher', isMulti: true, },
+        { key: '老师', value: 'teacher', },
         { key: '教学点', value: 'address_name' },
         { key: '时间点', value: 'times', isMulti: true, },
       ],
@@ -208,7 +208,7 @@ export default {
       res.data.forEach(v =>  v.times = Array.isArray(v.time) ? v.time.map(t => `${new Date(Number(t[0])).toLocaleDateString()} ${t[1]}`) : [''] );
 
       this.courseList = res.data;
-      console.log('get coulse', this.courseList);
+      console.log('get student course list', this.courseList);
       this.courseTotal = res.pagination ? res.pagination.total : this.courseList.length; // courseList
       this.loadCourse = false;  
     },

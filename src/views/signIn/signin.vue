@@ -8,7 +8,6 @@
     .big-icon-no
       font-size 30px
       color #b19999
-      // color #F56C6C
 </style>
 
 <template>
@@ -18,34 +17,23 @@
 
   <el-main>
 
-    <customHead :config='headConfig' @searchByDate='searchByDate'></customHead>
+    <customHead :config='headConfig' @searchByKeyWord='searchByName' @searchByDate='searchByDate'></customHead>
 
-    <el-table :data="list" stripe v-loading="loadList" element-loading-text="给我一点时间" style="width: 100%" >
-      <el-table-column :label='item.key' :prop='item.value' v-for='(item, index) in classList' :key='index'></el-table-column>
-
-      <el-table-column label="操作">
-        <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="showIn(scope.$index, scope.row)">查看签到</el-button>
-          <el-button size="mini" type="primary" @click="showOut(scope.$index, scope.row)">查看离开</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <el-pagination background 
-                  @size-change="sizeChange" 
-                  @current-change="pageChange" 
-                  :current-page="listConfig.page" 
-                  :page-sizes="[10,2,30, 50]" 
-                  :page-size="listConfig.limit" 
-                  layout="total, sizes, prev, pager, next" :total="listTotal">
-    </el-pagination>
+    <custom-table :config='tableConfig'
+                :data='list'
+                :classList='classList'
+                :total='listTotal'
+                :isLoading='loadList'
+                @signIn='showIn'
+                @signOut='showOut'
+                @change='change'></custom-table>
 
   </el-main>
 
 </el-container>
 
   <!-- coulse List -->
-  <el-dialog :visible.sync='canShowStudent'>
+  <el-dialog :visible.sync='canShowStudent' width='80%'>
 
     <customHead :config='studentHeadConfig' @searchByKeyWord='searchStudent' @exportFile='exportXLS'></customHead>
 
@@ -78,7 +66,7 @@ export default {
     customTable,
   },
   created(){
-    console.log('create');
+    this.listConfig.date = `${new Date().toLocaleDateString()}`;
     this.getList()
   },
   data() {
@@ -87,10 +75,12 @@ export default {
       address: null,
       addressList: [],
       headConfig: {
+        showSearchByKeyWord: true,
         showSearchByDate: true,
         // title: '添加教学点',
         inputWidth: '300px',
-        // placeholder: '请输入地址点',
+        dateWidth: '400px',
+        placeholder: '请输入课程名',
       },
       studentHeadConfig: {
         showSearchByKeyWord: true,
@@ -98,13 +88,19 @@ export default {
         inputWidth: '300px',
         placeholder: '请输入手机号',
       },
+      // course list
+      tableConfig: {
+        showOperate: true,
+        showSignIn: true,
+        showSignOut: true,
+      },
       classList: [
-        { key: '课程名称', value: 'name' },
-        { key: '总期数', value: 'num_total' },
-        { key: '已上期数', value: 'num' },
-        { key: '老师', value: 'teacher' },
-        { key: '教学点', value: 'address' },
-        { key: '时间段', value: 'times' },
+        { key: '课程名称', value: 'course_name' },
+        { key: '总期数', value: 'course_semester' },
+        { key: '已上期数', value: 'finished_semester' },
+        { key: '老师', value: 'teacher_name' },
+        { key: '教学点', value: 'address_name' },
+        { key: '时间段', value: 'times', }, // isMulti: true,
       ],
       listConfig: { // student
         page: 1,
@@ -113,20 +109,17 @@ export default {
       loadList: false,
       list: [],
       listTotal: null,
-
+      // student
       canShowStudent: false,
       loadStudent: false,
       studentKeyword: null,
-      studentConfig: {
-        showOperate: true,
-        showUpdate: true,
-        showDelete: true,
-      },
+      studentConfig: {},
       studentClass: [
-        { key: '学生姓名', value: 'name' },
-        { key: '家长姓名', value: 'name' },
-        { key: '家长手机号', value: 'phone' },
-        { key: '签到老师', value: 'teacher' },
+        { key: '学生姓名', value: 'student_name' },
+        { key: '家长姓名', value: 'parent_name' },
+        { key: '家长手机号', value: 'parent_mobile' },
+        { key: '签到老师', value: 'sign_teacher' },
+        { key: '签到时间', value: 'signinTime' },
       ],
       studentList: [],
       student: {
@@ -137,25 +130,34 @@ export default {
     }
   },
   methods: {
+      searchByName(v){ this.getList(this.listConfig.course_name = v); },
       searchByDate(v){
         console.log('search', v);
+        this.listConfig.date = `${v.startDate}|${v.endDate}`;
+        this.getList();
       },
-      searchStudent(v){
-        console.log('search', v);
-      },
-      showIn(index, row){
+      searchStudent(v){ this.getStudentList(this.student.search = v) },
+      showIn(item){
         this.canShowStudent = true;
         let signin = { key: '签到时间', value: 'signinTime' };
-        this.studentClass.some(v => v.key === '签到时间') ? void(0) : this.studentClass.push(signin);
+        this.studentClass.some(v => v.key === '签到时间') ? void(0) : this.studentClass[this.studentClass.length - 1] = signin;
 
-        this.getStudentList();
+        this.student.cschedule_id = item.cschedule_id;
+        this.student.semester_no = item.semester_no;
+        this.student.sign_type = 1;
+
+        this.getStudentList(item);
       },
-      showOut(){
+      showOut(item){
         this.canShowStudent = true;
         let signout = { key: '离开时间', value: 'signoutTime' };
-        this.studentClass.some(v => v.key === '离开时间') ? void(0) : this.studentClass.push(signout);
+        this.studentClass.some(v => v.key === '离开时间') ? void(0) : this.studentClass[this.studentClass.length - 1] = signout;
 
-        this.getStudentList();
+        this.student.cschedule_id = item.cschedule_id;
+        this.student.semester_no = item.semester_no;
+        this.student.sign_type = 2;
+
+        this.getStudentList(item);
       },
       exportXLS(loading){
 
@@ -168,7 +170,7 @@ export default {
           excel.export_json_to_excel({
             header: tHeader,
             data,
-            filename: this.filename,
+            filename: `签到列表-${new Date().toLocaleDateString()}`,
             autoWidth: this.autoWidth
           })
 
@@ -180,41 +182,36 @@ export default {
       async getList() { 
         this.loadList = true;
 
-        let res = await api.getSignList(this.listConfig, this); //FIXME: api
-        // this.list = res.data;
-        // this.listTotal = res.pagination.total;
-        // console.log('coulse list', res);
+        let res = await api.getSignCourseList(this.listConfig, this); 
+        res.data.forEach(v =>  v.times = Array.isArray(v.time) ? `${v.time[0]} ${v.time[1]}` : '' );
+        // res.data.forEach(v =>  v.times = Array.isArray(v.time) ? v.time.map(t => `${new Date(t[0]).toLocaleDateString()} ${t[1]}`) : [''] );
+        console.log('course list res:', res.data);
         
-        this.list = [
-          { name: 'k1', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-          { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-        ];
-        this.listTotal = this.list.length;
+        this.list = res.data;
+        this.listTotal = res.pagination? res.pagination.total : this.list.length;
         this.loadList = false;
       },
-    sizeChange(val){
-      this.listConfig.limit = val;
+    change(v){
+      this.listConfig.page = v.page;
+      this.listConfig.limit = v.limit;
       console.log('size change', this.listConfig);
       this.getList();
     },
-    pageChange(val){
-      this.listConfig.page = val;
-      console.log('page change', this.listConfig);
-      this.getList();
-    },
-    getStudentList(){
+    async getStudentList(item){
       this.loadStudent = true;
 
-      this.studentList = [
-        { name: 'k1', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-        { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-      ];
-      this.student.total = this.studentList.length;
+      let res = await api.getSignList(this.student, this);
+      res.data.forEach(v => { v.signinTime = new Date(v.signin_time * 1000).toLocaleString(); v.signoutTime = new Date(v.signout_time * 1000).toLocaleString(); });
+      console.log('signlist', res);
+
+      this.studentList = res.data;
+      this.studentTotal = res.pagination ? res.pagination.total : this.studentList.length;
       this.loadStudent = false;
     },
     changeStudent(v){
       console.log('change student list:', v);
-      this.student = v;
+      this.student.page = v.page;
+      this.student.limit = v.limit;
       this.getStudentList();
     },
     

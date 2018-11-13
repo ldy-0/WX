@@ -47,9 +47,19 @@
         </el-radio-group>
 
         <!-- select -->
-        <el-select v-model="detail[item.value]" :placeholder="item.placeholder" v-if='item.isSelect'>
+        <el-select v-model="detail[item.value]" :placeholder="item.placeholder" v-if='item.isSelect' @change='selectChange(item.value, $event)'>
           <el-option v-for="option in item.list" :key="option[item.id]" :label="option[item.name]" :value="option[item.id]"></el-option>
         </el-select>
+        <div v-if='item.isSelect && item.isShowDetail'>
+          <div class='course_detail' v-for='(detail, index) in item.detailList' :key='index'>
+            <span class='interval'>教师：{{detail.teacher_name}}</span>
+            <span class='interval'>教学点: {{detail.address_name}}</span>
+            <span class='interval'>可预约人数: {{detail.max_stunum}}</span>
+            <div>教学时间:
+              <ul><li v-for='(time, i) in detail.time' :key='i'>{{time.join()}}</li></ul>
+            </div>
+          </div>
+        </div>
 
         <el-select v-model="detail[item.value]" multiple :placeholder="item.placeholder" v-if='item.isMultiSelect'>
           <el-option v-for="option in item.list" :key="option[item.id]" :label="option[item.name]" :value="option[item.id]"></el-option>
@@ -67,10 +77,28 @@
           </div>
         </div>
 
+        <!-- tag -->
+        <div v-if='item.isTagList'>
+          <el-tag style='margin-right: 20px;' v-for='(tag, index) in item.list' :key='index'>{{tag[item.name]}}{{tag.time ? '(' + tag.time[0].join() + ')' : ''}}</el-tag>
+        </div>
+
         <div v-if='item.isDetail'>
           <el-button @click="addDetail(item.value)" v-text='item.key'></el-button>
           <slot></slot>
         </div>
+
+        <!-- goods img -->
+        <el-upload action=''
+            list-type="picture-card"
+            :auto-upload="false"
+            :file-list='detail[item.value]'
+            :on-remove='changeGoodsImgs'
+            :on-change="changeGoodsImgs"
+            v-if='item.isGoodsImg'>
+
+            <i class="el-icon-plus"></i>
+
+        </el-upload>
 
         <!-- slot -->
         <!-- <div v-if='item.isCustom'>
@@ -113,10 +141,11 @@ export default {
 
   data() {
     return {
+      goodsImgs: [],
       imgs: [],
       date: '',  
       timeKey: '', // 时间段字段名 
-      error: null, // 暂存错误
+      error: [], // 错误列表
       canSubmit: true,
       interval: null,
       // rules: {
@@ -141,13 +170,19 @@ export default {
       if(!res) return ;
 
       if(!this.canSubmit)return ;
-
+console.warn(this.detail, this.timekey);
       if(this.detail[this.timeKey] && !this.detail[this.timeKey].length)return this.$message({ message: '请添加日期' });
 
-      if(this.error)return this.$message(this.error);
+      if(this.error.length)return this.$message(this.error[0]);
 
       console.log('submit dialog --', this.detail);
-      this.$emit('submit', this.imgs);
+      this.$emit('submit', this.goodsImgs, this.imgs);
+    },
+
+    // select
+    selectChange(key, id){
+      console.log('select change: ', key, id);
+      this.$emit(`${key}Change`, id);
     },
 
     getQrcode(){
@@ -164,6 +199,10 @@ export default {
     removeImg(file, list){
       console.log('remove', list)
       this.imgs = list;
+    },
+
+    changeGoodsImgs(file, files){
+      this.goodsImgs = files; 
     },
 
     // dates
@@ -205,11 +244,13 @@ export default {
       console.log('input --', item, v)
       if(isNaN(Number(v)))return ;
 
-      if(item.isInteger && v % 1 !== 0)return this.$message({ message: '值必须为整数' });
+      if(item.isNumber && v <= 0)return this.$message(this.error.push({ prop: item.value, message: '值必须大于零' }));
 
-      if(item.isPhone && !phonePattern.test(v)) return this.$message(this.error = { message: '手机号不合法!' });
+      if(item.isInteger && v % 1 !== 0)return this.$message( this.error.push({ prop: item.value, message: '值必须为整数' }) );
 
-      this.error = null; // clear error
+      if(item.isPhone && !phonePattern.test(v)) return this.$message( this.error.push({ prop: item.value, message: '手机号不合法!' }) );
+
+      this.error = this.error.filter(v => v.prop !== item.value); // clear error
       this.detail[item.value] = item.isPhone ? v : Number(v);
 
     } 
@@ -218,5 +259,11 @@ export default {
 </script>
 
 <style scoped>
-  
+.course_detail{
+  border-bottom: 1px solid gray;
+}
+
+.interval{
+  margin-right: 100px;
+}
 </style>

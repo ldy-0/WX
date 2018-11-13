@@ -49,9 +49,8 @@
                 @showDetail='showCourse'
                 @delete='deleteTeacher'
                 @authUpdate='authUpdate'
-                @authShow='authShow'
+                @authShow='authUpdate'
                 @change='change'></custom-table>
-    
 </el-main>
 
 </el-container>
@@ -83,9 +82,6 @@
 
   <!-- coulse item List -->
   <el-dialog :visible.sync='canShowCoulseItems' width='60%'>
-    <el-select v-model="courseItemsAddress" placeholder="请选择教学点" @change='changeCourseItemsAddress'>
-        <el-option v-for="item in addressList" :key="item.address_id" :label="item.address_name" :value="item.address_id"></el-option>
-    </el-select>
 
     <custom-table :config='courseItemsConfig' 
                   :data='courseItemsList' 
@@ -239,8 +235,8 @@ export default {
       // course item
       canShowCoulseItems: false,
       courseItemsConfig: {
-        showOperate: true,
-        showCome: true,
+        // showOperate: true,
+        // showCome: true,
       },
       courseItemsClass: [
         { key: '课程名称', value: 'course_name' },
@@ -259,8 +255,6 @@ export default {
         limit: 10,
       },
       courseItemsTotal: 0,
-      courseItemsAddress: null,
-      courseItemsAddressList: [],
       // student 
       canShowStudent: false,
       loadStudent: false,
@@ -338,8 +332,11 @@ export default {
       this.getStudentList();
     },
     removeFiles(){},
-    changeCourseAddress(){ console.log('change address:', this.course); this.getCourseList(); },
-    changeCourseItemsAddress(){ this.getCourseItemsList(); },
+    changeCourseAddress(){ 
+      this.course.address_id = this.address;
+      console.log('change address:', this.course);
+      this.getCourseList(); 
+    },
     changeStudentStatus(v){ this.getStudentList(); },
     showForm(index, row){
       this.canShow = true;
@@ -367,11 +364,8 @@ export default {
       this.update()
     },
     async update(){
-      let param = {
-
-      }
       console.log('param --', this.formData);
-      var addres = this.isAddItem ? await api.setTeacher(this.formData, this) : await api.updateTeacher(htis.formData, this);
+      var addres = this.isAddItem ? await api.setTeacher(this.formData, this) : await api.updateTeacher(this.formData, this);
 
       this.canSubmit = false
       this.canShow = false;
@@ -382,6 +376,7 @@ export default {
 
       let addressList = await api.getAddressList();
       this.addressList = addressList.data;
+      this.addressList.unshift({ address_id: 0, address_name: '全部' });
       // get coulse 
       this.canShowCoulse = true;
 
@@ -393,22 +388,56 @@ export default {
       this.listLoading = true
       
       let res = await api.getTeacherList(this.listQuery, this);
+      res.data.forEach(v => {
+        v.canUpdate = v.teacher_limits ? v.teacher_limits.indexOf('update') === -1 ? false : true : false;
+        v.canShow = v.teacher_limits ? v.teacher_limits.indexOf('show') === -1 ? false : true : false;
+      });
+      delete this.listQuery.teacher_limits;
 
       this.tableData = res.data;
       this.total = res.pagination ? res.pagination.total : 0;
       this.listLoading = false
+    },
+    async updateTeacher(item, teacher_limits){
+      let param = {
+        teacher_id: item.teacher_id,
+        teacher_name: item.teacher_name,
+        teacher_mobile: item.teacher_mobile,
+        teacher_limits,
+      };
+
+      let res = await api.updateTeacher(param, this);
+      this.getList();
     },
     async deleteTeacher(item){
       let res = await api.deleteTeacher({teacher_id: item.teacher_id}, this);
       console.log('delete teacher:', item);
       this.getList();
     },
-    authUpdate(item){
-      console.log('auth update teacher:', item);
+    authUpdate(str, item){
+      console.log('auth update teacher:', str, item);
+
+      if(Array.isArray(item.teacher_limits)){
+        var teacher_limits = item.teacher_limits.slice();
+        let index = item.teacher_limits.indexOf(str);
+        index === -1 ? teacher_limits.push(str) : teacher_limits.splice(index, 1);
+      }else{
+        teacher_limits = [str];
+      }
+
+      this.updateTeacher(item, teacher_limits);
     },
-    authShow(item){
-      console.log('auth Show teacher:', item);
-    },
+    // authShow(item){
+    //   console.log('auth Show teacher:', item);
+    //   if(Array.isArray(item.teacher_limits)){
+    //     var teacher_limits = item.teacher_limits.slice();
+    //     item.teacher_limits.indexOf('show') === -1 ? teacher_limits.push('show') : void(0);
+    //   }else{
+    //     teacher_limits = ['show'];
+    //   }
+
+    //   this.updateTeacher(item, teacher_limits);
+    // },
     change(v){
       console.log('change list:', v);
       this.listQuery = v;
@@ -452,7 +481,7 @@ export default {
       console.log('item course', this.courseItems, res);
 
       res.data.forEach(v => {
-        v.date = `${new Date(Number(v.course_date)).toLocaleDateString()} ${v.course_time}`;
+        v.date = `${v.course_date} ${v.course_time}`;
         v.remark = v.is_sign ? '到岗' : '未到岗';
       });
 
