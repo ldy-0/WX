@@ -2,7 +2,7 @@
 	<div class="app-container">
 		<!--预览图片开始 -->
 		<el-dialog :visible.sync="dialogVisible">
-			<div class="filter-container">
+			<div class="filter-container" v-if="isShowSeach">
 			  <el-input style="width:240px;" placeholder="请输入手机号/昵称" v-model="search"></el-input>
 			  <el-button type="primary" icon="el-icon-search" @click="dialogTableSearch()">查询</el-button>
 		  </div>
@@ -81,6 +81,7 @@ export default {
   },
   data() {
     return {
+      isShowSeach: true,
       //会员列表
       tableData: [],
       dialogTable: [],
@@ -116,6 +117,7 @@ export default {
         return;
       } else {
         let data = {
+          member_id: this.member_id,
           search: this.search
         };
         getSaler(data).then(res => {
@@ -141,10 +143,12 @@ export default {
         console.log(res);
         this.dialogTable = res.data;
         this.dialogVisible = true;
+        this.isShowSeach = false;
       });
     },
     lookingSubordinate(scope) {
       this.search = "";
+      this.member_id = scope.row.member_id;
       let data = {
         member_id: scope.row.member_id
       };
@@ -152,6 +156,7 @@ export default {
         console.log(res);
         this.dialogTable = res.data;
         this.dialogVisible = true;
+        this.isShowSeach = true;
       });
     }
   }
