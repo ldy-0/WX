@@ -98,15 +98,31 @@ export function postImportLib(data) { //导入平台题目
 
 export function getAnswerMember_api(data) {
     return request({
-      url: '/api/v1/admin/huntSubscriber',
-      method: 'get',
-      params: data
+        url: '/api/v1/admin/huntSubscriber',
+        method: 'get',
+        params: data
     })
-  }
-  export function getAnswerList_api(data) {
+}
+export function getAnswerList_api(data) {
     return request({
-      url: '/api/v1/admin/huntQuestion',
-      method: 'get',
-      params: data
+        url: '/api/v1/admin/huntQuestion',
+        method: 'get',
+        params: data
     })
-  }
+}
+
+export function getSalerList(data) {
+    return request({
+        url: '/api/v1/admin/getSalerList',
+        method: 'get',
+        params: data
+    })
+}
+
+export function setting(data) {
+    return request({
+        url: '/api/v1/admin/setting',
+        method: 'put',
+        data
+    })
+}

@@ -229,9 +229,9 @@
         <template slot-scope="scope">
         <el-button size="mini" type="primary" @click="editItem(scope.$index, scope.row)">编辑</el-button>
         <el-button size="mini" type="primary" @click="showAuthorize(scope.$index, scope.row)">权限管理</el-button>
-        <el-button size="mini" type="primary" @click="getAnswerInfo(scope.$index, scope.row)">查看答题详情</el-button>
+        <el-button size="mini" type="primary" @click="getAnswerInfo(scope.$index, scope.row)">查看详情</el-button>
 
-        <el-dialog title="答题详情" :visible.sync="outerVisible">
+        <el-dialog title="详情" :visible.sync="outerVisible">
         <el-dialog
           width="50%"
           title="答题详情"
@@ -264,8 +264,30 @@
               </el-pagination>
             </el-footer> -->
         </el-dialog>
+
+        <el-dialog
+          width="50%"
+          title="分销人员详情"
+          :visible.sync="disVisible"
+          append-to-body>
+          <el-table :data="disData">
+            <el-table-column property="member_truename" label="昵称"></el-table-column>
+            <el-table-column label="头像">
+              <template slot-scope="scope">
+                <div style="width:60px;height:60px;align-items:center;display:flex;">
+                  <img :src="scope.row.member_avatar" alt="" style="width:60px">
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column property="member_mobile" label="手机号"></el-table-column>
+            <el-table-column property="history_integral" label="历史积分"></el-table-column>
+            <el-table-column property="history_commission" label="历史佣金"></el-table-column>
+          </el-table>
+        </el-dialog>
+
         <el-button size="mini" type="primary" @click="getAnswerMember">答题人员</el-button>
         <el-button size="mini" type="primary" @click="getAnswerList">题目列表</el-button>
+        <el-button size="mini" type="primary" @click="getDistributionMember">分销人员</el-button>
         <div slot="footer" class="dialog-footer">
         <el-button @click="outerVisible = false">取 消</el-button>
         </div>
@@ -318,7 +340,12 @@ import {
   getROrderList_api
 } from "@/api/admin";
 import api from "@/api/admin";
-import { getAnswerMember_api, getAnswerList_api } from "@/api/libraryList";
+import {
+  getAnswerMember_api,
+  getAnswerList_api,
+  getSalerList,
+  setting
+} from "@/api/libraryList";
 import uploadFn from "@/utils/aahbs";
 
 const formForNotive = {
@@ -357,11 +384,17 @@ export default {
   },
   data() {
     return {
-      // auth 
+      distribution_state: null,
+      share_state: null,
+      // auth
+      disVisible: false,
       isShowAuth: false,
+      disData: [],
       authList: [],
       authClassList: [
-        { label: '签到', value: 'class_sign', entitle: false },
+        { label: "签到", value: "class_sign", entitle: false },
+        { label: "分销", value: null, entitle: false },
+        { label: "分享", value: null, entitle: false }
       ],
       total: 0,
       gridData: [],
@@ -1087,7 +1120,9 @@ export default {
                 // 支付数据
                 hasPayDataTXT: hasPayData.length > 0 ? "是" : "否",
                 hasPayData: hasPayData,
-                checked: hasPayData.length > 0
+                checked: hasPayData.length > 0,
+                distribution_state: aData.distribution_state,
+                share_state: aData.share_state
               });
             });
             if (all) {
@@ -1129,36 +1164,72 @@ export default {
       this.addNewShow = true;
     },
     // 2018/11/13 店铺权限管理
-    showAuthorize(index, item){
+    showAuthorize(index, item) {
       this.isShowAuth = true;
       this.store_id = item.id;
-
+      console.log("item", item);
+      this.authClassList[0].entitle = false;
+      this.authClassList[1].entitle = false;
+      this.authClassList[2].entitle = false;
+      this.share_state = item.share_state;
+      this.distribution_state = item.distribution_state;
       this.getAuth();
     },
-    hideAuth(){ this.isShowAuth = false; },
-    changeAuth(){
+    hideAuth() {
       this.isShowAuth = false;
-      console.log('change auth', this.authClassList);
-
-      this.setAuth(this.authClassList.map(v => `${v.value}|${Number(v.entitle)}`));
     },
-    async getAuth(){
+    changeAuth() {
+      this.isShowAuth = false;
+      console.log("change auth", this.authClassList);
+      console.log(this.store_id);
+      let type;
+      if (this.authClassList[1].entitle) {
+        type = "distribution";
+      } else {
+        type = "notdistribution";
+      }
+      if (this.authClassList[2].entitle) {
+        type = "share";
+      } else {
+        type = "notshare";
+      }
+      let data = {
+        store_id: this.store_id,
+        type: type
+      };
+      setting(data).then(res => {
+        console.log("res",res);
+        this.getList();
+      });
+      // this.setAuth(
+      //   this.authClassList.map(v => `${v.value}|${Number(v.entitle)}`)
+      // );
+    },
+    async getAuth() {
       let res = await api.getAuth({ store_id: this.store_id }, this);
 
-      if(!res.module_list){
-        return this.authClassList.forEach(v => v.entitle = false)
+      if (!res.module_list) {
+        return this.authClassList.forEach(v => (v.entitle = false));
       }
 
-      res.module_list.forEach(v => { 
-        let arr = v.split('|'); 
-        this.authClassList.some(item => item.entitle = item.value === arr[0] && arr[1] == 1 ? true : false );
+      res.module_list.forEach(v => {
+        let arr = v.split("|");
+        this.authClassList.some(
+          item =>
+            (item.entitle = item.value === arr[0] && arr[1] == 1 ? true : false)
+        );
+        this.authClassList[1].entitle =
+          this.distribution_state != 2 ? false : true;
+        this.authClassList[2].entitle = this.share_state != 2 ? false : true;
       });
-      console.log('get auth: ', this.authClassList);
+      console.log("get auth: ", this.authClassList);
     },
-    async setAuth(module_list){
-      let res = await api.setAuth({ store_id: this.store_id, module_list }, this);
-
-      console.log('get auth: ', res);
+    async setAuth(module_list) {
+      let res = await api.setAuth(
+        { store_id: this.store_id, module_list },
+        this
+      );
+      console.log("get auth: ", res);
     },
     getAnswerInfo(index, rowData) {
       console.log(index, rowData);
@@ -1166,6 +1237,17 @@ export default {
       this.rowData_s = rowData;
       this.outerVisible = true;
       this.innerVisible = false;
+    },
+    getDistributionMember() {
+      this.disVisible = true;
+      let data = {
+        page: 1,
+        limit: 0,
+        store_id: this.rowData_s.id
+      };
+      getSalerList(data).then(res => {
+        this.disData = res.data;
+      });
     },
     getAnswerMember() {
       this.isMember = true;
