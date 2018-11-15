@@ -101,6 +101,23 @@
         </el-option>
       </el-select>
     </el-form-item>
+
+    <!-- signIn 签到模块专用 -->
+    <el-form-item label='课程' :label-width='formLabelWidth' prop='course' v-if='formForNotive.goodsType === 2 || formForNotive === 3'>
+      <el-select v-model="formForNotive.course" placeholder="请选择课程" @focus='getCourseList' @change='selectChange(item.value, $event)'>
+        <el-option v-for="option in courseList" :key="option[item.id]" :label="option[item.name]" :value="option[item.id]"></el-option>
+      </el-select>
+    </el-form-item>
+      <div v-if='formForNotive.goodsType === 2 || formForNotive.goodsType === 3'>
+        <div class='course_detail' v-for='(detail, index) in courseDetailList' :key='index'>
+          <span class='interval'>教师：{{detail.teacher_name}}</span>
+          <span class='interval'>教学点: {{detail.address_name}}</span>
+          <span class='interval'>可预约人数: {{detail.max_stunum}}</span>
+          <div>教学时间:
+            <ul><li v-for='(time, i) in detail.time' :key='i'>{{time.join()}}</li></ul>
+          </div>
+        </div>
+      </div>
     
     <!-- <el-form-item label="商品属性" :label-width="formLabelWidth">
       <el-select v-model="formForNotive.goodsElement"
@@ -334,6 +351,7 @@
 </template>
 <script>
 import {addGoods_api,getGoodsList_api,getSchoolList_api,getGoods_api,upDownGoods_api,editGoods_api,getEntryList_api,deleteGoods_api} from '@/api/seller'
+import api from '@/api/seller'
 import uploadFn from '@/utils/aahbs'
 
 const formForNotive = {
@@ -364,6 +382,9 @@ export default {
   },
   data() {
     return {
+      // 签到模块
+      courseList: [],
+      courseDetailList: [],
       // out
         editLoading:false,//此页面的编辑页为 获取单条详情方式，故添加loading
         imgLimit1:6,
@@ -535,6 +556,12 @@ export default {
     }
   },
   methods: {
+    // signIn 签到模块
+    async getCourseList(){
+      console.log('select click ----');
+      let res = await api.getCourseList(null, this);
+      this.courseList = res.data;
+    },
     // out
       //初始化数据
       getSchoolList(){ //获取 行业列表 
@@ -597,7 +624,9 @@ export default {
               },{
                 value:1,
                 label:'预约商品'
-              }
+              },
+              { value: 2, label:'课程' },
+              { value: 3, label:'预约课程' }
           ]
         }else{
           this.goodsTypehbsList = [

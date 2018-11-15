@@ -321,12 +321,12 @@ export let asyncRouterMapSeller = [
     redirect: '/food/index',
     meta: { title: 'food', icon: 'goods', roles:'food'},
     children: [
-    {
-      path: 'goods',
-      component: () => import('@/views/food/goods'),
-      name: 'foodGoods',
-      meta: { title: 'goods', noCache: true }
-    },
+    // {
+    //   path: 'goods',
+    //   component: () => import('@/views/food/goods'),
+    //   name: 'foodGoods',
+    //   meta: { title: 'goods', noCache: true }
+    // },
     {
       path: 'index',
       component: () => import('@/views/food/desk'),
@@ -344,7 +344,7 @@ export let asyncRouterMapSeller = [
     path: '/signIn',
     component: Layout,
     // redirct: '/signIn/index',
-    meta: { title: 'signIn', icon: 'goods', roles: 'signIn' },
+    meta: { title: 'signIn', icon: 'goods', roles: 'class_sign' },
     children: [
       {
         path: 'teacher',
@@ -374,16 +374,21 @@ export let asyncRouterMapSeller = [
         // name: 'studen',
         meta: { title: 'student' }
       },
-      { path: 'appointment',
-        component: () => import('@/views/signIn/appointment'),
-        name: 'signIn_appointment',
-        meta: { title: 'appointment' }
-      },
-      { path: 'addGoods',
-        component: () => import('@/views/signIn/course_goods'),
-        name: 'appointment',
-        meta: { title: 'addGoods' }
-      },
+      {
+        path: 'edit',
+        component: () => import('@/views/signIn/edit'),
+        meta: { title: 'editname' }
+      }
+      // { path: 'appointment',
+      //   component: () => import('@/views/signIn/appointment'),
+      //   name: 'signIn_appointment',
+      //   meta: { title: 'appointment' }
+      // },
+      // { path: 'addGoods',
+      //   component: () => import('@/views/signIn/course_goods'),
+      //   name: 'appointment',
+      //   meta: { title: 'addGoods' }
+      // },
     ]
   },
   // {

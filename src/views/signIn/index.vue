@@ -14,7 +14,7 @@
 
 <template>
 <div>
-<el-dialog :title="isAddItem ? '新增老师' : '编辑老师' " :visible.sync="canShow" width="60%">
+<el-dialog :title="isAddItem ? `新增${names.words_name3}` : `编辑${names.words_name3}` " :visible.sync="canShow" width="60%">
 
   <el-form :model="formData"  ref="ruleForm" :rules="rules" >
 
@@ -112,8 +112,7 @@
             :show-file-list='false'
             :on-remove='removeFiles'
             :on-change="changeFiles">
-
-            <el-button>导入学生</el-button>
+            <el-button>导入{{names.words_name1}}</el-button>
         </el-upload>
         <!-- <upload-excel-component :on-success='importDone' ></upload-excel-component> -->
       </el-form-item>
@@ -148,6 +147,7 @@
 <script>
 
 import api from '@/api/seller' 
+import { getNames } from '@/utils/auth' 
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 import upLoadFile from '@/utils/aahbs.js'
 import customHead from '@/components/customHead/index.vue'
@@ -162,6 +162,8 @@ export default {
     customDialog,
   },
   created(){
+    this.setNames(); 
+
     this.getList()
   },
   data() {
@@ -215,6 +217,7 @@ export default {
         showOperate: true,
         showDetail: true,
         showStudent: true,
+        showStudentTitle: '',
       },
       courseClass: [
         { key: '课程名称', value: 'course_name' },
@@ -297,9 +300,27 @@ export default {
         parent_mobile: '',
       },
       formInline: {},
+      names: null,
     }
   },
   methods: {
+    // edit names
+    setNames(){
+      let names = JSON.parse(getNames('names'));
+      this.names = names;
+      console.log('names; ', names);
+      this.headConfig.title = `添加${names.words_name3}`;
+      this.courseClass = [
+        { key: `${names.words_name2}名称`, value: 'course_name' },
+        { key: '总期数', value: 'course_semester' },
+        { key: '已上期数', value: 'finished_semester' },
+        { key: '总人数', value: 'stu_num' },
+        { key: '教学点', value: 'address_name' },
+      ];
+      this.courseConfig.showStudentTitle = `查看${names.words_name1}`;
+      this.courseItemsClass[0].key = `${names.words_name2}名称`;
+      this.studentClass[0].key = `${names.words_name1}`;
+    },
     searchByKeyWord(v){
       this.listQuery.search = v;
       console.log('address search :', this.listQuery);
@@ -337,7 +358,12 @@ export default {
       console.log('change address:', this.course);
       this.getCourseList(); 
     },
-    changeStudentStatus(v){ this.getStudentList(); },
+    changeStudentStatus(v){ 
+      console.log('--student status--', v);
+      this.studentConfig.showUpdate = v ? false : true;
+
+      this.getStudentList(); 
+    },
     showForm(index, row){
       this.canShow = true;
       this.canSubmit = true;
@@ -388,11 +414,14 @@ export default {
       this.listLoading = true
       
       let res = await api.getTeacherList(this.listQuery, this);
-      res.data.forEach(v => {
-        v.canUpdate = v.teacher_limits ? v.teacher_limits.indexOf('update') === -1 ? false : true : false;
-        v.canShow = v.teacher_limits ? v.teacher_limits.indexOf('show') === -1 ? false : true : false;
-      });
       delete this.listQuery.teacher_limits;
+
+      if(Array.isArray(res.data)){
+        res.data.forEach(v => {
+          v.canUpdate = v.teacher_limits ? v.teacher_limits.indexOf('update') === -1 ? false : true : false;
+          v.canShow = v.teacher_limits ? v.teacher_limits.indexOf('show') === -1 ? false : true : false;
+        });
+      }
 
       this.tableData = res.data;
       this.total = res.pagination ? res.pagination.total : 0;
@@ -427,17 +456,6 @@ export default {
 
       this.updateTeacher(item, teacher_limits);
     },
-    // authShow(item){
-    //   console.log('auth Show teacher:', item);
-    //   if(Array.isArray(item.teacher_limits)){
-    //     var teacher_limits = item.teacher_limits.slice();
-    //     item.teacher_limits.indexOf('show') === -1 ? teacher_limits.push('show') : void(0);
-    //   }else{
-    //     teacher_limits = ['show'];
-    //   }
-
-    //   this.updateTeacher(item, teacher_limits);
-    // },
     change(v){
       console.log('change list:', v);
       this.listQuery = v;
@@ -480,17 +498,17 @@ export default {
       let res = await api.getTeacherItemCourse(this.courseItems, this);
       console.log('item course', this.courseItems, res);
 
-      res.data.forEach(v => {
-        v.date = `${v.course_date} ${v.course_time}`;
-        v.remark = v.is_sign ? '到岗' : '未到岗';
-      });
+      if(Array.isArray(res.data)){
+        res.data.forEach(v => {
+          v.date = `${v.course_date} ${v.course_time}`;
+          v.remark = v.is_sign ? '到岗' : '未到岗';
+        });
+      }
 
       this.courseItemsList = res.data;
-      this.courseItemsTotal = res.pagination.total;
+      this.courseItemsTotal = res.pagination ? res.pagination.total : 0;
     },
-    uncome(){
-       
-    },
+    uncome(){},
     changeCourseItems(v){
       console.log('change course item list:', v);
       this.courseItems.page = v.page;  
@@ -531,7 +549,8 @@ export default {
     },
     async deleteStudent(item){
       console.log('delete student:', item);
-      let res = await api.deleteStudent({ student_id: item.student_id }, this);
+      // let res = await api.deleteStudent({ student_id: item.student_id }, this);
+      let res = await api.deleteStucourse({ stucourse_id: item.stucourse_id }, this);
 
       this.getStudentList();
     },

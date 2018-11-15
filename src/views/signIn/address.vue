@@ -182,7 +182,7 @@ export default {
         let res = await api.getAddressList(this.listParam, this);
         
         this.addressList = res.data;
-        this.addressTotal = res.pagination.total;
+        this.addressTotal = res.pagination ? res.pagination.total : 0;
         this.loadAddress = false;
       },
       

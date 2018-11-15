@@ -42,8 +42,8 @@
         </div>
       </el-form-item>
 
-      <el-form-item label="老师" prop='teacher' style='margin: 20px 0 0;'>
-        <el-select v-model='item.teacher' placeholder="请选择老师" > <!--@focus='setTeacherList(index)' --> 
+      <el-form-item :label="names.words_name3" prop='teacher' style='margin: 20px 0 0;'>
+        <el-select v-model='item.teacher' :placeholder="'请选择'+names.words_name3" > <!--@focus='setTeacherList(index)' --> 
             <el-option v-for="option in teacherList" :key="option.teacher_id" :label="option.teacher_name" :value="option.teacher_id"></el-option>
         </el-select>
       </el-form-item>
@@ -117,12 +117,15 @@
 <script>
 
 import api from '@/api/seller' 
+import { getNames } from '@/utils/auth' 
 import customHead from '@/components/customHead/index.vue' 
 import customTable from '@/components/customTable/index.vue' 
 import customDialog from '@/components/customDialog/index.vue' 
 
 export default {
   created(){
+    this.setNames();
+
     this.getClassList();
     this.getTeacherList();
     this.getAddressList();
@@ -159,6 +162,7 @@ export default {
         showUpdate: true,
         showStudent: true,
         showDelete: true,
+        showStudentTitle: '',
       },
       tableData: [],
       tableClass: [
@@ -244,10 +248,42 @@ export default {
         student_state: 1,
       },
       studentTotal: 0,
+      names: null,
     }
   },
 
   methods: {
+    // edit names
+    setNames(){
+      let names = JSON.parse(getNames('names'));
+      console.log('names: ', names);
+      this.names = names;
+      this.headConfig.title = `添加${names.words_name2}`;
+      this.headConfig.placeholder = `请输入${names.words_name2}名`;
+      this.tableClass = [
+        { key: '姓名', value: 'course_name' },
+        { key: '总期数', value: 'course_semester' },
+        { key: '价格', value: 'price' },
+        { key: '可预约人数', value: 'max_stunum' },
+        { key: '已预约人数', value: 'stu_num' },
+        { key: names.words_name3, value: 'teacher_name', }, //isMulti: true,
+        { key: '教学点', value: 'address_name', },
+        { key: '时间段', value: 'times', isMulti: true, },
+      ];
+      this.tableConfig.showStudentTitle = `查看${names.words_name1}`;
+      this.dialogConfig.classList = [
+          { key: `${names.words_name2}名称`, value: 'course_name', isText: true, },
+          { key: '期数', value: 'course_semester', isInteger: true, },
+          { key: `添加${names.words_name3}`, value: 'detailList', isDetail: true, },
+      ];
+      this.studentClass = [
+        { key: `${names.words_name1}姓名`, value: 'student_name' },
+        { key: '家长姓名', value: 'parent_name' },
+        { key: '家长手机', value: 'parent_mobile' },
+        { key: '总期数', value: 'buy_semester' },
+        { key: '已上期数', value: 'over_semester' },
+      ];
+    },
     searchByKeyWord(v){
       this.listQuery.course_name = v;
       console.log('address search :', this.listQuery);
@@ -386,11 +422,13 @@ export default {
     async getList() { 
       this.listLoading = true
 
-      let res = await api.getCoulseList(this.listQuery);
-      res.data.forEach(v =>  v.times = Array.isArray(v.time) ? v.time.map(t => `${new Date(t[0]).toLocaleDateString()} ${t[1]}`).reverse() : [''] );
+      let res = await api.getCoulseList(this.listQuery, this);
+      if(Array.isArray(res.data)){
+        res.data.forEach(v =>  v.times = Array.isArray(v.time) ? v.time.map(t => `${new Date(t[0]).toLocaleDateString()} ${t[1]}`).reverse() : [''] );
+      }
 
       this.tableData = res.data;
-      this.total = res.pagination.total;
+      this.total = res.pagination ? res.pagination.total : 0;
       console.log('get course', this.tableData, this.total);
       this.listLoading = false
     },

@@ -39,7 +39,7 @@
           <el-button size="mini" type="text" @click="showDetail(scope.$index, scope.row)" v-if='config.showLook'>查看</el-button>
           <el-button size="mini" type="text" @click="showAuthUpdate(scope.$index, scope.row)" v-if='config.showAuthUpdate'>{{scope.row.canUpdate ? '取消修改权限' : '授权修改'}}</el-button>
           <el-button size="mini" type="text" @click="showAuthShow(scope.$index, scope.row)" v-if='config.showAuthShow'>{{scope.row.canShow ? '取消查看权限' : '授权查看'}}</el-button>
-          <el-button size="mini" type="text" @click="showStudent(scope.$index, scope.row)" v-if='config.showStudent'>查看学生</el-button>
+          <el-button size="mini" type="text" @click="showStudent(scope.$index, scope.row)" v-if='config.showStudent'>{{config.showStudentTitle}}</el-button>
           <el-button size="mini" type="text" @click="showAdd(scope.$index, scope.row)" v-if='config.showAdd'>增加期数</el-button>
           <el-button size="mini" type="text" @click="showMinus(scope.$index, scope.row)" v-if='config.showMinus'>减少期数</el-button>
           <el-button size="mini" type="text" @click="showDeleteDialog(scope.$index, scope.row)" v-if='config.showDelete'>删除</el-button>
@@ -52,7 +52,7 @@
 
     </el-table>
 
-    <el-pagination background @size-change="changeSize" @current-change="changePage" :current-page="query.page" :page-sizes="[10,2,30, 50]" :page-size="query.limit" layout="total, sizes, prev, pager, next" :total="total">
+    <el-pagination background @size-change="changeSize" @current-change="changePage" :current-page="query.page" :page-sizes="[10, 20, 30, 50]" :page-size="query.limit" layout="total, sizes, prev, pager, next" :total="total">
     </el-pagination>
     
   </div>

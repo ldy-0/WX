@@ -61,6 +61,7 @@
 <script>
 
 import api from '@/api/seller' 
+import { getNames } from '@/utils/auth' 
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 import customTable from '@/components/customTable/index.vue'
 import customDialog from '@/components/customDialog/index.vue'
@@ -72,6 +73,8 @@ export default {
     customDialog,
   },
   created(){
+    this.setNames();
+
     this.getStudentList()
   },
   data() {
@@ -112,7 +115,7 @@ export default {
         { key: '课程名称', value: 'course_name' },
         { key: '总期数', value: 'course_semester' },
         { key: '已上期数', value: 'finished_semester' },
-        { key: '老师', value: 'teacher', },
+        { key: '老师', value: 'teacher_name', },
         { key: '教学点', value: 'address_name' },
         { key: '时间点', value: 'times', isMulti: true, },
       ],
@@ -141,6 +144,23 @@ export default {
     }
   },
   methods: {
+    setNames(){
+      let names = JSON.parse(getNames('names'));
+      this.studentClass = [
+        { key: `${names.words_name1}姓名`, value: 'student_name' },
+        { key: `家长姓名`, value: 'parent_name' },
+        { key: `家长手机`, value: 'parent_mobile' },
+        { key: '分类', value: 'status' },
+      ];
+      this.courseClass = [
+        { key: `${names.words_name2}名称`, value: 'course_name' },
+        { key: '总期数', value: 'course_semester' },
+        { key: '已上期数', value: 'finished_semester' },
+        { key: names.words_name2, value: 'teacher_name', },
+        { key: '教学点', value: 'address_name' },
+        { key: '时间点', value: 'times', isMulti: true, },
+      ];
+    },
     searchStudent(){
       console.log('search student', this.keyword);
       this.student.search = this.keyword;
@@ -154,10 +174,10 @@ export default {
       this.loadStudent = true;
 
       let res = await api.getStudentList(this.student, this);
-      res.data.forEach(v => v.status = v.student_state ? '匹配' : '不匹配');
+      if(res.data) res.data.forEach(v => v.status = v.student_state ? '匹配' : '不匹配');
       
       this.studentList = res.data;
-      this.studentTotal = res.pagination ? res.pagination.total : this.studentList.length;
+      this.studentTotal = res.pagination ? res.pagination.total : 0;
       this.loadStudent = false;
     },
     updatePhone(item){
@@ -204,12 +224,14 @@ export default {
     async getCourseList(){
       this.loadCourse = true;
 
-      let res = await api.getCoulseList(this.course);
-      res.data.forEach(v =>  v.times = Array.isArray(v.time) ? v.time.map(t => `${new Date(Number(t[0])).toLocaleDateString()} ${t[1]}`) : [''] );
+      let res = await api.getCoulseList(this.course, this);
+      if(res.data){
+        res.data.forEach(v =>  v.times = Array.isArray(v.time) ? v.time.map(t => `${t[0]} ${t[1]}`) : [''] );
+      }
 
       this.courseList = res.data;
       console.log('get student course list', this.courseList);
-      this.courseTotal = res.pagination ? res.pagination.total : this.courseList.length; // courseList
+      this.courseTotal = res.pagination ? res.pagination.total : 0; // courseList
       this.loadCourse = false;  
     },
     changeCourse(v){

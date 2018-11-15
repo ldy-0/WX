@@ -118,6 +118,7 @@ import api from '@/api/seller'
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 import customDialog from '@/components/customDialog/index.vue'
 import upLoadFile from '@/utils/aahbs.js'
+import { getStoreId } from '@/utils/auth'
 
 export default {
   components: {
@@ -161,6 +162,7 @@ export default {
       ],
       isShowDialog: false,
       dialogConfig: {
+        width: '80%',
         classList: [
           { key: '餐桌名字', value: 'table_name', isText: true, },
           { key: '编号', value: 'table_no', isNumber: true, },
@@ -243,11 +245,11 @@ export default {
     async getQR(){
 
       if(!this.detail.table_no) return this.$message.error({ message: `请输入编号！` })
-
+      console.log('qr param: ', getStoreId());
       let param = {
         page: 'pages/home',
         // scene: `{id:1,did:${this.detail.table_no}}`,
-        scene: `${this.$store.state.user.storeId},${this.detail.table_no}`,
+        scene: `${getStoreId()},${this.detail.table_no}`,
         width: 430,
         auto_color: false,
         line_color: {"r":"0","g":"0","b":"0"},

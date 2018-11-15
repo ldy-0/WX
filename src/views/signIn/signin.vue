@@ -55,6 +55,7 @@
 <script>
 
 import api from '@/api/seller' 
+import { getNames } from '@/utils/auth' 
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
 import customHead from '@/components/customHead/index.vue'
 import customTable from '@/components/customTable/index.vue'
@@ -66,6 +67,8 @@ export default {
     customTable,
   },
   created(){
+    this.setNames();
+
     this.listConfig.date = `${new Date().toLocaleDateString()}`;
     this.getList()
   },
@@ -118,7 +121,7 @@ export default {
         { key: '学生姓名', value: 'student_name' },
         { key: '家长姓名', value: 'parent_name' },
         { key: '家长手机号', value: 'parent_mobile' },
-        { key: '签到老师', value: 'sign_teacher' },
+        { key: '签到老师', value: 'teacher_name' }, 
         { key: '签到时间', value: 'signinTime' },
       ],
       studentList: [],
@@ -130,6 +133,25 @@ export default {
     }
   },
   methods: {
+    setNames(){
+      let names = JSON.parse(getNames('names'));
+      this.headConfig.placeholder = `请输入${names.words_name2}名`;
+      this.classList = [
+        { key: `${names.words_name2}名称`, value: 'course_name' },
+        { key: '总期数', value: 'course_semester' },
+        { key: '已上期数', value: 'finished_semester' },
+        { key: names.words_name3, value: 'teacher_name' },
+        { key: '教学点', value: 'address_name' },
+        { key: '时间段', value: 'times', }, // isMulti: true,
+      ];
+      this.studentClass = [
+        { key: `${names.words_name1}姓名`, value: 'student_name' },
+        { key: '家长姓名', value: 'parent_name' },
+        { key: '家长手机号', value: 'parent_mobile' },
+        { key: `签到${names.words_name3}`, value: 'teacher_name' }, 
+        { key: '签到时间', value: 'signinTime' },
+      ];
+    },
       searchByName(v){ this.getList(this.listConfig.course_name = v); },
       searchByDate(v){
         console.log('search', v);
@@ -183,12 +205,14 @@ export default {
         this.loadList = true;
 
         let res = await api.getSignCourseList(this.listConfig, this); 
-        res.data.forEach(v =>  v.times = Array.isArray(v.time) ? `${v.time[0]} ${v.time[1]}` : '' );
+        if(res.data){
+          res.data.forEach(v =>  v.times = Array.isArray(v.time) ? `${v.time[0]} ${v.time[1]}` : '' );
+        }
         // res.data.forEach(v =>  v.times = Array.isArray(v.time) ? v.time.map(t => `${new Date(t[0]).toLocaleDateString()} ${t[1]}`) : [''] );
         console.log('course list res:', res.data);
         
         this.list = res.data;
-        this.listTotal = res.pagination? res.pagination.total : this.list.length;
+        this.listTotal = res.pagination? res.pagination.total : 0;
         this.loadList = false;
       },
     change(v){
@@ -201,7 +225,9 @@ export default {
       this.loadStudent = true;
 
       let res = await api.getSignList(this.student, this);
-      res.data.forEach(v => { v.signinTime = new Date(v.signin_time * 1000).toLocaleString(); v.signoutTime = new Date(v.signout_time * 1000).toLocaleString(); });
+      if(Array.isArray(res.data)){
+        res.data.forEach(v => { v.signinTime = new Date(v.signin_time * 1000).toLocaleString(); v.signoutTime = new Date(v.signout_time * 1000).toLocaleString(); });
+      }
       console.log('signlist', res);
 
       this.studentList = res.data;

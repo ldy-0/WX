@@ -138,8 +138,8 @@ export default {
       loginForm: {
         // username: 'admin',
         // password: '1111111'
-        username: 'yuan',
-        password: '123456'
+        username: '',
+        // password: '123456'
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -192,7 +192,6 @@ export default {
           loginPromise.then(() => {
             this.loading = false
             this.$router.push({ path: '/' })
-            console.log('$store---',this.$store.state.user)
           }).catch((e) => {
             console.log('no', e)
             this.loading = false
