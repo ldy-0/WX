@@ -1,0 +1,447 @@
+<style>
+.tips {
+  width: 100%;
+  text-align: center;
+  line-height: 100rpx;
+  font-size: 30rpx;
+}
+
+.link-list > navigator {
+  position: relative;
+  margin: 5rpx 0;
+  padding-right: 50rpx;
+  line-height: 88rpx;
+  background: white;
+}
+
+.link-list text {
+  display: block;
+  text-indent: 20rpx;
+  font-size: 32rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link-list image {
+  width: 16rpx;
+  height: 25rpx;
+  margin-top: -12rpx;
+  position: absolute;
+  right: 20rpx;
+  top: 50%;
+}
+
+.search {
+  overflow: hidden;
+  height: 108rpx;
+  font: 28rpx PingFang-SC-Medium;
+  color: #969696;
+  background: #fff;
+  text-align: center;
+}
+.search .search_content {
+  width: 690rpx;
+  line-height: 68rpx;
+  margin: 20rpx auto;
+  border-radius: 34rpx;
+  background: #f2f2f2;
+}
+
+.search_text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-search {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.nodata {
+  margin-top: 50%;
+  font-size: 38rpx;
+  text-align: center;
+}
+
+.wire-gray {
+  height: 20rpx;
+  width: 100%;
+  background: #f4f4f4;
+}
+
+.container {
+  font: 28rpx PingFangSC-Regular;
+  color: #666;
+  background: #f4f4f4;
+  height: 100vh;
+}
+
+.row_between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  line-height: 88rpx;
+  padding: 0 20rpx;
+  border-top: 1rpx solid #f4f4f4;
+  background: #fff;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.row {
+  line-height: 101rpx;
+  margin-bottom: 1rpx;
+  padding-left: 23rpx;
+  background: #fff;
+}
+.row .info {
+  color: #333;
+}
+
+.cityup {
+  width: 26rpx;
+  height: 16rpx;
+  margin: 42rpx;
+}
+
+.setting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 149rpx;
+  padding: 0 23rpx;
+  background: #fff;
+}
+
+.comment {
+  margin: 22rpx 0 0;
+  font-size: 26rpx;
+  color: #999;
+}
+
+.save {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  line-height: 88rpx;
+  font-size: 36rpx;
+  background: #ff4444;
+  text-align: center;
+  color: #fff;
+  border-radius: 0;
+}
+
+.row_flex {
+  display: flex;
+  align-items: center;
+  border-bottom: 1rpx solid #f0f0f0;
+  padding-left: 23rpx;
+  background: #fff;
+}
+
+.inline {
+  display: inline-block;
+  flex-grow: 1;
+  height: 101rpx;
+  color: #333;
+}
+
+.picker-group {
+  display: flex;
+}
+
+.picker-view {
+  font-size: 28rpx;
+}
+
+.info_text {
+  height: 100%;
+  width: 200rpx;
+}
+
+.fiexdW {
+  width: 86rpx;
+  overflow: hidden;
+}
+</style>
+
+<template>
+  <view class='container'>
+      <form bindsubmit='submit'>
+          <view class='row_flex'><text class="info_text">收件人：</text> <input type='text' name='name' class='inline' bindinput='setConsignee' value='{{address.consignee}}' /></view>
+
+          <view class='row_flex'><text class="info_text">联系方式：</text><input type='text' name='phone' class='inline' bindinput='setPhone' value='{{address.phone}}' /></view>
+            <view class="row_flex">
+              <view>所在地区：</view>
+              <view class="picker-group">
+                <picker class="picker-box" bindchange="bindPickerChange" value="{{index}}" range="{{arrayProvince}}" data-type="province">
+                  <view class="picker-view">
+                    <view class='flex'>
+                      <view class="fiexdW">{{province ? province : '省'}}</view>
+                      <image class="cityup" src="../../images/icon_xiangxia@2x.png"/>
+                    </view>
+                  </view>
+                </picker>
+                <picker class="picker-box" bindchange="bindPickerChange" value="{{index}}" range="{{arrayCity}}" range-key="area_name" data-type="city">
+                  <view class="picker-view">
+                    <view class='flex'>
+                      <view class="fiexdW">{{city ? city : '市' }}</view>
+                       <image class="cityup" src="../../images/icon_xiangxia@2x.png"/>
+                  </view>
+                  </view>
+                </picker>
+                <picker class="picker-box" bindchange="bindPickerChange" value="{{index}}" range="{{arrayDistrict}}" range-key="area_name" data-type="district">
+                  <view class="picker-view">
+                    <view class='flex'>
+                      <view class="fiexdW">{{district ? district : '区' }}</view>
+                       <image class="cityup" src="../../images/icon_xiangxia@2x.png"/>
+                  </view>
+                  </view>
+                </picker>
+              </view>
+            </view>
+          <view class='row_flex'><text class="info_text">详细地址：</text><input type='text' name='detail' class='inline' bindinput='setStreet' value='{{address.street}}' /></view>
+
+          <view class='setting'>
+              <view>
+                  <view>设为默认地址</view>
+                  <view class='comment'>注：每次下单时会使用该地址</view>
+              </view>
+              <switch name='isDefault' checked='{{address.isDefault}}'></switch>
+          </view>
+
+          <button class='save' formType='submit'>保存</button>
+      </form>
+  </view>
+</template>
+
+<script>
+import wepy from "wepy";
+import { shttp } from "../../utils/http";
+import {
+  showSuccessToast,
+  showFailToast,
+  exploitToast
+} from "../../utils/tools";
+export default class AddAddress extends wepy.page {
+  config = {
+    navigationBarTitleText: "添加新地址"
+  };
+  data = {
+    //地址选择
+    province: "",
+    arrayProvince: [],
+    city: "",
+    arrayCity: [],
+    district: "",
+    arrayDistrict: [],
+    pid: null,
+    cid: null,
+    areaid: null,
+    //
+    address: {
+      id: "",
+      consignee: "",
+      phone: "",
+      street: "",
+      isDefault: false
+    },
+    // 是否是第一个地址
+    isFirst: null,
+    addressType: null
+  };
+
+  components = {};
+
+  methods = {
+    setConsignee: e => (this.data.address.consignee = e.detail.value),
+    setPhone: e => (this.data.address.phone = e.detail.value),
+    setStreet: e => (this.data.address.street = e.detail.value),
+    submit(e) {
+      let v = e.detail.value,
+        phone = /^((0\d{2,3}-\d{7,8})|(1\d{10}))$/;
+      this.address.isDefault = v.isDefault;
+
+      if (!v.name) {
+        return wx.showToast({
+          title: "姓名不能为空!",
+          icon: "none",
+          duration: 1000
+        });
+      }
+      if (v.phone === "" || !phone.test(v.phone)) {
+        return wx.showToast({
+          title: "手机号格式不正确!",
+          icon: "none",
+          duration: 1000
+        });
+      }
+      if (!this.city) {
+        return wx.showToast({
+          title: "请选择所在地区!",
+          icon: "none",
+          duration: 1000
+        });
+      }
+      if (!v.detail) {
+        return wx.showToast({
+          title: "请完善详细地址!",
+          icon: "none",
+          duration: 1000
+        });
+      }
+      console.log(this.address);
+      if (this.addressType == "edit") {
+        this.modifyAddress(this.address);
+      } else {
+        this.saveAddress(this.address);
+      }
+
+      // this.data.address.id
+      //   ? this.modifyAddress(this.data.address.id, v)
+      //   : this.saveAddress(v);
+
+      // this.data.isFirst ? wx.navigateBack({ delta: 2 }) : wx.navigateBack({});
+      // if(this.data.isFirst){
+      //   return wx.navigateBack({ delta: 2 });
+      // }
+      // wx.navigateBack({});
+    }
+  };
+
+  async onLoad(opt) {
+    this.getProvince();
+    let address = wx.getStorageSync("address");
+    if (opt.type === "edit") {
+      this.addressType = opt.type;
+      this.address.id = address.address_id;
+      this.address.consignee = address.address_realname;
+      this.address.phone = address.address_mob_phone;
+      this.address.street = address.address_detail;
+      this.address.isDefault = address.address_is_default == 1 ? true : false;
+      this.cid = address.city_id;
+      this.areaid = address.area_id;
+      this.pid = address.province_id;
+      let arrArea = address.area_info.split(" ");
+      this.province = arrArea[0];
+      this.city = arrArea[1];
+      this.district = arrArea[2];
+      this.getCity(address.province_id);
+      this.getDistrict(address.city_id);
+    }
+    this.$apply();
+  }
+  onShow() {}
+  async saveAddress(address) {
+    const res = await shttp
+      .post("/api/v1/member/address")
+      .send({
+        city_id: this.cid,
+        area_id: this.areaid,
+        province_id: this.pid,
+        area_info: this.province + " " + this.city + " " + this.district,
+        address_tel_phone: address.phone,
+        address_mob_phone: address.phone,
+        address_realname: address.consignee,
+        address_detail: address.street,
+        address_is_default: address.isDefault ? 1 : 0
+      })
+      .end();
+    // console.log(res);
+    if (res.status === 0) {
+      showSuccessToast("添加成功");
+      wx.navigateBack();
+    }
+    console.log(`添加失败--${res}`);
+  }
+
+  async modifyAddress(address) {
+    const res = await shttp
+      .put(`/api/v1/member/address?address_id=${address.id}`)
+      .send({
+        city_id: this.cid,
+        area_id: this.areaid,
+        province_id: this.pid,
+        area_info: this.province + " " + this.city + " " + this.district,
+        address_tel_phone: address.phone,
+        address_mob_phone: address.phone,
+        address_realname: address.consignee,
+        address_detail: address.street,
+        address_is_default: address.isDefault ? 1 : 0
+      })
+      .end();
+    console.log(res);
+    if (res.status === 0) {
+      showSuccessToast("修改成功");
+      wx.removeStorageSync("address");
+      wx.navigateBack();
+    } else {
+      showFailToast("修改失败");
+    }
+  }
+  bindPickerChange(e) {
+    let type = e.currentTarget.dataset.type;
+    switch (type) {
+      case "province":
+        this.province = this.arrayProvince[e.detail.value];
+        let pid = parseInt(e.detail.value) + 1;
+        this.pid = pid;
+        this.getCity(pid);
+        break;
+      case "city":
+        this.city = this.arrayCity[e.detail.value].area_name;
+        let cid = this.arrayCity[e.detail.value].area_id;
+        this.cid = cid;
+        this.getDistrict(cid);
+        break;
+      case "district":
+        this.district = this.arrayDistrict[e.detail.value].area_name;
+        this.areaid = this.arrayDistrict[e.detail.value].area_id;
+        break;
+
+      default:
+        break;
+    }
+    this.$apply();
+  }
+  //地址查询
+  async getProvince() {
+    const res = await shttp
+      .get("/api/v1/member/area")
+      .query({
+        level: 1
+      })
+      .end();
+    this.arrayProvince = Object.values(res.data);
+    this.$apply();
+  }
+  async getCity(pid) {
+    const res = await shttp
+      .get("/api/v1/member/area")
+      .query({
+        level: 2,
+        parentId: pid
+      })
+      .end();
+    this.arrayCity = res.data;
+    this.$apply();
+  }
+  async getDistrict(cid) {
+    const res = await shttp
+      .get("/api/v1/member/area")
+      .query({
+        level: 3,
+        parentId: cid
+      })
+      .end();
+    this.arrayDistrict = res.data;
+    this.$apply();
+  }
+}
+</script>

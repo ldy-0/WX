@@ -6,10 +6,9 @@
  */
 
 const BASE_URL_LOCAL = "http://127.0.0.1:3010";
-const BASE_URL_DEVELOPMENT = "http://121.42.184.125:888"; //测试(以实际开发api文档为准)
-const BASE_URL_PRODUCTION = "https://www.njjncm.com"; //正式服(以实际开发api文档为准)
-const LOGINAPI = "/api/v1/member/login"; //登录接口(以实际开发api文档为准)
-const USERINFO = "/api/v1/member/memberinfo"; //用户资料接口(以实际开发api文档为准)
+const BASE_URL_DEVELOPMENT = "https://test1.healthsource.com.cn"; //测试(以实际开发api文档为准)
+const BASE_URL_PRODUCTION = "https://test1.healthsource.com.cn"; //正式服(以实际开发api文档为准)
+const LOGINAPI = "/api/v2/member/login"; //登录接口(以实际开发api文档为准)
 
 //腾讯云对象存储参数配置
 const OSSPARAMETER = {
@@ -37,7 +36,6 @@ module.exports = {
   ENV,
   DEBUG,
   LOGINAPI,
-  USERINFO,
   FORMIDAPI,
   OSSPARAMETER,
   OSSALIYUN
