@@ -1201,17 +1201,15 @@ export default {
         console.log("res",res);
         this.getList();
       });
-      // this.setAuth(
-      //   this.authClassList.map(v => `${v.value}|${Number(v.entitle)}`)
-      // );
+      this.setAuth(
+        this.authClassList.map(v => `${v.value}|${Number(v.entitle)}`)
+      );
     },
     async getAuth() {
       let res = await api.getAuth({ store_id: this.store_id }, this);
-
       if (!res.module_list) {
         return this.authClassList.forEach(v => (v.entitle = false));
       }
-
       res.module_list.forEach(v => {
         let arr = v.split("|");
         this.authClassList.some(
