@@ -144,6 +144,14 @@
         </template>
       </el-table-column>
       <el-table-column 
+        label="分销"
+        >
+        <template slot-scope="scope">
+          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('distribution')!==-1)" class="el-icon-check big-icon"></i>
+          <i v-else class="el-icon-close big-icon-no"></i>
+        </template>
+      </el-table-column>
+      <el-table-column 
         label="账号" 
         prop="account"
         >
@@ -245,6 +253,10 @@ export default {
         {
           label: "auth",
           text: "授权管理"
+        },
+        {
+          label: "distribution",
+          text: "分销"
         }
       ],
       formLabelWidth: "140px", //弹框1 左侧文字默认宽度
