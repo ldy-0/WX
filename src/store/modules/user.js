@@ -1,6 +1,8 @@
 import { loginByUsername,loginByAdminname, logout, getUserInfo } from '@/api/login'
-import { getToken, setToken, removeToken,setRoles } from '@/utils/auth'
+import { getToken, setToken, setStoreId, setNames, removeToken,setRoles } from '@/utils/auth'
+import api from '@/api/seller'
 import store from '@/store'
+// import { setNames } from '../../utils/auth';
 
 const user = {
   state: {
@@ -17,7 +19,8 @@ const user = {
     roles: [],
     setting: {
       articlePlatform: []
-    }
+    },
+    storeId: '' // 堂食 food storeId
   },
 
   mutations: {
@@ -52,7 +55,8 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
-    }
+    },
+    // setStoreId(s, id){ s.storeId = id} // 堂食 food storeId 
   },
 
   actions: {
@@ -108,20 +112,34 @@ const user = {
     LoginByUsername({ commit }, userInfo) {
       // const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        loginByUsername(userInfo).then(response => {
+        loginByUsername(userInfo).then(async response => {
           const data = response
+          console.log('login --', data)
           if(data&&data.status===0){
             //把getuserinfo的事情做完
             const sessionID = data.data['token']
             commit('SET_TOKEN', sessionID)
+            // commit('setStoreId', data.data['store_id']) // 堂食 food storeId
             setToken(sessionID)
+            setStoreId(data.data['store_id']) // 存堂食 food storeId
             let roles = data.data.permission
             if(data.data.is_admin===1){
               roles.push('seller')
             }else{
               roles.push('seller2')
             }
+            roles.push(data.data.module_list); // 存店铺权限列表 2018/11/13
             setRoles(JSON.stringify(roles))
+            
+            // 签到模块名词修改
+            console.log('module_list : ', data.data.module_list, data.data.module_list.indexOf("class_sign|1"));
+            if( data.data.module_list.indexOf("class_sign|1") !== -1 ){
+              let res = await api.getNames(null, this);
+              console.log('sign edit name: ', res.data);
+              setNames(res.data);
+            }
+
+
             resolve()
           }else{
             //接口ok，权限问题，提示登出

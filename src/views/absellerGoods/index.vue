@@ -765,6 +765,7 @@ export default {
     },
       // 虚拟
       formForNotiveIs_virtual_fn(nowValue){
+        console.log("c")
         if(nowValue){
           // 虚拟 的 操作
           this.goodsTypehbsList = [

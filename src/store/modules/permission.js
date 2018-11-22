@@ -1,5 +1,5 @@
-import { getNames } from '@/utils/auth'
 import { asyncRouterMapAdmin,asyncRouterMapSeller, constantRouterMap } from '@/router'
+import { getNames } from '@/utils/auth'
 
 /**
  * 通过meta.role判断是否与当前用户权限匹配
@@ -84,11 +84,11 @@ const permission = {
         }
         //商家
         else if (roles.indexOf('seller') >= 0) {
-          accessedRouters = asyncRouterMapSeller
+          accessedRouters = filterStoreAuth(asyncRouterMapSeller, roles[roles.length - 1])
         } 
         else if(roles.indexOf('seller2') >= 0){
-          console.log('---------------',roles)
-            accessedRouters = filterAsyncRouter(asyncRouterMapSeller,roles)
+          console.log('---------------',roles, data)
+            accessedRouters = filterAsyncRouter(filterStoreAuth(asyncRouterMapSeller, roles[roles.length - 1]),roles)
             //   let authIndex = -1
             // for(let i=0,len=asyncRouterMapSeller.length;i<len;i++){
             // hbs:make some diff
