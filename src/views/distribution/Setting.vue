@@ -93,6 +93,10 @@ export default {
       };
       postSetting(data).then(res => {
         console.log(res);
+        this.$message({
+          message: '保存成功！',
+          type: 'success'
+        });
       });
     }
   }
