@@ -325,7 +325,7 @@
             <view class="redinfo add_redinfo">
               <text class="prdname">{{item.goods_name}}</text>
               <view class="price">
-                ￥{{item.goods_price}}/天
+                ￥{{item.goods_price}}
             </view>
             </view>
         </view>

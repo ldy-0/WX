@@ -24,7 +24,6 @@ export default class extends wepy.app {
       "pages/shopList", //店铺列表页
       "pages/article/advertisingPage", //banner跳转页
       "pages/store/more", //推荐更多
-      // "pages/joinUspage",//加入我们创建小程序页
       "pages/store/goodsList", //商品列表
       "pages/store/goodsDetails", //商品详情
       "pages/store/pointGoodsDetail", //积分商品详情
@@ -112,15 +111,30 @@ export default class extends wepy.app {
     if (userInfo.status === 0) {
       let auth = userInfo.data.token;
       wx.setStorageSync("token", auth);
+      const memberRes = await shttp.get("/api/v2/member/memberinfo").end();
+      let memberInfo = {
+        member_id: memberRes.data.member_id,
+        member_points: memberRes.data.member_points,
+        wx_avatar: null,
+        wx_name: null,
+        member_mobile: memberRes.data.member_mobile,
+      };
+      wx.setStorageSync("memberInfo", memberInfo);
     }
   }
   /**
    * 设置全局变量
    */
   globalData = {
-    isAuthorization: true, //是否需要微信授权
-    isGetUserInfo: true, //是否强制微信头像用户名授权
-    isMobileNum: true //是否手机授权
+    authorizationStyle: "1" //1: 强制需要用户微信信息和强制手机授权
+                            //2：强制需要用户微信信息和不强制手机授权 
+                            //3：强制需要用户微信信息和不需要手机授权
+                            //4：不强制需要用户微信信息和强制手机授权
+                            //5：不强制需要用户微信信息和不强制手机授权
+                            //6：不强制需要用户微信信息和不需要手机授权
+                            //7：不需要用户微信信息和强制手机授权
+                            //8：不需要用户微信信息和不强制手机授权
+                            //9：不需要用户微信信息和不需要手机授权
   };
 }
 </script>

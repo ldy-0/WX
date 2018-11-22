@@ -175,7 +175,7 @@
           <view class="bodycontent">
        <repeat for="{{goodList}}" key="index" index="index" item="item">  
          <view class="redlist" @tap="intoDetail({{item.goods_commonid}})"> 
-             <image class="title_page" src="{{item.goods_image}}"></image>  
+             <image class="title_page" src="{{item.goods_image}}" mode='aspectFill'></image>  
             <view class="redinfo">
               <text class="prdname">{{item.goods_name}}</text>
             </view>

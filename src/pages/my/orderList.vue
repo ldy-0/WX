@@ -228,7 +228,7 @@
           <repeat for='{{waitPayList}}' key="index" item="item">
              <repeat for="{{item.order_goods}}" item='items'>
             <view class='product_info'  @tap="goOrderDetail({{item.order_id}},{{item.payment_code}})">
-              <image src='{{items.goods_image}}' />
+              <image src='{{items.goods_image}}' mode="aspectFill" />
               <view class='product'>
                   <view class='product_title'>{{items.goods_name}}</view>
                   <view class='row'>
@@ -263,7 +263,7 @@
           <repeat for="{{waitShipList}}" key="index" item="item">
           <repeat for="{{item.order_goods}}" item='items'>
             <view class='product_info' @tap="goOrderDetail({{item.order_id}},{{item.payment_code}})">
-              <image src='{{items.goods_image}}' />
+              <image src='{{items.goods_image}}' mode="aspectFill" />
               <view class='product'>
                   <view class='product_title'>{{items.goods_name}}</view>
                   <view class='row'>
@@ -297,7 +297,7 @@
           <repeat for='{{waitReceiptList}}' item='item'>
               <repeat for="{{item.order_goods}}" item='items'>
             <view class='product_info'  @tap="goOrderDetail({{item.order_id}},{{item.payment_code}})">
-              <image src='{{items.goods_image}}' />
+              <image src='{{items.goods_image}}' mode="aspectFill" />
               <view class='product'>
                   <view class='product_title'>{{items.goods_name}}</view>
                   <view class='row'>
@@ -332,7 +332,7 @@
           <repeat for='{{waitEvaluationList}}' item='item'>
               <repeat for="{{item.order_goods}}" item='items'>
             <view class='product_info'  @tap="goOrderDetail({{item.order_id}},{{item.payment_code}})">
-              <image src='{{items.goods_image}}' />
+              <image src='{{items.goods_image}}' mode="aspectFill" />
               <view class='product'>
                   <view class='product_title'>{{items.goods_name}}</view>
                   <view class='row'>

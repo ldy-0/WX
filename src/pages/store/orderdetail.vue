@@ -165,7 +165,7 @@
   background: #fff;
 }
 .order_info .order_price {
-  font: 37rpx PingFang-SC-Bold;
+  font-size: 37rpx;
   color: #af0000;
 }
 
@@ -270,9 +270,6 @@
                   </view>
                   <view class='row'>
                       <view class='product_number'>×{{item.goods_num || '1'}}</view>
-                  </view>
-                    <view class='row'>
-                      <view class='product_address'>租用时间：{{item.goods_start}}到{{item.goods_end}}</view>
                   </view>
               </view>
           </view>

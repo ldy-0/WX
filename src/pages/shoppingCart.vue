@@ -282,7 +282,7 @@
                       <view class='big_circle'  @tap='check({{index}})'>
                           <view  class="{{tableData[index].active ? 'fill_circle' : ''}}"></view>
                       </view>
-                      <image src="{{item.goods_image||item.pgoods_image}}" />
+                      <image src="{{item.goods_image||item.pgoods_image}}" mode="aspectFill"/>
                       <view class='info'>
                           <view class='desc'>{{item.goods_name||item.pgoods_name}}</view>
                           <view class='price'>¥{{item.goods_price|| item.pgoods_price}}</view>
@@ -297,20 +297,6 @@
                           </view>
                       </view>
                   </view>
-                  <view class="section">
-                          <view class="section__title">租用时间:</view>
-                              <picker mode="date"  value="{{item.goods_start}}" data-idx="{{item}}" start="{{nowDate}}" end="2024-09-01" bindchange="bindTimeChange_start">
-                                <view class="picker">
-                                      {{ item.goods_start}}
-                                </view>
-                              </picker>
-                              <view class="section__title">至</view>
-                              <picker mode="date"   value="{{item.goods_end}}"  data-idx="{{item}}" start="{{nowDate}}" end="2024-09-01" bindchange="bindTimeChange_end">
-                                <view class="picker">
-                                     {{ item.goods_end}}
-                                </view>
-                              </picker>
-                       </view>
               </repeat>
           </view>
 
@@ -661,47 +647,6 @@ export default class ShoppingCart extends wepy.page {
       this.$apply();
     } else {
       showFailToast(result.error);
-    }
-  }
-  //购物车商品租期时间修改
-  async editDateItem(date, item, type) {
-    wx.showLoading({
-      title: "加载中"
-    });
-    let param = {};
-    if (type == "end") {
-      param = {
-        quantity: item.goods_num,
-        goods_end: date,
-        goods_start: item.goods_start
-      };
-    } else {
-      param = {
-        quantity: item.goods_num,
-        goods_end: item.goods_end,
-        goods_start: date
-      };
-    }
-    console.log(param);
-    let startDate = new Date(param.goods_start).getTime(); //得到毫秒数
-    let endDate = new Date(param.goods_end).getTime(); //得到毫秒数
-    console.log(endDate - startDate);
-    if (endDate - startDate < 86400000) {
-      return showFailToast("至少租一天");
-    }
-    //return
-    const res = await shttp
-      .put(`/api/v2/member/cart/` + item.cart_id)
-      .send(param)
-      .end();
-    //console.log(res)
-    //console.log(this.tableData);
-    // wx.hideLoading();
-    if (res.status == 0) {
-      //获取购物车列表
-      this.getCartList();
-    } else {
-      showFailToast(res.error);
     }
   }
 }

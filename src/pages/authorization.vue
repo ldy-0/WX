@@ -65,16 +65,16 @@
       <view class="tip_wel">Welcome !</view>
       <view class="wx_name">授权演示文字</view>
     </view>
-    <button class="btn" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">微信登入</button>
-    <getPhone class="getPhone"></getPhone>
-    
+    <button wx:if='{{getinfoBtn}}' class="btn" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">微信登入</button>
+    <button wx:if='{{!getinfoBtn}}' class="btn" @tap="onGotPhone">微信登入</button>
+    <getPhone wx:if='{{getPhoneShow}}' class="getPhone" @SMSPhoneNum.user="SMSPhoneFn" @WXPhoneNum.user="WXPhoneFn" @hidePhonebox.user="hideboxphone"></getPhone>  
  </view>
 </template>
 
 <script>
 import wepy from "wepy";
 import { shttp } from "../utils/http";
-import  GetPhone  from "../components/getPhone";
+import GetPhone from "../components/getPhone";
 export default class Authorization extends wepy.page {
   config = {
     navigationBarTitleText: "微信授权",
@@ -84,7 +84,11 @@ export default class Authorization extends wepy.page {
 
   data = {
     path: null,
-    shareType: null
+    shareType: null,
+    getPhoneShow: false,
+    isMobileNum: true, //是否强制手机授权。默认强制
+    isWxInfo: true, //是否强制用户微信信息授权。默认强制
+    getinfoBtn: true
   };
 
   components = {
@@ -100,64 +104,101 @@ export default class Authorization extends wepy.page {
     }
   }
   onShow() {
-    console.log(this.$parent.globalData);
-    if (this.$parent.globalData.isAuthorization) {
-      console.log("需要授权");
-      // this.isStorageUserInfo()
-    } else {
-      if (this.path) {
+    switch (this.$parent.globalData.authorizationStyle) {
+      case "1":
+        this.isStorageUserInfo1();
+        break;
+      case "2":
+        this.isStorageUserInfo1();
+        this.isMobileNum = false;
+        break;
+      case "3":
+        this.isStorageUserInfo3();
+        break;
+      case "4":
+        this.isStorageUserInfo1();
+        this.isWxInfo = false;
+        break;
+      case "5":
+        this.isStorageUserInfo1();
+        this.isWxInfo = false;
+        this.isMobileNum = false;
+        break;
+      case "6":
+        this.isStorageUserInfo3();
+        this.isWxInfo = false;
+        break;
+      case "7":
+        this.isStorageUserInfo7();
+        this.getinfoBtn = false;
+        break;
+      case "8":
+        this.isStorageUserInfo7();
+        this.getinfoBtn = false;
+        this.isMobileNum = false;
+        break;
+      default:
         this.goNav();
-      } else if (this.shareType == "activity") {
-        wx.navigateBack();
-      }
+        break;
     }
+    this.$apply();
   }
   //页面跳转
   goNav() {
-    switch (this.path) {
-      case "/pages/home":
-        wx.switchTab({
-          url: "/pages/home"
-        });
-        break;
-      default:
-        wx.redirectTo({
-          url: this.path
-        });
-        break;
+    if (this.path) {
+      switch (this.path) {
+        case "/pages/home":
+          wx.switchTab({
+            url: "/pages/home"
+          });
+          break;
+        default:
+          wx.redirectTo({
+            url: this.path
+          });
+          break;
+      }
+    } else if (this.shareType == "activity") {
+      wx.navigateBack();
     }
   }
   //本地是否缓存了用户信息
-  isStorageUserInfo() {
-    this.wxUserInfo = wx.getStorageSync("wxUserInfo") || null;
-    if (this.wxUserInfo != null) {
-      if (this.$parent.globalData.isMobileNum) {
-        if (this.wxUserInfo.phone) {
-          if (this.path) {
-            this.goNav();
-          } else if (this.shareType == "activity") {
-            wx.navigateBack();
-          }
-        } else {
-          this.getInfoShow = true;
-          this.$apply();
-        }
+  isStorageUserInfo1() {
+    this.wxUserInfo = wx.getStorageSync("memberInfo");
+    console.log(this.wxUserInfo);
+    if (this.wxUserInfo.wx_name) {
+      if (this.wxUserInfo.member_mobile) {
+        this.goNav();
       } else {
-        if (this.wxUserInfo) {
-          if (this.path) {
-            this.goNav();
-          } else if (this.shareType == "activity") {
-            wx.navigateBack();
-          }
-        }
+        this.getPhoneShow = true;
       }
+    } else {
+      this.getPhoneShow = false;
+    }
+    this.$apply();
+  }
+
+  isStorageUserInfo3() {
+    this.wxUserInfo = wx.getStorageSync("memberInfo");
+    if (this.wxUserInfo.wx_name) {
+      this.goNav();
+    } else {
+      this.getPhoneShow = false;
+    }
+    this.$apply();
+  }
+
+  isStorageUserInfo7() {
+    this.wxUserInfo = wx.getStorageSync("memberInfo");
+    if (this.wxUserInfo.member_mobile) {
+      this.goNav();
+    } else {
+      this.getinfoBtn = false;
     }
   }
   //获取用户信息,onGotUserInfo中所用到的api接口
   async onGotUserInfo(e) {
     let wxUserInfo = e.detail.userInfo;
-    console.log(wxUserInfo);
-    // wx.setStorageSync("wxUserInfo", wxUserInfo);
     if (wxUserInfo != null) {
       const res = await shttp
         .post(`/api/v2/member/memberinfo`)
@@ -167,110 +208,113 @@ export default class Authorization extends wepy.page {
         })
         .end();
       //获取用户资料存入本地缓存
-      // const memberRes = await shttp.get('/api/v2/member/memberinfo').end();
-      // let memberInfo = memberRes.data;
-      // wx.setStorageSync("memberInfo", memberInfo);
-      // wx.switchTab({
-      //   url: "/pages/home"
-      // });
-    }
-  }
-
-  //获取用户信息
-  async onGotUserInfo22(e) {
-    let wxUserInfo = e.detail.userInfo;
-    this.wxUserInfo = e.detail.userInfo;
-    console.log(wxUserInfo);
-    wx.setStorageSync("wxUserInfo", wxUserInfo);
-    if (wxUserInfo != null) {
-      const res = await shttp
-        .post("/api/v1/member/memberinfo")
-        .send({
-          wx_name: wxUserInfo.nickName,
-          wx_avatar: wxUserInfo.avatarUrl
-        })
-        .end();
-      //获取个人资料/api/v1/member4/profile
-      const memberRes = await shttp.get(`/api/v1/member/memberinfo`).end();
+      const memberRes = await shttp.get("/api/v2/member/memberinfo").end();
       let memberInfo = memberRes.data;
-      console.log(memberInfo);
       wx.setStorageSync("memberInfo", memberInfo);
-      wxUserInfo = wx.getStorageSync("wxUserInfo");
-      if (this.showPhone) {
-        if (wxUserInfo.phone) {
-          if (this.path == "/pages/home") {
-            wx.switchTab({
-              url: "/pages/home"
-            });
-          } else if (this.shareType == "bargain") {
-            wx.navigateBack();
-          } else {
-            wx.redirectTo({
-              url: this.path
-            });
-          }
-        } else {
-          this.getInfoShow = true;
-          this.$apply();
-        }
-      } else {
-        if (wxUserInfo) {
-          if (this.path == "/pages/home") {
-            wx.switchTab({
-              url: "/pages/home"
-            });
-          } else if (this.shareType == "bargain") {
-            wx.navigateBack();
-          } else {
-            wx.redirectTo({
-              url: this.path
-            });
-          }
+      switch (this.$parent.globalData.authorizationStyle) {
+        case "1":
+          this.isStorageUserInfo1();
+          break;
+        case "2":
+          this.isStorageUserInfo1();
+          this.isMobileNum = false;
+          break;
+        case "3":
+          this.isStorageUserInfo3();
+          break;
+        case "4":
+          this.isStorageUserInfo1();
+          this.isWxInfo = false;
+          break;
+        case "5":
+          this.isStorageUserInfo1();
+          this.isWxInfo = false;
+          this.isMobileNum = false;
+          break;
+        case "6":
+          this.isStorageUserInfo3();
+          this.isWxInfo = false;
+          break;
+        default:
+          break;
+      }
+    } else {
+      console.log("授权取消");
+      if (!this.isWxInfo) {
+        //获取用户资料存入本地缓存
+        const memberRes = await shttp.get("/api/v2/member/memberinfo").end();
+        let memberInfo = memberRes.data;
+        wx.setStorageSync("memberInfo", memberInfo);
+        switch (this.$parent.globalData.authorizationStyle) {
+          case "1":
+            this.isStorageUserInfo1();
+            break;
+          case "2":
+            this.isStorageUserInfo1();
+            this.isMobileNum = false;
+            break;
+          case "3":
+            this.isStorageUserInfo3();
+            break;
+          case "4":
+            this.isStorageUserInfo1();
+            this.isWxInfo = false;
+          case "5":
+            this.isStorageUserInfo1();
+            this.isWxInfo = false;
+            this.isMobileNum = false;
+            break;
+          case "6":
+            this.isStorageUserInfo3();
+            this.isWxInfo = false;
+            break;
+          default:
+            break;
         }
       }
     }
   }
-
-  //获取手机号
-  async getPhoneNumber(e) {
-    this.getInfoShow = false;
-    if (e.detail.iv) {
-      let code = await getCode();
-      let data = {
-        iv: e.detail.iv,
-        encryptedData: e.detail.encryptedData,
-        code: code.code
-      };
-      console.log("调用手机");
-      this.postPhone(data);
-    } else {
-      console.log("授权取消");
-      this.$apply();
-    }
-  }
-  async postPhone(data) {
-    console.log("开始绑定");
-    let that = this;
-    const res = await shttp
-      .post("/api/v1/member/telephone")
-      .send(data)
-      .end();
-    console.log(this.wxUserInfo);
-    this.wxUserInfo.phone = res.data.telephone;
-    wx.setStorageSync("wxUserInfo", this.wxUserInfo);
-    console.log("存了");
-    if (this.path == "/pages/home") {
-      wx.switchTab({
-        url: "/pages/home"
-      });
-    } else if (this.shareType == "bargain") {
-      wx.navigateBack();
-    } else {
-      wx.redirectTo({
-        url: this.path
-      });
+  async onGotPhone() {
+    this.getPhoneShow = true;
+    const memberRes = await shttp.get("/api/v2/member/memberinfo").end();
+    let memberInfo = memberRes.data;
+    wx.setStorageSync("memberInfo", memberInfo);
+    switch (this.$parent.globalData.authorizationStyle) {
+      case "7":
+        this.isStorageUserInfo7();
+        this.getinfoBtn = false;
+        break;
+      case "8":
+        this.isStorageUserInfo7();
+        this.getinfoBtn = false;
+        this.isMobileNum = false;
+        break;
+      default:
+        break;
     }
     this.$apply();
   }
+  methods = {
+    SMSPhoneFn(data, evt) {
+      if (data == 1 && this.isMobileNum) {
+        this.goNav();
+      } else if (data == 2 && !this.isMobileNum) {
+        this.goNav();
+      }
+    },
+    WXPhoneFn(data, evt) {
+      if (data == 1 && this.isMobileNum) {
+        this.goNav();
+      } else if (data == 2 && !this.isMobileNum) {
+        this.goNav();
+      }
+    },
+    hideboxphone(data, evt) {
+      this.getPhoneShow = false;
+      if (!this.isMobileNum) {
+        this.goNav();
+      }
+    }
+  };
 }
 </script>

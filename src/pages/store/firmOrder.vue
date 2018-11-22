@@ -343,9 +343,6 @@
                   <view class='row'>
                       <view class='product_number'>×{{item.goods_num|| '1'}}</view>
                   </view>
-                  <view class='row'>
-                      <view class='product_address'>租用时间：{{item.goods_start}}到{{item.goods_end}}</view>
-                  </view>
               </view>
           </view>
       </repeat>
@@ -487,8 +484,6 @@ export default class FirmOrder extends wepy.page {
       order_from: 2,
       pay_message: [],
       ifcart: this.ifcart, //购物车填1，直接购买填0,
-      goods_start: this.ifcart == 0 ? this.goodsList[0].goods_start : "",
-      goods_end: this.ifcart == 0 ? this.goodsList[0].goods_end : ""
     };
     const res = await shttp
       .post("/api/v2/member/order")
@@ -586,8 +581,6 @@ export default class FirmOrder extends wepy.page {
         city_id: this.address.city_id,
         ifcart: this.ifcart, //购物车填1，直接购买填0
         voucher_list: [],
-        goods_start: this.ifcart == 0 ? this.goodsList[0].goods_start : "",
-        goods_end: this.ifcart == 0 ? this.goodsList[0].goods_end : ""
       })
       .end();
     console.log("结算");

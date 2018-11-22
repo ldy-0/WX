@@ -183,8 +183,8 @@
   <view class='container'>
     <view class='my'>
       <view class='head'>
-        <image class="user-img" src='{{wxUserInfo.avatarUrl}}'/>
-        <text class='content inputStyle login'>{{wxUserInfo.nickName}}</text>
+        <open-data class="user-img" type="userAvatarUrl"></open-data>
+        <open-data  class='content inputStyle login' type="userNickName" lang="zh_CN"></open-data>  
       </view>
     </view>
     <view class='my_manage'>

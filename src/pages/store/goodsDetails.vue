@@ -416,7 +416,7 @@
                   <view class='base_info'>
                       <view class="warp_price">
                           <view class='pro_name'>{{goods.goods_name}}</view>
-                          <view class='product_price'>¥{{goods.goods_price}}/天</view>
+                          <view class='product_price'>¥{{goods.goods_price}}</view>
                       </view>
                   </view>
                   
@@ -428,20 +428,7 @@
                         <view class='add' @tap='add'><image class='icon_add' src='../../images/icon_jia@2x.png' /></view>
                       </view>
                   </view>
-                   <view class="section">
-                          <view class="section__title">租用时间:</view>
-                              <picker mode="date" value="{{goods_start}}" start="{{nowDate}}" end="2024-09-01"  bindchange="bindTimeChange_start">
-                                <view class="picker">
-                                      {{ goods_start}}
-                                </view>
-                              </picker>
-                              <view class="section__title">至</view>
-                              <picker mode="date" value="{{goods_end}}" start="{{nowDate}}" end="2024-09-01"  bindchange="bindTimeChange_end">
-                                <view class="picker">
-                                     {{ goods_end}}
-                                </view>
-                              </picker>
-                       </view>
+                  
               </view>
               <view class='space'></view>
           </view>
@@ -460,7 +447,7 @@
           <view class='product_info'>
               <view class='goods'>
                   <view class='product_title'>{{goods.goods_name}}</view>
-                  <view class='product_price'>¥{{goods.goods_price}}/天</view>
+                  <view class='product_price'>¥{{goods.goods_price}}</view>
                   <view class='goods_other_info'>
                     <!-- <view class='text'>湖北武汉</view> -->
                     <view class='text'>库存：{{goods.goods_storage}}</view>
@@ -491,7 +478,7 @@
           </view>
           <view class="warp_btn">
           <view class='add_btn'  @tap="addShoppingCart()">加入购物车</view>
-          <view class='buy_btn'  @tap="firmOrder()">立即租用</view>
+          <view class='buy_btn'  @tap="firmOrder()">立即购买</view>
           </view>
       </view>
   </view>
@@ -535,10 +522,7 @@ export default class GoodsDetails extends wepy.page {
     //商品详情
     goods: {},
     //商品详情图片列表
-    goodsimgList: [],
-    //初始日期
-    goods_start: "",
-    goods_end: ""
+    goodsimgList: []
   };
 
   computed = {
@@ -551,16 +535,6 @@ export default class GoodsDetails extends wepy.page {
 
   components = {};
   methods = {
-    bindTimeChange_start: function(e) {
-      console.log("picker发送选择改变，携带值为", e.detail.value);
-      this.goods_start = e.detail.value;
-      this.$apply();
-    },
-    bindTimeChange_end: function(e) {
-      console.log("picker发送选择改变，携带值为", e.detail.value);
-      this.goods_end = e.detail.value;
-      this.$apply();
-    },
     minus() {
       if (this.size === 1) {
         return;
@@ -587,19 +561,12 @@ export default class GoodsDetails extends wepy.page {
         });
       }
       console.log(this.goods);
-      let startDate = new Date(this.goods_start).getTime(); //得到毫秒数
-      let endDate = new Date(this.goods_end).getTime(); //得到毫秒数
-      console.log(endDate - startDate);
-      if (endDate - startDate < 86400000) {
-        return showFailToast("至少租一天");
-      }
+
       const res = await shttp
         .post("/api/v2/member/cart")
         .send({
           goods_id: this.goods.SKUList[0].goods_id,
-          quantity: this.goods.goods_num || 1,
-          goods_start: this.goods_start,
-          goods_end: this.goods_end
+          quantity: this.goods.goods_num || 1
         })
         .end();
       if (res.data.cart_num) {
@@ -632,14 +599,6 @@ export default class GoodsDetails extends wepy.page {
       if (this.goods.goods_storage < 1) {
         return showFailToast("库存不足");
       }
-      let startDate = new Date(this.goods_start).getTime(); //得到毫秒数
-      let endDate = new Date(this.goods_end).getTime(); //得到毫秒数
-      console.log(endDate - startDate);
-      if (endDate - startDate < 86400000) {
-        return showFailToast("至少租一天");
-      }
-      this.goods.goods_start = this.goods_start;
-      this.goods.goods_end = this.goods_end;
       wx.navigateTo({
         url:
           "/pages/store/firmOrder?type=nocart&goods=" +
@@ -702,9 +661,7 @@ export default class GoodsDetails extends wepy.page {
       title: "加载中"
     });
     //初始化日期
-    (this.goods_start = getTimes.formatTime(new Date(), "Y-M-D")),
-      (this.goods_end = getTimes.formatTime(new Date(), "Y-M-D")),
-      (this.options = option);
+    this.options = option;
     let wxUserInfo = wx.getStorageSync("wxUserInfo");
     // this.getShopCartNum();
     this.id = option.goods_commonid;
