@@ -1374,7 +1374,7 @@ export default {
         goods_commonid: id
       };
       getGoods_api(sendData)
-        .then(data => {
+        .then( async data => {
           this.editLoading = false;
           this.waitAddNotice = false;
           if (data.status === 0) {
