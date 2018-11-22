@@ -1,3 +1,4 @@
+import { getNames } from '@/utils/auth'
 import { asyncRouterMapAdmin,asyncRouterMapSeller, constantRouterMap } from '@/router'
 
 /**
