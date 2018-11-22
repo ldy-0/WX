@@ -19,7 +19,22 @@ export function getRoles() {
 export function setRoles(Roles) {
   return Cookies.set(RolesKey, Roles)
 }
+// store Id
+export function getStoreId() {
+  return Cookies.get('storeId')
+}
 
+export function setStoreId(Roles) {
+  return Cookies.set('storeId', Roles)
+}
+// signIn edit names 
+export function getNames() {
+  return Cookies.get('names')
+}
+
+export function setNames(names) {
+  return Cookies.set('names', names)
+}
 //State
 export function getState() {
   return Cookies.get(StateKey)
