@@ -315,6 +315,82 @@ export let asyncRouterMapSeller = [
       meta: { title: 'sellerAuth', icon: 'goods', noCache: true }
     }]
   },
+  {
+    path: '/food',
+    component: Layout,
+    redirect: '/food/index',
+    meta: { title: 'food', icon: 'goods', roles:'food'},
+    children: [
+    // {
+    //   path: 'goods',
+    //   component: () => import('@/views/food/goods'),
+    //   name: 'foodGoods',
+    //   meta: { title: 'goods', noCache: true }
+    // },
+    {
+      path: 'index',
+      component: () => import('@/views/food/desk'),
+      name: 'desk',
+      meta: { title: 'desk', noCache: true }
+    },
+    {
+      path: 'order',
+      component: () => import('@/views/food/orderList'),
+      name: 'foodOrder',
+      meta: { title: 'order', noCache: true }
+    }]
+  },
+  {
+    path: '/signIn',
+    component: Layout,
+    // redirct: '/signIn/index',
+    meta: { title: 'signIn', icon: 'goods', roles: 'class_sign' },
+    children: [
+      {
+        path: 'teacher',
+        component: () => import('@/views/signIn/index'),
+        name: 'teacher',
+        meta: { title: 'teacher', }
+      },
+      {
+        path: 'course',
+        component: () => import('@/views/signIn/course'),
+        name: 'course',
+        meta: { title: 'course', }
+      },
+      { path: 'signin',
+        component: () => import('@/views/signIn/signin'),
+        name: 'signin',
+        meta: { title: 'signin' }
+      },
+      { path: 'address',
+        component: () => import('@/views/signIn/address'),
+        name: 'address',
+        meta: { title: 'address' }
+      },
+      {
+        path: 'student',
+        component: () => import('@/views/signIn/student'),
+        // name: 'studen',
+        meta: { title: 'student' }
+      },
+      { path: 'appointment',
+        component: () => import('@/views/signIn/appointment'),
+        name: 'signIn_appointment',
+        meta: { title: 'appointment' }
+      },
+      {
+        path: 'edit',
+        component: () => import('@/views/signIn/edit'),
+        meta: { title: 'editname' }
+      },
+      // { path: 'addGoods',
+      //   component: () => import('@/views/signIn/course_goods'),
+      //   name: 'appointment',
+      //   meta: { title: 'addGoods' }
+      // },
+    ]
+  },
   // {
   //   path: '/library',
   //   component: Layout,

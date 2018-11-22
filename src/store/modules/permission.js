@@ -31,6 +31,20 @@ function filterAsyncRouter(asyncRouterMap, roles) {
   return accessedRouters
 }
 
+// 过滤店铺无权限模块 2018/11/13
+function filterStoreAuth(asyncRouterMap, storeAuthList){
+  let authList = ['class_sign'],
+      // 店铺无权限列表
+      roles = storeAuthList.length ? storeAuthList.filter(v => { let arr = v.split('|'); return arr[1] == 1 ? false : true; }).map(v => v.split('|')[0]) : authList;
+
+  console.log(storeAuthList, roles);
+
+  return asyncRouterMap.filter(v => {
+    let route = v.meta.roles;
+    return roles.length ? route.indexOf(roles) === -1 ? true : false : true;
+  });
+}
+
 const permission = {
   state: {
     routers: constantRouterMap,

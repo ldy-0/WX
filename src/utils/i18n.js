@@ -6,5 +6,13 @@ export function generateTitle(title) {
   if (hasKey) {
     return translatedTitle
   }
+  // signIn edit names
+  if( getNames('names') && ['student', 'course', 'teacher'].indexOf(title) !== -1 ) {
+    let names = JSON.parse(getNames('names'));
+    if(title === 'student') return `${names.words_name1}列表`;
+    if(title === 'course') return `${names.words_name2}列表`;
+    if(title === 'teacher') return `${names.words_name3}列表`;
+  }
+
   return title
 }
