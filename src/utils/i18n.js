@@ -8,7 +8,7 @@ export function generateTitle(title) {
     return translatedTitle
   }
   // signIn edit names
-  if( ['student', 'course', 'teacher'].indexOf(title) !== -1 ) {
+  if( getNames('names') && ['student', 'course', 'teacher'].indexOf(title) !== -1 ) {
     let names = JSON.parse(getNames('names'));
     if(title === 'student') return `${names.words_name1}列表`;
     if(title === 'course') return `${names.words_name2}列表`;

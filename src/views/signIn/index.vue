@@ -386,6 +386,8 @@ export default {
       let res = await this.$refs[formName].validate().catch(e => e);
       if(!res) return ;
 
+      if(/[-\[\]]/g.test(this.formData.teacher_name)) return this.$message.error({ message: `${this.names.words_name3}名不能包含非法符号` });
+
       this.canSubmit = false 
       this.update()
     },

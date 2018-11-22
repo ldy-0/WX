@@ -374,16 +374,16 @@ export let asyncRouterMapSeller = [
         // name: 'studen',
         meta: { title: 'student' }
       },
+      { path: 'appointment',
+        component: () => import('@/views/signIn/appointment'),
+        name: 'signIn_appointment',
+        meta: { title: 'appointment' }
+      },
       {
         path: 'edit',
         component: () => import('@/views/signIn/edit'),
         meta: { title: 'editname' }
-      }
-      // { path: 'appointment',
-      //   component: () => import('@/views/signIn/appointment'),
-      //   name: 'signIn_appointment',
-      //   meta: { title: 'appointment' }
-      // },
+      },
       // { path: 'addGoods',
       //   component: () => import('@/views/signIn/course_goods'),
       //   name: 'appointment',

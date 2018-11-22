@@ -150,6 +150,8 @@ export default {
         let res = await this.$refs[rule].validate().catch(e => e);
         if(!res) return 
 
+        if(/[-\[\]]/g.test(this.addressForm.address_name)) return this.$message.error({ message: `地址不能包含非法符号` });
+
         this.canSubmit = false;
         console.log('save address :', this.addressForm);
         if(this.isAdd){

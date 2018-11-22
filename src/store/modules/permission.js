@@ -36,7 +36,7 @@ function filterAsyncRouter(asyncRouterMap, roles) {
 function filterStoreAuth(asyncRouterMap, storeAuthList){
   let authList = ['class_sign'],
       // 店铺无权限列表
-      roles = storeAuthList ? storeAuthList.filter(v => { let arr = v.split('|'); return arr[1] == 1 ? false : true; }).map(v => v.split('|')[0]) : authList;
+      roles = storeAuthList.length ? storeAuthList.filter(v => { let arr = v.split('|'); return arr[1] == 1 ? false : true; }).map(v => v.split('|')[0]) : authList;
 
   console.log(storeAuthList, roles);
 

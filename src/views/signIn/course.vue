@@ -55,7 +55,7 @@
       </el-form-item>
 
       <el-form-item label="可预约人数" prop='max_stunum'>
-        <el-input v-model="item.max_stunum" auto-complete="off" @input='inputSum'></el-input>
+        <el-input v-model="item.max_stunum" auto-complete="off" @input='inputSum($event, item)'></el-input>
       </el-form-item>
 
     </el-form>
@@ -168,7 +168,7 @@ export default {
       tableClass: [
         { key: '姓名', value: 'course_name' },
         { key: '总期数', value: 'course_semester' },
-        { key: '价格', value: 'price' },
+        // { key: '价格', value: 'price' },
         { key: '可预约人数', value: 'max_stunum' },
         { key: '已预约人数', value: 'stu_num' },
         { key: '老师', value: 'teacher_name', }, //isMulti: true,
@@ -263,9 +263,9 @@ export default {
       this.tableClass = [
         { key: '姓名', value: 'course_name' },
         { key: '总期数', value: 'course_semester' },
-        { key: '价格', value: 'price' },
+        // { key: '价格', value: 'price' },
         { key: '可预约人数', value: 'max_stunum' },
-        { key: '已预约人数', value: 'stu_num' },
+        { key: '已预约人数', value: 'subscribe_num' },
         { key: names.words_name3, value: 'teacher_name', }, //isMulti: true,
         { key: '教学点', value: 'address_name', },
         { key: '时间段', value: 'times', isMulti: true, },
@@ -321,6 +321,7 @@ export default {
           teacher: detail.teacher_id,
           address: detail.address_id,
           max_stunum: detail.max_stunum, 
+          subscribe_num: detail.subscribe_num,
           dateList,
         }];
         
@@ -345,7 +346,11 @@ export default {
       o[index].teacherList = this.teacherList;
     },
     getTime(temp){ return new Date(temp).toTimeString().split(' ')[0].substr(0, 5) },
-    deleteDate(index, i){ this.formData.detailList[index].dateList.splice(i, 1); },
+    deleteDate(index, i){ 
+      let dateList = this.formData.detailList[index].dateList;
+
+      dateList[i].startStamp < Date.now() ? this.$message.error({ message: '该时间不可删除！' }) : this.formData.detailList[index].dateList.splice(i, 1); 
+    },
     addDate(index, e){
       let o = this.formData.detailList[index],
           dateList = o.dateList,
@@ -359,6 +364,12 @@ export default {
 
       if(dateList.length >= this.formData.course_semester) return this.$message.error({ message: '上课时间数量超过指定期数' });
 
+      // if(date.endStamp - date.startStamp > 24 * 3600000) return this.$message.error({ message: '' });
+      let stamp = 24 * 3600000,
+          timeZone = 8 * 3600000;
+      console.log(date.endStamp - date.startStamp, stamp, date.startStamp % stamp);
+      if( date.endStamp - date.startStamp >= (stamp - timeZone - date.startStamp % stamp) )return this.$message.error({ message: '上课,下课时间必须在同一天以内!' });
+
       // sort
       for(var i = 0, len = dateList.length; i < len; i++){
         if(dateList[i].startStamp >= date.startStamp){
@@ -369,10 +380,12 @@ export default {
       o.dateList.length === i && o.dateList.push(date);
       console.log('add date: ', date);
     },
-    inputSum(v){
-      console.log('input sum', v); 
+    inputSum(v, item){
+      console.log('input sum', v, item); 
       
       if(v <= 0 || v % 1 !== 0)return this.error = { message: '值必须为正整数' };
+
+      if(item && item.subscribe_num && v < item.subscribe_num) return this.error = { message: '可预约人数必须大于已预约人数!' };
 
       this.error = null;
     },
@@ -389,6 +402,8 @@ export default {
       }
 
       if(this.error) return this.$message.error(this.error);
+
+      if(/[-\[\]]/g.test(this.formData.course_name)) return this.$message.error({ message: `${this.names.words_name2}名不能包含非法字符!` });
 
       this.dialogConfig.canSubmit = false;
 

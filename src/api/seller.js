@@ -754,6 +754,27 @@ async function getSignList(params, _this){
   return res.error && res.error !== '未查询到数据' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : res.data.error === '查询成功' ? res.data : res; 
 }
 
+// appoinment
+async function getCourseAppoinment(params, _this){
+  let res = await request({
+    url: '/api/v1/seller/courseappointment',
+    methods: 'get',
+    params,
+  });
+
+  return res.error && res.error !== '' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : res; 
+}
+
+async function deleteCourseAppoinment(data, _this){
+  let res = await request({
+    url: '/api/v1/seller/courseappointment',
+    method: 'DELETE',
+    data,
+  }); 
+
+  return res.error !== '删除成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error }); 
+}
+
 // edit name 
 async function getNames(params, _this){
   let res = await request({
@@ -884,6 +905,8 @@ export default {
   getStudentCourse,
   getSignCourseList, // sign
   getSignList, 
+  getCourseAppoinment, // appoinment
+  deleteCourseAppoinment,
   getNames, // edit name
   setNames,
   getDeskList,

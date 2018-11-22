@@ -41,7 +41,7 @@
                   @size-change="sizeChange" 
                   @current-change="pageChange" 
                   :current-page="listConfig.page" 
-                  :page-sizes="[10,2,30, 50]" 
+                  :page-sizes="[10, 20, 30, 50]" 
                   :page-size="listConfig.limit" 
                   layout="total, sizes, prev, pager, next" :total="listTotal">
     </el-pagination>
@@ -51,7 +51,7 @@
 </el-container>
 
   <!-- coulse List -->
-  <el-dialog :visible.sync='canShowStudent'>
+  <el-dialog :visible.sync='canShowStudent' width='80%'>
 
     <el-form :data="detail" stripe v-loading="loadStudent" element-loading-text="给我一点时间" style="width: 100%" :disabled='true'>
 
@@ -86,20 +86,15 @@ export default {
       address: null,
       addressList: [],
       classList: [
-        { key: '预约人', value: 'name' },
-        { key: '联系方式', value: 'num_total' },
-        { key: '预约课程', value: 'coulse' },
-        { key: '预约老师', value: 'teacher' },
-        // { key: '教学点', value: 'address' },
-        { key: '时间段', value: 'times' },
+        { key: '预约人', value: 'member_name' },
+        { key: '联系方式', value: 'appointment_phone' },
+        { key: '预约课程', value: 'course_name' },
+        { key: '预约老师', value: 'teacher_name' },
+        { key: '预约时间', value: 'appointment_date' },
       ],
       listConfig: { // student
         page: 1,
         limit: 10,
-        coulseId: 0,
-        teacherId: 0,
-        parentName: '',
-        parentPhone: 1,
       },
       keyword: '',
       loadList: false,
@@ -109,65 +104,70 @@ export default {
       loadStudent: false,
       detail: {},
       formList: [
-        { key: '预 约 人 ', value: 'name' },
-        { key: '联系方式', value: 'phone' },
-        { key: '学生姓名', value: 'name' },
-        { key: '家长姓名', value: 'parentName' },
-        { key: '预约课程', value: 'teacher' },
-        { key: '预约老师', value: 'teacher' },
-        { key: '预约时间', value: 'teacher' },
+        { key: '预 约 人 ', value: 'member_name' },
+        { key: '联系方式', value: 'appointment_phone' },
+        { key: '学生姓名', value: 'student_name' },
+        { key: '家长姓名', value: 'member_name' },
+        { key: '预约课程', value: 'course_name' },
+        { key: '预约老师', value: 'teacher_name' },
+        { key: '预约时间', value: 'appointment_date' },
       ]
     }
   },
   methods: {
       search(){
-        this.listConfig.keyword = this.keyword;
+        this.listConfig.search = this.keyword;
         console.log('search', this.listConfig);
+
+        this.getList();
       },
       showItem(index, row){
         this.canShowStudent = true;
 
-        this.getDetail(row.id)
+        this.detail = row;
+        // this.getDetail(row.appoinment_id);
       },
       deleteItem(index,row){
-        let id = row.id
         this.$confirm(`此操作将删除该条目, 是否继续?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.deleteItem(id);
-        }).catch(()=>{
-          console.log('delete student cancel');
-          this.$notify.info({ title: '消息', message: '已取消' });
-        })
+          console.log(row);
+          this.deleteAppoinment(row.appointment_id);
+        }).catch(()=>{ this.$notify.info({ title: '消息', message: '已取消' }); })
       },
-      //
-      getList() { //获取列表
-        this.loadList = true;
+    //
+    async getList() { //获取列表
+      this.loadList = true;
 
-        // let sendData = Object.assign({},this.listQuery)
-        
-        this.list = [
-          { name: 'k1', coulse: 'kk1', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-          { name: 'k1sdfkjsdfgdp', phone: 10, teacher: 't2', parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' },
-        ];
-        this.listTotal = this.list.length;
-        this.loadList = false;
-      },
-      getDetail(id){
-        this.detail = { name: 'k1sdfkjsdfgdp', phone: 10, parentName: 'skfjkdsf看视频低空飞过佛i给fig水平高奋斗过v佛光v就' };
-      },
-      deleteItem(id){
-        console.log('delete id:', id);
-      },
+      let res = await api.getCourseAppoinment(this.listConfig, this);
+      console.log('appoinment res: ', res);
+      res.data.forEach(v => v.time = `${v.appoinment_date}${v.appoinment_time}`);
+      
+      this.list = res.data ? res.data : [];
+      this.listTotal = res.pagination ? res.pagination.total : 0; 
+      this.loadList = false;
+    },
+    async getDetail(appoinment_id){
+      // let res = await api.getCourseAppoinment({ appoinment_id }, this);
+      
+      console.log('appoinment res: ', res);
+    },
+    async deleteAppoinment(appointment_id){
+      let res = await api.deleteCourseAppoinment({ appointment_id, }, this);
+      console.log('delete id:', id);
+      this.getList();
+    },
     sizeChange(val){
-      this.listConfig.search = val;
+      this.listConfig.limit = val;
       console.log('size change', this.listConfig);
+      this.getList();
     },
     pageChange(val){
-      this.listConfig.search = val;
+      this.listConfig.page = val;
       console.log('page change', this.listConfig);
+      this.getList();
     }
     
   }
