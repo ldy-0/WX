@@ -218,7 +218,7 @@ export let asyncRouterMapSeller = [
         import('@/views/memberList/index'),
       name: 'memberList',
       meta: {
-        title: '会员列表',
+        title: 'memberlist',
         noCache: true,
         icon: 'goods'
       }
@@ -315,31 +315,31 @@ export let asyncRouterMapSeller = [
       meta: { title: 'sellerAuth', icon: 'goods', noCache: true }
     }]
   },
-  {
-    path: '/food',
-    component: Layout,
-    redirect: '/food/index',
-    meta: { title: 'food', icon: 'goods', roles:'food'},
-    children: [
-    // {
-    //   path: 'goods',
-    //   component: () => import('@/views/food/goods'),
-    //   name: 'foodGoods',
-    //   meta: { title: 'goods', noCache: true }
-    // },
-    {
-      path: 'index',
-      component: () => import('@/views/food/desk'),
-      name: 'desk',
-      meta: { title: 'desk', noCache: true }
-    },
-    {
-      path: 'order',
-      component: () => import('@/views/food/orderList'),
-      name: 'foodOrder',
-      meta: { title: 'order', noCache: true }
-    }]
-  },
+  // {
+  //   path: '/food',
+  //   component: Layout,
+  //   redirect: '/food/index',
+  //   meta: { title: 'food', icon: 'goods', roles:'food'},
+  //   children: [
+  //   // {
+  //   //   path: 'goods',
+  //   //   component: () => import('@/views/food/goods'),
+  //   //   name: 'foodGoods',
+  //   //   meta: { title: 'goods', noCache: true }
+  //   // },
+  //   {
+  //     path: 'index',
+  //     component: () => import('@/views/food/desk'),
+  //     name: 'desk',
+  //     meta: { title: 'desk', noCache: true }
+  //   },
+  //   {
+  //     path: 'order',
+  //     component: () => import('@/views/food/orderList'),
+  //     name: 'foodOrder',
+  //     meta: { title: 'order', noCache: true }
+  //   }]
+  // },
   {
     path: '/signIn',
     component: Layout,

@@ -12,6 +12,7 @@ export default {
     vReturn: '虚拟退款',
 
     appointment: '预约',
+    memberlist: '数据列表',
     coupon: '优惠券',
 
     server: '运营',
@@ -33,12 +34,13 @@ export default {
     desk: '餐桌',
 
     // signIn
-    signIn: '签到列表',
+    // signIn: '签到列表',
+    signIn: '会员管理',
     signin: '签到列表',
     // course: '课程列表',
     // teacher: '老师列表',
     // student: '学生列表',
-    address: '教学点列表',
+    address: '门店列表',
     appointment: '预约列表',
     addGoods: '新增商品',
     editname: '名词修改',
