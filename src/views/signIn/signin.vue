@@ -230,8 +230,8 @@ export default {
       }
       console.log('signlist', res);
 
-      this.studentList = res.data;
-      this.studentTotal = res.pagination ? res.pagination.total : this.studentList.length;
+      this.studentList = res.data ? res.data : [];
+      this.studentTotal = res.pagination ? res.pagination.total : 0;
       this.loadStudent = false;
     },
     changeStudent(v){

@@ -750,8 +750,8 @@ async function getSignList(params, _this){
     methods: 'get',
     params,
   });
-
-  return res.error && res.error !== '未查询到数据' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : res.data.error === '查询成功' ? res.data : res; 
+console.log('res: ', res.error);
+  return res.error && res.error !== '查询成功' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : res.error === '查询成功' ? res : res; 
 }
 
 // appoinment
