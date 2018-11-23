@@ -585,8 +585,8 @@ async function getCourseStudent(params, _this){
     methods: 'get',
     params,
   });
-
-  return res.error !== '' ? res.data : res; 
+console.log('--course list --', res);
+  return res.error !== '' ? res : res; 
 }
 
 async function getFile(params, _this){

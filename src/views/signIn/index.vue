@@ -425,7 +425,7 @@ export default {
         });
       }
 
-      this.tableData = res.data;
+      this.tableData = res.data ? res.data : [];
       this.total = res.pagination ? res.pagination.total : 0;
       this.listLoading = false
     },

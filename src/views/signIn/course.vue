@@ -366,9 +366,9 @@ export default {
 
       // if(date.endStamp - date.startStamp > 24 * 3600000) return this.$message.error({ message: '' });
       let stamp = 24 * 3600000,
-          timeZone = 8 * 3600000;
-      console.log(date.endStamp - date.startStamp, stamp, date.startStamp % stamp);
-      if( date.endStamp - date.startStamp >= (stamp - timeZone - date.startStamp % stamp) )return this.$message.error({ message: '上课,下课时间必须在同一天以内!' });
+          timeZone = -(new Date().getTimezoneOffset()/60) * 3600000;
+      console.log(date.endStamp - date.startStamp, stamp, timeZone, date.startStamp % stamp, stamp - (timeZone + date.startStamp) % stamp );
+      if( date.endStamp - date.startStamp >= (stamp - (timeZone + date.startStamp) % stamp) )return this.$message.error({ message: '上课,下课时间必须在同一天以内!' });
 
       // sort
       for(var i = 0, len = dateList.length; i < len; i++){

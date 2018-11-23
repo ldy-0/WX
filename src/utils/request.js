@@ -53,7 +53,8 @@ service.interceptors.response.use(
       //   location.reload() // 为了重新实例化vue-router对象 避免bug
       // })
       // store.dispatch('FedLogOut')
-      return Promise.reject('request.js拦截响应 res.status == 1')
+      // return Promise.reject('request.js拦截响应 res.status == 1')
+      return response.data
     } else if(res&&res.status === 10){
         Message({
           message: res.error,
