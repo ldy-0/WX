@@ -46,11 +46,11 @@ service.interceptors.response.use(
     console.log('request.js', response)
     const res = response.data
     if (res && res.status === 1) {
-      Message({
-        message: res.error,
-        type: 'error',
-        duration: 5 * 1000
-      })
+      // Message({
+      //   message: res.error,
+      //   type: 'error',
+      //   duration: 5 * 1000
+      // })
       // store.dispatch('FedLogOut').then(() => {
       //   location.reload() // 为了重新实例化vue-router对象 避免bug
       // })
