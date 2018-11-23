@@ -344,7 +344,8 @@ import {
   getAnswerMember_api,
   getAnswerList_api,
   getSalerList,
-  setting
+  setting,
+  getSetting
 } from "@/api/libraryList";
 import uploadFn from "@/utils/aahbs";
 
@@ -393,8 +394,8 @@ export default {
       authList: [],
       authClassList: [
         { label: "签到", value: "class_sign", entitle: false },
-        { label: "分销", value: null, entitle: false },
-        { label: "分享", value: null, entitle: false }
+        { label: "分销", value: "distribution", entitle: true },
+        { label: "分享", value: "share", entitle: true }
       ],
       total: 0,
       gridData: [],
@@ -1167,12 +1168,24 @@ export default {
     showAuthorize(index, item) {
       this.isShowAuth = true;
       this.store_id = item.id;
-      console.log("item", item);
-      this.authClassList[0].entitle = false;
-      this.authClassList[1].entitle = false;
-      this.authClassList[2].entitle = false;
-      this.share_state = item.share_state;
-      this.distribution_state = item.distribution_state;
+      console.log(this.store_id);
+      let data = {
+        store_id: this.store_id
+      };
+      getSetting(data).then(res => {
+        console.log("res", res.data);
+        if (res.data.distribution_state == 2) {
+          this.authClassList[1].entitle = true;
+        } else {
+          this.authClassList[1].entitle = false;
+        }
+        if (res.data.share_state == 2) {
+          this.authClassList[2].entitle = true;
+        } else {
+          this.authClassList[2].entitle = false;
+        }
+      });
+
       this.getAuth();
     },
     hideAuth() {
@@ -1182,44 +1195,48 @@ export default {
       this.isShowAuth = false;
       console.log("change auth", this.authClassList);
       console.log(this.store_id);
-      let type;
+      let type_distribution = null;
+      let type_share = null;
       if (this.authClassList[1].entitle) {
-        type = "distribution";
+        type_distribution = "distribution";
       } else {
-        type = "notdistribution";
+        type_distribution = "notdistribution";
       }
       if (this.authClassList[2].entitle) {
-        type = "share";
+        type_share = "share";
       } else {
-        type = "notshare";
+        type_share = "notshare";
       }
       let data = {
         store_id: this.store_id,
-        type: type
+        type_distribution: type_distribution,
+        type_share: type_share
       };
       setting(data).then(res => {
-        console.log("res",res);
+        console.log("res", res);
         this.getList();
       });
       this.setAuth(
-        this.authClassList.map(v => `${v.value}|${Number(v.entitle)}`)
+        this.authClassList
+          .slice(0, 1)
+          .map(v => `${v.value}|${Number(v.entitle)}`)
       );
     },
     async getAuth() {
       let res = await api.getAuth({ store_id: this.store_id }, this);
-      if (!res.module_list) {
-        return this.authClassList.forEach(v => (v.entitle = false));
+      if (res != null) {
+        if (!res.module_list) {
+          return this.authClassList.forEach(v => (v.entitle = false));
+        }
+        res.module_list.forEach(v => {
+          let arr = v.split("|");
+          this.authClassList.some(
+            item =>
+              (item.entitle =
+                item.value === arr[0] && arr[1] == 1 ? true : false)
+          );
+        });
       }
-      res.module_list.forEach(v => {
-        let arr = v.split("|");
-        this.authClassList.some(
-          item =>
-            (item.entitle = item.value === arr[0] && arr[1] == 1 ? true : false)
-        );
-        this.authClassList[1].entitle =
-          this.distribution_state != 2 ? false : true;
-        this.authClassList[2].entitle = this.share_state != 2 ? false : true;
-      });
       console.log("get auth: ", this.authClassList);
     },
     async setAuth(module_list) {

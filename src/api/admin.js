@@ -327,7 +327,7 @@ async function setAuth(data, _this) {
     data
   })
 
-  return res.error !== '修改成功' ? _this.$message.error({ message: res.error }) : _this.$message.success({ message: '修改成功' })
+  return res.error !== '修改成功' ? null : _this.$message.success({ message: '修改成功' })
 }
 
 export default {

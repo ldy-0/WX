@@ -126,3 +126,11 @@ export function setting(data) {
         data
     })
 }
+
+export function getSetting(data) {
+    return request({
+        url: '/api/v1/admin/getsetting',
+        method: 'get',
+        params:data
+    })
+}
