@@ -89,7 +89,7 @@
 }
 
 .person_info_wrap {
-  height: 160rpx;
+  min-height: 160rpx;
   font: 28rpx PingFang-SC-Medium;
   color: #636363;
   background: #fff;
@@ -333,7 +333,7 @@
       <image src='../../images/img_1@2x.png' class='split_bar' />
       <repeat for='{{goodsList}}' index='index'  item='item'>
           <view class='product_info around'>
-              <image src="{{item.goods_image}}" />
+              <image src="{{item.goods_image}}" mode='aspectFill'/>
               <view class='product'>
                   <view class='product_title'>{{item.goods_name}}</view>
                   <view class='row'>
@@ -352,9 +352,7 @@
       <view class='bottom_bar'>
           <view class='sum row'>
               <view class='sum_number'>共计<text>{{goodsNum}}</text>件商品</view>
-              <view wx:if="{{listPriceSum>9999}}" class='sum_price'>合计：<text>¥{{listPriceSum}}</text></view>
-              <view else class='sum_price'>合计：<text>¥{{price}}</text></view>
-              <view  wx:if="{{listPriceSum>9999}}">需定金：<text>¥{{price}}</text></view>
+              <view class='sum_price'>合计：<text>¥{{price}}</text></view>
           </view>
           <view class='btn' @tap='bought()'>提交订单</view>
       </view>
@@ -398,8 +396,6 @@ export default class FirmOrder extends wepy.page {
     orderType: null,
     //判断是否点击了提交
     isclick: false,
-    //商品列表总价
-    listPriceSum: ""
   };
 
   components = {};
@@ -408,27 +404,20 @@ export default class FirmOrder extends wepy.page {
     this.isclick = false; //这里控制订单提交点击次数
     //进来就获取商城支付方式（固定）
     //下面判断商品来源
-    console.log("订单==》onload");
-    console.log(option);
     this.type = option.type;
     this.getDefaultAddress();
     if (option.type == "nocart") {
       let goods = JSON.parse(decodeURIComponent(option.goods));
       this.goodsList.push(goods);
-      console.log("直接购买商品");
-      console.log(this.goodsList);
-      // return
       this.ifcart = 0;
       let cartItem = "";
-      cartItem = goods.SKUList[0].goods_id + "|" + (goods.goods_num || 1);
+      cartItem = goods.goods_id + "|" + (goods.goods_num || 1);
       this.cart_id.push(cartItem);
       this.goodsNum = 1;
       this.orderType = goods.is_virtual;
     } else {
       this.ifcart = 1;
       this.goodsList = JSON.parse(decodeURIComponent(option.goods));
-      console.log("购物车商品");
-      console.log(this.goodsList);
       let cartItem = "";
       for (let i = 0; i < this.goodsList.length; i++) {
         cartItem =
@@ -445,19 +434,7 @@ export default class FirmOrder extends wepy.page {
       } else {
         this.goodsNum = calc.add(...numArr);
       }
-      // console.log(this.goodsNum)
-      // console.log("商品列表")
-      // console.log(this.goodsList)
-      console.log("购物车id列表");
-      console.log(this.cart_id);
     }
-    console.log("商品列表");
-    console.log(this.goodsList);
-    this.listPriceSum = this.goodsList.reduce(function(prev, cur, index, arr) {
-      console.log(prev, cur, index); //输出的是第一项的值或上一次叠加的结果，正在被处理的元素，正在被处理的元素的索引值
-      return Number(prev.goods_price) + Number(cur.goods_price);
-    });
-    console.log(this.listPriceSum); //输入数组本身和最后的结果
     this.$apply();
   }
 
@@ -483,7 +460,7 @@ export default class FirmOrder extends wepy.page {
       pay_name: "online",
       order_from: 2,
       pay_message: [],
-      ifcart: this.ifcart, //购物车填1，直接购买填0,
+      ifcart: this.ifcart //购物车填1，直接购买填0,
     };
     const res = await shttp
       .post("/api/v2/member/order")
@@ -535,10 +512,7 @@ export default class FirmOrder extends wepy.page {
   }
   async onShow() {
     this.isclick = false; //这里控制订单提交点击次数
-    console.log("show");
     let address = wx.getStorageSync("address");
-    console.log("本地地址");
-    console.log(address);
     if (address) {
       this.address = address;
       wx.removeStorageSync("address");
@@ -580,7 +554,7 @@ export default class FirmOrder extends wepy.page {
         cart_id: this.cart_id, //goods_id|num
         city_id: this.address.city_id,
         ifcart: this.ifcart, //购物车填1，直接购买填0
-        voucher_list: [],
+        voucher_list: []
       })
       .end();
     console.log("结算");

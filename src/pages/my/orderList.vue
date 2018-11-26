@@ -1,3 +1,8 @@
+<style>
+page {
+  background: #f7f7f7;
+}
+</style>
 <style scoped>
 .tips {
   width: 100%;
@@ -72,11 +77,13 @@
 }
 
 .title {
-  line-height: 68rpx;
-  padding-left: 30rpx;
-  color: #202020;
-  border-bottom: 1rpx solid #e5e5e5;
+  height: 56rpx;
+  line-height: 56rpx;
+  padding-right: 32rpx;
+  text-align: right;
+  color: #ffad10;
   background: #fff;
+  font-size: 28rpx;
 }
 
 .product_info {
@@ -84,13 +91,13 @@
   justify-content: space-around;
   align-items: center;
   width: 100%;
-  height: 250rpx;
-  background: #fff;
+  height: 280rpx;
+  background: #f7f7f7;
 }
 .product_info image {
-  width: 180rpx;
-  height: 180rpx;
-  background: gray;
+  width: 200rpx;
+  height: 200rpx;
+  margin-left: 26rpx;
 }
 .product_info .product {
   width: 500rpx;
@@ -105,11 +112,11 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
+  font-size: 28rpx;
 }
 .product_info .product .product_price {
-  font-size: 36rpx;
-  color: #ff4444;
-  padding-top: 20rpx;
+  font-size: 28rpx;
+  color: #e61717;
 }
 .product_info .product .product_address,
 .product_info .product .product_number {
@@ -214,155 +221,77 @@
 .container {
   font: 32rpx PingFang-SC-Medium;
   color: #000;
-  min-height: 100vh;
-  background: #f4f4f4;
+  padding-top: 80rpx;
+}
+.orderlist-topDiv {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+}
+.gray-f7f7f7 {
+  height: 12rpx;
+  background: #f7f7f7;
+}
+.orderlist-divfff {
+  height: 12rpx;
+  background: #ffffff;
 }
 </style>
 <template>
   <view class="container">
-    <tab :tabOption="tab" :nowindex.sync="nowindex" @tabitem.user="tabitem"></tab>
-    <view wx:if="{{orderList.length != 0}}">
-     <view class="waitView"  wx:if="{{isAll || nowindex==1 }}">
-      <view class='title' wx:if="{{waitPayList!=0}}" >待付款</view>
-        <view class="waitBody">
-          <repeat for='{{waitPayList}}' key="index" item="item">
-             <repeat for="{{item.order_goods}}" item='items'>
-            <view class='product_info'  @tap="goOrderDetail({{item.order_id}},{{item.payment_code}})">
-              <image src='{{items.goods_image}}' mode="aspectFill" />
-              <view class='product'>
-                  <view class='product_title'>{{items.goods_name}}</view>
-                  <view class='row'>
-                      <view class='product_price'>¥{{items.goods_price}}</view>
-                  </view>
-                  <view class='row'>
-                      <view class='product_standard'>规格：{{items.skuStr || "统一规格"}}</view>
-                      <view class='product_number'>×{{items.goods_num}}</view>
-                  </view>
-              </view>
-            </view>
-             </repeat>
-          <view class='price_info'>
-              <view>实付款</view>
-              <view>
-                  <text class='price'>¥{{item.order_amount}}</text>
-                  <text class='freight'>运费{{item.shipping_fee}}</text>
-              </view>
-          </view>
-          <view class='operate_info'>
-            <button  class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
-            <view @tap="payMoney({{item.pay_sn}})" >支付</view>
-             <view @tap="changeOrder('order_cancel',{{item.order_id}},{{item.pay_sn}})">取消订单</view>
-            
-          </view>
-     </repeat>
-      </view>
+    <view class="orderlist-topDiv">
+      <tab :tabOption="tab" :nowindex.sync="nowindex" @tabitem.user="tabitem"></tab>
     </view>
-    <view class="waitView"  wx:if="{{isAll || nowindex==2}}">
-      <view class='title'  wx:if="{{waitShipList!=0}}">待发货</view>
+    <view wx:if="{{orderList.length != 0}}">
         <view class="waitBody">
-          <repeat for="{{waitShipList}}" key="index" item="item">
-          <repeat for="{{item.order_goods}}" item='items'>
-            <view class='product_info' @tap="goOrderDetail({{item.order_id}},{{item.payment_code}})">
-              <image src='{{items.goods_image}}' mode="aspectFill" />
-              <view class='product'>
-                  <view class='product_title'>{{items.goods_name}}</view>
-                  <view class='row'>
-                      <view class='product_price'>¥{{items.goods_price}}</view>
-                  </view>
-                  <view class='row'>
-                      <view class='product_standard'>规格：{{items.skuStr || "统一规格"}}</view>
-                      <view class='product_number'>×{{items.goods_num}}</view>
-                  </view>
-              </view>
+      <repeat for="{{orderList}}" key="index" item="order">
+        <view class='title' wx:if="{{order.order_state_id==10}}">待付款</view>
+        <view class='title' wx:if="{{order.order_state_id==20}}">未发货</view>
+        <view class='title' wx:if="{{order.order_state_id==30}}">已发货</view>
+        <view class='title' wx:if="{{order.order_state_id==40}}">已完成</view>
+        <view @tap='goOrderDetail' data-index="{{index}}">
+          <repeat for="{{order.order_goods}}" item='items'>
+            <view class='product_info'>
+              
+              <image src='{{items.goods_image}}' mode="aspectFill"/>
+                <view class='product'>
+                    <view class='product_title'>{{items.goods_name}}</view>
+                    <view class='row'>
+                        <view class='product_price'>¥{{items.goods_price}}</view>
+                    </view>
+                    <view class='row'>
+                        <view class='product_standard'>规格：{{items.skuStr || "统一规格"}}</view>
+                        <view class='product_number'>×{{items.goods_num}}</view>
+                    </view>
+                </view>
+          
             </view>
           </repeat>
           <view class='price_info'>
               <view>实付款</view>
               <view>
-                  <text class='price'>¥{{item.order_amount}}</text>
-                  <text class='freight'>运费{{item.shipping_fee}}</text>
+                  <text class='price'>¥{{order.order_amount}}</text>
+                  <text class='freight'>运费{{order.shipping_fee}}</text>
               </view>
           </view>
-          <view class='operate_info'>
-            <button  class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
-            <!-- <view @tap="toReturnGood({{item}})">退货/换货</view> -->
-           
           </view>
+          <view class='operate_info'>
+          <button  class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
+          <view wx:if="{{order.order_state_id==10}}" @tap.stop="payMoney" data-pay="{{order.order_sn}}" data-index="{{index}}">支付</view>
+          <view wx:if="{{order.order_state_id==10}}" @tap.stop="orderCancel" data-id="{{order.order_id}}" data-paysn='{{order.pay_sn}}' data-index="{{index}}">取消订单</view>
+          <view wx:if="{{order.order_state_id==20||order.order_state_id==30}}" @tap.stop="salesReturn" data-order="{{order}}" data-id="{{order.order_id}}" data-index="{{index}}">退货/换货</view>
+          <view wx:if="{{order.order_state_id==30}}" @tap.stop="orderReceive" data-id="{{order.order_id}}" data-index="{{index}}">确认收货</view>
+          <view wx:if="{{order.order_state_id==40&&order.evaluation_state==0}}" @tap.stop="evaluate" data-order="{{order}}" data-id="{{order.order_id}}" data-index="{{index}}">评价</view>
+          <view wx:if="{{order.order_state_id==40}}" @tap.stop="orderDelete" data-id="{{order.order_id}}" data-index="{{index}}">删除订单</view>
+        </view>
         </repeat>
       </view>
-    </view>
-    <view class="waitView"  wx:if="{{isAll || nowindex==3}}">
-      <view class='title'  wx:if="{{waitReceiptList!=0}}">待收货</view>
-        <view class="waitBody">
-          <repeat for='{{waitReceiptList}}' item='item'>
-              <repeat for="{{item.order_goods}}" item='items'>
-            <view class='product_info'  @tap="goOrderDetail({{item.order_id}},{{item.payment_code}})">
-              <image src='{{items.goods_image}}' mode="aspectFill" />
-              <view class='product'>
-                  <view class='product_title'>{{items.goods_name}}</view>
-                  <view class='row'>
-                      <view class='product_price'>¥{{items.goods_price}}</view>
-                  </view>
-                  <view class='row'>
-                      <view class='product_standard'>规格：{{items.skuStr || "统一规格"}}</view>
-                      <view class='product_number'>×{{items.goods_num}}</view>
-                  </view>
-              </view>
-            </view>
-        </repeat>
-          <view class='price_info'>
-              <view>实付款</view>
-              <view>
-                  <text class='price'>¥{{item.order_amount}}</text>
-                  <text class='freight'>运费{{item.shipping_fee}}</text>
-              </view>
-          </view>
-          <view class='operate_info'>
-            <button  class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
-            <!-- <view @tap="toRefun()">退货/换货</view> -->
-              <view  @tap="changeOrder('order_receive',{{item.order_id}})">确认收货</view>
-            <!-- <view>查看物流</view> -->
-          </view>
-             </repeat>
-      </view>
-    </view>
-    <view class="waitView"  wx:if="{{isAll || nowindex==4}}">
-      <view class='title' wx:if="{{waitEvaluationList!=0}}">已完成</view>
-        <view class="waitBody">
-          <repeat for='{{waitEvaluationList}}' item='item'>
-              <repeat for="{{item.order_goods}}" item='items'>
-            <view class='product_info'  @tap="goOrderDetail({{item.order_id}},{{item.payment_code}})">
-              <image src='{{items.goods_image}}' mode="aspectFill" />
-              <view class='product'>
-                  <view class='product_title'>{{items.goods_name}}</view>
-                  <view class='row'>
-                      <view class='product_price'>¥{{items.goods_pay_price}}</view>
-                  </view>
-                  <view class='row'>
-                      <view class='product_standard'>规格：{{items.skuStr || "统一规格"}}</view>
-                      <view class='product_number'>×{{items.goods_num}}</view>
-                  </view>
-              </view>
-            </view>
-           </repeat>
-          <view class='price_info'>
-              <view>实付款</view>
-              <view>
-                  <text class='price'>¥{{item.order_amount}}</text>
-                  <text class='freight'>运费{{item.shipping_fee}}</text>
-              </view>
-          </view>
-          <view class='operate_info'>
-            <button  class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
-            <!-- <view @tap="toReturnGoods({{item}})">退货/换货</view>
-            <view @tap="toGoodsReviews({{item}})">评价</view> -->
-          </view>
-           </repeat>
-      </view>
-    </view>
+
   </view>
   <!--暂无数据显示-->
-    <placeholder :show.sync="is_empty" message="还没有相关的订单"></placeholder>
+    <placeholder :show.sync="is_empty" message="还没有相关的订单" wx:if='{{showa&&showb&&showc}}'></placeholder>
   </view>
 </template>
 <script>
@@ -372,231 +301,172 @@ import Placeholder from "../../components/placeholder";
 import { shttp } from "../../utils/http";
 export default class OrderList extends wepy.page {
   config = {
-    navigationBarTitleText: "我的订单"
+    navigationBarTitleText: "订单列表"
   };
   data = {
     tab: {
       tabList: ["全部", "待支付", "待发货", "待完成", "已完成"]
     },
-    //显示全部栏
-    isAll: true,
-    //显示哪一栏
     nowindex: Number,
-    //显示提示的
-    is_empty: false,
-    //订单列表
+    is_empty: true,
+    showa: true,
+    showb: true,
+    showc: true,
     orderList: [],
-    //待付款
-    waitPayList: [],
-    //待发货
-    waitShipList: [],
-    //待收货
-    waitReceiptList: [],
-    //待评价
-    waitEvaluationList: []
+    page: 1,
+    query: {},
+    changerType: null,
+    changerIndex: null,
+    cancel: false
   };
   components = {
     tab: Tab,
     placeholder: Placeholder
   };
   onLoad(options) {
+    if (options.choiceTab) {
+      this.nowindex = options.choiceTab;
+    } else {
+      this.nowindex = 0;
+    }
+  }
+  onShow() {
     wx.showLoading({
       title: "加载中"
     });
-    this.nowindex = options.choiceTab || 0;
-    console.log(this.nowindex);
-    //获取订单列表
-    //this.getOrderList();
+    this.showa = true;
+    this.showb = true;
+    this.showc = true;
+    this.cancel = false;
+    this.orderList = [];
+    this.page = 1;
+    this.query.page = this.page;
+    this.query.limit = 10;
+    delete this.query.order_state;
+    let e = Number(this.nowindex);
+    switch (e) {
+      case 0:
+        this.getList();
+        break;
+      case 1:
+        this.query.order_state = 10;
+        this.getList();
+        break;
+      case 2:
+        this.query.order_state = 20;
+        this.getList();
+        break;
+      case 3:
+        this.query.order_state = 30;
+        this.getList();
+        break;
+      case 4:
+        this.query.order_state = 40;
+        this.getList();
+        break;
+      default:
+        break;
+    }
     this.$apply();
   }
-  onShow() {
-    this.getOrderList();
-  }
   methods = {
-    //切换效果
     async tabitem(e) {
-      this.getOrderList();
+      wx.showLoading({
+        title: "加载中"
+      });
+      //订单状态：0:已取消 10:未付款 20:已付款 30:已发货 40:已收货 50：待评价
       this.nowindex = e;
-      console.log("nowindex" + e);
-      if (this.nowindex == 0) {
-        this.isAll = true;
-      } else {
-        this.isAll = false;
+      this.showa = true;
+      this.showb = true;
+      this.showc = true;
+      this.cancel = false;
+      this.unpaidOrder = [];
+      this.orderList = [];
+      this.page = 1;
+      this.query.page = this.page;
+      this.query.limit = 10;
+      delete this.query.order_state;
+      switch (e) {
+        case 0:
+          this.getList();
+          break;
+        case 1:
+          this.query.order_state = 10;
+          this.getList();
+          break;
+        case 2:
+          this.query.order_state = 20;
+          this.getList();
+          break;
+        case 3:
+          this.query.order_state = 30;
+          this.getList();
+          break;
+        case 4:
+          this.query.order_state = 40;
+          this.getList();
+          break;
+        default:
+          break;
       }
-      this.$apply();
     },
-    //去订单详情
-    goOrderDetail(id, payWay) {
+    goOrderDetail(e) {
+      let index = e.currentTarget.dataset.index;
       wx.navigateTo({
-        url: "/pages/store/orderdetail?orderId=" + id + "&payWay=" + payWay
-      });
-    },
-    //支付
-    payMoney(pay_sn) {
-      this.orderPay(pay_sn);
-    },
-    //改变订单状态
-    changeOrder(type, id, pay_sn) {
-      console.log(pay_sn);
-      //  return
-      let that = this;
-      wx.showModal({
-        title: "提示",
-        content: "确认操作吗？",
-        success: function(res) {
-          if (res.confirm) {
-            that.changeOrderState(type, id, pay_sn);
-          } else if (res.cancel) {
-            console.log("用户点击取消");
-          }
-        }
-      });
-    },
-    //评价
-    toGoodsReviews(list) {
-      let commitList = encodeURIComponent(JSON.stringify(list));
-      //return
-      wx.navigateTo({
-        url: "./goodsReviews?commitList=" + commitList
-      });
-    },
-    //退货换货
-    toReturnGoods(item) {
-      let goods = encodeURIComponent(JSON.stringify(item));
-      wx.navigateTo({
-        url: "../store/selectreturn?goods=" + goods
+        url:
+          "../../pages/store/orderdetail?orderId=" +
+          this.orderList[index].order_id
       });
     }
   };
-  //改变订单状态
-  async changeOrderState(type, id, pay_sn) {
-    console.log(this);
-    console.log("改变状态");
-    let that = this;
-    console.log(type, id);
-    let params = {
-      state_type: type,
-      pay_sn: pay_sn || ""
-    };
+  async getList() {
     const res = await shttp
-      .put("/api/v2/member/orderstate/" + id)
-      .send(params)
+      .get(`/api/v2/member/order`)
+      .query(this.query)
       .end();
-    if (res.status == 0) {
-      wx.showToast({
-        title: "操作成功",
-        icon: "success",
-        duration: 1000
-      });
-      setTimeout(function() {
-        that.getOrderList();
-      }, 1100);
-    }
-    console.log("状态返回");
-    console.log(res);
-  }
-  //获取订单列表
-  async getOrderList() {
-    wx.showLoading({
-      title: "加载中"
-    });
-    this.orderList = [];
-    const res = await shttp
-      .get("/api/v2/member/order")
-      .query({
-        page: 1,
-        limit: 10000
-      })
-      .end();
-    // console.log("订单列表")
-    // console.log(res.data)
-    let listObj = res.data;
-    if (!res.data) {
-      this.is_empty = true;
+    if (res.status === 0) {
       wx.hideLoading();
-      this.$apply();
-      return;
-    }
-    let { values } = Object;
-    for (let value of values(listObj)) {
-      this.orderList = this.orderList.concat(value);
-    }
-    this.arrClass(this.orderList);
-    //   console.log(this.orderList)
-  }
-  //分类订单数据
-  arrClass(arr) {
-    // 订单状态：0:已取消 10:未付款 12:部分支付 20:已付款 30:已发货 40:已收货
-    this.waitPayList = [];
-    this.waitShipList = [];
-    this.waitReceiptList = [];
-    this.waitEvaluationList = [];
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i].order_state_id == 10) {
-        //待付款
-        this.waitPayList.push(arr[i]);
-      } else if (arr[i].order_state_id == 20) {
-        //带发货
-        this.waitShipList.push(arr[i]);
-      } else if (arr[i].order_state_id == 30) {
-        //带收货
-        this.waitReceiptList.push(arr[i]);
-      } else if (arr[i].order_state_id == 40 && arr[i].evaluation_state == 0) {
-        //待评价
-        this.waitEvaluationList.push(arr[i]);
+      if (res.data != null && res.data.length != 0) {
+        this.showa = false;
+        this.orderList = this.orderList.concat(res.data);
       }
+    } else {
+      if (this.orderList.length != 0) {
+        this.showa = false;
+      }
+      wx.hideLoading();
     }
-    console.log(this.nowindex);
-    switch (this.nowindex) {
-      case 1:
-        if (this.waitPayList.length == 0) {
-          this.is_empty = true;
-        } else {
-          this.is_empty = false;
-        }
-        break;
-      case 2:
-        if (this.waitShipList.length == 0) {
-          this.is_empty = true;
-        } else {
-          this.is_empty = false;
-        }
-        break;
-      case 3:
-        if (this.waitReceiptList.length == 0) {
-          this.is_empty = true;
-        } else {
-          this.is_empty = false;
-        }
-        break;
-      case 4:
-        if (this.waitEvaluationList.length == 0) {
-          this.is_empty = true;
-        } else {
-          this.is_empty = false;
-        }
-        break;
-      default:
-        if (this.orderList.length == 0) {
-          this.is_empty = true;
-        } else {
-          this.is_empty = false;
-        }
-    }
-    wx.hideLoading();
-    //console.log(this)
     this.$apply();
   }
-  async orderPay(id) {
-    let pay_sn = id;
-    const res = await shttp.put("/api/v2/member/order/" + pay_sn).end();
+  //上拉加载
+  onReachBottom() {
+    this.page = this.page + 1;
+    this.query.page = this.page;
+    this.getList();
+
+    this.$apply();
+  }
+  //支付
+  async payMoney(e) {
+    let pay_sn = e.currentTarget.dataset.pay;
+    let index = e.currentTarget.dataset.index;
+    let send = {
+      pay_sn: pay_sn
+    };
+    const res = await shttp
+      .put("/api/v1/member/order")
+      .send(send)
+      .end();
     if (res.data) {
       wx.showToast({
         title: "支付申请中...",
         icon: "none",
         duration: 2000
       });
+      console.log(res);
       let order_id = res.data.order_id;
+      let pay_sn = res.data.pay_sn;
+      let that = this;
       wx.requestPayment({
         timeStamp: res.data.timeStamp,
         nonceStr: res.data.nonceStr,
@@ -604,9 +474,11 @@ export default class OrderList extends wepy.page {
         signType: "MD5",
         paySign: res.data.paySign,
         success: function(res) {
-          wx.reLaunch({
-            url: `../store/bought?id=${order_id}`
-          });
+          setTimeout(() => {
+            wx.reLaunch({
+              url: `/pages/store/bought?id=${order_id}`
+            });
+          }, 500);
         },
         fail: function(res) {
           wx.showToast({
@@ -615,6 +487,150 @@ export default class OrderList extends wepy.page {
             duration: 2000
           });
         }
+      });
+    }
+  }
+  //取消订单  1虚拟 //订单状态,order_cancel:取消订单,order_receive:收货,order_delete:删除订单
+  async orderCancel(e) {
+    this.changerIndex = e.currentTarget.dataset.index;
+    let send;
+    let pay_sn = e.currentTarget.dataset.paysn;
+    send = {
+      pay_sn: pay_sn,
+      state_type: "order_cancel"
+    };
+    let that = this;
+    wx.showModal({
+      title: "提示",
+      content: "是否取消订单",
+      success: function(res) {
+        if (res.confirm) {
+          that.changerOrder(send);
+        } else if (res.cancel) {
+          return;
+        }
+      }
+    });
+  }
+  //确认收货
+  async orderReceive(e) {
+    let order_id = e.currentTarget.dataset.id;
+    this.changerIndex = e.currentTarget.dataset.index;
+    let send;
+
+    send = {
+      order_id: order_id,
+      state_type: "order_receive"
+    };
+
+    let that = this;
+    wx.showModal({
+      title: "提示",
+      content: "是否确认收货",
+      success: function(res) {
+        if (res.confirm) {
+          that.changerOrder(send);
+        } else if (res.cancel) {
+          return;
+        }
+      }
+    });
+  }
+  //删除订单
+  async orderDelete(e) {
+    let order_id = e.currentTarget.dataset.id;
+    this.changerIndex = e.currentTarget.dataset.index;
+    let send;
+    send = {
+      order_id: order_id,
+      state_type: "order_delete"
+    };
+
+    let that = this;
+    wx.showModal({
+      title: "提示",
+      content: "是否删除订单",
+      success: function(res) {
+        if (res.confirm) {
+          that.changerOrder(send);
+        } else if (res.cancel) {
+          return;
+        }
+      }
+    });
+  }
+  //改变订单状态
+  async changerOrder(send) {
+    const res = await shttp
+      .put("/api/v1/member/orderstate")
+      .send(send)
+      .end();
+    if (res.status === 0) {
+      wx.showToast({
+        title: "操作成功",
+        duration: 1000
+      });
+      if (this.cancel) {
+        if (this.changerType == "1") {
+          this.vrorderList.splice(this.changerIndex, 1);
+        } else {
+          this.unpaidOrder.splice(this.changerIndex, 1);
+        }
+      } else {
+        if (this.changerType == "1") {
+          this.vrorderList.splice(this.changerIndex, 1);
+        } else {
+          this.orderList.splice(this.changerIndex, 1);
+        }
+      }
+
+      this.$apply();
+    } else {
+      wx.showToast({
+        title: res.error,
+        duration: 1000
+      });
+    }
+  }
+  godetile(e) {
+    let id = e.currentTarget.dataset.goodsid;
+    wx.navigateTo({
+      url: `../store/goodsDetails?goods_commonid=${id}`
+    });
+  }
+  //评价订单
+  evaluate(e) {
+    let order = e.currentTarget.dataset.order;
+    let type = e.currentTarget.dataset.type;
+    if (type == "1") {
+      wx.navigateTo({
+        url:
+          "/pages/my/evaluate?type=1&order=" +
+          encodeURIComponent(JSON.stringify(order))
+      });
+    } else {
+      wx.navigateTo({
+        url:
+          "/pages/my/evaluate?order=" +
+          encodeURIComponent(JSON.stringify(order))
+      });
+    }
+  }
+  //退款/退货
+  salesReturn(e) {
+    let order = e.currentTarget.dataset.order;
+    let type = e.currentTarget.dataset.type;
+    if (type == "1") {
+      wx.navigateTo({
+        url:
+          "/pages/my/salesReturn?type=1&order=" +
+          encodeURIComponent(JSON.stringify(order))
+      });
+    } else {
+      wx.navigateTo({
+        url:
+          "/pages/my/salesReturn?order=" +
+          encodeURIComponent(JSON.stringify(order))
       });
     }
   }

@@ -99,7 +99,7 @@
 }
 
 .address {
-  height: 171rpx;
+  min-height: 171rpx;
   padding: 25rpx 25rpx 0;
   border-top: 1rpx solid #f4f4f4;
   background: #fff;
