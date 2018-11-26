@@ -2,19 +2,19 @@
 
       <swiper class="slide" 
               :style='{ height: config.height || "476rpx", }'
-              :indicator-active-color="config.indicatorActiveColor || '#fff'" 
-              :autoplay="config.autoplay === undefined || 'true'"> 
-            <!-- indicator-dots="{{config.indicatorDots === undefined ? 'true' : config.indicatorDots}}" -->
+              :indicator-active-color="config.activeColor || '#fff'" 
+              :autoplay="config.autoplay === undefined || 'true'"
+              :indicator-dots="config.showDot || true"
+              :circular="config.circular || false">
             <!-- interval="{{config.interval === undefined ? 3000 : config.interval }}"  -->
             <!-- duration="{{config.duration === undefined ? 1000 : config.duration }}"   -->
-            <!-- circular="{{config.circular === undefined ? 'true' : config.circular}}"> -->
 
         <block>
           <swiper-item v-for="(item, index) in config.data" :key='index'>
 
             <image :src="item.img" 
                    class="slider_img" 
-                   @click="click(item)" 
+                   @click="click(item, config.data)" 
                    mode='aspectFill' />
 
           </swiper-item>
@@ -40,8 +40,8 @@ export default {
   },
 
   methods: {
-    click (item) {
-      this.$emit('go', item)
+    click (item, data) {
+      this.$emit('go', item, data)
       console.log('emit click event', this.config)
     }
   }
