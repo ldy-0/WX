@@ -225,106 +225,41 @@
   <view class="container">
     <tab :tabOption="tab" :nowindex.sync="nowindex" @tabitem.user="tabitem"></tab>
     <view wx:if="{{orderList.length != 0}}">
-    <!-- <view class="waitView"  wx:if="{{isAll || nowindex==1}}">
-      <view class='title' wx:if="{{waitAcceptList!=0}}">待验收退货</view>
-      <repeat for='{{waitAcceptList}}' index='index' item='item'>
-        <view class="waitBody" >
-          <repeat for='{{item.order_goods}}' item='items'>
-            <view class='product_info' @tap="toDetail({{item}})">
-              <image src='{{items.goods_image}}'  />
-              <view class='product'>
-                  <view class='product_title'>{{items.goods_name}}</view>
-                  <view class='row'>
-                      <view class='product_price'>¥{{items.goods_price}}</view>
+      <view class="waitView">
+        <repeat for="{{orderList}}" index="index" item="item">
+          <view class="title">{{item.order_state}}</view>
+          <view class="waitBody">
+            <repeat for="{{item.order_goods}}" item="items">
+              <view class="product_info" @tap="toDetail({{item}})">
+                <image src="{{items.goods_image}}" mode="aspectFill"/>
+                <view class="product">
+                  <view class="product_title">{{items.goods_name}}</view>
+                  <view class="row">
+                    <view class="product_price">¥{{items.goods_price}}</view>
                   </view>
-                  <view class='row'>
-                      <view class='product_standard'>规格：{{items.skuStr || '统一规格'}}</view>
-                      <view class='product_number'>×{{items.goods_num}}</view>
+                  <view class="row">
+                    <view class="product_standard">规格：{{items.goods_spec ||"统一规格"}}</view>
+                    <view class="product_number">×{{items.goods_num}}</view>
                   </view>
+                </view>
               </view>
-            </view>
-          </repeat>
-          <view class='price_info'>
+            </repeat>
+            <view class="price_info">
               <view>实付款</view>
               <view>
-                  <text class='price'>¥{{item.order_amount}}</text>
-                  <text class='freight'>运费{{item.shipping_fee}}</text>
-              </view>
-          </view>
-          <view class='operate_info'>
-            <button  class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
-            <view @tap="cancelReturn({{item.refund_id}})">取消退货</view>
-          </view>
-      </view>
-      </repeat>
-    </view> -->
-     <view class="waitView"  wx:if="{{ isAll ||nowindex==2}}">
-      <view class='title' wx:if="{{waitMoneyList!=0}}">待退款</view>
-      <repeat for='{{waitMoneyList}}' index='index' item='item'>
-        <view class="waitBody">
-          <repeat for='{{item.order_goods}}' item='items'>
-            <view class='product_info'  @tap="toDetail({{item}})">
-              <image src='{{items.goods_image}}' />
-              <view class='product'>
-                  <view class='product_title'>{{items.goods_name}}</view>
-                  <view class='row'>
-                      <view class='product_price'>¥{{items.goods_price}}</view>
-                  </view>
-                  <view class='row'>
-                      <view class='product_standard'>规格：{{items.skuStr ||"统一规格"}}</view>
-                      <view class='product_number'>×{{items.goods_num}}</view>
-                  </view>
+                <text class="price">¥{{item.order_amount}}</text>
+                <text class="freight">运费{{item.shipping_fee}}</text>
               </view>
             </view>
-          </repeat>
-          <view class='price_info'>
-              <view>实付款</view>
-              <view>
-                  <text class='price'>¥{{item.order_amount}}</text>
-                  <text class='freight'>运费{{item.shipping_fee}}</text>
-              </view>
+            <view class="operate_info">
+              <button class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
+              <view wx:if="{{item.order_state=='待退款'||item.order_state=='待退货'}}" @tap="cancelReturn({{item.refund_id}})">取消</view>
+            </view>
           </view>
-          <view class='operate_info'>
-            <button  class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
-             <view @tap="cancelReturn({{item.refund_id}})">取消退货</view>
-          </view>
+        </repeat>
       </view>
-      </repeat>
     </view>
-     <view class="waitView"  wx:if="{{isAll ||nowindex==3}}" >
-      <view class='title' wx:if="{{isOkList!=0}}">已完成</view>
-      <repeat for='{{isOkList}}' index='index' item='item'>
-        <view class="waitBody"  >
-          <repeat for='{{item.order_goods}}' item='items'>
-            <view class='product_info' @tap="toDetail({{item}})">
-              <image src='{{items.goods_image}}'  />
-              <view class='product'>
-                  <view class='product_title'>{{items.goods_name}}</view>
-                  <view class='row'>
-                      <view class='product_price'>¥{{items.goods_price}}</view>
-                  </view>
-                  <view class='row'>
-                      <view class='product_standard'>规格：{{items.skuStr || "统一规格"}}</view>
-                      <view class='product_number'>×{{items.goods_num}}</view>
-                  </view>
-              </view>
-            </view>
-          </repeat>
-          <view class='price_info'>
-              <view>实付款</view>
-              <view>
-                  <text class='price'>¥{{item.order_amount}}</text>
-                  <text class='freight'>运费{{item.shipping_fee}}</text>
-              </view>
-          </view>
-          <view class='operate_info'>
-            <button  class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
-          </view>
-      </view>
-      </repeat>
-    </view>
-  </view>
-  <!--暂无数据显示-->
+    <!--暂无数据显示-->
     <placeholder :show.sync="is_empty" message="还没有相关的订单"></placeholder>
   </view>
 </template>
@@ -362,8 +297,6 @@ export default class Aftersale extends wepy.page {
   };
   onLoad(options) {
     this.nowindex = 0;
-    // console.log(this.nowindex);
-    //获取售后订单列表
     this.getOrderList();
     this.$apply();
   }
@@ -371,14 +304,9 @@ export default class Aftersale extends wepy.page {
   methods = {
     //切换效果
     async tabitem(e) {
-      this.getOrderList();
       this.nowindex = e;
-      console.log("nowindex" + e);
-      if (this.nowindex == 0) {
-        this.isAll = true;
-      } else {
-        this.isAll = false;
-      }
+      console.log(this.nowindex, "this.nowindex");
+      this.getOrderList();
       this.$apply();
     },
     //取消退货
@@ -386,7 +314,7 @@ export default class Aftersale extends wepy.page {
       let that = this;
       wx.showModal({
         title: "提示",
-        content: "是否取消退货？",
+        content: "是否取消？",
         success: function(res) {
           if (res.confirm) {
             that.cancelToReturn(id);
@@ -399,45 +327,15 @@ export default class Aftersale extends wepy.page {
     //去订单详情
     toDetail(item) {
       console.log(item);
-      this.getOrderInfo(item.refund_id);
+       wx.navigateTo({
+          url: "../store/retundGoodDetail?refund_id=" +item.refund_id
+        });
     }
   };
-  //去对应的详情页面
-  async getOrderInfo(id) {
-    wx.showLoading({
-      title: "加载中"
-    });
-    const res = await shttp
-      .get("/api/v1/member/refundreturn")
-      .query({
-        refund_id: id
-      })
-      .end();
-    console.log(res);
-
-    if (res.status == 0) {
-      let orderDetail = res.data;
-      if (orderDetail.invoice_no) {
-        wx.navigateTo({
-          url: "../store/retundGoodDetail?refund_id=" + orderDetail.refund_id
-        });
-      } else {
-        wx.navigateTo({
-          url: "../store/refundDetail?refund_id=" + orderDetail.refund_id
-        });
-      }
-    }
-    wx.hideLoading();
-  }
   //取消退款退货
   async cancelToReturn(id) {
     let that = this;
-    const res = await shttp
-      .put("/api/v1/member/refundreturn")
-      .query({
-        refund_id: id
-      })
-      .end();
+    const res = await shttp.put(`/api/v2/member/refundreturn/${id}`).end();
     console.log(res);
     if (res.status == 0) {
       wx.showToast({
@@ -448,81 +346,67 @@ export default class Aftersale extends wepy.page {
       setTimeout(function() {
         that.getOrderList();
       }, 1100);
+    } else if (res.status == 1) {
+      return wx.showToast({
+        title: res.error,
+        icon: "none",
+        duration: 2000
+      });
+    } else {
+      return wx.showToast({
+        title: "取消失败",
+        icon: "none",
+        duration: 2000
+      });
     }
   }
   //获取订单列表
   async getOrderList() {
+    let query = {
+      refund_state: 0
+    };
+    console.log(this.nowindex);
+    if (this.nowindex == 0) {
+      query = {};
+    } else if (this.nowindex == 1) {
+      query = {
+        refund_state: 1
+      };
+    } else if (this.nowindex == 2) {
+      query = {
+        refund_state: 2
+      };
+    }
+
     wx.showLoading({
       title: "加载中"
     });
     const res = await shttp
-      .get("/api/v1/member/refundreturn")
-      .query({})
+      .get("/api/v2/member/refundreturn")
+      .query(query)
       .end();
     console.log("订单列表");
     if (res.status == 0) {
       wx.hideLoading();
-      this.orderList = res.data;
-      if (this.orderList) {
-        this.arrClass(this.orderList);
-      } else {
+      if(res.data){
+        this.orderList = res.data;
+        if (this.orderList.length == 0) {
+            this.is_empty = true;
+          } else {
+            this.is_empty = false;
+        }
+      }else {
+        this.orderList=[]
         this.is_empty = true;
       }
+      
+     
     } else {
+      this.is_empty = true
       wx.hideLoading();
     }
     this.$apply();
     // console.log(res.data);
-  }
-  //分类订单数据
-  arrClass(arr) {
-    // 订单状态：0:已取消 10:未付款 12:部分支付 20:已付款 30:已发货 40:已收货
-    this.waitAcceptList = [];
-    this.waitMoneyList = [];
-    this.isOkList = [];
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i].order_state == "待退款") {
-        this.waitMoneyList.push(arr[i]);
-      } else if (arr[i].order_state == "待退货") {
-        this.waitAcceptList.push(arr[i]);
-      } else if (arr[i].order_state == "已完成") {
-        this.isOkList.push(arr[i]);
-      }
-    }
-    console.log(this.nowindex);
-    switch (this.nowindex) {
-      case 1:
-        if (this.waitAcceptList.length == 0) {
-          this.is_empty = true;
-        } else {
-          this.is_empty = false;
-        }
-        break;
-      case 2:
-        if (this.waitMoneyList.length == 0) {
-          this.is_empty = true;
-        } else {
-          this.is_empty = false;
-        }
-        break;
-      case 3:
-        if (this.isOkList.length == 0) {
-          this.is_empty = true;
-        } else {
-          this.is_empty = false;
-        }
-        break;
-      default:
-        if (this.orderList.length == 0) {
-          this.is_empty = true;
-        } else {
-          this.is_empty = false;
-        }
-    }
-    //console.log(this.is_empty);
-
-    //console.log(this)
-    this.$apply();
   }
 }
 </script>

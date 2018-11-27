@@ -417,6 +417,32 @@
   padding-left: 20rpx;
   text-decoration: line-through;
 }
+.comment {
+  padding: 20rpx;
+  font-size: 28rpx;
+  color: #000;
+  background: #fff;
+}
+.comment .more_btn {
+  width: 180rpx;
+  line-height: 50rpx;
+  height: 50rpx;
+  margin: 0rpx auto;
+  color: #ff7900;
+  border-radius: 25rpx;
+  text-align: center;
+  border: 1rpx solid #ff7900;
+}
+.comment .item .user {
+  display: flex;
+  align-items: center;
+}
+.comment .item .head {
+  margin: 24rpx 20rpx 20rpx 0;
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;
+}
 </style>
 
 <template>
@@ -478,6 +504,15 @@
             <view>规格 {{goods.standard}}</view>
             <image src='../../images/icon_zuojiantou@2x.png' />
         </view>
+        <view class='comment' wx:if="{{comment.data[0]}}">
+              <view>宝贝评价({{comment.pagination.total}})</view>
+              <view class='item'>
+                  <view class='user'><image src="{{comment.data[0].geval_frommemberavatar}}" class='head' />{{comment.data[0].geval_frommembername}}</view>
+                  <view>{{comment.data[0].geval_content}}</view>
+                  <!-- <view>一件十盒 送无纺布</view> -->
+              </view>
+              <view class='more_btn' @tap="goComment" data-goodid="{{goods.SKUList[0].goods_id}}">查看评论</view>
+          </view>
           <view class='detail'>
               <view class='detail_title'>商品详情</view>
               <repeat for='{{goodsimgList}}' item='item' >
@@ -547,7 +582,8 @@ export default class GoodsDetails extends wepy.page {
     //商品详情
     goods: {},
     //商品详情图片列表
-    goodsimgList: []
+    goodsimgList: [],
+     comment: null,
   };
 
   computed = {
@@ -679,7 +715,7 @@ export default class GoodsDetails extends wepy.page {
     }
     console.log("普通商品详情");
     console.log(this.goods.goodsimagesList);
-
+    this.getComment();
     wx.hideLoading();
     this.$apply();
   }
@@ -715,6 +751,33 @@ export default class GoodsDetails extends wepy.page {
         duration: 1000
       });
     }
+    this.$apply();
+  }
+    //商品评论
+  async getComment() {
+    let send;
+      send = {
+        goods_id: this.goods.SKUList[0].goods_id,
+        goods_type: "real",
+        page: 1,
+        limit: 3
+      };
+    const res = await shttp
+      .get(`/api/v2/member/goodsevaluate`)
+      .query(send)
+      .end();
+    this.comment = res;
+    this.$apply();
+  }
+  //评论列表
+  goComment(e) {
+    let id = e.currentTarget.dataset.goodid;
+    let virtual = this.goods.is_virtual;
+    let appoint = this.goods.is_appoint;
+    console.log(id);
+    wx.navigateTo({
+      url: `commentList?goodsId=${id}&virtual=${virtual}&appoint=${appoint}`
+    });
     this.$apply();
   }
   onUnload() {}

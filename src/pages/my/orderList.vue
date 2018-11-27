@@ -245,53 +245,83 @@ page {
       <tab :tabOption="tab" :nowindex.sync="nowindex" @tabitem.user="tabitem"></tab>
     </view>
     <view wx:if="{{orderList.length != 0}}">
-        <view class="waitBody">
-      <repeat for="{{orderList}}" key="index" item="order">
-        <view class='title' wx:if="{{order.order_state_id==10}}">待付款</view>
-        <view class='title' wx:if="{{order.order_state_id==20}}">未发货</view>
-        <view class='title' wx:if="{{order.order_state_id==30}}">已发货</view>
-        <view class='title' wx:if="{{order.order_state_id==40}}">已完成</view>
-        <view @tap='goOrderDetail' data-index="{{index}}">
-          <repeat for="{{order.order_goods}}" item='items'>
-            <view class='product_info'>
-              
-              <image src='{{items.goods_image}}' mode="aspectFill"/>
-                <view class='product'>
-                    <view class='product_title'>{{items.goods_name}}</view>
-                    <view class='row'>
-                        <view class='product_price'>¥{{items.goods_price}}</view>
-                    </view>
-                    <view class='row'>
-                        <view class='product_standard'>规格：{{items.skuStr || "统一规格"}}</view>
-                        <view class='product_number'>×{{items.goods_num}}</view>
-                    </view>
+      <view class="waitBody">
+        <repeat for="{{orderList}}" key="index" item="order">
+          <view class="title" wx:if="{{order.order_state_id==10}}">待付款</view>
+          <view class="title" wx:if="{{order.order_state_id==20}}">未发货</view>
+          <view class="title" wx:if="{{order.order_state_id==30}}">已发货</view>
+          <view class="title" wx:if="{{order.order_state_id==40}}">已完成</view>
+          <view @tap="goOrderDetail" data-index="{{index}}">
+            <repeat for="{{order.order_goods}}" item="items">
+              <view class="product_info">
+                <image src="{{items.goods_image}}" mode="aspectFill" />
+                <view class="product">
+                  <view class="product_title">{{items.goods_name}}</view>
+                  <view class="row">
+                    <view class="product_price">¥{{items.goods_price}}</view>
+                  </view>
+                  <view class="row">
+                    <view class="product_standard">规格：{{items.goods_spec || "统一规格"}}</view>
+                    <view class="product_number">×{{items.goods_num}}</view>
+                  </view>
                 </view>
-          
-            </view>
-          </repeat>
-          <view class='price_info'>
+              </view>
+            </repeat>
+            <view class="price_info">
               <view>实付款</view>
               <view>
-                  <text class='price'>¥{{order.order_amount}}</text>
-                  <text class='freight'>运费{{order.shipping_fee}}</text>
+                <text class="price">¥{{order.order_amount}}</text>
+                <text class="freight">运费{{order.shipping_fee}}</text>
               </view>
+            </view>
           </view>
+          <view class="operate_info">
+            <button class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
+            <view
+              wx:if="{{order.order_state_id==10}}"
+              @tap.stop="payMoney"
+              data-pay="{{order.pay_sn}}"
+              data-index="{{index}}"
+            >支付</view>
+            <view
+              wx:if="{{order.order_state_id==10}}"
+              @tap.stop="orderCancel"
+              data-id="{{order.order_id}}"
+              data-paysn="{{order.pay_sn}}"
+              data-index="{{index}}"
+            >取消订单</view>
+            <view
+              wx:if="{{order.order_state_id==20||order.order_state_id==30}}"
+              @tap.stop="salesReturn"
+              data-order="{{order}}"
+              data-id="{{order.order_id}}"
+              data-index="{{index}}"
+            >退货/换货</view>
+            <view
+              wx:if="{{order.order_state_id==30}}"
+              @tap.stop="orderReceive"
+              data-id="{{order.order_id}}"
+              data-index="{{index}}"
+            >确认收货</view>
+            <view
+              wx:if="{{order.order_state_id==40&&order.evaluation_state==0}}"
+              @tap.stop="evaluate"
+              data-order="{{order}}"
+              data-id="{{order.order_id}}"
+              data-index="{{index}}"
+            >评价</view>
+            <view
+              wx:if="{{order.order_state_id==40}}"
+              @tap.stop="orderDelete"
+              data-id="{{order.order_id}}"
+              data-index="{{index}}"
+            >删除订单</view>
           </view>
-          <view class='operate_info'>
-          <button  class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
-          <view wx:if="{{order.order_state_id==10}}" @tap.stop="payMoney" data-pay="{{order.order_sn}}" data-index="{{index}}">支付</view>
-          <view wx:if="{{order.order_state_id==10}}" @tap.stop="orderCancel" data-id="{{order.order_id}}" data-paysn='{{order.pay_sn}}' data-index="{{index}}">取消订单</view>
-          <view wx:if="{{order.order_state_id==20||order.order_state_id==30}}" @tap.stop="salesReturn" data-order="{{order}}" data-id="{{order.order_id}}" data-index="{{index}}">退货/换货</view>
-          <view wx:if="{{order.order_state_id==30}}" @tap.stop="orderReceive" data-id="{{order.order_id}}" data-index="{{index}}">确认收货</view>
-          <view wx:if="{{order.order_state_id==40&&order.evaluation_state==0}}" @tap.stop="evaluate" data-order="{{order}}" data-id="{{order.order_id}}" data-index="{{index}}">评价</view>
-          <view wx:if="{{order.order_state_id==40}}" @tap.stop="orderDelete" data-id="{{order.order_id}}" data-index="{{index}}">删除订单</view>
-        </view>
         </repeat>
       </view>
-
-  </view>
-  <!--暂无数据显示-->
-    <placeholder :show.sync="is_empty" message="还没有相关的订单" wx:if='{{showa&&showb&&showc}}'></placeholder>
+    </view>
+    <!--暂无数据显示-->
+    <placeholder :show.sync="is_empty" message="还没有相关的订单" wx:if="{{showa&&showb&&showc}}"></placeholder>
   </view>
 </template>
 <script>
@@ -453,10 +483,7 @@ export default class OrderList extends wepy.page {
     let send = {
       pay_sn: pay_sn
     };
-    const res = await shttp
-      .put("/api/v1/member/order")
-      .send(send)
-      .end();
+    const res = await shttp.put(`/api/v2/member/order/${pay_sn}`).end();
     if (res.data) {
       wx.showToast({
         title: "支付申请中...",
@@ -487,6 +514,12 @@ export default class OrderList extends wepy.page {
             duration: 2000
           });
         }
+      });
+    } else if (res.status == 1) {
+      wx.showToast({
+        title: res.error,
+        icon: "none",
+        duration: 2000
       });
     }
   }
@@ -562,7 +595,7 @@ export default class OrderList extends wepy.page {
   //改变订单状态
   async changerOrder(send) {
     const res = await shttp
-      .put("/api/v1/member/orderstate")
+      .put(`/api/v2/member/orderstate/${send.order_id}`)
       .send(send)
       .end();
     if (res.status === 0) {
@@ -605,13 +638,13 @@ export default class OrderList extends wepy.page {
     if (type == "1") {
       wx.navigateTo({
         url:
-          "/pages/my/evaluate?type=1&order=" +
+          "/pages/my/goodsReviews?type=1&commitList=" +
           encodeURIComponent(JSON.stringify(order))
       });
     } else {
       wx.navigateTo({
         url:
-          "/pages/my/evaluate?order=" +
+          "/pages/my/goodsReviews?commitList=" +
           encodeURIComponent(JSON.stringify(order))
       });
     }
@@ -623,13 +656,13 @@ export default class OrderList extends wepy.page {
     if (type == "1") {
       wx.navigateTo({
         url:
-          "/pages/my/salesReturn?type=1&order=" +
+          "/pages/store/selectreturn?goods=" +
           encodeURIComponent(JSON.stringify(order))
       });
     } else {
       wx.navigateTo({
         url:
-          "/pages/my/salesReturn?order=" +
+          "/pages/store/selectreturn?goods=" +
           encodeURIComponent(JSON.stringify(order))
       });
     }

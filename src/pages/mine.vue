@@ -208,9 +208,9 @@
               <image src='../images/weiwancheng@2x.png' />
               <view>待完成</view>
           </navigator>
-          <navigator class='column_around' url='/pages/my/orderList?choiceTab=4'>
+          <navigator class='column_around' url='/pages/my/aftersale'>
               <image src='../images/icon_wancheng@2x.png' />
-              <view>已完成</view>
+              <view>售后</view>
           </navigator>
       </view>
       <view class="wire-gray"></view>

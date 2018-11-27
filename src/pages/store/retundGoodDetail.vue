@@ -242,8 +242,7 @@
 
 <template>
   <view class="container">
-
-      <!-- <view class='title backaddr'>退货寄回地址</view>
+    <!-- <view class='title backaddr'>退货寄回地址</view>
 
       <view class='person_info_wrap around'>
           <image class="icon_diwei" src='../../images/icon_dingwei@2x.png' />
@@ -254,53 +253,46 @@
               </view>
               <view>收货地址：{{orderDetail.addressDetails}}</view>
           </view>
-      </view> -->
-
-      <view class='title'>{{orderDetail.refund_state}}</view>
-      <repeat for="{{orderDetail.order_goods}}" key="index" index="index" item="item">
-      <view class='product_info around'>
-          <image src='{{item.goods_image}}'/>
-          <view class='product'>
-              <view class='product_title'>{{item.goods_name}}</view>
-              <view class='row'>
-                  <view class='product_price'>¥{{item.goods_price}}</view>
-                  <!-- <view class='product_address'>福建福州</view> -->
-              </view>
-              <view class='row'>
-                  <view class='product_standard'>规格：{{item.spec_value|| '统一规格'}}</view>
-                  <view class='product_number'>×{{item.goods_num}}</view>
-              </view>
+    </view>-->
+    <view class="title">{{orderDetail.order_state}}</view>
+    <repeat for="{{orderDetail.order_goods}}" key="index" index="index" item="item">
+      <view class="product_info around">
+        <image src="{{item.goods_image}}" mode="aspectFill"/>
+        <view class="product">
+          <view class="product_title">{{item.goods_name}}</view>
+          <view class="row">
+            <view class="product_price">¥{{item.goods_price}}</view>
+            <!-- <view class='product_address'>福建福州</view> -->
           </view>
+          <view class="row">
+            <view class="product_standard">规格：{{item.goods_spec|| '统一规格'}}</view>
+            <view class="product_number">×{{item.goods_num}}</view>
+          </view>
+        </view>
       </view>
     </repeat>
-     <view class='single_row row' >
-          <view>退款原因</view>
-          <view class='description'>{{orderDetail.reason_info}}</view>
-      </view>
+    <view class="split_line_row row">
+      <view>退款金额</view>
+      <view class="price">{{orderDetail.order_amount}}</view>
+    </view>
 
-      <view class='split_line_row row'>
-          <view>退款金额</view>
-          <view class='price'>{{orderDetail.order_amount}}</view>
-      </view>
-
-      <view class='split_line_row row'>
-          <view>退货说明</view>
-          <view class='description row'>{{orderDetail.buyer_message}}</view>
-      </view>
-      <view class='split_line_row row'>
-          <view>物流公司</view>
-          <view class='description row'>{{orderDetail.express_name}}</view>
-      </view>
-      <view class='split_line_row row'>
-          <view>物流单号</view>
-          <view class='description'>{{orderDetail.invoice_no}}</view>
-      </view>
-      <view class='bottom_bar'>
-          <!-- <navigator class='btn' url='./select'>填写物流单号</navigator> -->
-           <button  class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
-          <!-- <view class='btn'>查看物流</view> -->
-      </view>
-
+    <view class="split_line_row row">
+      <view>退货/退款说明</view>
+      <view class="description row">{{orderDetail.buyer_message}}</view>
+    </view>
+    <view class="split_line_row row" wx:if='{{orderDetail.express_name}}'>
+      <view>物流公司</view>
+      <view class="description row">{{orderDetail.express_name}}</view>
+    </view>
+    <view class="split_line_row row" wx:if='{{orderDetail.invoice_no}}'>
+      <view>物流单号</view>
+      <view class="description">{{orderDetail.invoice_no}}</view>
+    </view>
+    <view class="bottom_bar">
+      <!-- <navigator class='btn' url='./select'>填写物流单号</navigator> -->
+      <button class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
+      <!-- <view class='btn'>查看物流</view> -->
+    </view>
   </view>
 </template>
 
@@ -313,7 +305,7 @@ export default class ReturnGoodsDetail extends wepy.page {
   };
   data = {
     //订单商品详情
-    orderDetail: {}
+    orderDetail: {},
   };
 
   computed = {};
@@ -328,11 +320,8 @@ export default class ReturnGoodsDetail extends wepy.page {
   }
   async getOrderInfo(id) {
     const res = await shttp
-      .get("/api/v1/member/refundreturn")
-      .query({
-        refund_id: id,
-        refund_type: 2
-      })
+      .get(`/api/v2/member/refundreturn/${id}`)
+    
       .end();
     console.log(res);
     if (res.status == 0) {

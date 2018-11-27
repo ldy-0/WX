@@ -182,7 +182,7 @@
 
       <repeat for="{{orderDetail.order_goods}}" key="index" index="index" item="item">
       <view class='product_info around'>
-          <image  src='{{item.goods_image}}'/>
+          <image  src='{{item.goods_image}}' mode="aspectFill"/>
           <view class='product'>
               <view class='product_title'>{{item.goods_name}}</view>
               <view class='row'>
@@ -190,7 +190,7 @@
                   <!-- <view class='product_address'>福建福州</view> -->
               </view>
               <view class='row'>
-                  <view class='product_standard'>规格：{{item.spec_value|| '统一规格'}}</view>
+                  <view class='product_standard'>规格：{{item.goods_spec|| '统一规格'}}</view>
                   <view class='product_number'>×{{item.goods_num}}</view>
               </view>
           </view>
@@ -277,7 +277,7 @@ export default class Refund extends wepy.page {
 
   async refuns() {
     const res = await shttp
-      .post("/api/v1/member/refundreturn")
+      .post("/api/v2/member/refundreturn")
       .send({
         order_id: this.orderDetail.order_id,
         refund_type: 1,
@@ -290,6 +290,18 @@ export default class Refund extends wepy.page {
       wx.redirectTo({
         url: "/pages/store/refundDetail?refund_id=" + res.data.refund_id
       });
+    }else if(res.status == 1){
+      return wx.showToast({
+          title: res.error,
+          icon: "none",
+          duration: 2000
+        });
+    }else {
+      return wx.showToast({
+          title: "退款失败",
+          icon: "none",
+          duration: 2000
+        });
     }
   }
   onLoad(option) {

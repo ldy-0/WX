@@ -176,6 +176,7 @@
   background: #fff;
   font-size: 20rpx;
   color: #636363;
+  margin-bottom: 0rpx;
 }
 .time_info .time view {
   margin: 18rpx 0 0;
@@ -268,9 +269,12 @@
                       <view class='product_price'>¥{{item.goods_price}}</view>
                       <!-- <view class='product_address'>福建福州</view> -->
                   </view>
-                  <view class='row'>
-                      <view class='product_number'>×{{item.goods_num || '1'}}</view>
+                  
+                  <view class="row">
+                    <view class="product_standard">规格：{{items.goods_spec || "统一规格"}}</view>
+                    <view class="product_number">×{{items.goods_num}}</view>
                   </view>
+                  
               </view>
           </view>
       </repeat>
@@ -304,6 +308,15 @@
             <view>付款方式：微信支付</view>
           </view>
           <view class='btn' @tap='copyOrder'>复制</view>
+      </view>
+      <view class='time_info row' wx:if='{{order.shipping_code.companyName||order.shipping_code.expressNumber||order.shipping_code.linkmanName||order.shipping_code.linkmanPhone}}'>
+          <view class='time'>
+            <view wx:if='{{order.shipping_code.companyName}}'>快递公司：{{order.shipping_code.companyName}}</view>
+            <view wx:if='{{order.shipping_code.expressNumber}}'>快递单号：{{order.shipping_code.expressNumber}}</view>
+            <view wx:if='{{order.shipping_code.linkmanName}}'>联系人：{{order.shipping_code.linkmanName}}</view>
+            <view wx:if='{{order.shipping_code.linkmanPhone}}'>联系电话：{{order.shipping_code.linkmanPhone}}</view>
+          </view>
+          <view class='btn' @tap='copyexpress'>复制</view>
       </view>
       <view class='bottom_bar'>
           <!-- <navigator class='btn' url='./select'>退货/换货</navigator> -->
@@ -359,6 +372,29 @@ export default class OrderDetail extends wepy.page {
         data: `订单号：${this.order.order_sn} 下单时间：${
           this.order.add_time
         } 支付时间：${this.order.payment_time}`,
+        success: res =>
+          wx.getClipboardData({ success: res => console.log(res) })
+      });
+    },
+    copyexpress() {
+      wx.setClipboardData({
+        data: `${
+          this.order.shipping_code.companyName
+            ? "快递公司：" + this.order.shipping_code.companyName
+            : ""
+        } ${
+          this.order.shipping_code.expressNumber
+            ? "快递单号：" + this.order.shipping_code.expressNumber
+            : ""
+        } ${
+          this.order.shipping_code.linkmanName
+            ? "联系人：" + this.order.shipping_code.linkmanName
+            : ""
+        } ${
+          this.order.shipping_code.linkmanPhone
+            ? "联系电话：" + this.order.shipping_code.linkmanPhone
+            : ""
+        }`,
         success: res =>
           wx.getClipboardData({ success: res => console.log(res) })
       });

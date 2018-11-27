@@ -207,7 +207,6 @@
       </view>
       <view class="btn_comfir"  @tap="comfir({{item}},{{index}})">提交</view>
     </view>
-   </view> 
    </repeat>
   </view>
 </template>
@@ -292,7 +291,7 @@ export default class GoodsReviews extends wepy.page {
     }
     this.commentList = [];
     const res = await shttp
-      .post(`/api/v1/member/goods_evaluate`)
+      .post(`/api/v2/member/goodsevaluate`)
       .send({
         goods_id: item.goods_id,
         order_id: this.order.order_id,
@@ -301,15 +300,22 @@ export default class GoodsReviews extends wepy.page {
         goods_type: "real"
       })
       .end();
-
-    console.log("评价结果");
-    console.log(res);
-    return;
-    if (res.data) {
-      this.commentList = res.data;
-    } else {
+    if (res.status == 0) {
       wx.showToast({
-        title: "暂无相关评论",
+        title: "评价成功",
+        icon: "none",
+        duration: 2000
+      });
+      wx.navigateBack();
+    } else if(res.status == 1) {
+      wx.showToast({
+        title: res.error,
+        icon: "none",
+        duration: 2000
+      });
+    } else {
+wx.showToast({
+        title: "评价失败",
         icon: "none",
         duration: 2000
       });

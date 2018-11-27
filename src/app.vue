@@ -33,11 +33,11 @@ export default class extends wepy.app {
       //   "pages/store/pointbought",//积分购买完成
       //  "pages/store/pointorderdetail",//积分订单详情
       "pages/store/orderdetail", //订单详情
-      //  "pages/store/selectreturn",//选择退款还是退货
-      //  "pages/store/refund",//退款
-      //  "pages/store/refundDetail",//退款详情
-      //  "pages/store/retundgood",//退货
-      //   "pages/store/retundGoodDetail",//退货详情
+      "pages/store/selectreturn",//选择退款还是退货
+      "pages/store/refund",//退款
+      "pages/store/refundDetail",//退款详情
+      "pages/store/retundgood",//退货
+      "pages/store/retundGoodDetail",//退货详情
       //"pages/outWeb",//外链
       "pages/my/addressList", //收货地址列表
       "pages/my/addAddress", //收货地址编辑
