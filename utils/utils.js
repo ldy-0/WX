@@ -70,9 +70,7 @@ setTime(_second){
 
     this.interval = setInterval(function(){
 
-      if(_second <= 0){
-        return ;
-      }
+      if(_second <= 0) return ;
 
       let _minute = _second / 60,
           _hour = _minute / 60,
@@ -96,9 +94,19 @@ setTime(_second){
 
 }
 
-modifyPhone(phone){ 
+modifyPhone(phone){
   return phone.toString().replace(/\d{4}(?=\d{4}$)/, '****'); 
 }
+
+// a(param, obj, 'a', 'b') 
+
+// split(arr, num){
+//       let new_arr = [];
+
+//       arr.forEach(function(v, i){ i % num === 0 ? new_arr.push([v]) : new_arr[new_arr.length - 1].push(v); });
+
+//       return new_arr;
+//     }
 
 
 module.exports = {
