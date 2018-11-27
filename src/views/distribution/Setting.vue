@@ -32,6 +32,8 @@
         <el-input v-model="convert_integral" style="width:200px;margin-left:60px;" placeholder="请输入内容"></el-input> 积分 = 
         <el-input v-model="convert_money" style="width:200px;margin-left:6px;" placeholder="请输入内容"></el-input> 现金
     </div>
+    <div class="row-div">每人每天分享小程序可以获得积分，每天最多只能获得100次分享积分，</div>
+    <div class="row-div">若分享有人点开，且此人是新用户，则新用户和分享人均可获取额外积分</div>
     <div style="margin-left:280px;">
         <el-button type="primary" @click="keepSetting">保存</el-button>
     </div>

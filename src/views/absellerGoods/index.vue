@@ -212,7 +212,7 @@
       </el-upload>
     </el-form-item>
     <p class="hbs-margin-left140">建议尺寸：宽750*高不限 ，最多上传9张图</p>
-    <el-form-item label="分销商能拿到的积分" :label-width="formLabelWidth">
+    <el-form-item label="购买者（本人购买）拿到的积分" :label-width="formLabelWidth">
       <el-input v-model="rank_1" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item label="上级能拿到的积分" :label-width="formLabelWidth">
@@ -652,7 +652,7 @@ export default {
         }
       ],
 
-      formLabelWidth: "140px",
+      formLabelWidth: "210px",
       //header
       industry: "",
 
