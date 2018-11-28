@@ -389,11 +389,24 @@ export default class ReturnGoods extends wepy.page {
       .end();
     console.log(res);
     if (res.status == 0) {
-      console.log("传过去");
-      console.log(res.data.refund_id);
-      wx.redirectTo({
-        url: "./retundGoodDetail?refund_id=" + res.data.refund_id
-      });
+      wx.showToast({
+          title: '操作成功',
+          icon: "none",
+          duration: 2000
+        });
+      wx.navigateBack();
+    }else if(res.status == 1){
+      return wx.showToast({
+          title: res.error,
+          icon: "none",
+          duration: 2000
+        });
+    }else {
+      return wx.showToast({
+          title: "操作失败",
+          icon: "none",
+          duration: 2000
+        });
     }
   }
   onLoad(option) {

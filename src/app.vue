@@ -28,7 +28,7 @@ export default class extends wepy.app {
       "pages/store/goodsDetails", //商品详情
       "pages/store/pointGoodsDetail", //积分商品详情
       "pages/store/firmOrder", //提交订单（购买)
-      // "pages/store/pointfirmOrder",//积分提交订单（购买)
+      "pages/store/commentList",//评价表
       "pages/store/bought", //购买完成
       //   "pages/store/pointbought",//积分购买完成
       //  "pages/store/pointorderdetail",//积分订单详情
@@ -126,7 +126,7 @@ export default class extends wepy.app {
    * 设置全局变量
    */
   globalData = {
-    authorizationStyle: "1" //1: 强制需要用户微信信息和强制手机授权
+    authorizationStyle: "2" //1: 强制需要用户微信信息和强制手机授权
                             //2：强制需要用户微信信息和不强制手机授权 
                             //3：强制需要用户微信信息和不需要手机授权
                             //4：不强制需要用户微信信息和强制手机授权

@@ -115,27 +115,28 @@
 
 .product_info {
   background: #fff;
-  border-bottom: solid 1rpx #f7f7f7;
-  margin-bottom: 20rpx;
 }
 .product_info .goods {
   padding: 20rpx;
 }
-.product_info .goods view {
-  padding-top: 10rpx;
-}
+.product_info .goods .goods_main_info,
 .product_info .goods .goods_other_info {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 .product_info .goods .product_title {
-  width: 606rpx;
+  width: 560rpx;
   color: #333;
 }
 .product_info .goods .share_icon {
   width: 36rpx;
   height: 40rpx;
+}
+.product_info .goods .qr_icon {
+  width: 40rpx;
+  height: 40rpx;
+  padding: 0 10rpx;
 }
 .product_info .goods .text {
   font-size: 24rpx;
@@ -443,102 +444,166 @@
   height: 50rpx;
   border-radius: 50%;
 }
+.over_model {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.save_btn {
+  width: 280rpx;
+  height: 60rpx;
+  background: #fff;
+  line-height: 60rpx;
+  border: 1rpx solid #000;
+  border-radius: 10rpx;
+  text-align: center;
+  margin-top: 60rpx;
+}
 </style>
 
 <template>
   <view class="container">
-      <view wx:if='{{showStandard}}' class="standard-box">
-          <view class='product_standard_info'>
-              <view class='product'>
-                  <view class='base_info'>
-                      <image src='{{goods.goods_image}}' mode="aspectFill"/>
-                      <view>
-                          <view class='product_price'>¥{{goods.goods_price}}</view>
-                          <view class=''>库存：{{goods.goods_storage}}</view>
-                      </view>
-                      <image class='delete-btn' src='../../images/icon_cha@2x.png' @tap='deleteBtn'/>
-                  </view>
-                  <view class='standard_wrap'>
-                      <view class='standard_title'>规格</view>
-                      <view class='standard_info'>
-                          <repeat for='{{standards}}' index='index' item='item'>
-                              <view class="{{isChecked==index?'checked':''}}" @tap='checked({{index}})'>{{item}}</view>
-                          </repeat>
-                      </view>
-                  </view>
-                  <view class='row'>
-                      <view class='number_title'>购买数量</view>
-                      <view class='number_wrap'>
-                        <view class='minus' @tap='minus'><image class='icon_minus' src='../../images/icon_jian@2x.png' /></view>
-                        <view class='number'>{{getSize}}</view>
-                        <view class='add' @tap='add'><image class='icon_add' src='../../images/icon_jia@2x.png' /></view>
-                      </view>
-                  </view>
-              </view>
-              <view class='space'></view>
+    <view wx:if="{{showStandard}}" class="standard-box">
+      <view class="product_standard_info">
+        <view class="product">
+          <view class="base_info">
+            <image src="{{goods.goods_image}}" mode="aspectFill">
+            <view>
+              <view class="product_price">¥{{goods.goods_price}}</view>
+              <view class>库存：{{goods.goods_storage}}</view>
+            </view>
+            <image class="delete-btn" src="../../images/icon_cha@2x.png" @tap="deleteBtn">
           </view>
-      </view>
-      <view>
-      <swiper class="goods-swiper"  indicator-active-color="{{indicatorActiveColor}}" indicator-color="{{indicatorColor}}" indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" interval="{{interval}}"  duration="{{duration}}"  circular="true">
-            <repeat for="{{goods.goodsimagesList}}" key="index" index="index" item="item">   
-          <swiper-item class="goods_swiper_itme">
-            <image src="{{item.goodsimage_url}}"  mode="aspectFill" @tap="swipclick({{item.goodsimage_url}})"/>
-          </swiper-item>
-            </repeat> 
-    
-       
-      </swiper>
-        
-          <view class='product_info'>
-              <view class='goods'>
-                  <view class='product_title'>{{goods.goods_name}}</view>
-                  <view class='product_price'>¥{{goods.goods_price}}<text class="text3">¥{{goods.goods_marketprice}}</text></view>
-                  <view class='goods_other_info'>
-                    <!-- <view class='text'>湖北武汉</view> -->
-                    <view class='text'>库存：{{goods.goods_storage}}</view>
-                    <view class='text'>已售：{{goods.goods_salenum}}</view>
-                  </view>
-              </view>
-          </view>
-          <view class='standard' @tap='goStandard'>
-            <view>规格 {{goods.standard}}</view>
-            <image src='../../images/icon_zuojiantou@2x.png' />
-        </view>
-        <view class='comment' wx:if="{{comment.data[0]}}">
-              <view>宝贝评价({{comment.pagination.total}})</view>
-              <view class='item'>
-                  <view class='user'><image src="{{comment.data[0].geval_frommemberavatar}}" class='head' />{{comment.data[0].geval_frommembername}}</view>
-                  <view>{{comment.data[0].geval_content}}</view>
-                  <!-- <view>一件十盒 送无纺布</view> -->
-              </view>
-              <view class='more_btn' @tap="goComment" data-goodid="{{goods.SKUList[0].goods_id}}">查看评论</view>
-          </view>
-          <view class='detail'>
-              <view class='detail_title'>商品详情</view>
-              <repeat for='{{goodsimgList}}' item='item' >
-                 <view class="description">{{item.Repeat_title}}</view>
-                      <image src='{{item.Repeat_images[0].url}}'  mode="aspectFill" />
+          <view class="standard_wrap">
+            <view class="standard_title">规格</view>
+            <view class="standard_info">
+              <repeat for="{{standards}}" index="index" item="item">
+                <view class="{{isChecked==index?'checked':''}}" @tap="checked({{index}})">{{item}}</view>
               </repeat>
-              <view class='space'></view>
-          </view>   
-      </view>
-      <view class='bottom_bar'>
-          <view class='icon'>
-              <navigator open-type="switchTab" url="/pages/home" hover-class="none">
-                <image class='tab-icon2' src='../../images/xaingqing_sy@2x.png'  />
-                <view>主页</view>
-              </navigator>
-              <view class='red_dot_wrap'>
-                <image class='tab-icon3' src='../../images/xaingqing_gwc@2x.png'  @tap='goShoppingCart' />
-                <view>购物车</view>
-                <view class='red_dot'>{{carSize}}</view>
+            </view>
+          </view>
+          <view class="row">
+            <view class="number_title">购买数量</view>
+            <view class="number_wrap">
+              <view class="minus" @tap="minus">
+                <image class="icon_minus" src="../../images/icon_jian@2x.png">
               </view>
+              <view class="number">{{getSize}}</view>
+              <view class="add" @tap="add">
+                <image class="icon_add" src="../../images/icon_jia@2x.png">
+              </view>
+            </view>
           </view>
-          <view class="warp_btn">
-          <view class='add_btn'  @tap="addShoppingCart()">加入购物车</view>
-          <view class='buy_btn'  @tap="firmOrder()">立即购买</view>
-          </view>
+        </view>
+        <view class="space"></view>
       </view>
+    </view>
+    <view>
+      <swiper
+        class="goods-swiper"
+        indicator-active-color="{{indicatorActiveColor}}"
+        indicator-color="{{indicatorColor}}"
+        indicator-dots="{{indicatorDots}}"
+        autoplay="{{autoplay}}"
+        interval="{{interval}}"
+        duration="{{duration}}"
+        circular="true"
+      >
+        <repeat for="{{goods.goodsimagesList}}" key="index" index="index" item="item">
+          <swiper-item class="goods_swiper_itme">
+            <image
+              src="{{item.goodsimage_url}}"
+              mode="aspectFill"
+              @tap="swipclick({{item.goodsimage_url}})"
+            >
+          </swiper-item>
+        </repeat>
+      </swiper>
+
+      <view class="product_info">
+        <view class="goods">
+          <view class="goods_main_info">
+            <view class="column">
+              <view class="product_title">{{goods.goods_name}}</view>
+            </view>
+            <view class="column_center" @tap="getQrCode">
+              <image src="../../images/qr_code.png" class="qr_icon">
+            </view>
+            <button class="share" plain="true" open-type="share">
+              <view class="column_center">
+                <image src="../../images/icon_6_fenxiang@2x.png" class="share_icon">
+              </view>
+            </button>
+          </view>
+          <view class="product_price">
+            ¥{{goods.goods_price}}
+            <text class="text3">¥{{goods.goods_marketprice}}</text>
+          </view>
+          <view class="goods_other_info">
+            <!-- <view class='text'>湖北武汉</view> -->
+            <view class="text">库存：{{goods.goods_storage}}</view>
+            <view class="text">已售：{{goods.goods_salenum}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="standard" @tap="goStandard">
+        <view>规格 {{goods.standard}}</view>
+        <image src="../../images/icon_zuojiantou@2x.png">
+      </view>
+      <view class="comment" wx:if="{{comment.data[0]}}">
+        <view>宝贝评价({{comment.pagination.total}})</view>
+        <view class="item">
+          <view class="user">
+            <image src="{{comment.data[0].geval_frommemberavatar}}" class="head">
+            {{comment.data[0].geval_frommembername}}
+          </view>
+          <view>{{comment.data[0].geval_content}}</view>
+          <!-- <view>一件十盒 送无纺布</view> -->
+        </view>
+        <view class="more_btn" @tap="goComment" data-goodid="{{goods.SKUList[0].goods_id}}">查看评论</view>
+      </view>
+      <view class="detail">
+        <view class="detail_title">商品详情</view>
+        <repeat for="{{goodsimgList}}" item="item">
+          <view class="description">{{item.Repeat_title}}</view>
+          <image src="{{item.Repeat_images[0].url}}" mode="aspectFill">
+        </repeat>
+        <view class="space"></view>
+      </view>
+    </view>
+    <view class="bottom_bar">
+      <view class="icon">
+        <navigator open-type="switchTab" url="/pages/home" hover-class="none">
+          <image class="tab-icon2" src="../../images/xaingqing_sy@2x.png">
+          <view>主页</view>
+        </navigator>
+        <view class="red_dot_wrap">
+          <image class="tab-icon3" src="../../images/xaingqing_gwc@2x.png" @tap="goShoppingCart">
+          <view>购物车</view>
+          <view class="red_dot">{{carSize}}</view>
+        </view>
+      </view>
+      <view class="warp_btn">
+        <view class="add_btn" @tap="addShoppingCart()">加入购物车</view>
+        <view class="buy_btn" @tap="firmOrder()">立即购买</view>
+      </view>
+    </view>
+    <!-- QT -->
+    <view class="over_model" @tap="closeModel" wx:if="{{isShowQT}}" catchtouchmove="{{true}}">
+      <view class="poster_model">
+        <canvas canvas-id="canvas" style="width: 300px; height: 300px;"></canvas>
+      </view>
+      <view class="save_btn" @tap="saveImg">保存</view>
+    </view>
   </view>
 </template>
 
@@ -566,7 +631,7 @@ export default class GoodsDetails extends wepy.page {
     //是否添加获取手机号按钮
     isPhone: true,
     //个人信息
-    wxUserInfo: {},
+    wxUserInfo: null,
     // Goods Id
     id: null,
     // 是否显示规格信息
@@ -583,7 +648,8 @@ export default class GoodsDetails extends wepy.page {
     goods: {},
     //商品详情图片列表
     goodsimgList: [],
-     comment: null,
+    comment: null,
+    isShowQT: false
   };
 
   computed = {
@@ -596,6 +662,25 @@ export default class GoodsDetails extends wepy.page {
 
   components = {};
   methods = {
+    onShareAppMessage: function(res) {
+      return {
+        title: this.goods.goods_name,
+        path: `pages/store/goodsDetails?shareType=activity&goods_commonid=${
+          this.goods.goods_commonid
+        }`,
+        success: function(res) {
+          // 转发成功
+          wx.showToast({
+            title: "转发成功",
+            icon: "success",
+            duration: 2000
+          });
+        },
+        fail: function(res) {
+          // 转发失败
+        }
+      };
+    },
     checked: index => {
       this.isChecked = index;
       this.goods.standard = this.standards[index];
@@ -679,9 +764,6 @@ export default class GoodsDetails extends wepy.page {
     }
   };
 
-  onShow() {
-    this.getShopCartNum();
-  }
   //购物车数量
   async getShopCartNum() {
     console.log("开始请求购物车数量");
@@ -720,17 +802,30 @@ export default class GoodsDetails extends wepy.page {
     this.$apply();
   }
 
-  async onLoad(option) {
+  onLoad(option) {
+    this.options = option;
+    this.id = option.goods_commonid;
+
+    this.scene = decodeURIComponent(option.scene);
+  }
+  onShow() {
+    this.wxUserInfo = wx.getStorageSync("memberInfo");
     wx.showLoading({
       title: "加载中"
     });
-    //初始化日期
-    this.options = option;
-    let wxUserInfo = wx.getStorageSync("memberInfo");
-    // this.getShopCartNum();
-    this.id = option.goods_commonid;
-    // console.log(option)
-    this.goodsDetails(this.id);
+    if (this.scene != "undefined") {
+      let qrarry = scene.split(";");
+      this.id = qrarry[0];
+      this.goodsDetails(this.id);
+    } else {
+      this.goodsDetails(this.id);
+    }
+    if (!this.wxUserInfo.wx_name) {
+      wx.navigateTo({
+        url: `/pages/authorization?shareType=activity`
+      });
+    }
+    this.getShopCartNum();
   }
 
   goStandard() {
@@ -753,15 +848,15 @@ export default class GoodsDetails extends wepy.page {
     }
     this.$apply();
   }
-    //商品评论
+  //商品评论
   async getComment() {
     let send;
-      send = {
-        goods_id: this.goods.SKUList[0].goods_id,
-        goods_type: "real",
-        page: 1,
-        limit: 3
-      };
+    send = {
+      goods_id: this.goods.SKUList[0].goods_id,
+      goods_type: "real",
+      page: 1,
+      limit: 3
+    };
     const res = await shttp
       .get(`/api/v2/member/goodsevaluate`)
       .query(send)
@@ -776,8 +871,122 @@ export default class GoodsDetails extends wepy.page {
     let appoint = this.goods.is_appoint;
     console.log(id);
     wx.navigateTo({
-      url: `commentList?goodsId=${id}&virtual=${virtual}&appoint=${appoint}`
+      url: `./commentList?goodsId=${id}&virtual=${virtual}&appoint=${appoint}`
     });
+    this.$apply();
+  }
+  //获取二维码
+  async getQrCode() {
+    this.isShowQT = true;
+    wx.showLoading({ title: "loading..." });
+    let content = wx.createCanvasContext("canvas");
+    content.setFillStyle("#ffffff");
+    content.fillRect(0, 0, 340, 500);
+    const res = await shttp
+      .post("/api/v2/member/wxcode")
+      .send({
+        page: "pages/store/goodsDetails",
+        scene: this.id + ";",
+        width: 350, // 430
+        is_hyaline: true // false,
+      })
+      .end();
+    let qrpicUrl = res.data.url;
+    console.log(qrpicUrl);
+    await this.drawImage(
+      {
+        img: qrpicUrl.replace(/http/, "https"),
+        top: 50,
+        left: 50,
+        width: 200,
+        height: 200
+      },
+      content
+    );
+    content.draw(true);
+    wx.hideLoading();
+  }
+  async drawImage(data, ctx) {
+    console.log(data);
+    let res = await new Promise((res, rej) => {
+      wx.getImageInfo({
+        src: data.img,
+        success(e) {
+          console.log(e);
+          res(e.path);
+        },
+        fail(e) {
+          console.log(e);
+          rej(e);
+        }
+      });
+    }).catch(e => {
+      return e;
+    });
+
+    if (res.errMsg) {
+      return wx.showModal({
+        title: "提示",
+        content: res.errMsg,
+        showCancel: false
+      });
+    }
+    console.log("draw", res);
+
+    ctx.drawImage(
+      res,
+      data.left ? data.left : 0,
+      data.top ? data.top : 0,
+      data.width ? data.width : 100,
+      data.height ? data.height : 100
+    );
+  }
+  saveImg() {
+    let that = this;
+    wx.canvasToTempFilePath({
+      canvasId: "canvas",
+      x: 0,
+      y: 0,
+      width: 500,
+      height: 500,
+      success: function(res) {
+        console.log(res);
+        wx.saveImageToPhotosAlbum({
+          filePath: res.tempFilePath,
+          success(e) {
+            wx.showToast({
+              title: "保存成功!",
+              icon: "success",
+              duration: 2000
+            });
+            that.isShowQT = false;
+            that.$apply();
+          },
+          fail: function(res) {
+            if (
+              res.errMsg === "saveImageToPhotosAlbum:fail:auth denied" ||
+              res.errMsg === "saveImageToPhotosAlbum:fail auth denied"
+            ) {
+              wx.openSetting({
+                success(settingdata) {
+                  if (settingdata.authSetting["scope.writePhotosAlbum"]) {
+                    console.log("获取权限成功，再次点击图片保存到相册");
+                  } else {
+                    console.log("获取权限失败");
+                  }
+                }
+              });
+            }
+          }
+          // fail(err){
+          //   console.log('save', err);
+          // }
+        });
+      }
+    });
+  }
+  closeModel() {
+    this.isShowQT = false;
     this.$apply();
   }
   onUnload() {}

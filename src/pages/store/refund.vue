@@ -287,9 +287,12 @@ export default class Refund extends wepy.page {
       .end();
     console.log(res);
     if (res.status == 0) {
-      wx.redirectTo({
-        url: "/pages/store/refundDetail?refund_id=" + res.data.refund_id
-      });
+      wx.showToast({
+          title: '操作成功',
+          icon: "none",
+          duration: 2000
+        });
+      wx.navigateBack();
     }else if(res.status == 1){
       return wx.showToast({
           title: res.error,
@@ -298,7 +301,7 @@ export default class Refund extends wepy.page {
         });
     }else {
       return wx.showToast({
-          title: "退款失败",
+          title: "操作失败",
           icon: "none",
           duration: 2000
         });

@@ -91,7 +91,7 @@
 .success_info_wrap {
   height: 200rpx;
   padding: 0 117rpx;
-  background: #282425;
+  background: #ff7900;
 }
 .success_info_wrap image {
   width: 154rpx;
@@ -222,7 +222,7 @@
   <view class="container"  >      
     <view wx:if="{{!isPointOrder}}">
       <view class='success_info_wrap around'>
-          <image src='../../images/img_yifukuan@2x.png' />
+          <image src='../../images/img_2@2x.png' />
           <view class='success_info'>
               <view>买家已付款</view>
               <view class='success_sub_info'>等待卖家发货</view>
