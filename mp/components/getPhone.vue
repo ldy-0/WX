@@ -10,32 +10,37 @@
         </button>
 
         <custom-phone @show='showRegisterPhone'></custom-phone>
-        <!-- <div class='phone_btn s-fc-3' >
-            <image class='phone_icon' src='/static/phone.png' mode='aspectFill' />
-            <div @click='showRegisterPhone'>使用手机号绑定</div>
-            点击事件被错误绑定至父元素上
-        </div> -->
 
       </div>
     </custom-modal>
 
-    <custom-modal :config='registerConfig' @close='closeRegisterPhone' v-if='registering'>
-      <div class='form_item'>
-        <input class='form_input' placeholder="手机号" placeholder-style="color: #d5d3d3;" v-model='phone' />
-      </div>
-      
-      <div class='form_item'>
-        <input class='form__input' placeholder="短信验证码" placeholder-style="color: #d5d3d3;" v-model='captcha' />
-        <div class='captcha_btn s-fc-5' @click='getCaptcha'>{{countdown_time ? countdown_time + 's' : '获取验证码'}}</div>
-      </div>
+    <div class='custom_modal' @touchmove.stop='preventScorll' @click.stop='closeRegisterPhone' v-if='registering'>
+      <div class='form_wrap' @click.stop='preventClose'>
+        <div class='form_title_wrap s-fc-2'>
+          
+          <div class='form_title'>资料填写</div>
 
-      <div class='submit_btn s-fc-1 s-bg-3' @click='savePhone'>{{registering}}确定</div>
+          <img class='close_btn' src='/static/close.png' alt='No Found' @click.stop='closeRegisterPhone' />
 
-      <button class='form_weixin_btn clear_btn s-fc-6' style='border: none' open-type='getPhoneNumber' @getphonenumber='getPhone' plain='true'>
-          <image class='form_weixin_icon' src='/static/weixin.png' mode='aspectFill' />
-          <div>微信手机号一键绑定</div>
-      </button>
-    </custom-modal>
+        </div>
+
+        <div class='form_item'>
+          <input class='form_input' placeholder="手机号" placeholder-style="color: #d5d3d3;" v-model='phone' />
+        </div>
+        
+        <div class='form_item'>
+          <input class='form__input' placeholder="短信验证码" placeholder-style="color: #d5d3d3;" v-model='captcha' />
+          <div class='captcha_btn s-fc-5' @click='getCaptcha'>{{countdown_time ? countdown_time + 's' : '获取验证码'}}</div>
+        </div>
+
+        <div class='submit_btn s-fc-1 s-bg-3' @click='savePhone'>确定</div>
+
+        <button class='form_weixin_btn clear_btn s-fc-6' style='border: none' open-type='getPhoneNumber' @getphonenumber='getPhone' plain='true'>
+            <image class='form_weixin_icon' src='/static/weixin.png' mode='aspectFill' />
+            <div>微信手机号一键绑定</div>
+        </button>
+      </div>
+    </div>
     
   </div>
 </template>
@@ -82,6 +87,7 @@ export default {
 
   methods: {
     preventScorll () {},
+    preventClose () {},
     closeModal (e) { this.$emit('close') },
     showRegisterPhone (e) { console.log('registering :', this.registering = true) },
     closeRegisterPhone () { this.interval && clearInterval(this.interval); this.registering = false },
@@ -95,6 +101,7 @@ export default {
       this.countdown()
     },
     savePhone () { 
+      console.log('formData: ', this.phone, this.captcha)
       let phone = /^((13[0-9])|(14[5|7|9])|(15([0-3]|[5-9]))|(17[0,1,3,5,6,7,8])|(18[0-9]))\d{8}$/
 
       if (!this.phone || !phone.test(this.phone)) return wx.showModal({ title: '请输入正确的手机号', showCancel: false })
@@ -177,7 +184,42 @@ export default {
   height: 56rpx;
 }
 
-
+.custom_modal{
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.4);
+}
+.form_wrap{
+  width: 690rpx;
+  height: 636rpx;
+  border-radius: 10rpx;
+  background: #fff;
+}
+.form_title_wrap{
+  position: relative;
+  text-align: center;
+}
+.form_title{
+  height: 45rpx;
+  line-height: 45rpx;
+  padding: 30rpx 0 0;
+  font-size: 30rpx;
+}
+.close_btn{
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  width: 24rpx;
+  height: 24rpx;
+  padding: 10rpx;
+}
 .form_item{
   display: flex;
   align-items: center;
@@ -186,6 +228,7 @@ export default {
   margin: 50rpx auto 0;
   font-size: 30rpx;
   border-bottom: 2rpx solid #e8e7e7;
+  text-align: left;
 }
 .form_input{
   flex-grow: 1;

@@ -3,10 +3,10 @@
          :style="{ width: config.width,
                     height: config.height }" @click='goGoodsDetail(item)'>
 
-      <image class='item_img custom_item_img s-bg-3' :src='item.goods_image' mode='aspectFill' />
+      <image class='item_img custom_item_img' :src='config.imgKey ? item[config.imgKey] : item.goods_image' mode='aspectFill' />
 
       <div class='item_content'>
-        <div class='item_name s-fc-4' v-text='item.goods_name'></div>
+        <div class='item_name s-fc-4' :class='{ center: config.isCenter }' v-text='item.goods_name'></div>
         <div class='item_price s-fc-5' v-if='!config.hidePrice'>￥{{item.goods_price}}</div>
       </div>
 
@@ -36,7 +36,7 @@ export default {
   methods: {
     goGoodsDetail (item) {
       console.log('goodsDetail : ', item)
-      wx.navigateTo({ url: `/pages/goods/main?id=${item.id}` })
+      wx.navigateTo({ url: `/pages/goods/main?id=${item.goods_commonid}` })
     }
   }
 
@@ -47,11 +47,13 @@ export default {
 .item{
   border-radius: 10rpx;
 }
+
 .item_img{
   width: 100%;
   height: 350rpx;
   border-radius: 10rpx 10rpx 0 0;
 }
+
 .item_content{
   padding: 0 20rpx;
 }
@@ -68,20 +70,9 @@ export default {
   margin: 20rpx 0 0;
 }
 
-/* .end_desc:before, .end_desc:after{
-  content: '';
-  position: absolute;
-  top: calc(50% - 2rpx);
-  width: 210rpx;
-  height: 4rpx;
-  background: #dedede;
+.center{
+  text-align: center;
 }
-.end_desc:before{
-  left: 0;
-}
-.end_desc:after{
-  right: 0;
-} */
 
 .s-fc-1{ color: #fff; }
 .s-fc-2{ color: #999; }
