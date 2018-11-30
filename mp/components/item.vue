@@ -1,7 +1,7 @@
 <template>
     <div class='item s-bg-1'
-         :style="{ width: config.width,
-                    height: config.height }" @click='goGoodsDetail(item)'>
+         :style="{ width: config && config.width || '345rpx',
+                    height: config && config.height || '480rpx' }" @click='goGoodsDetail(item)'>
 
       <image class='item_img custom_item_img' :src='config.imgKey ? item[config.imgKey] : item.goods_image' mode='aspectFill' />
 

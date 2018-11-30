@@ -8,8 +8,13 @@
                         textAlign: config.titleAlign || 'center' }">商品详情</div>
 
         <div v-for='(item, index) in data' :key='index'>
-          <div style='margin-bottom: 30rpx;' :style="{ color: config.color || '#222', fontSize: config.size || '28rpx' }">{{item.content}}</div>
-          <image class='detail_img' :src='item.img' mode='aspectFill' @click='preview(item.img, goods.goods_body)' />
+          
+          <div style='margin-bottom: 30rpx;' :style="{ color: config.color || '#222', fontSize: config.size || '28rpx' }" v-text='item.content'></div>
+          
+          <image class='detail_img' :src='item.img' mode='aspectFill' @click='preview(item.img, goods.goods_body)' v-if='item.img' />
+
+          <image class='detail_img' :src='img' mode='aspectFill' v-for='(img, i) in item.imgs' :key='i' v-if='item.imgs' />
+        
         </div>
 
         <div :style="{ height: config.intervalHeight || '110rpx' }"></div>
