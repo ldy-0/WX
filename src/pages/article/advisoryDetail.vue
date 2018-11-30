@@ -116,7 +116,6 @@
 }
 .warp .content .text_img {
   width: 100%;
-  height: 400rpx;
 }
 .warp .content .text_info {
   line-height: 48rpx;
@@ -142,7 +141,7 @@
        <view class="addtime">{{detailArticle.dynamic_created_at}}</view>  
         <repeat for="{{detailArticle.dynamic_content}}" key="index" index="index" item="itemInfo">   
        <view class="content">
-              <image class="text_img" wx:if="{{itemInfo.Repeat_images[0].url}}" src="{{itemInfo.Repeat_images[0].url}}" mode="aspectFill"  ></image>
+              <image class="text_img" wx:if="{{itemInfo.Repeat_images[0].url}}" src="{{itemInfo.Repeat_images[0].url}}" mode="widthFix"  ></image>
            <view class="text_info">
               {{itemInfo.Repeat_title}}
            </view>

@@ -172,52 +172,99 @@
 </style>
 
 <template>
-  <view class='container'>
-      <form bindsubmit='submit'>
-          <view class='row_flex'><text class="info_text">收件人：</text> <input type='text' name='name' class='inline' bindinput='setConsignee' value='{{address.consignee}}' /></view>
+  <view class="container">
+    <form bindsubmit="submit">
+      <view class="row_flex">
+        <text class="info_text">收件人：</text>
+        <input
+          type="text"
+          name="name"
+          class="inline"
+          bindinput="setConsignee"
+          value="{{address.consignee}}"
+        >
+      </view>
 
-          <view class='row_flex'><text class="info_text">联系方式：</text><input type='text' name='phone' class='inline' bindinput='setPhone' value='{{address.phone}}' /></view>
-            <view class="row_flex">
-              <view>所在地区：</view>
-              <view class="picker-group">
-                <picker class="picker-box" bindchange="bindPickerChange" value="{{index}}" range="{{arrayProvince}}" data-type="province">
-                  <view class="picker-view">
-                    <view class='flex'>
-                      <view class="fiexdW">{{province ? province : '省'}}</view>
-                      <image class="cityup" src="../../images/icon_xiangxia@2x.png"/>
-                    </view>
-                  </view>
-                </picker>
-                <picker class="picker-box" bindchange="bindPickerChange" value="{{index}}" range="{{arrayCity}}" range-key="area_name" data-type="city">
-                  <view class="picker-view">
-                    <view class='flex'>
-                      <view class="fiexdW">{{city ? city : '市' }}</view>
-                       <image class="cityup" src="../../images/icon_xiangxia@2x.png"/>
-                  </view>
-                  </view>
-                </picker>
-                <picker class="picker-box" bindchange="bindPickerChange" value="{{index}}" range="{{arrayDistrict}}" range-key="area_name" data-type="district">
-                  <view class="picker-view">
-                    <view class='flex'>
-                      <view class="fiexdW">{{district ? district : '区' }}</view>
-                       <image class="cityup" src="../../images/icon_xiangxia@2x.png"/>
-                  </view>
-                  </view>
-                </picker>
+      <view class="row_flex">
+        <text class="info_text">联系方式：</text>
+        <input
+          type="text"
+          name="phone"
+          class="inline"
+          bindinput="setPhone"
+          value="{{address.phone}}"
+        >
+      </view>
+      <view class="row_flex">
+        <view>所在地区：</view>
+        <view class="picker-group">
+          <picker
+            class="picker-box"
+            bindchange="bindPickerChange"
+            value="{{index}}"
+            range="{{arrayProvince}}"
+            data-type="province"
+          >
+            <view class="picker-view">
+              <view class="flex">
+                <view class="fiexdW">{{province ? province : '省'}}</view>
+                <image class="cityup" src="../../images/icon_xiangxia@2x.png">
               </view>
             </view>
-          <view class='row_flex'><text class="info_text">详细地址：</text><input type='text' name='detail' class='inline' bindinput='setStreet' value='{{address.street}}' /></view>
-
-          <view class='setting'>
-              <view>
-                  <view>设为默认地址</view>
-                  <view class='comment'>注：每次下单时会使用该地址</view>
+          </picker>
+          <picker
+            class="picker-box"
+            bindchange="bindPickerChange"
+            value="{{index}}"
+            range="{{arrayCity}}"
+            range-key="area_name"
+            data-type="city"
+          >
+            <view class="picker-view">
+              <view class="flex">
+                <view class="fiexdW">{{city ? city : '市' }}</view>
+                <image class="cityup" src="../../images/icon_xiangxia@2x.png">
               </view>
-              <switch name='isDefault' checked='{{address.isDefault}}'></switch>
-          </view>
+            </view>
+          </picker>
+          <picker
+            class="picker-box"
+            bindchange="bindPickerChange"
+            value="{{index}}"
+            range="{{arrayDistrict}}"
+            range-key="area_name"
+            data-type="district"
+          >
+            <view class="picker-view">
+              <view class="flex">
+                <view class="fiexdW">{{district ? district : '区' }}</view>
+                <image class="cityup" src="../../images/icon_xiangxia@2x.png">
+              </view>
+            </view>
+          </picker>
+        </view>
+      </view>
+      <view class="row_flex">
+        <text class="info_text">详细地址：</text>
+        <input
+          type="text"
+          name="detail"
+          class="inline"
+          bindinput="setStreet"
+          value="{{address.street}}"
+        >
+      </view>
 
-          <button class='save' formType='submit'>保存</button>
-      </form>
+      <view class="setting">
+        <view>
+          <view>设为默认地址</view>
+          <view class="comment">注：每次下单时会使用该地址</view>
+        </view>
+        <switch name="isDefault" checked="{{address.isDefault}}"></switch>
+      </view>
+
+      <button class="save" formType="submit">保存</button>
+    </form>
   </view>
 </template>
 
@@ -315,7 +362,7 @@ export default class AddAddress extends wepy.page {
     }
   };
 
-  async onLoad(opt) {
+  onLoad(opt) {
     this.getProvince();
     let address = wx.getStorageSync("address");
     if (opt.type === "edit") {
@@ -392,12 +439,15 @@ export default class AddAddress extends wepy.page {
         this.province = this.arrayProvince[e.detail.value];
         let pid = parseInt(e.detail.value) + 1;
         this.pid = pid;
+
+        this.district = "";
         this.getCity(pid);
         break;
       case "city":
         this.city = this.arrayCity[e.detail.value].area_name;
         let cid = this.arrayCity[e.detail.value].area_id;
         this.cid = cid;
+        this.district = "";
         this.getDistrict(cid);
         break;
       case "district":
@@ -430,6 +480,9 @@ export default class AddAddress extends wepy.page {
       })
       .end();
     this.arrayCity = res.data;
+    this.city = this.arrayCity[0].area_name;
+    this.cid = this.arrayCity[0].area_id;
+    this.getDistrict(this.cid);
     this.$apply();
   }
   async getDistrict(cid) {
@@ -441,6 +494,8 @@ export default class AddAddress extends wepy.page {
       })
       .end();
     this.arrayDistrict = res.data;
+    this.district = this.arrayDistrict[0].area_name;
+    this.areaid = this.arrayDistrict[0].area_id;
     this.$apply();
   }
 }

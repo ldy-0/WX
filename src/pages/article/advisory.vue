@@ -146,7 +146,7 @@
       <repeat for='{{articleList}}' item='item'>
           <view class='row_between'   @tap="gotoNews({{item.dynamic_id}})" >
               <view class='flex'>
-                  <image class='icon' src='{{item.dynamic_images[0].url}}' />
+                  <image class='icon' src='{{item.dynamic_images[0].url}}' mode="aspectFill"/>
                   <view class="pageInfo">
                       <view class="title">{{item.dynamic_title}}</view>
                       <view >{{item.dynamic_created_at}}</view>
@@ -206,12 +206,15 @@ export default class Mine extends wepy.page {
       .get(`/api/v2/member/dynamic`)
       .query({
         dynamic_type: "news",
-        limit: 1000
+        limit: 10,
+        page: this.page,
       })
       .end();
-    console.log(res);
-    this.articleList = this.toJSON(res.data);
+     if (res.status === 0) {
+      wx.hideLoading();
+   this.articleList = this.articleList.concat(this.toJSON(res.data));
     console.log(this.articleList);
+     }     
     if (this.articleList.length == 0) {
       this.is_empty = true;
     } else {

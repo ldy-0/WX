@@ -555,6 +555,8 @@ export default class ShoppingCart extends wepy.page {
 
   onLoad() {}
   onShow() {
+    this.allMoney = 0
+    this.countItem = 0
     this.wxUserInfo = wx.getStorageSync("wxUserInfo");
     // console.log(this.wxUserInfo)
 

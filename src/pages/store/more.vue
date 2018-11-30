@@ -156,7 +156,7 @@
        <view class="bodycontent">
         <repeat for="{{materialList}}" key="index" index="index" item="item">   
          <view class="redlist" @tap="gotoCase({{item.dynamic_id}})"> 
-             <image class="title_page" src="{{item.dynamic_images[0].url}}" mode="aspectFill" ></image>  
+             <image class="title_page" src="{{item.dynamic_images[0].url}}" mode="aspectFill"></image>  
             <view class="redinfo">
               <text class="prdname">{{item.dynamic_title}}</text>
             </view>
@@ -213,34 +213,32 @@ export default class Home extends wepy.page {
       .get(`/api/v2/member/dynamic`)
       .query({
         dynamic_type: "material",
-        limit: 1000
+        limit: 8,
+        page: this.page,
       })
       .end();
-    let list = res.data;
     if (res.status === 0) {
-      if (list.length > 4) {
-        this.materialList = list.slice(0, 4);
-      } else {
-        this.materialList = list;
-      }
       wx.hideLoading();
+      if (res.data != null && res.data.length != 0) {
+        res.data.forEach((element, idx) => {
+          res.data[idx].dynamic_images = JSON.parse(
+            res.data[idx].dynamic_images
+          );
+        });
+        this.materialList  = this.materialList.concat(res.data);
+      }
     } else {
       wx.hideLoading();
     }
-    wx.stopPullDownRefresh();
-    console.log("案例列表");
-    this.materialList.forEach((element, idx) => {
-      this.materialList[idx].dynamic_images = JSON.parse(
-        this.materialList[idx].dynamic_images
-      );
-    });
+    
     console.log(this.materialList);
 
     this.$apply();
   }
-  //下拉刷新
-  onPullDownRefresh() {
-    this.getgoodsList();
+  //上拉加载更多
+  onReachBottom() {
+    this.page = this.page + 1;
+    this.getMaterialList();
   }
 }
 </script>

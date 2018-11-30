@@ -180,9 +180,8 @@
   background: #fff;
   text-align: center;
 }
-.detail image {
+.detail .detail_img {
   width: 100%;
-  height: 706rpx;
 }
 .detail .space {
   height: 80rpx;
@@ -575,7 +574,7 @@
         <view class="detail_title">商品详情</view>
         <repeat for="{{goodsimgList}}" item="item">
           <view class="description">{{item.Repeat_title}}</view>
-          <image src="{{item.Repeat_images[0].url}}" mode="aspectFill">
+          <image class="detail_img" src="{{item.Repeat_images[0].url}}"  mode="widthFix"/>
         </repeat>
         <view class="space"></view>
       </view>
@@ -701,6 +700,15 @@ export default class GoodsDetails extends wepy.page {
     },
     add() {
       this.size++;
+      if(this.size>this.goods.goods_storage){
+        this.size--;
+        return wx.showToast({
+          title: "库存不足",
+          icon: "none",
+          duration: 1000
+        });
+      }
+      
       this.goods.goods_num = this.size;
       this.$apply();
     },
@@ -814,7 +822,7 @@ export default class GoodsDetails extends wepy.page {
       title: "加载中"
     });
     if (this.scene != "undefined") {
-      let qrarry = scene.split(";");
+      let qrarry = this.scene.split(";");
       this.id = qrarry[0];
       this.goodsDetails(this.id);
     } else {

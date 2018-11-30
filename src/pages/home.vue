@@ -321,7 +321,7 @@
        <view class="bodycontent">
         <repeat for="{{goodsList}}" key="index" index="index" item="item">   
          <view class="redlist"  @tap="intoDetail({{item.goods_commonid}})"> 
-             <image class="title_page"  mode="aspectFill" src="{{item.goods_image}}" ></image>  
+             <image class="title_page"  mode="aspectFill" src="{{item.goods_image}}" mode='aspectFill'></image>  
             <view class="redinfo add_redinfo">
               <text class="prdname">{{item.goods_name}}</text>
               <view class="price">
@@ -347,7 +347,7 @@
        <view class="bodycontent">
         <repeat for="{{materialList}}" key="index" index="index" item="item">   
          <view class="redlist case_redlist" @tap="gotoCase({{item.dynamic_id}})"  > 
-             <image class="case_title_page" src="{{item.dynamic_images[0].url}}" ></image>  
+             <image class="case_title_page" src="{{item.dynamic_images[0].url}}" mode='aspectFill'></image>  
             <view class="redinfo">
               <text class="prdname">{{item.dynamic_title}}</text>
             </view>
@@ -371,7 +371,7 @@
        <view class="bodycontent">
         <repeat for="{{newsList}}" key="index" index="index" item="item">   
          <view class="redlist news_redlist"  @tap="gotoNews({{item.dynamic_id}})"> 
-             <image class="title_page" src="{{item.dynamic_images[0].url}}"></image>  
+             <image class="title_page" src="{{item.dynamic_images[0].url}}" mode='aspectFill'></image>  
             <view class="redinfo">
               <text class="prdname">{{item.dynamic_title}}</text>
               <view class="num_info">
@@ -414,17 +414,17 @@ export default class Home extends wepy.page {
   components = {};
 
   onLoad(options) {
-    wx.showLoading({
+   
+  }
+
+  onShow() {
+ wx.showLoading({
       title: "加载中"
     });
     this.getbannerList();
     this.getRecommendList();
     this.getMaterialList();
     this.getNewsList();
-  }
-
-  onShow() {
-
   }
 
   methods = {
