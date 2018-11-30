@@ -1,12 +1,11 @@
 <style lang="stylus">
-.course_detail{
+.course_detail {
   border-top: 1px solid;
 }
 
-.interval{
+.interval {
   margin-right: 100px;
 }
-      
 </style>
 
 <template>
@@ -71,6 +70,9 @@
     </el-form-item> -->
     <el-form-item label="商品编号" :label-width="formLabelWidth" prop="goodsNum">
       <el-input v-model="formForNotive.goodsNum" auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="商品限购" :label-width="formLabelWidth" prop="limited">
+      <el-input v-model="formForNotive.limited" auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item label="门店" :label-width="formLabelWidth" prop="school">
       <el-select multiple v-model="formForNotive.school" placeholder="请选择门店">
@@ -221,6 +223,21 @@
     <el-form-item label="上级的上级拿到积分" :label-width="formLabelWidth">
       <el-input v-model="rank_3" auto-complete="off"></el-input>
     </el-form-item>
+    <el-form-item label="背景音乐" :label-width="formLabelWidth">
+      <el-upload
+        class="upload-demo"
+        action=""
+        :limit="1"
+        :auto-upload="false"
+        :on-remove="handleRemove"
+        :on-change="handlePicture"
+        :file-list="formForNotive.music"
+        accept='audio/*'
+        list-type="text">
+        <el-button size="small" type="primary">选择音乐</el-button>
+      </el-upload>
+    </el-form-item>
+    <!-- <audio src="C:\Users\EDZ\Desktop\Camera Roll\2.mp3" controls></audio> -->
   </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="addNewShow = false">取 消</el-button>
@@ -371,10 +388,19 @@
 </div>
 </template>
 <script>
-import {addGoods_api,getGoodsList_api,getSchoolList_api,getGoods_api,upDownGoods_api,editGoods_api,getEntryList_api,deleteGoods_api} from '@/api/seller'
-import api from '@/api/seller'
-import { getNames } from '@/utils/auth'
-import uploadFn from '@/utils/aahbs'
+import {
+  addGoods_api,
+  getGoodsList_api,
+  getSchoolList_api,
+  getGoods_api,
+  upDownGoods_api,
+  editGoods_api,
+  getEntryList_api,
+  deleteGoods_api
+} from "@/api/seller";
+import api from "@/api/seller";
+import { getNames } from "@/utils/auth";
+import uploadFn from "@/utils/aahbs";
 
 const formForNotive = {
   fileList1: [],
@@ -458,6 +484,13 @@ export default {
             message: "请输入商品编号",
             trigger: "blur",
             min: 1
+          }
+        ],
+        limited: [
+          {
+            required: true,
+            message: "请输入限购数量",
+            trigger: "blur",
           }
         ],
         school: [
@@ -666,7 +699,7 @@ export default {
         search: "",
         time: ""
       },
-      total:1,
+      total: 1,
       //excel
       filename: "会员列表Excel",
       exportExcelStatus: "导出",
@@ -675,36 +708,47 @@ export default {
   },
   methods: {
     // signIn 签到模块
-    changeGoodsType(v){
-      if(this.goodsType < 2 && v > 1){
-        console.log('changeGoodsType: ', this.goodsType, v, this.formForNotive.goodsType); 
+    changeGoodsType(v) {
+      if (this.goodsType < 2 && v > 1) {
+        console.log(
+          "changeGoodsType: ",
+          this.goodsType,
+          v,
+          this.formForNotive.goodsType
+        );
         this.isPubilcToCourse = true;
         this.courseDetailList = [];
-      }else{
+      } else {
         this.isPubilcToCourse = false;
       }
       this.goodsType = v;
     },
-    async getCourseList(){
+    async getCourseList() {
       let res = await api.getCourseList({ is_goods: 0 }, this);
-      console.log('--res--', res);
+      console.log("--res--", res);
       this.courseList = res.data;
     },
-    async getCourseDetail(course_id){
+    async getCourseDetail(course_id) {
       let res = await api.getCourseList({ course_id }, this);
-      console.log('--res--', res);
-      if(res.data){
-        res.data[0].each.forEach(v => v.stock = v.max_stunum);
+      console.log("--res--", res);
+      if (res.data) {
+        res.data[0].each.forEach(v => (v.stock = v.max_stunum));
         this.course = res.data[0];
         this.courseDetailList = res.data[0].each;
       }
     },
-    changeCourse(index){
+    changeCourse(index) {
       this.courseDetailList = this.courseList[index].each;
-      console.log('change course: ', index, this.courseDetailList); 
+      console.log("change course: ", index, this.courseDetailList);
     },
-    setStock(e, item, index){
-      console.log('stock : ', typeof e, e, typeof item.max_stunum, e > item.max_stunum);
+    setStock(e, item, index) {
+      console.log(
+        "stock : ",
+        typeof e,
+        e,
+        typeof item.max_stunum,
+        e > item.max_stunum
+      );
       // Number(e) > Number(item.max_stunum) ? this.$message.error({ message: '库存数量不能超过可预约人数' }) : item.stock = Number(e);
     },
     // out
@@ -763,32 +807,37 @@ export default {
           });
       });
     },
-      // 虚拟
-      formForNotiveIs_virtual_fn(nowValue){
-        console.log("c")
-        if(nowValue){
-          // 虚拟 的 操作
-          this.goodsTypehbsList = [
-              {
-                value:0,
-                label:'普通商品'
-              },{
-                value:1,
-                label:'预约商品'
-              },
-          ]
-          if(getNames('names') && true) this.goodsTypehbsList.push({ value: 2, label:'课程' }, { value: 3, label:'预约课程' });
-        }else{
-          this.goodsTypehbsList = [
-              {
-                value:0,
-                label:'普通商品'
-              }
-          ]
-          this.formForNotive.goodsType = 0
-        }
-      },
-      
+    // 虚拟
+    formForNotiveIs_virtual_fn(nowValue) {
+      console.log("c");
+      if (nowValue) {
+        // 虚拟 的 操作
+        this.goodsTypehbsList = [
+          {
+            value: 0,
+            label: "普通商品"
+          },
+          {
+            value: 1,
+            label: "预约商品"
+          }
+        ];
+        if (getNames("names") && true)
+          this.goodsTypehbsList.push(
+            { value: 2, label: "课程" },
+            { value: 3, label: "预约课程" }
+          );
+      } else {
+        this.goodsTypehbsList = [
+          {
+            value: 0,
+            label: "普通商品"
+          }
+        ];
+        this.formForNotive.goodsType = 0;
+      }
+    },
+
     //规格2
 
     addSize_out() {
@@ -815,6 +864,12 @@ export default {
     change2() {
       console.log("change----", arguments);
       this.formForNotive.fileList2 = arguments[1];
+    },
+    handlePicture() {
+      this.formForNotive.music = arguments[1];
+    },
+    handleRemove() {
+      this.formForNotive.music = arguments[1];
     },
     onsuccess() {
       console.log("sucess----", arguments);
@@ -847,56 +902,61 @@ export default {
         urls
       };
     },
-      //添加新商品条目
-      async addNewNotice(formName){
-          console.log(this.$refs)
-          if(!(this.formForNotive.goodsType === 2 || this.formForNotive.goodsType === 3)){
-            if(this.formForNotive.size === 'one'){
-              //如果 size是统一 仅对统一表单进行验证
-              let resChild1 = await new Promise((res,rej)=>{
-                this.$refs['ruleFormChild1'].validate((valid) => {
-                    if (valid) {
-                      // alert('submit!');
-                      res(true)
-                    } else {
-                      res(false)
-                      // console.log('error submit!!');
-                      // return false;
-                    }
-                  })
-                })
-                if(!resChild1){
-                  return 
-                }
-            }else{
-              //如果 size是 多个 仅对 多个表单进行验证
-              let formChild2PromiseList = []
-              for(let i=0;i<this.formForNotiveChild2List.length;i++){
-                console.log(this.formForNotiveChild2List.length)
-                let one = new Promise((res,rej)=>{
-                  this.$refs['ruleFormChild2'][i].validate((valid) => {
-                      if (valid) {
-                        // alert('submit!');
-                        res(true)
-                      } else {
-                        rej(false)
-                        // console.log('error submit!!');
-                        // return false;
-                      }
-                    })
-                  })
-                formChild2PromiseList.push(one)
+    //添加新商品条目
+    async addNewNotice(formName) {
+      console.log(this.$refs);
+      if (
+        !(
+          this.formForNotive.goodsType === 2 ||
+          this.formForNotive.goodsType === 3
+        )
+      ) {
+        if (this.formForNotive.size === "one") {
+          //如果 size是统一 仅对统一表单进行验证
+          let resChild1 = await new Promise((res, rej) => {
+            this.$refs["ruleFormChild1"].validate(valid => {
+              if (valid) {
+                // alert('submit!');
+                res(true);
+              } else {
+                res(false);
+                // console.log('error submit!!');
+                // return false;
               }
-              let resChild2 = await Promise.all(formChild2PromiseList)
-                if(!resChild2){
-                  return 
-                }
-            }
+            });
+          });
+          if (!resChild1) {
+            return;
           }
-          
-        //基础验证
-        let res = await new Promise((res,rej)=>{
-          this.$refs[formName].validate((valid) => {
+        } else {
+          //如果 size是 多个 仅对 多个表单进行验证
+          let formChild2PromiseList = [];
+          for (let i = 0; i < this.formForNotiveChild2List.length; i++) {
+            console.log(this.formForNotiveChild2List.length);
+            let one = new Promise((res, rej) => {
+              this.$refs["ruleFormChild2"][i].validate(valid => {
+                if (valid) {
+                  // alert('submit!');
+                  res(true);
+                } else {
+                  rej(false);
+                  // console.log('error submit!!');
+                  // return false;
+                }
+              });
+            });
+            formChild2PromiseList.push(one);
+          }
+          let resChild2 = await Promise.all(formChild2PromiseList);
+          if (!resChild2) {
+            return;
+          }
+        }
+      }
+
+      //基础验证
+      let res = await new Promise((res, rej) => {
+        this.$refs[formName].validate(valid => {
           if (valid) {
             // alert('submit!');
             res(true);
@@ -910,10 +970,15 @@ export default {
       if (!res) {
         return;
       }
-        // signIn 签到列表
-        if((this.formForNotive.goodsType === 2 || this.formForNotive.goodsType === 3) 
-            && !(this.formForNotive.goodsPrice > 0)){ return this.$message.error({ message: '值必须大于零' }) }
-        // 通过验证
+      // signIn 签到列表
+      if (
+        (this.formForNotive.goodsType === 2 ||
+          this.formForNotive.goodsType === 3) &&
+        !(this.formForNotive.goodsPrice > 0)
+      ) {
+        return this.$message.error({ message: "值必须大于零" });
+      }
+      // 通过验证
 
       this.waitAddNotice = true;
       let sendData = {};
@@ -1000,61 +1065,82 @@ export default {
       sendData.school_name = JSON.stringify(tempArray);
       //库存 放在规格里 sendData.goodsTotal= this.formForNotive.goodsTotal
 
-        //分类
-        sendData.storegc_id= this.formForNotive.industry
+      //分类
+      sendData.storegc_id = this.formForNotive.industry;
 
-        //描述
-        sendData.goods_advword= this.formForNotive.goodsDescribe
-        //规格
-        sendData.spec_name= this.formForNotive.size
+      //描述
+      sendData.goods_advword = this.formForNotive.goodsDescribe;
+      //规格
+      sendData.spec_name = this.formForNotive.size;
 
+      // signIn 签到模块
+      if (
+        this.formForNotive.goodsType === 2 ||
+        this.formForNotive.goodsType === 3
+      ) {
+        sendData.spec_name = this.formForNotive.size = "mutil";
+        sendData.is_appoint =
+          this.formForNotive.goodsType === 1 ||
+          this.formForNotive.goodsType === 3;
+      }
+
+      if (this.formForNotive.size === "one") {
+        //单规格
+        sendData.spec_value = null;
+        sendData.goods_storage = this.formForNotiveChild1.count;
+      } else {
+        // 多规格
+        let tempMutil = [];
+        let tempSepc_value = [],
+          o = this.formForNotive;
         // signIn 签到模块
-        if(this.formForNotive.goodsType === 2 || this.formForNotive.goodsType === 3){
-          sendData.spec_name = this.formForNotive.size = 'mutil';
-          sendData.is_appoint = this.formForNotive.goodsType === 1 || this.formForNotive.goodsType === 3;
-        }
-          
-        if(this.formForNotive.size === 'one'){
-          //单规格
-          sendData.spec_value= null
-          sendData.goods_storage= this.formForNotiveChild1.count
-        }else{
-          // 多规格
-          let tempMutil = []
-          let tempSepc_value = [],
-              o = this.formForNotive;
-          // signIn 签到模块
-          if(o.goodsType === 2 || o.goodsType === 3){
-            sendData.goods_price = sendData.goods_marketprice = sendData.goods_costprice = Number(o.goodsPrice);
-            sendData.is_course = this.courseList[o.course].course_id;
-            console.log(sendData);
+        if (o.goodsType === 2 || o.goodsType === 3) {
+          sendData.goods_price = sendData.goods_marketprice = sendData.goods_costprice = Number(
+            o.goodsPrice
+          );
+          sendData.is_course = this.courseList[o.course].course_id;
+          console.log(sendData);
 
-            this.courseDetailList.forEach(v => {
-              let val = `${v.teacher_name}-[${v.cschedule_id}]-${v.address_name}-${v.time_data ? v.time_data[0] : ''}`
+          this.courseDetailList.forEach(v => {
+            let val = `${v.teacher_name}-[${v.cschedule_id}]-${
+              v.address_name
+            }-${v.time_data ? v.time_data[0] : ""}`;
 
-              tempMutil.push({ price: sendData.goods_price, marketprice: sendData.goods_price, sp_value: val, stock: v.max_stunum });
-              tempSepc_value.push(val);
+            tempMutil.push({
+              price: sendData.goods_price,
+              marketprice: sendData.goods_price,
+              sp_value: val,
+              stock: v.max_stunum
             });
-          }else{
-            // signIn 签到
-            sendData.is_course = 0;
-            for(let i=0,len=this.formForNotiveChild2List.length;i<len;i++){
-              tempMutil.push({
-                price:this.formForNotiveChild2List[i].price,
-                marketprice:this.formForNotiveChild2List[i].price,
-                sp_value:this.formForNotiveChild2List[i].name,
-                stock:this.formForNotiveChild2List[i].count
-              })
-              tempSepc_value.push(this.formForNotiveChild2List[i].name)
-            }
+            tempSepc_value.push(val);
+          });
+        } else {
+          // signIn 签到
+          sendData.is_course = 0;
+          for (
+            let i = 0, len = this.formForNotiveChild2List.length;
+            i < len;
+            i++
+          ) {
+            tempMutil.push({
+              price: this.formForNotiveChild2List[i].price,
+              marketprice: this.formForNotiveChild2List[i].price,
+              sp_value: this.formForNotiveChild2List[i].name,
+              stock: this.formForNotiveChild2List[i].count
+            });
+            tempSepc_value.push(this.formForNotiveChild2List[i].name);
           }
-          
-          sendData.spec_value = tempSepc_value
-          sendData.goods_storage = ''
-          sendData.spec = tempMutil
         }
+
+        sendData.spec_value = tempSepc_value;
+        sendData.goods_storage = "";
+        sendData.spec = tempMutil;
+      }
       // 运费
       sendData.goods_freight = this.formForNotive.goodsTrans;
+      //背景音乐
+      let music = await uploadFn(this.formForNotive.music[0].raw);
+      sendData.goods_music = music[0];
 
       addGoods_api(sendData)
         .then(data => {
@@ -1081,50 +1167,55 @@ export default {
           console.error("manageShop:addGoods_api 接口错误");
         });
     },
-      async editNewNotice(formName){
-          if(!(this.formForNotive.goodsType === 2 || this.formForNotive.goodsType === 3)){
-            if(this.formForNotive.size === 'one'){
-              //如果 size是统一 仅对统一表单进行验证
-              let resChild1 = await new Promise((res,rej)=>{
-                this.$refs['ruleFormChild1'].validate((valid) => {
-                    if (valid) {
-                      // alert('submit!');
-                      res(true)
-                    } else {
-                      res(false)
-                      // console.log('error submit!!');
-                      // return false;
-                    }
-                  })
-                })
-                if(!resChild1){
-                  return 
-                }
-            }else{
-              //如果 size是 多个 仅对 多个表单进行验证
-              let formChild2PromiseList = []
-              for(let i=0;i<this.formForNotiveChild2List.length;i++){
-                console.log(this.formForNotiveChild2List.length)
-                let one = new Promise((res,rej)=>{
-                  this.$refs['ruleFormChild2'][i].validate((valid) => {
-                      if (valid) {
-                        // alert('submit!');
-                        res(true)
-                      } else {
-                        rej(false)
-                        // console.log('error submit!!');
-                        // return false;
-                      }
-                    })
-                  })
-                formChild2PromiseList.push(one)
+    async editNewNotice(formName) {
+      if (
+        !(
+          this.formForNotive.goodsType === 2 ||
+          this.formForNotive.goodsType === 3
+        )
+      ) {
+        if (this.formForNotive.size === "one") {
+          //如果 size是统一 仅对统一表单进行验证
+          let resChild1 = await new Promise((res, rej) => {
+            this.$refs["ruleFormChild1"].validate(valid => {
+              if (valid) {
+                // alert('submit!');
+                res(true);
+              } else {
+                res(false);
+                // console.log('error submit!!');
+                // return false;
               }
-              let resChild2 = await Promise.all(formChild2PromiseList)
-                if(!resChild2){
-                  return 
-                }
-            }
+            });
+          });
+          if (!resChild1) {
+            return;
           }
+        } else {
+          //如果 size是 多个 仅对 多个表单进行验证
+          let formChild2PromiseList = [];
+          for (let i = 0; i < this.formForNotiveChild2List.length; i++) {
+            console.log(this.formForNotiveChild2List.length);
+            let one = new Promise((res, rej) => {
+              this.$refs["ruleFormChild2"][i].validate(valid => {
+                if (valid) {
+                  // alert('submit!');
+                  res(true);
+                } else {
+                  rej(false);
+                  // console.log('error submit!!');
+                  // return false;
+                }
+              });
+            });
+            formChild2PromiseList.push(one);
+          }
+          let resChild2 = await Promise.all(formChild2PromiseList);
+          if (!resChild2) {
+            return;
+          }
+        }
+      }
 
       //基础验证
       let res = await new Promise((res, rej) => {
@@ -1144,8 +1235,13 @@ export default {
       }
       // signIn 签到列表
 
-      if((this.formForNotive.goodsType === 2 || this.formForNotive.goodsType === 3) 
-            && !(this.formForNotive.goodsPrice > 0)){ return this.$message.error({ message: '值必须大于零' }) }
+      if (
+        (this.formForNotive.goodsType === 2 ||
+          this.formForNotive.goodsType === 3) &&
+        !(this.formForNotive.goodsPrice > 0)
+      ) {
+        return this.$message.error({ message: "值必须大于零" });
+      }
       // 通过验证
 
       this.waitAddNotice = true;
@@ -1251,64 +1347,87 @@ export default {
       } else {
         sendData.storegc_id = this.formForNotive.industry;
       }
-        //描述
-        sendData.goods_advword= this.formForNotive.goodsDescribe
+      //描述
+      sendData.goods_advword = this.formForNotive.goodsDescribe;
 
+      // signIn 签到模块
+      if (
+        this.formForNotive.goodsType === 2 ||
+        this.formForNotive.goodsType === 3
+      ) {
+        sendData.spec_name = this.formForNotive.size = "mutil";
+        sendData.is_appoint =
+          this.formForNotive.goodsType === 1 ||
+          this.formForNotive.goodsType === 3;
+        console.log("is_appoinment", sendData);
+      }
+      // temp
+      // sendData.rank_1 = 0;
+      // sendData.rank_2 = 0;
+      // sendData.rank_3 = 0;
+      //规格
+      if (this.formForNotive.size === "one") {
+        //单规格
+        // sendData.spec_value= null
+        sendData.goods_storage = this.formForNotiveChild1.count;
+      } else {
+        sendData.spec_name = this.formForNotive.size;
+        // 多规格
+        let tempMutil = [];
+        let tempSepc_value = [],
+          o = this.formForNotive;
         // signIn 签到模块
-        if(this.formForNotive.goodsType === 2 || this.formForNotive.goodsType === 3) {
-          sendData.spec_name = this.formForNotive.size = 'mutil';
-          sendData.is_appoint = this.formForNotive.goodsType === 1 || this.formForNotive.goodsType === 3;
-          console.log('is_appoinment', sendData);
-        }
-        // temp
-          // sendData.rank_1 = 0;
-          // sendData.rank_2 = 0;
-          // sendData.rank_3 = 0;
-        //规格
-        if(this.formForNotive.size === 'one'){
-          //单规格
-          // sendData.spec_value= null
-          sendData.goods_storage= this.formForNotiveChild1.count
-        }else{
-          sendData.spec_name= this.formForNotive.size
-          // 多规格
-          let tempMutil = []
-          let tempSepc_value = [],
-              o = this.formForNotive;
-          // signIn 签到模块
-          if(o.goodsType === 2 || o.goodsType === 3){
-            let err = null;
-            sendData.goods_price = sendData.goods_marketprice = sendData.goods_costprice = Number(o.goodsPrice);
-            sendData.is_course = this.course.course_id;
-            console.log(sendData);
+        if (o.goodsType === 2 || o.goodsType === 3) {
+          let err = null;
+          sendData.goods_price = sendData.goods_marketprice = sendData.goods_costprice = Number(
+            o.goodsPrice
+          );
+          sendData.is_course = this.course.course_id;
+          console.log(sendData);
 
-            this.courseDetailList.forEach(v => {
-              if(v.stock > v.max_stunum){ return err = { message: '库存数量不能超过可预约人数' }; }
-
-              let val = `${v.teacher_name}-[${v.cschedule_id}]-${v.address_name}-${v.time_data ? v.time_data[0] : ''}`
-
-              tempMutil.push({ price: sendData.goods_price, marketprice: sendData.goods_price, sp_value: val, stock: v.stock });
-              tempSepc_value.push(val);
-            });
-
-            if(err){ this.waitAddNotice = false; return this.$message.error(err); }
-          }else{
-            sendData.is_course = 0; // signIn 签到
-            for(let i=0,len=this.formForNotiveChild2List.length;i<len;i++){
-              tempMutil.push({
-                price:this.formForNotiveChild2List[i].price,
-                marketprice:this.formForNotiveChild2List[i].price,
-                sp_value:this.formForNotiveChild2List[i].name,
-                stock:this.formForNotiveChild2List[i].count
-              })
-              tempSepc_value.push(this.formForNotiveChild2List[i].name)
+          this.courseDetailList.forEach(v => {
+            if (v.stock > v.max_stunum) {
+              return (err = { message: "库存数量不能超过可预约人数" });
             }
-          }
 
-          sendData.spec_value = tempSepc_value
-          sendData.goods_storage = ''
-          sendData.spec = tempMutil
+            let val = `${v.teacher_name}-[${v.cschedule_id}]-${
+              v.address_name
+            }-${v.time_data ? v.time_data[0] : ""}`;
+
+            tempMutil.push({
+              price: sendData.goods_price,
+              marketprice: sendData.goods_price,
+              sp_value: val,
+              stock: v.stock
+            });
+            tempSepc_value.push(val);
+          });
+
+          if (err) {
+            this.waitAddNotice = false;
+            return this.$message.error(err);
+          }
+        } else {
+          sendData.is_course = 0; // signIn 签到
+          for (
+            let i = 0, len = this.formForNotiveChild2List.length;
+            i < len;
+            i++
+          ) {
+            tempMutil.push({
+              price: this.formForNotiveChild2List[i].price,
+              marketprice: this.formForNotiveChild2List[i].price,
+              sp_value: this.formForNotiveChild2List[i].name,
+              stock: this.formForNotiveChild2List[i].count
+            });
+            tempSepc_value.push(this.formForNotiveChild2List[i].name);
+          }
         }
+
+        sendData.spec_value = tempSepc_value;
+        sendData.goods_storage = "";
+        sendData.spec = tempMutil;
+      }
       // 运费
       sendData.goods_freight = this.formForNotive.goodsTrans;
 
@@ -1375,7 +1494,7 @@ export default {
         goods_commonid: id
       };
       getGoods_api(sendData)
-        .then( async data => {
+        .then(async data => {
           this.editLoading = false;
           this.waitAddNotice = false;
           if (data.status === 0) {
@@ -1431,17 +1550,19 @@ export default {
               console.log("111111111111", err);
             }
 
-            tempForm.is_virtual = data.is_virtual
+            tempForm.is_virtual = data.is_virtual;
             // signIn 签到模块
             // if(!this.courseList.length){await this.getCourseList();console.log('await ');}
-            if(data.is_course) this.formForNotiveIs_virtual_fn(data.is_course);
-            tempForm.goodsType = data.is_course ? data.is_appoint ? 3 : 2 : data.is_appoint;
+            if (data.is_course) this.formForNotiveIs_virtual_fn(data.is_course);
+            tempForm.goodsType = data.is_course
+              ? data.is_appoint ? 3 : 2
+              : data.is_appoint;
             // if(data.is_course){ this.courseList.some((v, i) => v.course_id === data.is_course ? tempForm.course = i : false) }
-            if(data.is_course) await this.getCourseDetail(data.is_course);
-            console.log('----', tempForm.course);
+            if (data.is_course) await this.getCourseDetail(data.is_course);
+            console.log("----", tempForm.course);
 
-            tempForm.goodsName = data.goods_name
-            tempForm.goodsNum = data.goods_serial
+            tempForm.goodsName = data.goods_name;
+            tempForm.goodsNum = data.goods_serial;
             console.log(tempSchool);
             tempForm.school = tempSchool;
 
@@ -1463,39 +1584,41 @@ export default {
             }
             this.formForNotive = tempForm; //基础form完成填充
             // 此时需要 判断 规格 单或多
-            let tempForm2 = {} //单规格 零时变量
-            let tempForm3 = [] //多规格 零时变量
-            if(tempForm.size==='mutil'){
+            let tempForm2 = {}; //单规格 零时变量
+            let tempForm3 = []; //多规格 零时变量
+            if (tempForm.size === "mutil") {
               // signIn 签到模块
-              if(tempForm.goodsType === 2 || tempForm.goodsType === 3){
-                  let o = this.formForNotive;
-                  o.goodsPrice = data.goods_price; 
-                  
-                  this.courseDetailList.forEach((v, i) => v.stock = data.SKUList[i].goods_storage);
-              }else{
-                for(let i = 0 ,len = data.SKUList.length;i<len;i++){
+              if (tempForm.goodsType === 2 || tempForm.goodsType === 3) {
+                let o = this.formForNotive;
+                o.goodsPrice = data.goods_price;
+
+                this.courseDetailList.forEach(
+                  (v, i) => (v.stock = data.SKUList[i].goods_storage)
+                );
+              } else {
+                for (let i = 0, len = data.SKUList.length; i < len; i++) {
                   tempForm3.push({
-                    price:Number(data.SKUList[i].goods_price),
-                    marketprice:Number(data.SKUList[i].goods_marketprice),
-                    name:data.SKUList[i].goods_spec,
-                    count:Number(data.SKUList[i].goods_storage),
-                  })
+                    price: Number(data.SKUList[i].goods_price),
+                    marketprice: Number(data.SKUList[i].goods_marketprice),
+                    name: data.SKUList[i].goods_spec,
+                    count: Number(data.SKUList[i].goods_storage)
+                  });
                 }
-                this.formForNotiveChild2List = tempForm3 
+                this.formForNotiveChild2List = tempForm3;
               }
-            }else{
+            } else {
               tempForm2 = {
-                price:Number(data.goods_price),
-                marketprice:Number(data.goods_marketprice),
-                count:Number(data.SKUList[0].goods_storage)
-              }
-            //   this.formForNotiveChild2List = tempForm3;
-            // } else {
-            //   tempForm2 = {
-            //     price: Number(data.goods_price),
-            //     marketprice: Number(data.goods_marketprice),
-            //     count: Number(data.SKUList[0].goods_storage)
-            //   };
+                price: Number(data.goods_price),
+                marketprice: Number(data.goods_marketprice),
+                count: Number(data.SKUList[0].goods_storage)
+              };
+              //   this.formForNotiveChild2List = tempForm3;
+              // } else {
+              //   tempForm2 = {
+              //     price: Number(data.goods_price),
+              //     marketprice: Number(data.goods_marketprice),
+              //     count: Number(data.SKUList[0].goods_storage)
+              //   };
               this.formForNotiveChild1 = tempForm2;
             }
           } else {
