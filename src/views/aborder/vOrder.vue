@@ -22,16 +22,11 @@
         {{formForNotive.amount}}
       </p>
     </el-form-item>
-    <el-form-item label="运费" :label-width="formLabelWidth">
+    <!-- <el-form-item label="运费" :label-width="formLabelWidth">
       <p class="hbs-no-margin-p">
         {{formForNotive.trans}}
       </p>
-    </el-form-item>
-    <el-form-item label="运费" :label-width="formLabelWidth">
-      <p class="hbs-no-margin-p">
-        {{formForNotive.phone}}
-      </p>
-    </el-form-item>
+    </el-form-item> -->
     <el-form-item label="下单时间" :label-width="formLabelWidth">
       <p class="hbs-no-margin-p">
         {{formForNotive.orderTime}}
@@ -71,14 +66,14 @@
             prop="goods_price"
             >
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
             label="编号" 
             prop="goods_num"
             >
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
             label="实付金额" 
-            prop="goods_pay_price"
+            prop="truePay"
             >
         </el-table-column>
       </el-table>
@@ -266,6 +261,24 @@
   </el-pagination>
 </el-footer>
 </el-container>
+<el-dialog
+  title="发货信息"
+  :visible.sync="centerDialogVisible"
+  width="30%"
+  center>
+  <el-form :model="findForm">
+    <el-form-item label="联系人" label-width="100px">
+      <el-input v-model="findForm.linkmanName" autoComplete="on" placeholder="姓名" />
+    </el-form-item>
+    <el-form-item label="联系电话" label-width="100px">
+      <el-input v-model="findForm.linkmanPhone" autoComplete="on" placeholder="电话号码" />
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="centerDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="postExpressage">确 定</el-button>
+  </div>
+</el-dialog>
 </div>
 </template>
 <script>
@@ -288,7 +301,7 @@ export default {
         //excel
           tableDataAll:'',
           autoWidth:true,
-          filename:'实物订单Excel',
+          filename:'虚拟订单Excel',
           exportExcelStatus:'导出',
           downloadLoading:false,
         orderState:'',
@@ -342,6 +355,12 @@ export default {
         },
         total:1,
       // -------------------------
+       findForm: {
+        linkmanName: "",
+        linkmanPhone: "",
+      },
+       centerDialogVisible: false,
+       postExpressageId: null,
     }
   },
   methods: {
@@ -373,8 +392,8 @@ export default {
           return console.log('获取数据失败:handleDownload')
         }
         import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['订单ID','买家','买家电话', '订单金额', '订单号', '订单状态', '交易日期','商品名','商品价格']
-          const filterVal = ['id', 'name','phone','money', 'num', 'state', 'time','goods_name','goods_price']
+          const tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '下单时间','支付时间','商品名','商品价格','买家','买家电话']
+          const filterVal = ['id','money', 'num', 'state', 'time','paytime','goods_name','goods_price', 'name','phone']
           const tableDataAll = this.tableDataAll
           const data = this.formatJson(filterVal, tableDataAll)
           excel.export_json_to_excel({
@@ -406,11 +425,12 @@ export default {
       changeNewNotice(id,num){
         let sendData = {
           order_id : id,
-          shipping_code : '',
+          shipping_code : num,
           state_type:'deliver_goods'
         }
         changeVOrder_api(sendData).then((res)=>{
           if(res&&res.status===0){
+            this.centerDialogVisible = false
               this.$notify({
               title: '成功',
               message: '操作成功',
@@ -430,19 +450,16 @@ export default {
         })
       },  
       changeItem(index,raw){
-        let id = raw.id
-        this.$confirm(`请确认您已发货`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.changeNewNotice(id)
-        }).catch(()=>{
-          this.$notify.info({
-            title: '消息',
-            message: '已取消'
-          });
-        })
+        this.postExpressageId= raw.id
+        this.centerDialogVisible = true
+        this.findForm = {
+          linkmanName: "",
+          linkmanPhone: "",
+        }
+      },
+      postExpressage() {
+        this.changeNewNotice(this.postExpressageId,this.findForm)
+        console.log(this.findForm); 
       },
       lookItem(index,raw) {
         if(!raw||!raw.id){
@@ -479,6 +496,7 @@ export default {
             // 订单状态
             tempForm.state = data.order_state
             // 商品列表
+            data.order_goods[0].truePay = data.order_amount
             tempForm.goodsTable = data.order_goods
             // 收货信息
             tempForm.buyerInfo = data.order_reciver_info 
@@ -548,10 +566,11 @@ export default {
                 state:aData.order_state,
                 stateID:aData.order_state_id,
                 orderTypeTXT :this.getOrderType(aData.order_type) ,
-                name:aData.reciver_name,
-                phone:aData.reciver_telephone,
+                name:aData.reciver_name==''||aData.reciver_name==null?'-':aData.reciver_name,
+                phone:aData.reciver_telephone==''||aData.reciver_telephone==null?'-':aData.reciver_telephone,
                 goods_name:aData.order_goods[0].goods_name,
-                goods_price:aData.order_goods[0].goods_price
+                goods_price:aData.order_goods[0].goods_price,
+                paytime:aData.payment_time=='1970-01-01 08:00:00'?'-':aData.payment_time
               })
             })
             if(all){

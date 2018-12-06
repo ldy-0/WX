@@ -1,66 +1,77 @@
 <template>
-	<div class="app-container">
-		<div class="filter-container">
-			<el-input style="width: 260px;" placeholder="请输入手机号" v-model="listQuery.search"></el-input>
-			<el-button type="primary" icon="el-icon-search" @click="tableListSearch()">查询</el-button>
+  <div class="app-container">
+    <div class="filter-container">
+      <el-input style="width: 260px;" placeholder="请输入手机号" v-model="listQuery.search"></el-input>
+      <el-button type="primary" icon="el-icon-search" @click="tableListSearch()">查询</el-button>
 
-      <el-date-picker style="margin-left:60px;"
+      <el-date-picker
+        style="margin-left:60px;"
         v-model="searchTime"
         type="daterange"
         value-format="timestamp"
         start-placeholder="开始日期"
-        end-placeholder="结束日期">
-      </el-date-picker>
+        end-placeholder="结束日期"
+      ></el-date-picker>
       <el-button type="primary" icon="el-icon-search" @click="timeSearch()">查询</el-button>
 
-      <el-select style="margin-left:60px;" v-model="selectValue" placeholder="请选择" @change="selectSearch">
+      <el-select
+        style="margin-left:60px;"
+        v-model="selectValue"
+        placeholder="请选择"
+        @change="selectSearch"
+      >
         <el-option
           v-for="item in options"
           :key="item.value"
           :label="item.label"
-          :value="item.value">
-        </el-option>
+          :value="item.value"
+        ></el-option>
       </el-select>
-		</div>
-		<el-table :data="tableData" style="width: 100%">
-			<el-table-column type="index" width="50">
-			</el-table-column>
-      <el-table-column label="时间" prop="withdraw_time">
-			</el-table-column>
-			<el-table-column label="用户头像">
-				<template slot-scope="scope">
-					<img :src="scope.row.member_avatar" style="width:50px;height: 50px;">
-				</template>
-			</el-table-column>
-			<el-table-column label="昵称" prop="member_truename">
-			</el-table-column>
-			<el-table-column label="手机号" prop="member_mobile">
-			</el-table-column>
-      <el-table-column label="提现账号" prop="withdraw_number">
-			</el-table-column>
-      <el-table-column label="账户姓名" prop="withdraw_name">
-			</el-table-column>
-      <el-table-column label="提现金额" prop="withdraw_money">
-			</el-table-column>
-      <el-table-column label="剩余佣金" prop="withdraw_surplus">
-			</el-table-column>
+    </div>
+    <el-table :data="tableData" style="width: 100%">
+      <el-table-column type="index" width="50"></el-table-column>
+      <el-table-column label="时间" prop="withdraw_time"></el-table-column>
+      <el-table-column label="用户头像">
+        <template slot-scope="scope">
+          <img :src="scope.row.member_avatar" style="width:50px;height: 50px;">
+        </template>
+      </el-table-column>
+      <el-table-column label="昵称" prop="member_truename"></el-table-column>
+      <el-table-column label="手机号" prop="member_mobile"></el-table-column>
+      <el-table-column label="提现账号" prop="withdraw_number"></el-table-column>
+      <el-table-column label="账户姓名" prop="withdraw_name"></el-table-column>
+      <el-table-column label="提现金额" prop="withdraw_money"></el-table-column>
+      <el-table-column label="剩余佣金" prop="withdraw_surplus"></el-table-column>
       <el-table-column label="状态" prop="withdraw_status">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.withdraw_status == 0">待处理</el-tag>
           <el-tag v-if="scope.row.withdraw_status != 0" type="success">已完成</el-tag>
         </template>
-			</el-table-column>
+      </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-        <el-button type="primary" style="margin: 10px;" size="mini" v-if="scope.row.withdraw_status == 0" @click="changeState(scope)">改变状态</el-button>
-        <el-button type="danger" style="margin: 10px;" size="mini" @click="deleteList(scope)">删除</el-button>
+          <el-button
+            type="primary"
+            style="margin: 10px;"
+            size="mini"
+            v-if="scope.row.withdraw_status == 0"
+            @click="changeState(scope)"
+          >改变状态</el-button>
+          <el-button type="danger" style="margin: 10px;" size="mini" @click="deleteList(scope)">删除</el-button>
         </template>
-			</el-table-column>
-		</el-table>
-		<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page"
-		 :page-sizes="[10,20,30]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" background>
-		</el-pagination>
-	</div>
+      </el-table-column>
+    </el-table>
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="listQuery.page"
+      :page-sizes="[10,20,30]"
+      :page-size="listQuery.limit"
+      layout="total, sizes, prev, pager, next"
+      background
+      :total="total"
+    ></el-pagination>
+  </div>
 </template>
 <script>
 import { getWithdraw, editState, deleteWithdraw } from "@/api/distribution";
@@ -71,6 +82,7 @@ export default {
   },
   data() {
     return {
+      total: 0,
       //列表
       tableData: [],
       //分页（请求参数）
@@ -131,6 +143,7 @@ export default {
       getWithdraw(getData).then(res => {
         this.tableData = res.data;
         console.log(this.tableData);
+        this.total = res.pagination.total;
       });
     },
     changeState(scope) {

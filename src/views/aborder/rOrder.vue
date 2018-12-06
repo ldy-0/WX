@@ -220,6 +220,30 @@
   </el-pagination>
 </el-footer>
 </el-container>
+<el-dialog
+  title="发货信息"
+  :visible.sync="centerDialogVisible"
+  width="30%"
+  center>
+  <el-form :model="findForm">
+    <el-form-item label="快递公司名称" label-width="100px">
+      <el-input type='text' v-model="findForm.companyName" autoComplete="on" placeholder="公司名称" />
+    </el-form-item>
+    <el-form-item label="快递单号" label-width="100px">
+      <el-input v-model="findForm.expressNumber" autoComplete="on" placeholder="单号" />
+    </el-form-item>
+    <el-form-item label="联系人" label-width="100px">
+      <el-input v-model="findForm.linkmanName" autoComplete="on" placeholder="姓名" />
+    </el-form-item>
+    <el-form-item label="联系电话" label-width="100px">
+      <el-input v-model="findForm.linkmanPhone" autoComplete="on" placeholder="电话号码" />
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="centerDialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="postExpressage">确 定</el-button>
+  </div>
+</el-dialog>
 </div>
 </template>
 <script>
@@ -291,6 +315,14 @@ export default {
         },
         total:1,
       // -------------------------
+      findForm: {
+        companyName: "",
+        expressNumber: "",
+        linkmanName: "",
+        linkmanPhone: "",
+      },
+       centerDialogVisible: false,
+       postExpressageId: null,
     }
   },
   methods: {
@@ -360,6 +392,7 @@ export default {
         }
         changeROrder_api(sendData).then((res)=>{
           if(res&&res.status===0){
+            this.centerDialogVisible = false
               this.$notify({
               title: '成功',
               message: '操作成功',
@@ -379,19 +412,20 @@ export default {
         })
       },  
       changeItem(index,raw){
-        let id = raw.id
-        this.$prompt(`请输入单号?`, '发货', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-        }).then((data) => {
-          this.changeNewNotice(id,data.value)
-        }).catch(()=>{
-          this.$notify.info({
-            title: '消息',
-            message: '已取消'
-          });
-        })
+        this.postExpressageId= raw.id
+        this.centerDialogVisible = true
+        this.findForm = {
+          companyName: "",
+          expressNumber: "",
+          linkmanName: "",
+          linkmanPhone: "",
+        }
       },
+      postExpressage() {
+      this.changeNewNotice(this.postExpressageId,this.findForm)
+      console.log(this.findForm);
+      
+    },
       getOrderType(type){
         switch(type){
           case 0:
@@ -499,6 +533,11 @@ export default {
                 reciver_name:aData.order_reciver_info.name,
                 reciver_address:aData.order_reciver_info.address,
                 reciver_phone:aData.order_reciver_info.phone,
+                order_address:aData.order_reciver_info.address==''||aData.order_reciver_info.address==null?'-':aData.order_reciver_info.address,
+                order_name:aData.order_reciver_info.name==''||aData.order_reciver_info.name==null?'-':aData.order_reciver_info.name,
+                order_phone:aData.order_reciver_info.phone==''||aData.order_reciver_info.phone==null?'-':aData.order_reciver_info.phone,
+                paytime:aData.payment_time=='1970-01-01 08:00:00'?'-':aData.payment_time
+                // goodsList:aData.order_goods,
               })
             })
             if(all){

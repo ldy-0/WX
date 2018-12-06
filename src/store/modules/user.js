@@ -2,6 +2,7 @@ import { loginByUsername,loginByAdminname, logout, getUserInfo } from '@/api/log
 import { getToken, setToken, setStoreId, setNames, removeToken,setRoles } from '@/utils/auth'
 import api from '@/api/seller'
 import store from '@/store'
+import Vue from "vue"
 // import { setNames } from '../../utils/auth';
 
 const user = {
@@ -141,7 +142,13 @@ const user = {
 
 
             resolve()
-          }else{
+          } else if (data && data.status === 1) {
+            Vue.prototype.$message({
+              message: data.error,
+              type: "warning"
+            });
+            return Promise.reject("error");
+          } else{
             //接口ok，权限问题，提示登出
             return Promise.reject('error')
           }
