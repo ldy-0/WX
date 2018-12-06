@@ -86,6 +86,18 @@
     <el-form-item label="店铺介绍" :label-width="formLabelWidth" prop='shopText'>
       <el-input v-model="formForNotive.shopText" type="textarea"  auto-complete="off"></el-input>
     </el-form-item>
+    <el-form-item label="发件人" :label-width="formLabelWidth" prop='shopText'>
+      <el-input v-model="formForNotive.shopText" type="textarea"  auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="发件人电话" :label-width="formLabelWidth" prop='shopText'>
+      <el-input v-model="formForNotive.shopText" type="textarea"  auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="固话" :label-width="formLabelWidth" prop='shopText'>
+      <el-input v-model="formForNotive.shopText" type="textarea"  auto-complete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="发件人地址" :label-width="formLabelWidth" prop='shopText'>
+      <el-input v-model="formForNotive.shopText" type="textarea"  auto-complete="off"></el-input>
+    </el-form-item>
     <el-form-item label="提供服务" :label-width="formLabelWidth" prop='checkList'>
         <el-checkbox-group v-model="formForNotive.checkList">
             <el-checkbox label="1" border>wifi</el-checkbox>
@@ -171,7 +183,7 @@ export default {
         ],
 
       },
-      formLabelWidth:'80px',
+      formLabelWidth:'100px',
       //header
       formInline: {},
       // body 

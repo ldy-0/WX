@@ -322,8 +322,8 @@ export default {
           return console.log('获取数据失败:handleDownload')
         }
         import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '交易日期','商品名','商品价格']
-          const filterVal = ['id', 'money', 'num', 'state', 'time','goods_name','goods_price']
+          const tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '交易日期','商品名','商品价格','收件人','手机号','收货地址','发件人','发件人电话','固话','发件人地址']
+          const filterVal = ['id', 'money', 'num', 'state', 'time','goods_name','goods_price','reciver_name','reciver_phone','reciver_address','','','','']
           const tableDataAll = this.tableDataAll
           const data = this.formatJson(filterVal, tableDataAll)
           excel.export_json_to_excel({
@@ -495,8 +495,10 @@ export default {
                 stateID:aData.order_state_id,
                 orderTypeTXT :this.getOrderType(aData.order_type) ,
                 goods_name:aData.order_goods[0].goods_name,
-                goods_price:aData.order_goods[0].goods_price
-                // goodsList:aData.order_goods,
+                goods_price:aData.order_goods[0].goods_price,
+                reciver_name:aData.order_reciver_info.name,
+                reciver_address:aData.order_reciver_info.address,
+                reciver_phone:aData.order_reciver_info.phone,
               })
             })
             if(all){

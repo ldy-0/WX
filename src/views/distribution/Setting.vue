@@ -28,15 +28,13 @@
     <div class="row-div">每次点击分享链接获得积分
         <el-input v-model="link_integral" style="width:200px;margin-left:60px;" placeholder="请输入内容"></el-input>
     </div>
-    <div class="row-div">积分比例
-        <el-input v-model="link_integral" style="width:200px;margin-left:60px;" placeholder="请输入内容"></el-input>
-    </div>
     <div class="row-div">提现门槛
         <el-input v-model="link_integral" style="width:200px;margin-left:60px;" placeholder="请输入内容"></el-input>
     </div>
     <div class="row-div">积分/现金
         <el-input v-model="convert_integral" style="width:200px;margin-left:60px;" placeholder="请输入内容"></el-input> 积分 = 
         <el-input v-model="convert_money" style="width:200px;margin-left:6px;" placeholder="请输入内容"></el-input> 现金
+        <el-button @click="applyEdit" type="primary" icon='el-icon-edit' plain>申请修改</el-button>
     </div>
     <div style="margin-left:280px;">
         <el-button type="primary" @click="keepSetting">保存</el-button>
@@ -104,6 +102,9 @@ export default {
           type: 'success'
         });
       });
+    },
+    applyEdit(){
+      
     }
   }
 };
