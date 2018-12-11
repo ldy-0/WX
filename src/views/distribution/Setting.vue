@@ -28,13 +28,13 @@
     <div class="row-div">每次点击分享链接获得积分
         <el-input v-model="link_integral" style="width:200px;margin-left:60px;" placeholder="请输入内容"></el-input>
     </div>
-    <div class="row-div">提现门槛
-        <el-input v-model="link_integral" style="width:200px;margin-left:60px;" placeholder="请输入内容"></el-input>
-    </div>
+    <!-- <div class="row-div">提现门槛
+        <el-input v-model="min-money" style="width:200px;margin-left:60px;" placeholder="请输入内容"></el-input>
+    </div> -->
     <div class="row-div">积分/现金
         <el-input v-model="convert_integral" style="width:200px;margin-left:60px;" placeholder="请输入内容"></el-input> 积分 = 
         <el-input v-model="convert_money" style="width:200px;margin-left:6px;" placeholder="请输入内容"></el-input> 现金
-        <el-button @click="applyEdit" type="primary" icon='el-icon-edit' plain>申请修改</el-button>
+        <!-- <el-button @click="applyEdit" type="primary" icon='el-icon-edit' plain>申请修改</el-button> -->
     </div>
     <div class="row-div">每人每天分享小程序可以获得积分，每天最多只能获得100次分享积分，</div>
     <div class="row-div">若分享有人点开，且此人是新用户，则新用户和分享人均可获取额外积分</div>

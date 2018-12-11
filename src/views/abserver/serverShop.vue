@@ -86,17 +86,17 @@
     <el-form-item label="店铺介绍" :label-width="formLabelWidth" prop='shopText'>
       <el-input v-model="formForNotive.shopText" type="textarea"  auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="发件人" :label-width="formLabelWidth" prop='shopText'>
-      <el-input v-model="formForNotive.shopText" type="textarea"  auto-complete="off"></el-input>
+    <el-form-item label="发件人" :label-width="formLabelWidth" prop='addresser'>
+      <el-input v-model="formForNotive.addresser" type="text"  auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="发件人电话" :label-width="formLabelWidth" prop='shopText'>
-      <el-input v-model="formForNotive.shopText" type="textarea"  auto-complete="off"></el-input>
+    <el-form-item label="发件人电话" :label-width="formLabelWidth" prop='addresser_phone'>
+      <el-input v-model="formForNotive.addresser_phone" type="text"  auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="固话" :label-width="formLabelWidth" prop='shopText'>
-      <el-input v-model="formForNotive.shopText" type="textarea"  auto-complete="off"></el-input>
+    <el-form-item label="固话" :label-width="formLabelWidth" prop='addresser_call'>
+      <el-input v-model="formForNotive.addresser_call" type="text"  auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="发件人地址" :label-width="formLabelWidth" prop='shopText'>
-      <el-input v-model="formForNotive.shopText" type="textarea"  auto-complete="off"></el-input>
+    <el-form-item label="发件人地址" :label-width="formLabelWidth" prop='addresser_address'>
+      <el-input v-model="formForNotive.addresser_address" type="text"  auto-complete="off"></el-input>
     </el-form-item>
     <el-form-item label="提供服务" :label-width="formLabelWidth" prop='checkList'>
         <el-checkbox-group v-model="formForNotive.checkList">
@@ -181,7 +181,10 @@ export default {
             message: '请选择一张图片',
           }
         ],
-
+        addresser:[{type:"string", required: true, message: '请输入发件人名称', trigger: 'blur'}],
+        addresser_phone:[{type:"string", required: true, message: '请输入发件人电话', trigger: 'blur'}],
+        addresser_call:[{type:"string", message: '请输入发件人固话，选填', trigger: 'blur'}],
+        addresser_address:[{type:"string", required: true, message: '请输入发件人地址', trigger: 'blur'}],
       },
       formLabelWidth:'100px',
       //header
@@ -360,7 +363,10 @@ export default {
       sendData.store_description = this.formForNotive.shopText
       sendData.store_service = this.formForNotive.checkList
       sendData.store_longitude=this.position.lng,
-      sendData.store_latitude=this.position.lat
+      sendData.addresser_address=this.formForNotive.addresser_address
+      sendData.addresser_phone=this.formForNotive.addresser_phone
+      sendData.addresser_call=this.formForNotive.addresser_call||''
+      sendData.addresser=this.formForNotive.addresser
 
       editShopText_api(sendData).then(data=>{
         this.waitAddNotice = false
@@ -419,7 +425,12 @@ export default {
             this.formForNotive.fileList2=temp_fileList2,
             this.formForNotive.fileList3=temp_fileList3,
             this.formForNotive.checkList=aData.store_service,
-            this.formForNotive.shopText=aData.store_introduce
+            this.formForNotive.shopText=aData.store_introduce,
+            this.formForNotive.addresser=aData.addresser,
+            this.formForNotive.addresser_phone=aData.addresser_phone,
+            this.formForNotive.addresser_call=aData.addresser_call,
+            this.formForNotive.addresser_address=aData.addresser_address
+            
 
         }
         

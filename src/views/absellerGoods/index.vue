@@ -6,6 +6,11 @@
 .interval {
   margin-right: 100px;
 }
+audio {
+  position: absolute;
+    top: -12px;
+    left: 12%;
+}
 </style>
 
 <template>
@@ -71,9 +76,9 @@
     <el-form-item label="商品编号" :label-width="formLabelWidth" prop="goodsNum">
       <el-input v-model="formForNotive.goodsNum" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="商品限购" :label-width="formLabelWidth" prop="limited">
+    <!-- <el-form-item label="商品限购" :label-width="formLabelWidth" prop="limited">
       <el-input v-model="formForNotive.limited" auto-complete="off"></el-input>
-    </el-form-item>
+    </el-form-item> -->
     <el-form-item label="门店" :label-width="formLabelWidth" prop="school">
       <el-select multiple v-model="formForNotive.school" placeholder="请选择门店">
         <el-option
@@ -223,7 +228,7 @@
     <el-form-item label="上级的上级拿到积分" :label-width="formLabelWidth">
       <el-input v-model="rank_3" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="背景音乐" :label-width="formLabelWidth">
+    <el-form-item label="背景音乐" :label-width="formLabelWidth" prop="music">
       <el-upload
         class="upload-demo"
         action=""
@@ -233,11 +238,13 @@
         :on-change="handlePicture"
         :file-list="formForNotive.music"
         accept='audio/*'
-        list-type="text">
+        list-type="picture"
+        style="max-width:400px;"
+        >
         <el-button size="small" type="primary">选择音乐</el-button>
       </el-upload>
+      <audio ref="audio" v-if="!isAddItem&&music!=''" :src="music" controls></audio>
     </el-form-item>
-    <!-- <audio src="C:\Users\EDZ\Desktop\Camera Roll\2.mp3" controls></audio> -->
   </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="addNewShow = false">取 消</el-button>
@@ -429,6 +436,7 @@ export default {
   },
   data() {
     return {
+      music:'',
       // 签到模块
       courseList: [],
       courseDetailList: [],
@@ -484,13 +492,6 @@ export default {
             message: "请输入商品编号",
             trigger: "blur",
             min: 1
-          }
-        ],
-        limited: [
-          {
-            required: true,
-            message: "请输入限购数量",
-            trigger: "blur",
           }
         ],
         school: [
@@ -555,7 +556,22 @@ export default {
             min: 1,
             message: "至少选择一张图片"
           }
-        ]
+        ],
+        // limited: [
+        //   {
+        //     required: true,
+        //     message: "请输入限购数量",
+        //     trigger: "blur",
+        //   }
+        // ],
+        music: [
+          {
+            type: "array",
+            required: false,
+            min: 1,
+            message: "选择背景音乐，选填"
+          }
+        ],
       },
       formForNotiveChild1: Object.assign({}, formForNotiveChild1),
       rulesChild1: {
@@ -870,6 +886,7 @@ export default {
     },
     handleRemove() {
       this.formForNotive.music = arguments[1];
+      this.music = '';
     },
     onsuccess() {
       console.log("sucess----", arguments);
@@ -1139,8 +1156,10 @@ export default {
       // 运费
       sendData.goods_freight = this.formForNotive.goodsTrans;
       //背景音乐
-      let music = await uploadFn(this.formForNotive.music[0].raw);
-      sendData.goods_music = music[0];
+      if(this.formForNotive.music[0]){
+        let music = await uploadFn(this.formForNotive.music[0].raw);
+        sendData.music = music[0];
+      }
 
       addGoods_api(sendData)
         .then(data => {
@@ -1430,7 +1449,17 @@ export default {
       }
       // 运费
       sendData.goods_freight = this.formForNotive.goodsTrans;
-
+      //BGM
+      if(this.formForNotive.music[0]){
+        if(this.formForNotive.music[0].raw){
+          let music = await uploadFn(this.formForNotive.music[0].raw);
+          sendData.music = music[0];
+        }else{
+          sendData.music = this.formForNotive.music[0].url
+        }
+      }else{
+        sendData.music = ''
+      }
       editGoods_api(sendData)
         .then(data => {
           this.waitAddNotice = false;
@@ -1445,7 +1474,7 @@ export default {
           } else {
             this.$notify({
               title: "失败",
-              message: "修改商品失败",
+              message: data.error,
               type: "error"
             });
           }
@@ -1534,6 +1563,21 @@ export default {
               tempForm.fileList1 = tempFileList0;
             } catch (error) {
               tempForm.fileList0 = [];
+            }
+            //BGM
+            try {
+              if(data.music != ''){
+                let tempmusic = [];
+                tempmusic.push({url:data.music})
+                tempForm.music = tempmusic;
+                this.music = data.music
+              }else{
+                tempForm.music = [];
+                this.music = ''
+              }
+            } catch (error) {
+              tempForm.music = [];
+              this.music = ''
             }
             //虚拟
 
@@ -1998,6 +2042,7 @@ export default {
         })
       );
     }
+
   }
 };
 </script>
