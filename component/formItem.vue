@@ -2,7 +2,7 @@
     <view class='row'>
         <view><image class='input_icon' src='/images/signin/input.png' /></view>
         <input class='input' placeholder="{{config.placeholder}}" placeholder-style='color: #c5c5c5;' value='{{formData[config.value]}}' @input='handle' />
-        <view class='star s-fc-4' wx:if='{{config.type}}'>*</view>
+        <view class='star s-fc-4' wx:if='{{config.showStar}}'>*</view>
     </view>
 </template>
 <script>
@@ -34,7 +34,7 @@ export default class formItem extends wepy.component {
 
       if(type === 'email') this.config.invalid = !email.test(v) ? '邮箱格式不正确' : false;
 
-      console.error(this.config, v.length);
+      // console.error(this.config, v.length);
     },
   };
 }
