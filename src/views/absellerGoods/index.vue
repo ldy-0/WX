@@ -1326,7 +1326,7 @@ export default {
           } else {
             this.$notify({
               title: "失败",
-              message: "修改商品失败",
+              message: data.error,
               type: "error"
             });
           }

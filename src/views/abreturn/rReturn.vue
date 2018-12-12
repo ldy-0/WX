@@ -130,11 +130,11 @@
       style="width: 100%" >
 
       <el-table-column
-        label="店铺头像"
+        label="商品图"
         >
         <template slot-scope="scope">
           <div style="width:100px;height:100px;align-items:center;display:flex;">
-            <img :src="scope.row.storeImg" alt="" style="width:100px">
+            <img :src="scope.row.goodsImg" alt="" style="width:100px">
           </div>
         </template>
       </el-table-column>
@@ -421,7 +421,7 @@ export default {
             result.forEach((aData)=>{
               tempTableData.push({
                 id:aData.refund_id,
-                storeImg:aData.store_avatar,
+                goodsImg:aData.order_goods[0].goods_image,
                 num:aData.order_sn,
                 money:aData.order_amount,
                 time:aData.refund_add_time,

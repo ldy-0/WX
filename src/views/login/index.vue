@@ -159,6 +159,20 @@ export default {
       // showDialog: false
     }
   },
+  created(){
+    var userAgent = navigator.userAgent;
+    if (userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1 && !isOpera) {
+        this.$confirm(`本网站部分功能不兼容IE类浏览器，为了更好体验请更换其他浏览器如火狐、谷歌等浏览器`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          
+        }).catch(()=>{
+         
+        })
+    };
+  },
   methods: {
     // --------------
     // --------------
@@ -271,9 +285,6 @@ export default {
       //   })
       // }
     }
-  },
-  created() {
-    // window.addEventListener('hashchange', this.afterQRScan)
   },
   destroyed() {
     // window.removeEventListener('hashchange', this.afterQRScan)

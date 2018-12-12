@@ -10,7 +10,7 @@ export default {
     return: '退款',
     rReturn: '实物退款',
     vReturn: '虚拟退款',
-
+    groupReturn: '团购退款',
     appointment: '预约',
     memberlist: '数据列表',
     coupon: '优惠券',
@@ -21,7 +21,8 @@ export default {
     serverRec: '精品推荐',
     serverAct: '动态',
     serverShop: '店铺介绍',
-    serverAllbuy: '团购',
+    serverAllbuy: '普通团购',
+    upServerAllbuy: '等级团购',
     serverKill: '砍价',
     serverSchool: '门店',
     serverGetFlow: '流量充值',

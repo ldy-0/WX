@@ -408,8 +408,7 @@ export function editAllBuy_api(data){
   return request({
     url:'/api/v1/seller/groupbuying',
     method:'post',
-    params:data,
-    data
+    data:data,
   })
 }
 
@@ -472,7 +471,30 @@ export function getHomeData_api(data){
       params: data
   })
 }
-
+//团购退款列表
+export function groupReturn_api(data){
+  return request({
+      url: '/api/v1/seller/groupbuyrefund',
+      method: 'get',
+      params: data
+  })
+}
+//团购退款
+export function editGroupReturn(data){
+  return request({
+      url: '/api/v1/seller/groupbuyrefund',
+      method: 'post',
+      data,
+  })
+}
+//团购退款删除
+export function deleteGroupReturn(data){
+  return request({
+      url: '/api/v1/seller/groupbuyrefund',
+      method: 'delete',
+      data: data
+  })
+}
 // ----------------------------------------------
 // signIn 签到
 async function setAddress(data, _this){

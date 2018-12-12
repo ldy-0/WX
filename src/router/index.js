@@ -191,6 +191,11 @@ export let asyncRouterMapSeller = [
       component: () => import('@/views/abreturn/vReturn'),
       name: 'vReturn',
       meta: { title: 'vReturn', noCache: true }
+    }, {
+      path: 'groupReturn',
+      component: () => import('@/views/abreturn/groupReturn'),
+      name: 'groupReturn',
+      meta: { title: 'groupReturn', noCache: true }
     }]
   },
   {
@@ -271,7 +276,12 @@ export let asyncRouterMapSeller = [
       component: () => import('@/views/abserver/serverAllbuy'),
       name: 'serverAllbuy',
       meta: { title: 'serverAllbuy', noCache: true }
-    }, {
+    },{
+      path: 'upServerAllbuy',
+      component: () => import('@/views/abserver/upServerAllbuy'),
+      name: 'upServerAllbuy',
+      meta: { title: 'upServerAllbuy', noCache: true }
+    },{
       path: 'serverKill',
       component: () => import('@/views/abserver/serverKill'),
       name: 'serverKill',
