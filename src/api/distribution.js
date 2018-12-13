@@ -55,3 +55,10 @@ export function postSetting(data) { //删除提现列表
         data
     })
 }
+export function putSetting(data) { //删除提现列表
+    return request({
+        url: '/api/v1/seller/salersetting',
+        method: 'put',
+        data
+    })
+}
