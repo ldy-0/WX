@@ -137,6 +137,18 @@ export let asyncRouterMapAdmin = [
     }]
   },
   {
+    path: '/editAuth',
+    component: Layout,
+    redirect: '/editAuth/index',
+    meta: { roles: ['editAuth'] },
+    children: [{
+      path: 'index',
+      component: () => import('@/views/editAuth/index'),
+      name: 'editAuth',
+      meta: { title: 'editAuth', icon: 'notice', roles: ['editAuth'] }
+    }]
+  },
+  {
     path: '/library',
     component: Layout,
     redirect: '/library/libraryList',

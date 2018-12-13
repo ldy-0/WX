@@ -308,6 +308,21 @@ export function getFlowstats_api(data) {
     params: data
   })
 }
+//积分比例授权
+export function getEditAuth_api(data) {
+  return request({
+    url: '/api/v1/admin/salersettingaudit',
+    method: 'get',
+    params: data
+  })
+}
+export function editEditAuth_api(data) {
+  return request({
+    url: '/api/v1/admin/salersettingaudit',
+    method: 'put',
+    data
+  })
+}
 
 // auth
 async function getAuth(params, _this) {

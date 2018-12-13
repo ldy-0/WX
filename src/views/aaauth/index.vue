@@ -107,6 +107,14 @@
         </template>
       </el-table-column> -->
       <el-table-column 
+        label="积分比例修改授权"
+        >
+        <template slot-scope="scope">
+          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('editAuth')!==-1)" class="el-icon-check big-icon"></i>
+          <i v-else class="el-icon-close big-icon-no"></i>
+        </template>
+      </el-table-column>
+      <el-table-column 
         label="权限管理"
         >
         <template slot-scope="scope">
@@ -189,10 +197,10 @@ export default {
             label:'library',
             text:'题库'
           },
-          // {
-          //   label:'agent',
-          //   text:'分公司'
-          // },
+          {
+            label:'editAuth',
+            text:'积分比例修改授权'
+          },
           {
             label:'auth',
             text:'授权管理'

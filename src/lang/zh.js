@@ -30,7 +30,7 @@ export default {
     goods: '商品',
     notice: '公告',
     manageShop: '店铺管理',
-    
+    editAuth:'积分比例修改授权',
     library: "题库",
     libraryList: "题目列表",
     libraryClass: "分类",
