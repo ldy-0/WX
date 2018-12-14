@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
+import Vue from "vue";
 // import { MessageBox } from 'element-ui'
 
 // create an axios instance
@@ -55,6 +56,10 @@ service.interceptors.response.use(
       //   location.reload() // 为了重新实例化vue-router对象 避免bug
       // })
       // store.dispatch('FedLogOut')
+      Vue.prototype.$message({
+        message: res.error,
+        type: "warning"
+      });
       return Promise.reject('request.js拦截响应 res.status == 1')
     } else if (res && res.status === 10) {
       Message({
