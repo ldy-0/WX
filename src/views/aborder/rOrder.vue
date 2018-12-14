@@ -248,14 +248,16 @@
 </template>
 <script>
 //getROrderList_api 接口异常 php :未定义变量 bannnerModel
-import {getROrderList_api,getROrder_api,changeROrder_api} from '@/api/seller'
+import {getROrderList_api,getROrder_api,changeROrder_api,getIntroForm_api} from '@/api/seller'
 export default {
-  created(){
+  async created(){
+    await this.getForm();
     this.getList()
     // getROrder_api({order_id:59})
   },
   data() {
     return {
+        shopInfo:{},
       // out
         formLabelWidth:'140px',
         formForNotive:{},
@@ -327,7 +329,14 @@ export default {
   },
   methods: {
     //out
-    
+    async getForm(){
+      let sendData = {}
+      await getIntroForm_api(sendData).then(response=>{
+        if(response&&response.status == 0){
+            this.shopInfo = response.data
+        }
+      })
+    },
     //head
       formatJson(filterVal, jsonData) {
         return jsonData.map(v => filterVal.map(j => {
@@ -354,8 +363,8 @@ export default {
           return console.log('获取数据失败:handleDownload')
         }
         import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '订单类型','下单时间','支付时间','商品名','商品价格','收货地址','收货人','收货人电话']
-          const filterVal = ['id', 'money', 'num', 'state','orderTypeTXT', 'time','paytime','goods_name','goods_price','order_address','order_name','order_phone']
+          const tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '交易日期','商品名','商品价格','收件人','手机号','收货地址','发件人','发件人电话','固话','发件人地址']
+          const filterVal = ['id', 'money', 'num', 'state', 'time','goods_name','goods_price','reciver_name','reciver_phone','reciver_address','addresser','addresser_phone','addresser_call','addresser_address']
           const tableDataAll = this.tableDataAll
           const data = this.formatJson(filterVal, tableDataAll)
           excel.export_json_to_excel({
@@ -530,10 +539,17 @@ export default {
                 orderTypeTXT :this.getOrderType(aData.order_type) ,
                 goods_name:aData.order_goods[0].goods_name,
                 goods_price:aData.order_goods[0].goods_price,
+                reciver_name:aData.order_reciver_info.name,
+                reciver_address:aData.order_reciver_info.address,
+                reciver_phone:aData.order_reciver_info.phone,
                 order_address:aData.order_reciver_info.address==''||aData.order_reciver_info.address==null?'-':aData.order_reciver_info.address,
                 order_name:aData.order_reciver_info.name==''||aData.order_reciver_info.name==null?'-':aData.order_reciver_info.name,
                 order_phone:aData.order_reciver_info.phone==''||aData.order_reciver_info.phone==null?'-':aData.order_reciver_info.phone,
-                paytime:aData.payment_time=='1970-01-01 08:00:00'?'-':aData.payment_time
+                paytime:aData.payment_time=='1970-01-01 08:00:00'?'-':aData.payment_time,
+                addresser:this.shopInfo.addresser,
+                addresser_phone:this.shopInfo.addresser_phone,
+                addresser_call:this.shopInfo.addresser_call,
+                addresser_address:this.shopInfo.addresser_address,
                 // goodsList:aData.order_goods,
               })
             })
