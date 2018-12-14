@@ -78,6 +78,18 @@
         </el-table-column>
       </el-table>
     </el-form-item>
+    <el-form-item label="赠品信息" :label-width="formLabelWidth" v-if="formForNotive.giftDetail">
+      <el-form >
+        <el-form-item label="团购等级" :label-width="formLabelWidth">
+          <p class="hbs-no-margin-p">
+            {{formForNotive.giftDetail.rank}}
+          </p>
+        </el-form-item>
+        <el-form-item label="赠品图片" :label-width="formLabelWidth">
+          <img :src="formForNotive.giftDetail.img" alt="" width="100px">
+        </el-form-item>
+      </el-form>
+    </el-form-item>
     <el-form-item label="收货信息" :label-width="formLabelWidth" v-if="formForNotive.buyerInfo">
       <el-form >
         <el-form-item label="收货地址" :label-width="formLabelWidth">
@@ -447,6 +459,8 @@ export default {
           return "团购预约订单"
           case 9:
           return "砍价订单"
+          case 11:
+          return "团购订单"
           default :
           return "普通订单"
         }
@@ -470,9 +484,18 @@ export default {
           this.editLoading = false //detail 和 edit共用
           // this.waitAddNotice = false
           if(data.status===0){
+            let tempForm = {} 
+            if(data.data.group){
+              let groupgift = {
+                img: data.data.group.groupgift[0].url,
+                rank: data.data.group.rank
+              }
+              tempForm.giftDetail = groupgift // 升级团详情
+            }
+            
             data = data.data[0]
             //获取数据成功，这填充数据，三个formNative
-            let tempForm = {}
+            
             // 编号
             tempForm.num = data.order_sn
             // 金额
@@ -489,8 +512,6 @@ export default {
             tempForm.goodsTable = data.order_goods
             // 收货信息
             tempForm.buyerInfo = data.order_reciver_info 
-            // 订单类别
-
             this.formForNotive = tempForm //基础form完成填充
           }else{
             this.$notify({
