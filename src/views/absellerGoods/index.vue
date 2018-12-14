@@ -6,10 +6,11 @@
 .interval {
   margin-right: 100px;
 }
+
 audio {
   position: absolute;
-    top: -12px;
-    left: 12%;
+  top: -12px;
+  left: 12%;
 }
 </style>
 
@@ -76,9 +77,9 @@ audio {
     <el-form-item label="商品编号" :label-width="formLabelWidth" prop="goodsNum">
       <el-input v-model="formForNotive.goodsNum" auto-complete="off"></el-input>
     </el-form-item>
-    <!-- <el-form-item label="商品限购" :label-width="formLabelWidth" prop="limited">
-      <el-input v-model="formForNotive.limited" auto-complete="off"></el-input>
-    </el-form-item> -->
+    <el-form-item label="商品限购" :label-width="formLabelWidth" prop="limited">
+      <el-input type="number" v-model="formForNotive.limited" auto-complete="off" placeholder="请输入限购数量,输入0则不限购"></el-input>
+    </el-form-item>
     <el-form-item label="门店" :label-width="formLabelWidth" prop="school">
       <el-select multiple v-model="formForNotive.school" placeholder="请选择门店">
         <el-option
@@ -421,7 +422,8 @@ const formForNotive = {
   goodsDescribe: "",
   goodsTrans: 0,
   size: "one",
-  fileList2: []
+  fileList2: [],
+  limited:null
 };
 const formForNotiveChild1 = {
   price: 10,
@@ -436,7 +438,7 @@ export default {
   },
   data() {
     return {
-      music:'',
+      music: "",
       // 签到模块
       courseList: [],
       courseDetailList: [],
@@ -557,13 +559,13 @@ export default {
             message: "至少选择一张图片"
           }
         ],
-        // limited: [
-        //   {
-        //     required: true,
-        //     message: "请输入限购数量",
-        //     trigger: "blur",
-        //   }
-        // ],
+        limited: [
+          {
+            required: true,
+            message: "请输入限购数量,输入0则不限购",
+            trigger: "blur"
+          }
+        ],
         music: [
           {
             type: "array",
@@ -571,7 +573,7 @@ export default {
             min: 1,
             message: "选择背景音乐，选填"
           }
-        ],
+        ]
       },
       formForNotiveChild1: Object.assign({}, formForNotiveChild1),
       rulesChild1: {
@@ -886,7 +888,7 @@ export default {
     },
     handleRemove() {
       this.formForNotive.music = arguments[1];
-      this.music = '';
+      this.music = "";
     },
     onsuccess() {
       console.log("sucess----", arguments);
@@ -1155,8 +1157,10 @@ export default {
       }
       // 运费
       sendData.goods_freight = this.formForNotive.goodsTrans;
+      //限购
+      sendData.limit_buy = this.formForNotive.limited
       //背景音乐
-      if(this.formForNotive.music[0]){
+      if (this.formForNotive.music[0]) {
         let music = await uploadFn(this.formForNotive.music[0].raw);
         sendData.music = music[0];
       }
@@ -1449,16 +1453,18 @@ export default {
       }
       // 运费
       sendData.goods_freight = this.formForNotive.goodsTrans;
+      //限购
+      sendData.limit_buy = this.formForNotive.limited
       //BGM
-      if(this.formForNotive.music[0]){
-        if(this.formForNotive.music[0].raw){
+      if (this.formForNotive.music[0]) {
+        if (this.formForNotive.music[0].raw) {
           let music = await uploadFn(this.formForNotive.music[0].raw);
           sendData.music = music[0];
-        }else{
-          sendData.music = this.formForNotive.music[0].url
+        } else {
+          sendData.music = this.formForNotive.music[0].url;
         }
-      }else{
-        sendData.music = ''
+      } else {
+        sendData.music = "";
       }
       editGoods_api(sendData)
         .then(data => {
@@ -1566,18 +1572,18 @@ export default {
             }
             //BGM
             try {
-              if(data.music != ''){
+              if (data.music != "") {
                 let tempmusic = [];
-                tempmusic.push({url:data.music})
+                tempmusic.push({ url: data.music });
                 tempForm.music = tempmusic;
-                this.music = data.music
-              }else{
+                this.music = data.music;
+              } else {
                 tempForm.music = [];
-                this.music = ''
+                this.music = "";
               }
             } catch (error) {
               tempForm.music = [];
-              this.music = ''
+              this.music = "";
             }
             //虚拟
 
@@ -1614,6 +1620,7 @@ export default {
             tempForm.goodsDescribe = data.goods_advword;
             tempForm.size = data.spec_value ? "mutil" : "one";
             tempForm.goodsTrans = Number(data.goods_freight);
+            tempForm.limited = data.limit_buy
             try {
               let tempImgs = JSON.parse(data.goods_body);
               let tempFileList2 = [];
@@ -2042,7 +2049,6 @@ export default {
         })
       );
     }
-
   }
 };
 </script>
