@@ -1163,7 +1163,7 @@ export default {
       //限购
       sendData.limit_buy = this.formForNotive.limited
       //背景音乐
-      if (this.formForNotive.music[0]) {
+      if (this.formForNotive.music) {
         let music = await uploadFn(this.formForNotive.music[0].raw);
         sendData.music = music[0];
       }
