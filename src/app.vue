@@ -28,16 +28,16 @@ export default class extends wepy.app {
       "pages/store/goodsDetails", //商品详情
       "pages/store/pointGoodsDetail", //积分商品详情
       "pages/store/firmOrder", //提交订单（购买)
-      "pages/store/commentList",//评价表
+      "pages/store/commentList", //评价表
       "pages/store/bought", //购买完成
       //   "pages/store/pointbought",//积分购买完成
       //  "pages/store/pointorderdetail",//积分订单详情
       "pages/store/orderdetail", //订单详情
-      "pages/store/selectreturn",//选择退款还是退货
-      "pages/store/refund",//退款
-      "pages/store/refundDetail",//退款详情
-      "pages/store/retundgood",//退货
-      "pages/store/retundGoodDetail",//退货详情
+      "pages/store/selectreturn", //选择退款还是退货
+      "pages/store/refund", //退款
+      "pages/store/refundDetail", //退款详情
+      "pages/store/retundgood", //退货
+      "pages/store/retundGoodDetail", //退货详情
       //"pages/outWeb",//外链
       "pages/my/addressList", //收货地址列表
       "pages/my/addAddress", //收货地址编辑
@@ -112,12 +112,13 @@ export default class extends wepy.app {
       let auth = userInfo.data.token;
       wx.setStorageSync("token", auth);
       const memberRes = await shttp.get("/api/v2/member/memberinfo").end();
+      let storageInfo = wx.getStorageSync("memberInfo");
       let memberInfo = {
         member_id: memberRes.data.member_id,
         member_points: memberRes.data.member_points,
-        wx_avatar: null,
-        wx_name: null,
-        member_mobile: memberRes.data.member_mobile,
+        wx_avatar: storageInfo.wx_avatar ? storageInfo.wx_avatar : null,
+        wx_name: storageInfo.wx_name ? storageInfo.wx_name : null,
+        member_mobile: memberRes.data.member_mobile
       };
       wx.setStorageSync("memberInfo", memberInfo);
     }
@@ -127,14 +128,14 @@ export default class extends wepy.app {
    */
   globalData = {
     authorizationStyle: "1" //1: 强制需要用户微信信息和强制手机授权
-                            //2：强制需要用户微信信息和不强制手机授权 
-                            //3：强制需要用户微信信息和不需要手机授权
-                            //4：不强制需要用户微信信息和强制手机授权
-                            //5：不强制需要用户微信信息和不强制手机授权
-                            //6：不强制需要用户微信信息和不需要手机授权
-                            //7：不需要用户微信信息和强制手机授权
-                            //8：不需要用户微信信息和不强制手机授权
-                            //9：不需要用户微信信息和不需要手机授权
+    //2：强制需要用户微信信息和不强制手机授权
+    //3：强制需要用户微信信息和不需要手机授权
+    //4：不强制需要用户微信信息和强制手机授权
+    //5：不强制需要用户微信信息和不强制手机授权
+    //6：不强制需要用户微信信息和不需要手机授权
+    //7：不需要用户微信信息和强制手机授权
+    //8：不需要用户微信信息和不强制手机授权
+    //9：不需要用户微信信息和不需要手机授权
   };
 }
 </script>
