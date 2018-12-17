@@ -143,7 +143,8 @@ audio {
       </el-select>
     </el-form-item> -->
     <el-form-item label="商品描述" :label-width="formLabelWidth" prop="goodsDescribe">
-      <el-input v-model="formForNotive.goodsDescribe" type="textarea" auto-complete="off"></el-input>
+      <!-- <el-input v-model="formForNotive.goodsDescribe" type="textarea" auto-complete="off"></el-input> -->
+      <editor style='width: 800px; height: 300px;' :menubar='editorConfig.menu' :height='editorConfig.height' v-model='formForNotive.goodsDescribe' v-if='addNewShow && showComponent' />
     </el-form-item>
 
     <!-- {{formForNotive.size}} -->
@@ -202,7 +203,7 @@ audio {
     <el-form-item label="运费" :label-width="formLabelWidth" prop="goodsTrans" v-if='!(formForNotive.goodsType === 2 || formForNotive.goodsType === 3)'>
       <el-input v-model.number="formForNotive.goodsTrans" auto-complete="off"></el-input>
     </el-form-item>
-    <el-form-item label="商品详情设置" :label-width="formLabelWidth" prop="fileList2" >
+    <el-form-item label="商品详情设置" :label-width="formLabelWidth" prop="fileList2" v-if="formForNotive.fileList2.length">
       <el-upload 
         :auto-upload="false"
           action=""
@@ -409,6 +410,7 @@ import {
 import api from "@/api/seller";
 import { getNames } from "@/utils/auth";
 import uploadFn from "@/utils/aahbs";
+import config from './config'
 
 const formForNotive = {
   fileList1: [],
@@ -431,6 +433,7 @@ const formForNotiveChild1 = {
 };
 const formForNotiveChild2List = [{}];
 export default {
+  mixins: [config],
   async created() {
     await this.getindustryList(); //自定义分类
     this.getSchoolList();
@@ -1521,7 +1524,7 @@ export default {
         });
         return;
       }
-      this.isAddItem = false;
+      this.isAddItem = this.showComponent = false;
       this.addNewShow = true;
       this.editLoading = true;
       let id = raw.id;
@@ -1679,6 +1682,7 @@ export default {
               type: "error"
             });
           }
+          this.showComponent = true; // init component
         })
         .catch(e => {
           this.waitAddNotice = false;

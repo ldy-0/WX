@@ -34,6 +34,11 @@ export default {
     food: '餐饮',
     desk: '餐桌',
 
+    // card
+    card: '名片',
+    parent: '家长列表',
+    clock: '打卡列表',
+
     // signIn
     // signIn: '签到列表',
     signIn: '会员管理',

@@ -351,6 +351,25 @@ export let asyncRouterMapSeller = [
   //   }]
   // },
   {
+    path: '/card',
+    component: Layout,
+    redirect: '/card/index',
+    meta: { title: 'card', icon: 'goods', roles:'card'},
+    children: [
+    {
+      path: 'index',
+      component: () => import('@/views/card/parent'),
+      name: 'parent',
+      meta: { title: 'parent', noCache: true }
+    },
+    {
+      path: 'clock',
+      component: () => import('@/views/card/clock'),
+      name: 'clock',
+      meta: { title: 'clock', noCache: true }
+    }]
+  },
+  {
     path: '/signIn',
     component: Layout,
     // redirct: '/signIn/index',
