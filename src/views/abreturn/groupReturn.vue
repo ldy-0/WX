@@ -101,7 +101,8 @@
             <template slot-scope="scope">
               <el-tag size="medium" v-if="scope.row.refund_state==='CHECK'">待退款</el-tag>
               <el-tag size="medium" v-if="scope.row.refund_state==='PENDING'">退款中</el-tag>
-              <el-tag size="medium" v-if="scope.row.refund_state==='SUCCESS'">已完成</el-tag>
+              <el-tag size="medium" v-if="scope.row.refund_state==='SUCCESS'&&scope.row.total_fee==scope.row.refund_fee">已完成</el-tag>
+              <el-tag size="medium" v-if="scope.row.refund_state==='SUCCESS'&&scope.row.total_fee!=scope.row.refund_fee">差价退款已完成</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="操作">

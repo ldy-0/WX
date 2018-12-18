@@ -480,20 +480,19 @@ export default {
         
         this.detailShow = true
         this.editLoading = true
-        getROrder_api(sendData).then(data=>{
+        getROrder_api(sendData).then(res=>{
           this.editLoading = false //detail 和 edit共用
           // this.waitAddNotice = false
-          if(data.status===0){
-            let tempForm = {} 
-            if(data.data.group){
+          if(res.status==0){
+            let tempForm = {}
+            if(res.data.group){
               let groupgift = {
-                img: data.data.group.groupgift[0].url,
-                rank: data.data.group.rank
+                img: res.data.group.groupgift.length>0?res.data.group.groupgift[0].url:'',
+                rank: res.data.group.rank
               }
               tempForm.giftDetail = groupgift // 升级团详情
             }
-            
-            data = data.data[0]
+            let data = res.data[0]
             //获取数据成功，这填充数据，三个formNative
             
             // 编号
@@ -523,7 +522,7 @@ export default {
         }).catch(e=>{
           // this.waitAddNotice = false
           this.editLoading = false
-          console.error('manageShop:getROrder_api 接口错误')
+          console.error(e,'manageShop:getROrder_api 接口错误')
         })
       },
       async getList(all) {
