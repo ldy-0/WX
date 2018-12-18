@@ -280,6 +280,7 @@ export default class Classify extends wepy.page {
       .get(`/api/v2/member/goodscommon?store_id=1`)
       .query({
         gc_id: this.topId,
+        type:'sort',
         page: this.page,
         limit: 1000
       })

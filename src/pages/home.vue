@@ -486,7 +486,8 @@ export default class Home extends wepy.page {
       .get(`/api/v2/member/goodscommon`)
       .query({
         store_id: 1,
-        goods_commend: 1
+        goods_commend: 1,
+        type:'sort'
       })
       .end();
     list = res.data;

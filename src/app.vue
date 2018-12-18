@@ -21,7 +21,7 @@ export default class extends wepy.app {
       "pages/mine", //我的
       "pages/article/search", //搜索
       "pages/store/searchResult", //搜索结果
-      "pages/shopList", //店铺列表页
+      // "pages/shopList", //店铺列表页
       "pages/article/advertisingPage", //banner跳转页
       "pages/store/more", //推荐更多
       "pages/store/goodsList", //商品列表
