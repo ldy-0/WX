@@ -485,14 +485,14 @@ export default {
           // this.waitAddNotice = false
           if(res.status==0){
             let tempForm = {}
-            if(res.data.group){
+            let data = res.data[0]
+            if(data.group){
               let groupgift = {
-                img: res.data.group.groupgift.length>0?res.data.group.groupgift[0].url:'',
-                rank: res.data.group.rank
+                img: data.group.groupgift.length>0?data.group.groupgift[0].url:'',
+                rank: data.group.rank
               }
               tempForm.giftDetail = groupgift // 升级团详情
             }
-            let data = res.data[0]
             //获取数据成功，这填充数据，三个formNative
             
             // 编号
