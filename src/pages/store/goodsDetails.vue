@@ -572,10 +572,15 @@
       </view>
       <view class="detail">
         <view class="detail_title">商品详情</view>
-        <repeat for="{{goodsimgList}}" item="item">
-          <view class="description">{{item.Repeat_title}}</view>
-          <image class="detail_img" src="{{item.Repeat_images[0].url}}"  mode="widthFix"/>
-        </repeat>
+        <view wx:if="{{goodsimgList}}">
+          <repeat for="{{goodsimgList}}" item="item">
+            <view class="description">{{item.Repeat_title}}</view>
+            <image class="detail_img" src="{{item.Repeat_images[0].url}}"  mode="widthFix"/>
+          </repeat>
+        </view>
+        <view wx:else>
+          <rich-text style='width: 100%; height: auto;' nodes='{{goodsBody}}'></rich-text>
+        </view>
         <view class="space"></view>
       </view>
     </view>
@@ -656,7 +661,8 @@ export default class GoodsDetails extends wepy.page {
       return this.showStandard;
     },
     getSize: () => this.size,
-    nowDate: () => getTimes.formatTime(new Date(), "Y-M-D")
+    nowDate: () => getTimes.formatTime(new Date(), "Y-M-D"),
+    goodsBody(){ return this.goods.goods_body && this.goods.goods_body.replace(/<img/g, "<img style='display: block; width: 100%;'"); }
   };
 
   components = {};
@@ -795,7 +801,7 @@ export default class GoodsDetails extends wepy.page {
       .end();
     console.log(res);
     this.goods = res.data;
-    this.goodsimgList = JSON.parse(this.goods.goods_body);
+    this.goodsimgList = this.goods.goods_body[0] === '[' ? JSON.parse(this.goods.goods_body) : null;
     this.goods.goods_salenum = this.goods.SKUList[0].goods_salenum;
     this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
     if (res.data.spec_value == false) {
