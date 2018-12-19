@@ -518,6 +518,15 @@ export default {
       this.QformForNotive.goods_image = row.goodsImage;
       this.QformForNotive.id = row.id;
       this.QaddNewShow = true;
+      this.QwaitAddNotice = false;
+      this.QformForNotive.rank = [
+        {
+          goods_price: "",
+          limit_num: "",
+          gift_images: [],
+          gift_title: ""
+        }
+      ]
     },
     Headdetails(index, row) {
       let detail = this.goodsList[index];
