@@ -556,8 +556,8 @@ async function updateTeacher(data, _this){
     method: 'post',
     data,
   });
-
-  return res.error !== '修改成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error })// res.data; 
+console.error(res);
+  return res.error !== '修改成功' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : _this.$notify.success({ title: '提示', message: res.error })// res.data; 
 }
 
 async function deleteTeacher(data, _this){
@@ -568,7 +568,7 @@ async function deleteTeacher(data, _this){
     data,
   });
 
-  return res.error !== '删除成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error })// res.data; 
+  return res.error !== '删除成功' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : _this.$notify.success({ title: '提示', message: res.error })// res.data; 
 }
 
 async function getTeacherList(params, _this){
@@ -634,7 +634,7 @@ async function importStudent(data, _this){
 
 async function updatePhone(data, _this){
   let res = await request({
-    url: '/api/v1/seller/editErrstu',
+    url: '/api/v1/seller/editerrstu',
     method: 'post',
     data,
   }); 
@@ -711,7 +711,7 @@ async function deleteCoulse(params, _this){
     params,
   });
 
-  return res.error !== '删除成功' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: res.error }); 
+  return res.error !== '删除成功' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : _this.$notify.success({ title: '提示', message: res.error }); 
 }
 
 async function changeSemester(params, _this){
@@ -800,12 +800,12 @@ async function deleteCourseAppoinment(data, _this){
 // edit name 
 async function getNames(params, _this){
   let res = await request({
-    url: '/api/v1/seller/getwordsList',
+    url: '/api/v1/seller/getwordslist',
     methods: 'get',
     params,
   });
 
-  return res.error && res.error !== '未查询到数据' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : res.data.error === '查询成功' ? res.data : res; 
+  return res.error && res.error !== '未查询到数据' ? res.error : res.data.error === '查询成功' ? res.data : res; 
 }
 
 async function setNames(data, _this){

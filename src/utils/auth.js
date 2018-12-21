@@ -44,6 +44,10 @@ export function setState(State) {
   return Cookies.set(StateKey, State)
 }
 export function removeToken() {
+  // clear sigin info 清除签到相关信息
+  Cookies.remove('names');
+  Cookies.remove('storeId');
+
   Cookies.remove(RolesKey)
   Cookies.remove(StateKey)
   return Cookies.remove(TokenKey)

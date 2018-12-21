@@ -885,7 +885,7 @@ async function getParentList(params, _this){
     params,
   });
 
-  return res.error !== '' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res; 
+  return res.error !== '' ? this.$notify.error({ title: '错误信息', message: res.error, }) : res; 
 }
 
 async function deleteParent(data, _this){
@@ -895,7 +895,7 @@ async function deleteParent(data, _this){
     data,
   }); 
 
-  return res.error !== '' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: '删除成功', }); 
+  return res.error !== '' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : _this.$notify.success({ title: '提示', message: '删除成功', }); 
 }
 
 async function getClockList(params, _this){
@@ -905,7 +905,7 @@ async function getClockList(params, _this){
     params,
   });
 
-  return res.error !== '' ? this.$notify.error({ title: '错误信息', message: res.data.error, }) : res; 
+  return res.error !== '' ? this.$notify.error({ title: '错误信息', message: res.error, }) : res; 
 }
 
 async function deleteClock(data, _this){
@@ -915,7 +915,7 @@ async function deleteClock(data, _this){
     data,
   }); 
 console.warn(res);
-  return res.error !== '' ? _this.$notify.error({ title: '错误信息', message: res.data.error, }) : _this.$notify.success({ title: '提示', message: '删除成功', }); 
+  return res.error !== '' ? _this.$notify.error({ title: '错误信息', message: res.error, }) : _this.$notify.success({ title: '提示', message: '删除成功', }); 
 }
 
 export default {

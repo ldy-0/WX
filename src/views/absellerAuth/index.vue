@@ -136,6 +136,14 @@
         </template>
       </el-table-column>
       <el-table-column 
+        label="会员管理"
+        v-if='showSign'>
+        <template slot-scope="scope">
+          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('sign')!==-1)" class="el-icon-check big-icon"></i>
+          <i v-else class="el-icon-close big-icon-no"></i>
+        </template>
+      </el-table-column>
+      <el-table-column 
         label="权限管理"
         >
         <template slot-scope="scope">
@@ -148,6 +156,14 @@
         >
         <template slot-scope="scope">
           <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('distribution')!==-1)" class="el-icon-check big-icon"></i>
+          <i v-else class="el-icon-close big-icon-no"></i>
+        </template>
+      </el-table-column>
+      <el-table-column 
+        label="名片"
+        >
+        <template slot-scope="scope">
+          <i v-if="scope.row.super||(scope.row.checkboxGroup1&&scope.row.checkboxGroup1.indexOf('card')!==-1)" class="el-icon-check big-icon"></i>
           <i v-else class="el-icon-close big-icon-no"></i>
         </template>
       </el-table-column>
@@ -196,6 +212,7 @@
 // getList 接口 获取
 // addNotice 接口 添加
 
+import { getNames } from '@/utils/auth';
 import {
   getAuthList_api,
   deleteAuth_api,
@@ -211,6 +228,14 @@ const formForNotive = {
 };
 export default {
   created() {
+    // 获取店铺是否签到权限
+    if(getNames('names')){
+      this.showSign = true;
+      this.rolesList.push({ label: "sign", text: "会员管理" });
+    }else{
+      this.showSign = false;
+    }
+    
     this.getList();
   },
   data() {
@@ -257,6 +282,10 @@ export default {
         {
           label: "distribution",
           text: "分销"
+        },
+        {
+          label: "card",
+          text: "名片"
         }
       ],
       formLabelWidth: "140px", //弹框1 左侧文字默认宽度
@@ -320,7 +349,8 @@ export default {
         search: "",
         time: ""
       },
-      total: 1
+      total: 1,
+      showSign: false, // 标记店铺是否有签到权限
     };
   },
   methods: {

@@ -135,9 +135,9 @@ const user = {
             // 签到模块名词修改
             console.log('module_list : ', data.data.module_list, data.data.module_list.indexOf("class_sign|1"));
             if( data.data.module_list.indexOf("class_sign|1") !== -1 ){
-              let res = await api.getNames(null, this);
-              console.log('sign edit name: ', res.data);
-              setNames(res.data);
+              let res = await api.getNames(null);
+              res.data && setNames(res.data);
+              console.log('sign getNames:', res.data, res.data === undefined);
             }
 
 
@@ -204,6 +204,7 @@ const user = {
         logout(state.token).then(() => {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
+
           removeToken()
           resolve()
         }).catch(error => {
