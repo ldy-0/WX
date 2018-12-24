@@ -90,6 +90,30 @@
         </el-form-item>
       </el-form>
     </el-form-item>
+    <el-form-item label="拼团信息" :label-width="formLabelWidth" v-if="formForNotive.member">
+      <el-form >
+        <el-form-item label="团长" :label-width="formLabelWidth">
+          <div class="group-item">
+            <img :src="formForNotive.member[0].member_avatar" alt="" width="50px" style="border-radius: 50%">
+            <div>{{formForNotive.member[0].member_truename}}</div>
+          </div>
+        </el-form-item>
+        <el-form-item label="团成员" :label-width="formLabelWidth">
+          <div class="group-list">
+            <div class="group-item" v-for="item in formForNotive.member">
+              <img :src="item.member_avatar" alt="" width="50px" style="border-radius: 50%">
+              <div>{{item.member_truename}}</div>
+            </div>
+          </div>
+        </el-form-item>
+      </el-form>
+    </el-form-item>
+    <el-form-item label="购买者微信信息" :label-width="formLabelWidth" v-if="formForNotive.buyer">
+      <div class="group-item">
+        <img :src="formForNotive.buyer.member_avatar" alt="" width="50px" style="border-radius: 50%">
+        <div>{{formForNotive.buyer.member_truename}}</div>
+      </div>
+    </el-form-item>
     <el-form-item label="收货信息" :label-width="formLabelWidth">
       <el-form >
         <el-form-item label="收货人" :label-width="formLabelWidth">
@@ -197,7 +221,7 @@
       style="width: 100%" >
 
       <el-table-column
-        label="店铺头像"
+        label="商品图片"
         >
         <template slot-scope="scope">
           <div style="width:100px;height:100px;align-items:center;display:flex;">
@@ -495,11 +519,16 @@ export default {
             let tempForm = {}
             let data = res.data[0]
             if(data.group){
-              let groupgift = {
-                img: data.group.groupgift.length>0?data.group.groupgift[0].url:'',
-                rank: data.group.rank
+              if(data.group.groupgift){
+                let groupgift = {
+                  img: data.group.groupgift.length>0?data.group.groupgift[0].url:'',
+                  rank: data.group.rank
+                }
+                tempForm.giftDetail = groupgift // 团礼物详情              
               }
-              tempForm.giftDetail = groupgift // 升级团详情
+              
+              tempForm.member = data.group.member
+              tempForm.buyer = data.group.buyer
             }
             
             //获取数据成功，这填充数据，三个formNative
@@ -535,7 +564,7 @@ export default {
         }).catch(e=>{
           // this.waitAddNotice = false
           this.editLoading = false
-          console.error('manageShop:getVOrder_api 接口错误')
+          console.error(e)
         })
       },
       getOrderType(type){
@@ -581,7 +610,7 @@ export default {
             result.forEach((aData)=>{
               tempTableData.push({
                 id:aData.order_id,
-                storeImg:aData.store_avatar,
+                storeImg:aData.order_goods[0].goods_image,
                 num:aData.order_sn,
                 money:aData.order_amount,
                 time:aData.add_time,

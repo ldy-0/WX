@@ -174,6 +174,16 @@ export let asyncRouterMapSeller = [
       component: () => import('@/views/aborder/vOrder'),
       name: 'vOrder',
       meta: { title: 'vOrder', noCache: true }
+    }, {
+      path: 'rGroupOrder',
+      component: () => import('@/views/aborder/rGroupOrder'),
+      name: 'rGroupOrder',
+      meta: { title: 'rGroupOrder', noCache: true }
+    }, {
+      path: 'vGroupOrder',
+      component: () => import('@/views/aborder/vGroupOrder'),
+      name: 'vGroupOrder',
+      meta: { title: 'vGroupOrder', noCache: true }
     }]
   },
   {

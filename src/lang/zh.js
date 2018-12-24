@@ -6,7 +6,8 @@ export default {
     order: '订单',
     rOrder: '实物订单',
     vOrder: '虚拟订单',
-
+    rGroupOrder: '实物未成团订单',
+    vGroupOrder: '虚拟未成团订单',
     return: '退款',
     rReturn: '实物退款',
     vReturn: '虚拟退款',

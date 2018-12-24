@@ -2,16 +2,6 @@
   .notice
     .header
       margin-top 20px
-  .group-item
-    width 110px 
-    display flex
-    align-items center
-    justify-content space-between
-    flex-direction column
-  .group-list
-    display flex
-    flex-direction row
-    flex-wrap wrap      
 </style>
 
 <template>
@@ -32,11 +22,11 @@
         {{formForNotive.amount}}
       </p>
     </el-form-item>
-    <el-form-item label="运费" :label-width="formLabelWidth">
+    <!-- <el-form-item label="运费" :label-width="formLabelWidth">
       <p class="hbs-no-margin-p">
         {{formForNotive.trans}}
       </p>
-    </el-form-item>
+    </el-form-item> -->
     <el-form-item label="下单时间" :label-width="formLabelWidth">
       <p class="hbs-no-margin-p">
         {{formForNotive.orderTime}}
@@ -76,14 +66,14 @@
             prop="goods_price"
             >
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
             label="编号" 
             prop="goods_num"
             >
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
             label="实付金额" 
-            prop="goods_pay_price"
+            prop="truePay"
             >
         </el-table-column>
       </el-table>
@@ -124,21 +114,16 @@
         <div>{{formForNotive.buyer.member_truename}}</div>
       </div>
     </el-form-item>
-    <el-form-item label="收货信息" :label-width="formLabelWidth" v-if="formForNotive.buyerInfo">
+    <el-form-item label="收货信息" :label-width="formLabelWidth">
       <el-form >
-        <el-form-item label="收货地址" :label-width="formLabelWidth">
-          <p class="hbs-no-margin-p">
-            {{formForNotive.buyerInfo.address}}
-          </p>
-        </el-form-item>
         <el-form-item label="收货人" :label-width="formLabelWidth">
           <p class="hbs-no-margin-p">
-            {{formForNotive.buyerInfo.name}}
+            {{formForNotive.name}}
           </p>
         </el-form-item>
         <el-form-item label="收货人电话" :label-width="formLabelWidth">
           <p class="hbs-no-margin-p">
-            {{formForNotive.buyerInfo.phone}}
+            {{formForNotive.phone}}
           </p>
         </el-form-item>
       </el-form>
@@ -150,31 +135,7 @@
   </span>
 </el-dialog>
 <el-container class="notice">
-<el-header class="header" style="height:auto !important">
-  <el-form :inline="true"  class="form">
-    <el-form-item label="订单状态">
-      <el-select v-model="orderState" placeholder="请选择">
-        <el-option
-          v-for="item in orderStateOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
-      <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
-    </el-form-item>
-    <el-form-item label="订单类别">
-      <el-select v-model="listQuery.order_type" placeholder="请选择">
-        <el-option
-          v-for="item in orderTypeOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
-      <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
-    </el-form-item>
-  </el-form>  
+<el-header class="header" style="height:auto !important"> 
   <el-form  :inline="true" class="form">
     <el-form-item label="导出Excel">
       <el-button  type="primary" icon="document" @click="handleDownload" :loading="downloadLoading">{{exportExcelStatus}}</el-button>
@@ -255,8 +216,6 @@
         >
         <template slot-scope="scope">
           <el-button size="mini" type="info" @click="lookItem(scope.$index, scope.row)">查看明细</el-button>
-          <el-button size="mini" type="danger" @click="changeItem(scope.$index, scope.row)"
-           v-if="scope.row.stateID===20">发货</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -272,12 +231,6 @@
   width="30%"
   center>
   <el-form :model="findForm">
-    <el-form-item label="快递公司名称" label-width="100px">
-      <el-input type='text' v-model="findForm.companyName" autoComplete="on" placeholder="公司名称" />
-    </el-form-item>
-    <el-form-item label="快递单号" label-width="100px">
-      <el-input v-model="findForm.expressNumber" autoComplete="on" placeholder="单号" />
-    </el-form-item>
     <el-form-item label="联系人" label-width="100px">
       <el-input v-model="findForm.linkmanName" autoComplete="on" placeholder="姓名" />
     </el-form-item>
@@ -293,17 +246,15 @@
 </div>
 </template>
 <script>
-//getROrderList_api 接口异常 php :未定义变量 bannnerModel
-import {getROrderList_api,getROrder_api,changeROrder_api,getIntroForm_api} from '@/api/seller'
+//getVOrderList_api 接口异常 php :未定义变量 bannnerModel
+import {getVOrderList_api,getVOrder_api,changeVOrder_api} from '@/api/seller'
 export default {
-  async created(){
-    await this.getForm();
+  created(){
     this.getList()
     // getROrder_api({order_id:59})
   },
   data() {
     return {
-        shopInfo:{},
       // out
         formLabelWidth:'140px',
         formForNotive:{},
@@ -314,7 +265,7 @@ export default {
         //excel
           tableDataAll:'',
           autoWidth:true,
-          filename:'实物订单Excel',
+          filename:'虚拟未成团订单Excel',
           exportExcelStatus:'导出',
           downloadLoading:false,
         orderState:'',
@@ -347,6 +298,12 @@ export default {
             value: 6,
             label: '团购订单'
           }, {
+            value: 7,
+            label: '预约订单'
+          } ,{
+            value: 8,
+            label: '预约且团购订单'
+          },{
             value: 9,
             label: '砍价订单'
           }],
@@ -358,14 +315,11 @@ export default {
           page: 1,
           limit: 20,
           search:"",
-          time:"",
-          order_type:''
+          time:""
         },
         total:1,
       // -------------------------
-      findForm: {
-        companyName: "",
-        expressNumber: "",
+       findForm: {
         linkmanName: "",
         linkmanPhone: "",
       },
@@ -375,14 +329,7 @@ export default {
   },
   methods: {
     //out
-    async getForm(){
-      let sendData = {}
-      await getIntroForm_api(sendData).then(response=>{
-        if(response&&response.status == 0){
-            this.shopInfo = response.data
-        }
-      })
-    },
+    
     //head
       formatJson(filterVal, jsonData) {
         return jsonData.map(v => filterVal.map(j => {
@@ -409,8 +356,8 @@ export default {
           return console.log('获取数据失败:handleDownload')
         }
         import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '交易日期','商品名','商品价格','收件人','手机号','收货地址','发件人','发件人电话','固话','发件人地址']
-          const filterVal = ['id', 'money', 'num', 'state', 'time','goods_name','goods_price','reciver_name','reciver_phone','reciver_address','addresser','addresser_phone','addresser_call','addresser_address']
+          const tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '下单时间','支付时间','商品名','商品价格','买家','买家电话']
+          const filterVal = ['id','money', 'num', 'state', 'time','paytime','goods_name','goods_price', 'name','phone']
           const tableDataAll = this.tableDataAll
           const data = this.formatJson(filterVal, tableDataAll)
           excel.export_json_to_excel({
@@ -445,7 +392,7 @@ export default {
           shipping_code : num,
           state_type:'deliver_goods'
         }
-        changeROrder_api(sendData).then((res)=>{
+        changeVOrder_api(sendData).then((res)=>{
           if(res&&res.status===0){
             this.centerDialogVisible = false
               this.$notify({
@@ -470,17 +417,85 @@ export default {
         this.postExpressageId= raw.id
         this.centerDialogVisible = true
         this.findForm = {
-          companyName: "",
-          expressNumber: "",
           linkmanName: "",
           linkmanPhone: "",
         }
       },
       postExpressage() {
-      this.changeNewNotice(this.postExpressageId,this.findForm)
-      console.log(this.findForm);
-      
-    },
+        this.changeNewNotice(this.postExpressageId,this.findForm)
+        console.log(this.findForm); 
+      },
+      lookItem(index,raw) {
+        if(!raw||!raw.id){
+            this.$notify.error({
+              title: '错误',
+              message: 'id不存在'
+          })
+          return
+        }
+        let sendData = {
+          order_id:raw.id,
+          group: 1
+        }
+        console.log(arguments)
+        
+        this.detailShow = true
+        this.editLoading = true
+        getVOrder_api(sendData).then(res=>{
+          this.editLoading = false //detail 和 edit共用
+          // this.waitAddNotice = false
+          if(res.status===0){
+            let tempForm = {}
+            let data = res.data[0]
+            if(data.group){
+              if(data.group.groupgift){
+                let groupgift = {
+                  img: data.group.groupgift.length>0?data.group.groupgift[0].url:'',
+                  rank: data.group.rank
+                }
+                tempForm.giftDetail = groupgift // 团礼物详情              
+              }
+              
+              tempForm.member = data.group.member
+              tempForm.buyer = data.group.buyer
+            }
+            
+            //获取数据成功，这填充数据，三个formNative
+            // 编号
+            tempForm.num = data.order_sn
+            // 金额
+            tempForm.amount = data.order_amount
+            // 运费
+            tempForm.trans = data.shipping_fee
+            // 下单时间
+            tempForm.orderTime = data.add_time
+            // 付款时间
+            tempForm.payTime = data.payment_time
+            // 订单状态
+            tempForm.state = data.order_state
+            // 商品列表
+            data.order_goods[0].truePay = data.order_amount
+            tempForm.goodsTable = data.order_goods
+            // 收货信息
+            tempForm.buyerInfo = data.order_reciver_info 
+
+            tempForm.name = data.reciver_name
+            tempForm.phone= data.reciver_telephone
+            
+            this.formForNotive = tempForm //基础form完成填充
+          }else{
+            this.$notify({
+              title: '失败',
+              message: '数据获取失败',
+              type: 'error'
+            })
+          }
+        }).catch(e=>{
+          // this.waitAddNotice = false
+          this.editLoading = false
+          console.error(e)
+        })
+      },
       getOrderType(type){
         switch(type){
           case 0:
@@ -499,70 +514,6 @@ export default {
           return "普通订单"
         }
       },
-      lookItem(index,raw) {
-        if(!raw||!raw.id){
-            this.$notify.error({
-              title: '错误',
-              message: 'id不存在'
-          })
-          return
-        }
-        let sendData = {
-          order_id:raw.id
-        }
-        console.log(arguments)
-        
-        this.detailShow = true
-        this.editLoading = true
-        getROrder_api(sendData).then(res=>{
-          this.editLoading = false //detail 和 edit共用
-          // this.waitAddNotice = false
-          if(res.status==0){
-            let tempForm = {}
-            let data = res.data[0]
-            if(data.group){
-              if(data.group.groupgift){
-                let groupgift = {
-                  img: data.group.groupgift.length>0?data.group.groupgift[0].url:'',
-                  rank: data.group.rank
-                }
-                tempForm.giftDetail = groupgift // 团礼物详情              
-              }
-              tempForm.member = data.group.member
-              tempForm.buyer = data.group.buyer
-            }
-            //获取数据成功，这填充数据，三个formNative
-            
-            // 编号
-            tempForm.num = data.order_sn
-            // 金额
-            tempForm.amount = data.order_amount
-            // 运费
-            tempForm.trans = data.shipping_fee
-            // 下单时间
-            tempForm.orderTime = data.add_time
-            // 付款时间
-            tempForm.payTime = data.payment_time
-            // 订单状态
-            tempForm.state = data.order_state
-            // 商品列表
-            tempForm.goodsTable = data.order_goods
-            // 收货信息
-            tempForm.buyerInfo = data.order_reciver_info 
-            this.formForNotive = tempForm //基础form完成填充
-          }else{
-            this.$notify({
-              title: '失败',
-              message: '数据获取失败',
-              type: 'error'
-            })
-          }
-        }).catch(e=>{
-          // this.waitAddNotice = false
-          this.editLoading = false
-          console.error(e,'manageShop:getROrder_api 接口错误')
-        })
-      },
       async getList(all) {
         // 立一个flag 因为当前函数 promise化 需要检测 接口返回状态 
         let flag = false
@@ -574,7 +525,8 @@ export default {
         if(typeof this.orderState === 'number'){
           sendData.order_state = this.orderState
         }
-        await getROrderList_api(sendData).then(response => {
+        sendData.group = 1
+        await getVOrderList_api(sendData).then(response => {
           this.listLoading = false
           if(response&&response.status==0){
             // 将flag 状态变为true 表明获取接口成功
@@ -582,7 +534,7 @@ export default {
             let result = response.data
             if(!result){
               result =[]
-             console.log('getROrderList_api 没有任何数据')
+             console.log('getVOrderList_api 没有任何数据')
             }
             let tempTableData = []
             result.forEach((aData)=>{
@@ -595,20 +547,11 @@ export default {
                 state:aData.order_state,
                 stateID:aData.order_state_id,
                 orderTypeTXT :this.getOrderType(aData.order_type) ,
+                name:aData.reciver_name==''||aData.reciver_name==null?'-':aData.reciver_name,
+                phone:aData.reciver_telephone==''||aData.reciver_telephone==null?'-':aData.reciver_telephone,
                 goods_name:aData.order_goods[0].goods_name,
                 goods_price:aData.order_goods[0].goods_price,
-                reciver_name:aData.order_reciver_info.name,
-                reciver_address:aData.order_reciver_info.address,
-                reciver_phone:aData.order_reciver_info.phone,
-                order_address:aData.order_reciver_info.address==''||aData.order_reciver_info.address==null?'-':aData.order_reciver_info.address,
-                order_name:aData.order_reciver_info.name==''||aData.order_reciver_info.name==null?'-':aData.order_reciver_info.name,
-                order_phone:aData.order_reciver_info.phone==''||aData.order_reciver_info.phone==null?'-':aData.order_reciver_info.phone,
-                paytime:aData.payment_time=='1970-01-01 08:00:00'?'-':aData.payment_time,
-                addresser:this.shopInfo.addresser,
-                addresser_phone:this.shopInfo.addresser_phone,
-                addresser_call:this.shopInfo.addresser_call,
-                addresser_address:this.shopInfo.addresser_address,
-                // goodsList:aData.order_goods,
+                paytime:aData.payment_time=='1970-01-01 08:00:00'?'-':aData.payment_time
               })
             })
             if(all){

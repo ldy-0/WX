@@ -150,31 +150,7 @@
   </span>
 </el-dialog>
 <el-container class="notice">
-<el-header class="header" style="height:auto !important">
-  <el-form :inline="true"  class="form">
-    <el-form-item label="订单状态">
-      <el-select v-model="orderState" placeholder="请选择">
-        <el-option
-          v-for="item in orderStateOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
-      <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
-    </el-form-item>
-    <el-form-item label="订单类别">
-      <el-select v-model="listQuery.order_type" placeholder="请选择">
-        <el-option
-          v-for="item in orderTypeOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
-      <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
-    </el-form-item>
-  </el-form>  
+<el-header class="header" style="height:auto !important"> 
   <el-form  :inline="true" class="form">
     <el-form-item label="导出Excel">
       <el-button  type="primary" icon="document" @click="handleDownload" :loading="downloadLoading">{{exportExcelStatus}}</el-button>
@@ -255,8 +231,6 @@
         >
         <template slot-scope="scope">
           <el-button size="mini" type="info" @click="lookItem(scope.$index, scope.row)">查看明细</el-button>
-          <el-button size="mini" type="danger" @click="changeItem(scope.$index, scope.row)"
-           v-if="scope.row.stateID===20">发货</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -314,7 +288,7 @@ export default {
         //excel
           tableDataAll:'',
           autoWidth:true,
-          filename:'实物订单Excel',
+          filename:'实物未成团订单Excel',
           exportExcelStatus:'导出',
           downloadLoading:false,
         orderState:'',
@@ -574,6 +548,7 @@ export default {
         if(typeof this.orderState === 'number'){
           sendData.order_state = this.orderState
         }
+        sendData.group = 1
         await getROrderList_api(sendData).then(response => {
           this.listLoading = false
           if(response&&response.status==0){
