@@ -116,6 +116,16 @@
             </div>
           </div>
         </el-form-item>
+        <el-form-item label="团容量" :label-width="formLabelWidth">
+          <p class="hbs-no-margin-p">
+            {{formForNotive.pintuangroup_limit_number}}
+          </p>
+        </el-form-item>
+        <el-form-item label="已参团人数" :label-width="formLabelWidth">
+          <p class="hbs-no-margin-p">
+            {{formForNotive.pintuangroup_joined}}
+          </p>
+        </el-form-item>
       </el-form>
     </el-form-item>
     <el-form-item label="购买者微信信息" :label-width="formLabelWidth" v-if="formForNotive.buyer">
@@ -295,6 +305,7 @@
 <script>
 //getROrderList_api 接口异常 php :未定义变量 bannnerModel
 import {getROrderList_api,getROrder_api,changeROrder_api,getIntroForm_api} from '@/api/seller'
+import Moment from '@/utils/moment'
 export default {
   async created(){
     await this.getForm();
@@ -409,8 +420,15 @@ export default {
           return console.log('获取数据失败:handleDownload')
         }
         import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '交易日期','商品名','商品价格','收件人','手机号','收货地址','发件人','发件人电话','固话','发件人地址']
-          const filterVal = ['id', 'money', 'num', 'state', 'time','goods_name','goods_price','reciver_name','reciver_phone','reciver_address','addresser','addresser_phone','addresser_call','addresser_address']
+          let tHeader = []
+          let filterVal = []
+          if(this.listQuery.order_type == 6 ||this.listQuery.order_type == 8) {
+            tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '交易日期','商品名','商品价格','收件人','手机号','收货地址','发件人','发件人电话','固话','发件人地址','团购类型','团购结束时间','团容量','已参团人数','团长微信昵称','团成员微信昵称','购买者微信昵称']
+            filterVal = ['id', 'money', 'num', 'state', 'time','goods_name','goods_price','reciver_name','reciver_phone','reciver_address','addresser','addresser_phone','addresser_call','addresser_address','groupType','groupEndTime','groupNum','groupJoinNum','groupColonel','groupList','buyer']
+          } else {
+            tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '交易日期','商品名','商品价格','收件人','手机号','收货地址','发件人','发件人电话','固话','发件人地址']
+            filterVal = ['id', 'money', 'num', 'state', 'time','goods_name','goods_price','reciver_name','reciver_phone','reciver_address','addresser','addresser_phone','addresser_call','addresser_address']
+          }
           const tableDataAll = this.tableDataAll
           const data = this.formatJson(filterVal, tableDataAll)
           excel.export_json_to_excel({
@@ -528,8 +546,11 @@ export default {
                 }
                 tempForm.giftDetail = groupgift // 团礼物详情              
               }
+
               tempForm.member = data.group.member
               tempForm.buyer = data.group.buyer
+              tempForm.pintuangroup_limit_number = data.group.pintuangroup_limit_number
+              tempForm.pintuangroup_joined = data.group.pintuangroup_joined
             }
             //获取数据成功，这填充数据，三个formNative
             
@@ -586,30 +607,67 @@ export default {
             }
             let tempTableData = []
             result.forEach((aData)=>{
-              tempTableData.push({
-                id:aData.order_id,
-                storeImg:aData.order_goods[0].goods_image,
-                num:aData.order_sn,
-                money:aData.order_amount,
-                time:aData.add_time,
-                state:aData.order_state,
-                stateID:aData.order_state_id,
-                orderTypeTXT :this.getOrderType(aData.order_type) ,
-                goods_name:aData.order_goods[0].goods_name,
-                goods_price:aData.order_goods[0].goods_price,
-                reciver_name:aData.order_reciver_info.name,
-                reciver_address:aData.order_reciver_info.address,
-                reciver_phone:aData.order_reciver_info.phone,
-                order_address:aData.order_reciver_info.address==''||aData.order_reciver_info.address==null?'-':aData.order_reciver_info.address,
-                order_name:aData.order_reciver_info.name==''||aData.order_reciver_info.name==null?'-':aData.order_reciver_info.name,
-                order_phone:aData.order_reciver_info.phone==''||aData.order_reciver_info.phone==null?'-':aData.order_reciver_info.phone,
-                paytime:aData.payment_time=='1970-01-01 08:00:00'?'-':aData.payment_time,
-                addresser:this.shopInfo.addresser,
-                addresser_phone:this.shopInfo.addresser_phone,
-                addresser_call:this.shopInfo.addresser_call,
-                addresser_address:this.shopInfo.addresser_address,
-                // goodsList:aData.order_goods,
-              })
+              if(aData.group) {
+                let groupList = ''
+                aData.group.member.forEach(item => {
+                  groupList+=item.member_truename+','
+                });
+                tempTableData.push({
+                  id:aData.order_id,
+                  storeImg:aData.order_goods[0].goods_image,
+                  num:aData.order_sn,
+                  money:aData.order_amount,
+                  time:aData.add_time,
+                  state:aData.order_state,
+                  stateID:aData.order_state_id,
+                  orderTypeTXT :this.getOrderType(aData.order_type) ,
+                  goods_name:aData.order_goods[0].goods_name,
+                  goods_price:aData.order_goods[0].goods_price,
+                  reciver_name:aData.order_reciver_info.name,
+                  reciver_address:aData.order_reciver_info.address,
+                  reciver_phone:aData.order_reciver_info.phone,
+                  order_address:aData.order_reciver_info.address==''||aData.order_reciver_info.address==null?'-':aData.order_reciver_info.address,
+                  order_name:aData.order_reciver_info.name==''||aData.order_reciver_info.name==null?'-':aData.order_reciver_info.name,
+                  order_phone:aData.order_reciver_info.phone==''||aData.order_reciver_info.phone==null?'-':aData.order_reciver_info.phone,
+                  paytime:aData.payment_time=='1970-01-01 08:00:00'?'-':aData.payment_time,
+                  addresser:this.shopInfo.addresser,
+                  addresser_phone:this.shopInfo.addresser_phone,
+                  addresser_call:this.shopInfo.addresser_call,
+                  addresser_address:this.shopInfo.addresser_address,
+                  groupColonel:aData.group.member[0].member_truename,
+                  groupList: groupList,
+                  buyer: aData.group.buyer.member_truename,
+                  groupType: aData.group.groupgift? '等级团购':'普通团购',
+                  groupJoinNum: aData.group.pintuangroup_joined,
+                  groupNum: aData.group.pintuangroup_limit_number,
+                  groupEndTime: Moment(aData.group.pintuangroup_endtime*1000).format('yyyy-MM-dd HH:mm:ss')
+                })
+              }else {
+                tempTableData.push({
+                  id:aData.order_id,
+                  storeImg:aData.order_goods[0].goods_image,
+                  num:aData.order_sn,
+                  money:aData.order_amount,
+                  time:aData.add_time,
+                  state:aData.order_state,
+                  stateID:aData.order_state_id,
+                  orderTypeTXT :this.getOrderType(aData.order_type) ,
+                  goods_name:aData.order_goods[0].goods_name,
+                  goods_price:aData.order_goods[0].goods_price,
+                  reciver_name:aData.order_reciver_info.name,
+                  reciver_address:aData.order_reciver_info.address,
+                  reciver_phone:aData.order_reciver_info.phone,
+                  order_address:aData.order_reciver_info.address==''||aData.order_reciver_info.address==null?'-':aData.order_reciver_info.address,
+                  order_name:aData.order_reciver_info.name==''||aData.order_reciver_info.name==null?'-':aData.order_reciver_info.name,
+                  order_phone:aData.order_reciver_info.phone==''||aData.order_reciver_info.phone==null?'-':aData.order_reciver_info.phone,
+                  paytime:aData.payment_time=='1970-01-01 08:00:00'?'-':aData.payment_time,
+                  addresser:this.shopInfo.addresser,
+                  addresser_phone:this.shopInfo.addresser_phone,
+                  addresser_call:this.shopInfo.addresser_call,
+                  addresser_address:this.shopInfo.addresser_address,
+                })
+              }
+              
             })
             if(all){
               this.tableDataAll = tempTableData

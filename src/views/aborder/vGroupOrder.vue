@@ -106,6 +106,16 @@
             </div>
           </div>
         </el-form-item>
+        <el-form-item label="团容量" :label-width="formLabelWidth">
+          <p class="hbs-no-margin-p">
+            {{formForNotive.pintuangroup_limit_number}}
+          </p>
+        </el-form-item>
+        <el-form-item label="已参团人数" :label-width="formLabelWidth">
+          <p class="hbs-no-margin-p">
+            {{formForNotive.pintuangroup_joined}}
+          </p>
+        </el-form-item>
       </el-form>
     </el-form-item>
     <el-form-item label="购买者微信信息" :label-width="formLabelWidth" v-if="formForNotive.buyer">
@@ -248,6 +258,7 @@
 <script>
 //getVOrderList_api 接口异常 php :未定义变量 bannnerModel
 import {getVOrderList_api,getVOrder_api,changeVOrder_api} from '@/api/seller'
+import Moment from '@/utils/moment'
 export default {
   created(){
     this.getList()
@@ -356,8 +367,8 @@ export default {
           return console.log('获取数据失败:handleDownload')
         }
         import('@/vendor/Export2Excel').then(excel => {
-          const tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '下单时间','支付时间','商品名','商品价格','买家','买家电话']
-          const filterVal = ['id','money', 'num', 'state', 'time','paytime','goods_name','goods_price', 'name','phone']
+          const tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '下单时间','支付时间','商品名','商品价格','买家','买家电话','团购类型','团购结束时间','团容量','已参团人数','团长微信昵称','团成员微信昵称','购买者微信昵称']
+          const filterVal = ['id','money', 'num', 'state', 'time','paytime','goods_name','goods_price', 'name','phone','groupType','groupEndTime','groupNum','groupJoinNum','groupColonel','groupList','buyer']
           const tableDataAll = this.tableDataAll
           const data = this.formatJson(filterVal, tableDataAll)
           excel.export_json_to_excel({
@@ -458,6 +469,8 @@ export default {
               
               tempForm.member = data.group.member
               tempForm.buyer = data.group.buyer
+              tempForm.pintuangroup_limit_number = data.group.pintuangroup_limit_number
+              tempForm.pintuangroup_joined = data.group.pintuangroup_joined
             }
             
             //获取数据成功，这填充数据，三个formNative
@@ -538,6 +551,10 @@ export default {
             }
             let tempTableData = []
             result.forEach((aData)=>{
+              let groupList = ''
+              aData.group.member.forEach(item => {
+                groupList+=item.member_truename+','
+              });
               tempTableData.push({
                 id:aData.order_id,
                 storeImg:aData.order_goods[0].goods_image,
@@ -551,7 +568,14 @@ export default {
                 phone:aData.reciver_telephone==''||aData.reciver_telephone==null?'-':aData.reciver_telephone,
                 goods_name:aData.order_goods[0].goods_name,
                 goods_price:aData.order_goods[0].goods_price,
-                paytime:aData.payment_time=='1970-01-01 08:00:00'?'-':aData.payment_time
+                paytime:aData.payment_time=='1970-01-01 08:00:00'?'-':aData.payment_time,
+                groupColonel:aData.group.member[0].member_truename,
+                groupList: groupList,
+                buyer: aData.group.buyer.member_truename,
+                groupType: aData.group.groupgift? '等级团购':'普通团购',
+                groupJoinNum: aData.group.pintuangroup_joined,
+                groupNum: aData.group.pintuangroup_limit_number,
+                groupEndTime: Moment(aData.group.pintuangroup_endtime*1000).format('yyyy-MM-dd HH:mm:ss')
               })
             })
             if(all){
