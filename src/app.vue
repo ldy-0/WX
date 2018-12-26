@@ -38,7 +38,7 @@ export default class extends wepy.app {
       "pages/store/refundDetail", //退款详情
       "pages/store/retundgood", //退货
       "pages/store/retundGoodDetail", //退货详情
-      //"pages/outWeb",//外链
+      "pages/outWeb",//外链
       "pages/my/addressList", //收货地址列表
       "pages/my/addAddress", //收货地址编辑
       "pages/my/orderList", //订单列表
@@ -49,6 +49,7 @@ export default class extends wepy.app {
       "pages/my/assessed", //商品评价完成
       "pages/article/aboutUs", //关于云仓
       "pages/article/advisory", //新闻资讯
+      "pages/article/videos", //视频列表
       "pages/article/advisoryDetail", //新闻资讯详情
       "pages/article/caseDetail" //案例详情
     ],
@@ -61,34 +62,34 @@ export default class extends wepy.app {
       backgroundColor: "#EFEFEF"
     },
     tabBar: {
-      color: "#888888",
-      selectedColor: "#888888",
+      color: "#8e8e8e",
+      selectedColor: "#f17f30",
       backgroundColor: "#ffffff",
       borderStyle: "block",
       list: [
         {
           pagePath: "pages/home",
           text: "首页",
-          iconPath: "./images/shouyewei@2x.png",
-          selectedIconPath: "./images/shouye@2x.png"
+          iconPath: "./images/tab_shouye@2x.png",
+          selectedIconPath: "./images/tab_shouye_hl@2x.png"
         },
         {
           pagePath: "pages/classify",
           text: "分类",
-          iconPath: "./images/icon_yuncangw@2x.png",
-          selectedIconPath: "./images/icon_yuncang@2x.png"
+          iconPath: "./images/tab_fenlei@2x.png",
+          selectedIconPath: "./images/tab_fenlei_hl@2x.png"
         },
         {
           pagePath: "pages/shoppingCart",
           text: "购物车",
-          iconPath: "./images/gouwuche_wei@2x.png",
-          selectedIconPath: "./images/gouwuche@2x.png"
+          iconPath: "./images/tab_gouwuche@2x.png",
+          selectedIconPath: "./images/tab_gouwuche_hl@2x.png"
         },
         {
           pagePath: "pages/mine",
           text: "我的",
-          iconPath: "./images/icon_wodew@2x.png",
-          selectedIconPath: "./images/icon_wode@2x.png"
+          iconPath: "./images/tab_wode@2x.png",
+          selectedIconPath: "./images/tab_wode_hl@2x.png"
         }
       ]
     },
