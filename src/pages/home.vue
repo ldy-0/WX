@@ -57,7 +57,7 @@
 
 .container {
   font: 32rpx PingFang-SC-Medium;
-  background: #f4f4f4;
+  background: #fff;
   width: 100%;
   overflow: hidden;
   min-height: calc(100% - 150rpx);
@@ -120,18 +120,18 @@
 .good_title {
   width: 100%;
   height: 90rpx;
+  margin-bottom: 20rpx;
   background: #fff;
   justify-content: space-between;
   align-items: center;
   display: flex;
 }
 .good_title .name {
-  border-left: solid 6rpx #f17f30;
-  width: 50%;
-  margin-left: 30rpx;
+  /* border-left: solid 6rpx #f17f30; */
+  margin-left: 20rpx;
   align-items: center;
   display: flex;
-  padding-left: 25rpx;
+  /* padding-left: 15rpx; */
 }
 .good_title .icon_info {
   width: 50%;
@@ -144,6 +144,7 @@
 .good_title .new_good {
   color: #222222;
   font-size: 36rpx;
+  font-weight: 500;
 }
 .good_title .more {
   font-size: 28rpx;
@@ -151,8 +152,8 @@
   margin-right: 8rpx;
 }
 .good_title .icon_R {
-  width: 16rpx;
-  height: 28rpx;
+  width: 12rpx;
+  height: 22rpx;
 }
 
 .bodycontent {
@@ -163,7 +164,7 @@
   display: flex;
   background: #fff;
 }
-.bodycontent .redlist {
+.redlist {
   background: #fff;
   width: 344rpx;
   height: 457rpx;
@@ -271,6 +272,82 @@
   -webkit-line-clamp: 2;
   overflow: hidden;
 }
+.viewX {
+  width: 100%;
+  white-space: nowrap;
+  background: #fff;
+}
+.viewX-item {
+  width: 320rpx;
+  height: 500rpx;
+  display: inline-block;
+  margin-left: 20rpx;
+}
+.viewX-itemImg {
+  width: 320rpx;
+  height: 340rpx;
+  border-radius: 5rpx;
+}
+.viewX-itemGoodsname {
+  color: #222;
+  width: 100%;
+  font-size: 28rpx;
+  height: 48rpx;
+  line-height: 48rpx;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+.viewX-price {
+  color: #dd3d27;
+  font-size: 32rpx;
+  display: flex;
+  align-items: center;
+}
+.viewX-originalPrice {
+  color: #222;
+  font-size: 32rpx;
+}
+.viewX-itemIcon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-left: 20rpx;
+}
+.coupons-item {
+  width: 380rpx;
+  height: 200rpx;
+  margin-left: 30rpx;
+  display: inline-block;
+  position: relative;
+}
+.coupons-itemImg {
+  width: 380rpx;
+  height: 200rpx;
+}
+.coupons-txtbox {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 318rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+}
+.coupons-txt1 {
+  font-size: 70rpx;
+  margin-top: 15rpx;
+}
+.coupons-txt1 text {
+  font-size: 32rpx;
+}
+.coupons-txt2 {
+  font-size: 26rpx;
+}
+.coupons-txt3 {
+  font-size: 24rpx;
+}
 </style>
 
 <template>
@@ -302,7 +379,7 @@
         <image class="item_page" src="../images/icon_1_meishi@2x.png">
         <view>美食</view>
       </navigator>
-      <navigator class="item_view" url="./article/advisory">
+      <navigator class="item_view" url="./store/goodsList?type=group">
         <image class="item_page" src="../images/icon_1_tuangou@2x.png">
         <view>团购</view>
       </navigator>
@@ -315,9 +392,35 @@
         <view>资讯</view>
       </navigator>
     </view>
-
     <view wx:if="{{goodsList.length!=0}}">
-      <navigator url="./store/goodsList">
+      <navigator url="./store/goodsList?type=hot">
+        <view class="good_title">
+          <view class="name">
+            <text class="new_good">优惠券</text>
+          </view>
+          <view class="icon_info">
+            <text class="more">更多</text>
+            <image class="icon_R" src="../images/icon_you@2x.png">
+          </view>
+        </view>
+      </navigator>
+      <scroll-view scroll-x class="viewX">
+        <repeat for="{{goodsList}}" key="index" index="index" item="item">
+          <view class="coupons-item" @tap="intoDetail({{item.goods_commonid}})">
+            <image class="coupons-itemImg" src="{{index==0?'../images/img_1_1@2x.png':'../images/img_1_2@2x.png'}}">
+            <view class="coupons-txtbox">
+              <view class="coupons-txt1">
+                <text>￥</text>{{20}}
+              </view>
+              <view class="coupons-txt2">无门槛使用</view>
+              <view class="coupons-txt3">有效期至：2018-10-31</view>
+            </view>
+          </view>
+        </repeat>
+      </scroll-view>
+    </view>
+    <view wx:if="{{goodsList.length!=0}}">
+      <navigator url="./store/goodsList?type=hot">
         <view class="good_title">
           <view class="name">
             <text class="new_good">热门推荐</text>
@@ -342,6 +445,38 @@
           </view>
         </repeat>
       </view>
+    </view>
+    <view wx:if="{{goodsList.length!=0}}">
+      <navigator url="./store/goodsList?type=hot">
+        <view class="good_title">
+          <view class="name">
+            <text class="new_good">火爆拼团</text>
+          </view>
+          <view class="icon_info">
+            <text class="more">更多</text>
+            <image class="icon_R" src="../images/icon_you@2x.png">
+          </view>
+        </view>
+      </navigator>
+      <scroll-view scroll-x class="viewX">
+        <repeat for="{{goodsList}}" key="index" index="index" item="item">
+          <view class="viewX-item" @tap="intoDetail({{item.goods_commonid}})">
+            <image class="viewX-itemImg" mode="aspectFill" src="{{item.goods_image}}">
+            <view class="viewX-itemGoodsname">{{item.goods_name}}</view>
+            <view class="viewX-originalPrice">
+              <text style="font-size:26rpx;">￥</text>
+              {{item.goods_price}}
+            </view>
+            <view class="viewX-price">
+              <view>
+                <text style="font-size:26rpx;">￥</text>
+                {{item.goods_price}}
+              </view>
+              <image class="viewX-itemIcon" src="../images/icon_tuangou@2x.png">
+            </view>
+          </view>
+        </repeat>
+      </scroll-view>
     </view>
 
     <!-- 案例展示开始 -->
@@ -418,8 +553,8 @@ export default class Home extends wepy.page {
     autoplay: true,
     interval: 3000,
     duration: 200,
-    indicatorActiveColor: "#333333",
-    indicatorColor: "#FFFFFF", //以上为轮播配置
+    indicatorActiveColor: "#f17f30",
+    indicatorColor: "rgba(0, 0, 0, .6)", //以上为轮播配置
     bannerList: [], //轮播图
     goodsList: [], //商品列表
     materialList: [], //案例列表

@@ -73,7 +73,7 @@ import { shttp } from "../../utils/http";
 import Placeholder from "../../components/placeholder";
 export default class GoodsList extends wepy.page {
   config = {
-    navigationBarTitleText: "热门推荐"
+    navigationBarTitleText: ""
   };
   data = {
     goodsList: [], //商品列表
@@ -84,6 +84,25 @@ export default class GoodsList extends wepy.page {
     placeholder: Placeholder
   };
   onLoad(options) {
+    console.log(options.type);
+    switch (options.type) {
+      case "group":
+        wx.setNavigationBarTitle({
+          title: "团购商品"
+        });
+        break;
+      case "hot":
+        wx.setNavigationBarTitle({
+          title: "热门推荐"
+        });
+        break;
+      default:
+        wx.setNavigationBarTitle({
+          title: "商品列表"
+        });
+        break;
+    }
+    this.$apply();
     this.getgoodsList();
   }
   onShow() {}
