@@ -1,76 +1,4 @@
 <style scoped>
-.tips {
-  width: 100%;
-  text-align: center;
-  line-height: 100rpx;
-  font-size: 30rpx;
-}
-
-.link-list > navigator {
-  position: relative;
-  margin: 5rpx 0;
-  padding-right: 50rpx;
-  line-height: 88rpx;
-  background: white;
-}
-
-.link-list text {
-  display: block;
-  text-indent: 20rpx;
-  font-size: 32rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.link-list image {
-  width: 16rpx;
-  height: 25rpx;
-  margin-top: -12rpx;
-  position: absolute;
-  right: 20rpx;
-  top: 50%;
-}
-
-.search {
-  overflow: hidden;
-  height: 108rpx;
-  font: 28rpx PingFang-SC-Medium;
-  color: #969696;
-  background: #fff;
-  text-align: center;
-}
-.search .search_content {
-  width: 690rpx;
-  line-height: 68rpx;
-  margin: 20rpx auto;
-  border-radius: 34rpx;
-  background: #f2f2f2;
-}
-
-.search_text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon-search {
-  width: 40rpx;
-  height: 40rpx;
-}
-
-.nodata {
-  margin-top: 50%;
-  font-size: 38rpx;
-  text-align: center;
-}
-
-.wire-gray {
-  height: 20rpx;
-  width: 100%;
-  background: #f4f4f4;
-}
-
 .container {
   font: 32rpx PingFang-SC-Medium;
   color: #000;
@@ -156,31 +84,31 @@
 
 <template>
   <view class="container">
-     <repeat for='{{couponsList}}' key='index' item='item'>
-        <view class="couponsBox">
-          <button class="share" plain="true"  open-type="share" data-coupon="{{item}}">
-                        <view class='column_center'>
-                          <image src='../../images/icon_6_fenxiang@2x.png' class='share_icon' />                
+    <repeat for="{{couponsList}}" key="index" item="item">
+      <view class="couponsBox">
+        <button class="share" plain="true" open-type="share" data-coupon="{{item}}">
+          <view class="column_center">
+            <image src="../../images/icon_6_fenxiang@2x.png" class="share_icon">
           </view>
-          </button> 
-            <image class="borImg" src="../../images/img_3@2x.png"></image>
-            <view class="couponInfo">
-                <view class="textInfo">
-                    <view class="priceInfo">
-                      <text class="unit">￥</text>
-                      <text class="num">{{item.voucher_price}}</text>
-                    </view>
-                    <view class="ruleInfo">
-                            <text class="dec">{{item.voucher_title}}</text>
-                            <text class="time">有效期至{{item.vouchertemplate_enddate}}</text>
-                    </view>
-                </view>
-                <image class="logo" src="../../images/logo@2x.png"></image>
+        </button>
+        <image class="borImg" src="../../images/img_3@2x.png">
+        <view class="couponInfo">
+          <view class="textInfo">
+            <view class="priceInfo">
+              <text class="unit">￥</text>
+              <text class="num">{{item.voucher_price}}</text>
             </view>
+            <view class="ruleInfo">
+              <text class="dec">{{item.voucher_title}}</text>
+              <text class="time">有效期至{{item.vouchertemplate_enddate}}</text>
+            </view>
+          </view>
+          <image class="logo" src="../../images/logo@2x.png">
         </view>
-        </repeat>
-          <!--暂无数据显示-->
-      <placeholder :show.sync="is_empty" message="优惠券空的呢"></placeholder> 
+      </view>
+    </repeat>
+    <!--暂无数据显示-->
+    <placeholder :show.sync="is_empty" message="优惠券空的呢"></placeholder>
   </view>
 </template>
 <script>

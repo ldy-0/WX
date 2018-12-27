@@ -245,7 +245,6 @@
 }
 
 .add_redinfo {
-  height: 80rpx;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
@@ -318,15 +317,17 @@
     </view>
 
     <view wx:if="{{goodsList.length!=0}}">
-      <view class="good_title">
-        <view class="name">
-          <text class="new_good">热门推荐</text>
+      <navigator url="./store/goodsList">
+        <view class="good_title">
+          <view class="name">
+            <text class="new_good">热门推荐</text>
+          </view>
+          <view class="icon_info">
+            <text class="more">更多</text>
+            <image class="icon_R" src="../images/icon_you@2x.png">
+          </view>
         </view>
-        <navigator class="icon_info" url="{{'./store/more?moreId='+item.indexclass_id}}">
-          <text class="more">更多</text>
-          <image class="icon_R" src="../images/icon_you@2x.png">
-        </navigator>
-      </view>
+      </navigator>
       <view class="bodycontent">
         <repeat for="{{goodsList}}" key="index" index="index" item="item">
           <view class="redlist" @tap="intoDetail({{item.goods_commonid}})">
@@ -345,15 +346,17 @@
 
     <!-- 案例展示开始 -->
     <view wx:if="{{materialList.length!=0}}">
-      <view class="good_title">
-        <view class="name">
-          <text class="new_good">案例展示</text>
+      <navigator url="./store/more">
+        <view class="good_title">
+          <view class="name">
+            <text class="new_good">案例展示</text>
+          </view>
+          <view class="icon_info">
+            <text class="more">更多</text>
+            <image class="icon_R" src="../images/icon_you@2x.png">
+          </view>
         </view>
-        <navigator class="icon_info" url="./store/more">
-          <text class="more">更多</text>
-          <image class="icon_R" src="../images/icon_you@2x.png">
-        </navigator>
-      </view>
+      </navigator>
       <view class="bodycontent">
         <repeat for="{{materialList}}" key="index" index="index" item="item">
           <view class="redlist case_redlist" @tap="gotoCase({{item.dynamic_id}})">
@@ -369,15 +372,17 @@
     <!-- 案例展示结束 -->
     <!-- 新闻资讯开始 -->
     <view wx:if="{{newsList.length!=0}}">
-      <view class="good_title">
-        <view class="name">
-          <text class="new_good">新闻资讯</text>
+      <navigator url="./article/advisory">
+        <view class="good_title">
+          <view class="name">
+            <text class="new_good">新闻资讯</text>
+          </view>
+          <view class="icon_info">
+            <text class="more">更多</text>
+            <image class="icon_R" src="../images/icon_you@2x.png">
+          </view>
         </view>
-        <navigator class="icon_info" url="./article/advisory">
-          <text class="more">更多</text>
-          <image class="icon_R" src="../images/icon_you@2x.png">
-        </navigator>
-      </view>
+      </navigator>
       <view class="bodycontent">
         <repeat for="{{newsList}}" key="index" index="index" item="item">
           <view class="redlist news_redlist" @tap="gotoNews({{item.information_id}})">
@@ -437,7 +442,6 @@ export default class Home extends wepy.page {
   methods = {
     //进入商品详情
     intoDetail(id) {
-      // console.log(id)
       wx.navigateTo({
         url: `store/goodsDetails?goods_commonid=${id}`
       });

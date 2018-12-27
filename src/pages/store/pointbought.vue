@@ -1,76 +1,4 @@
 <style>
-.tips {
-  width: 100%;
-  text-align: center;
-  line-height: 100rpx;
-  font-size: 30rpx;
-}
-
-.link-list > navigator {
-  position: relative;
-  margin: 5rpx 0;
-  padding-right: 50rpx;
-  line-height: 88rpx;
-  background: white;
-}
-
-.link-list text {
-  display: block;
-  text-indent: 20rpx;
-  font-size: 32rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.link-list image {
-  width: 16rpx;
-  height: 25rpx;
-  margin-top: -12rpx;
-  position: absolute;
-  right: 20rpx;
-  top: 50%;
-}
-
-.search {
-  overflow: hidden;
-  height: 108rpx;
-  font: 28rpx PingFang-SC-Medium;
-  color: #969696;
-  background: #fff;
-  text-align: center;
-}
-.search .search_content {
-  width: 690rpx;
-  line-height: 68rpx;
-  margin: 20rpx auto;
-  border-radius: 34rpx;
-  background: #f2f2f2;
-}
-
-.search_text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon-search {
-  width: 40rpx;
-  height: 40rpx;
-}
-
-.nodata {
-  margin-top: 50%;
-  font-size: 38rpx;
-  text-align: center;
-}
-
-.wire-gray {
-  height: 20rpx;
-  width: 100%;
-  background: #f4f4f4;
-}
-
 .container {
   font: 32rpx PingFang-SC-Medium;
   background: #f4f4f4;
@@ -219,62 +147,63 @@
 </style>
 
 <template>
-  <view class="container"  >      
-     <view>
-      <view class='success_info_wrap around'>
-          <image src='../../images/img_yifukuan@2x.png' />
-          <view class='success_info'>
-              <view>买家已付款</view>
-              <view class='success_sub_info'>等待卖家发货</view>
-          </view>
-      </view> 
-        <view class='person_info_wrap around'>
-          <view class='person_info'>
-              <view class='person'>
-                  <view>收货人：{{pointInfo.order_reciver_info.name}}</view>
-                  <view>{{pointInfo.order_reciver_info.phone}}</view>
-              </view>
-              <view>收货地址：{{pointInfo.order_reciver_info.address}}</view>
-          </view>
+  <view class="container">
+    <view>
+      <view class="success_info_wrap around">
+        <image src="../../images/img_yifukuan@2x.png">
+        <view class="success_info">
+          <view>买家已付款</view>
+          <view class="success_sub_info">等待卖家发货</view>
+        </view>
       </view>
-        <repeat for='{{pointInfo.order_goods}}' item='item'>
-          <view class='product_info around'>
-              <image src='{{item.goods_image}}' mode="aspectFill"/>
-              <view class='product'>
-                  <view class='product_title'>{{item.goods_name}}</view>
-                  <view class='row'>
-                      <view class='product_price'>¥{{item.goods_price}}</view>
-                      <!-- <view class='product_address'>福建福州</view> -->
-                  </view>
-                  <view class='row'>
-                      <view class='product_standard'>规格：{{item.standard.spec|| '无'}}</view>
-                      <view class='product_number'>×{{item.goods_num}}</view>
-                  </view>
-              </view>
+      <view class="person_info_wrap around">
+        <view class="person_info">
+          <view class="person">
+            <view>收货人：{{pointInfo.order_reciver_info.name}}</view>
+            <view>{{pointInfo.order_reciver_info.phone}}</view>
           </view>
-        </repeat>  
-      <view class='order_info'>
-          <view class='order_price'>总价:<text>¥{{pointInfo.order_amount}}</text></view>
-          <view class='around'>
-              <view class='order_btn' @tap='goPointOrderDetail()'>查看订单</view>
-              <view class='order_btn' @tap='goHome'>继续逛逛</view>
-          </view>
+          <view>收货地址：{{pointInfo.order_reciver_info.address}}</view>
+        </view>
       </view>
-       <view class='safe_info'>
-          <view class=''>安全提醒：</view>
-          <view class=''>付款成功后，商城不会以任何理由联系您。请勿泄露银行卡号、手机 验证码，否则会造成钱款损失。</view>
-      </view> 
+      <repeat for="{{pointInfo.order_goods}}" item="item">
+        <view class="product_info around">
+          <image src="{{item.goods_image}}" mode="aspectFill">
+          <view class="product">
+            <view class="product_title">{{item.goods_name}}</view>
+            <view class="row">
+              <view class="product_price">¥{{item.goods_price}}</view>
+              <!-- <view class='product_address'>福建福州</view> -->
+            </view>
+            <view class="row">
+              <view class="product_standard">规格：{{item.standard.spec|| '无'}}</view>
+              <view class="product_number">×{{item.goods_num}}</view>
+            </view>
+          </view>
+        </view>
+      </repeat>
+      <view class="order_info">
+        <view class="order_price">总价:
+          <text>¥{{pointInfo.order_amount}}</text>
+        </view>
+        <view class="around">
+          <view class="order_btn" @tap="goPointOrderDetail()">查看订单</view>
+          <view class="order_btn" @tap="goHome">继续逛逛</view>
+        </view>
+      </view>
+      <view class="safe_info">
+        <view class>安全提醒：</view>
+        <view class>付款成功后，商城不会以任何理由联系您。请勿泄露银行卡号、手机 验证码，否则会造成钱款损失。</view>
+      </view>
 
-      <view class='time_info row'>
-          <view class='time'>
-            <view>订单编号：{{pointInfo.order_sn}}</view>
-            <view>下单时间：{{pointInfo.add_time}}</view>
-            <!-- <view>付款时间：{{pointInfo.payment_time}}</view> -->
-          </view>
+      <view class="time_info row">
+        <view class="time">
+          <view>订单编号：{{pointInfo.order_sn}}</view>
+          <view>下单时间：{{pointInfo.add_time}}</view>
+          <!-- <view>付款时间：{{pointInfo.payment_time}}</view> -->
+        </view>
       </view>
     </view>
   </view>
-  
 </template>
 
 <script>

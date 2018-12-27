@@ -1,76 +1,4 @@
 <style>
-.tips {
-  width: 100%;
-  text-align: center;
-  line-height: 100rpx;
-  font-size: 30rpx;
-}
-
-.link-list > navigator {
-  position: relative;
-  margin: 5rpx 0;
-  padding-right: 50rpx;
-  line-height: 88rpx;
-  background: white;
-}
-
-.link-list text {
-  display: block;
-  text-indent: 20rpx;
-  font-size: 32rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.link-list image {
-  width: 16rpx;
-  height: 25rpx;
-  margin-top: -12rpx;
-  position: absolute;
-  right: 20rpx;
-  top: 50%;
-}
-
-.search {
-  overflow: hidden;
-  height: 108rpx;
-  font: 28rpx PingFang-SC-Medium;
-  color: #969696;
-  background: #fff;
-  text-align: center;
-}
-.search .search_content {
-  width: 690rpx;
-  line-height: 68rpx;
-  margin: 20rpx auto;
-  border-radius: 34rpx;
-  background: #f2f2f2;
-}
-
-.search_text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon-search {
-  width: 40rpx;
-  height: 40rpx;
-}
-
-.nodata {
-  margin-top: 50%;
-  font-size: 38rpx;
-  text-align: center;
-}
-
-.wire-gray {
-  height: 20rpx;
-  width: 100%;
-  background: #f4f4f4;
-}
-
 .container {
   font: 32rpx PingFang-SC-Medium;
   background: #f4f4f4;
@@ -245,88 +173,93 @@
 
 <template>
   <view class="container">
-  <view wx:if="{{orderType!=2}}">    
-      <view class='person_info_wrap around' wx:if="{{order.order_reciver_info.name}}">
-          <view class='person_info' >
-              <view class='person'>
-                  <view>收货人：{{order.order_reciver_info.name}}</view>
-                  <view>{{order.order_reciver_info.phone}}</view>
-              </view>
-              <view>收货地址：{{order.order_reciver_info.address}}</view>
+    <view wx:if="{{orderType!=2}}">
+      <view class="person_info_wrap around" wx:if="{{order.order_reciver_info.name}}">
+        <view class="person_info">
+          <view class="person">
+            <view>收货人：{{order.order_reciver_info.name}}</view>
+            <view>{{order.order_reciver_info.phone}}</view>
           </view>
-      </view> 
-      <view class='status_info' wx:if="{{order.order_state_id==10}}">待付款</view>
-      <view class='status_info' wx:if="{{order.order_state_id==20}}">待发货</view>
-      <view class='status_info' wx:if="{{order.order_state_id==30}}">待收货</view>
-      <view class='status_info' wx:if="{{order.order_state_id==50}}">待评价</view>
+          <view>收货地址：{{order.order_reciver_info.address}}</view>
+        </view>
+      </view>
+      <view class="status_info" wx:if="{{order.order_state_id==10}}">待付款</view>
+      <view class="status_info" wx:if="{{order.order_state_id==20}}">待发货</view>
+      <view class="status_info" wx:if="{{order.order_state_id==30}}">待收货</view>
+      <view class="status_info" wx:if="{{order.order_state_id==50}}">待评价</view>
       <view wx:if="{{orderType==0}}">
-      <repeat for='{{order.order_goods}}' item='item'>
-          <view class='product_info around'>
-              <image src='{{item.goods_image}}' mode="aspectFill"/>
-              <view class='product'>
-                  <view class='product_title'>{{item.goods_name}}</view>
-                  <view class='row'>
-                      <view class='product_price'>¥{{item.goods_price}}</view>
-                      <!-- <view class='product_address'>福建福州</view> -->
-                  </view>
-                  
-                  <view class="row">
-                    <view class="product_standard">规格：{{items.goods_spec || "统一规格"}}</view>
-                    <view class="product_number">×{{items.goods_num}}</view>
-                  </view>
-                  
+        <repeat for="{{order.order_goods}}" item="item">
+          <view class="product_info around">
+            <image src="{{item.goods_image}}" mode="aspectFill">
+            <view class="product">
+              <view class="product_title">{{item.goods_name}}</view>
+              <view class="row">
+                <view class="product_price">¥{{item.goods_price}}</view>
+                <!-- <view class='product_address'>福建福州</view> -->
               </view>
+
+              <view class="row">
+                <view class="product_standard">规格：{{items.goods_spec || "统一规格"}}</view>
+                <view class="product_number">×{{items.goods_num}}</view>
+              </view>
+            </view>
           </view>
-      </repeat>
+        </repeat>
       </view>
       <view wx:if="{{orderType==1}}">
-          <view class='product_info around'>
-              <image src='{{order.goods_image}}' mode="aspectFill"/>
-              <view class='product'>
-                  <view class='product_title'>{{order.goods_name}}</view>
-                  <view class='row'>
-                      <view class='product_price'>¥{{order.goods_price}}</view>
-                      <!-- <view class='product_address'>福建福州</view> -->
-                  </view>
-                  <view class='row'>
-                      <view class='product_standard'></view>
-                      <view class='product_number'></view>
-                  </view>
-              </view>
+        <view class="product_info around">
+          <image src="{{order.goods_image}}" mode="aspectFill">
+          <view class="product">
+            <view class="product_title">{{order.goods_name}}</view>
+            <view class="row">
+              <view class="product_price">¥{{order.goods_price}}</view>
+              <!-- <view class='product_address'>福建福州</view> -->
+            </view>
+            <view class="row">
+              <view class="product_standard"></view>
+              <view class="product_number"></view>
+            </view>
           </view>
+        </view>
       </view>
-      <view class='order_info row'>
+      <view class="order_info row">
         <text>实付款:</text>
-        <text class='order_price'>¥{{order.order_amount}}</text>
+        <text class="order_price">¥{{order.order_amount}}</text>
       </view>
 
-      <view class='time_info row'>
-          <view class='time'>
-            <view>订单编号：{{order.order_sn}}</view>
-            <view>下单时间：{{order.add_time}}</view>
-            <view >付款时间：{{order.payment_time=='1970年01月01日 08:00'?"未支付":order.payment_time}}</view>
-            <view>付款方式：微信支付</view>
-          </view>
-          <view class='btn' @tap='copyOrder'>复制</view>
+      <view class="time_info row">
+        <view class="time">
+          <view>订单编号：{{order.order_sn}}</view>
+          <view>下单时间：{{order.add_time}}</view>
+          <view>付款时间：{{order.payment_time=='1970年01月01日 08:00'?"未支付":order.payment_time}}</view>
+          <view>付款方式：微信支付</view>
+        </view>
+        <view class="btn" @tap="copyOrder">复制</view>
       </view>
-      <view class='time_info row' wx:if='{{order.shipping_code.companyName||order.shipping_code.expressNumber||order.shipping_code.linkmanName||order.shipping_code.linkmanPhone}}'>
-          <view class='time'>
-            <view wx:if='{{order.shipping_code.companyName}}'>快递公司：{{order.shipping_code.companyName}}</view>
-            <view wx:if='{{order.shipping_code.expressNumber}}'>快递单号：{{order.shipping_code.expressNumber}}</view>
-            <view wx:if='{{order.shipping_code.linkmanName}}'>联系人：{{order.shipping_code.linkmanName}}</view>
-            <view wx:if='{{order.shipping_code.linkmanPhone}}'>联系电话：{{order.shipping_code.linkmanPhone}}</view>
-          </view>
-          <view class='btn' @tap='copyexpress'>复制</view>
+      <view
+        class="time_info row"
+        wx:if="{{order.shipping_code.companyName||order.shipping_code.expressNumber||order.shipping_code.linkmanName||order.shipping_code.linkmanPhone}}"
+      >
+        <view class="time">
+          <view wx:if="{{order.shipping_code.companyName}}">快递公司：{{order.shipping_code.companyName}}</view>
+          <view
+            wx:if="{{order.shipping_code.expressNumber}}"
+          >快递单号：{{order.shipping_code.expressNumber}}</view>
+          <view wx:if="{{order.shipping_code.linkmanName}}">联系人：{{order.shipping_code.linkmanName}}</view>
+          <view
+            wx:if="{{order.shipping_code.linkmanPhone}}"
+          >联系电话：{{order.shipping_code.linkmanPhone}}</view>
+        </view>
+        <view class="btn" @tap="copyexpress">复制</view>
       </view>
-      <view class='bottom_bar'>
-          <!-- <navigator class='btn' url='./select'>退货/换货</navigator> -->
-          <button  class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
-          <view class='btn' wx:if="{{order.order_state_id==30}}" @tap="Confirm()">确认收货</view>
-          <view class='btn' wx:if="{{order.order_state_id==10}}" @tap="payMoney()">支付</view>
-          <!-- <view class='btn'>查看物流</view> -->
-      </view> 
-  </view>
-
+      <view class="bottom_bar">
+        <!-- <navigator class='btn' url='./select'>退货/换货</navigator> -->
+        <button class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
+        <view class="btn" wx:if="{{order.order_state_id==30}}" @tap="Confirm()">确认收货</view>
+        <view class="btn" wx:if="{{order.order_state_id==10}}" @tap="payMoney()">支付</view>
+        <!-- <view class='btn'>查看物流</view> -->
+      </view>
+    </view>
   </view>
 </template>
 

@@ -1,76 +1,4 @@
 <style>
-.tips {
-  width: 100%;
-  text-align: center;
-  line-height: 100rpx;
-  font-size: 30rpx;
-}
-
-.link-list > navigator {
-  position: relative;
-  margin: 5rpx 0;
-  padding-right: 50rpx;
-  line-height: 88rpx;
-  background: white;
-}
-
-.link-list text {
-  display: block;
-  text-indent: 20rpx;
-  font-size: 32rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.link-list image {
-  width: 16rpx;
-  height: 25rpx;
-  margin-top: -12rpx;
-  position: absolute;
-  right: 20rpx;
-  top: 50%;
-}
-
-.search {
-  overflow: hidden;
-  height: 108rpx;
-  font: 28rpx PingFang-SC-Medium;
-  color: #969696;
-  background: #fff;
-  text-align: center;
-}
-.search .search_content {
-  width: 690rpx;
-  line-height: 68rpx;
-  margin: 20rpx auto;
-  border-radius: 34rpx;
-  background: #f2f2f2;
-}
-
-.search_text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon-search {
-  width: 40rpx;
-  height: 40rpx;
-}
-
-.nodata {
-  margin-top: 50%;
-  font-size: 38rpx;
-  text-align: center;
-}
-
-.wire-gray {
-  height: 20rpx;
-  width: 100%;
-  background: #f4f4f4;
-}
-
 .container {
   font: 32rpx PingFang-SC-Medium;
   background: #f4f4f4;
@@ -472,63 +400,67 @@
 
 <template>
   <view class="container">
-      <view>
+    <view>
       <swiper class="goods-swiper">
         <block wx:for="{{1}}" wx:key="key">
           <swiper-item>
-            <image src="{{goods.goods_image}}" class="goods-swiperImg" mode="aspectFill"/>
+            <image src="{{goods.goods_image}}" class="goods-swiperImg" mode="aspectFill">
           </swiper-item>
         </block>
       </swiper>
-        
-          <view class='product_info'>
-              <view class='goods'>
-                  <view class='goods_main_info'>
-                      <view class='column'>
-                          <view class='product_title'>{{goods.pgoods_name}}</view>
-                      </view>
-                      <button  class="share" plain="true"  open-type="share">
-                        <view class='column_center'>
-                          <image src='../../images/icon_6_fenxiang@2x.png' class='share_icon' />    
-                           分享             
-                        </view>
-                       </button> 
-                  </view>
-                  <view class='product_price'>¥{{goods.goods_price}}</view>
-                  <view class='goods_other_info'>
-                    <view class='text'>库存：{{goods.goods_storage}}</view>
-                    <view class='text'>销量：{{goods.goods_salenum}}</view>
-                  </view>
+
+      <view class="product_info">
+        <view class="goods">
+          <view class="goods_main_info">
+            <view class="column">
+              <view class="product_title">{{goods.pgoods_name}}</view>
+            </view>
+            <button class="share" plain="true" open-type="share">
+              <view class="column_center">
+                <image src="../../images/icon_6_fenxiang@2x.png" class="share_icon">分享
               </view>
-          </view>
-          <view class='detail'>
-              <view class='detail_title'>商品详情</view>
-              <repeat for='{{goodsimgList}}' item='img'>
-                      <image src='{{img}}' mode='widthFix' />
-              </repeat>
-              <view class='space'></view>
-          </view>   
-      </view>
-      <view class='bottom_bar'>
-          <view class='icon'>
-              <button class="share sess_btn" open-type="contact" session-from="weapp" plain="true">
-                  <image class='tab-icon1' src='../../images/icon_6_kefu@2x.png' />
-                <view>客服</view>
-              </button>
-              <navigator open-type="switchTab" url="/pages/home" hover-class="none">
-                <image class='tab-icon2' src='../../images/icon_6_zhuye@2x.png' />
-                <view>主页</view>
-              </navigator>
-          </view>
-          <view class='buy_btn'   @tap="firmOrder()">立即购买</view>
-      </view>
-      <view class='modal_wrap' wx:if='{{getInfoShow}}'>
-        <view class="modal">
-            <button class='modal_btn' plain="true" open-type="getUserInfo" lang="zh_CN"  bindgetuserinfo="bindGetUserInfo" >
-               <image class="img_modal" mode="widthFix" src="../../images/getphone.png"></image>
             </button>
-            
+          </view>
+          <view class="product_price">¥{{goods.goods_price}}</view>
+          <view class="goods_other_info">
+            <view class="text">库存：{{goods.goods_storage}}</view>
+            <view class="text">销量：{{goods.goods_salenum}}</view>
+          </view>
         </view>
+      </view>
+      <view class="detail">
+        <view class="detail_title">商品详情</view>
+        <repeat for="{{goodsimgList}}" item="img">
+          <image src="{{img}}" mode="widthFix">
+        </repeat>
+        <view class="space"></view>
+      </view>
+    </view>
+    <view class="bottom_bar">
+      <view class="icon">
+        <button class="share sess_btn" open-type="contact" session-from="weapp" plain="true">
+          <image class="tab-icon1" src="../../images/icon_6_kefu@2x.png">
+          <view>客服</view>
+        </button>
+        <navigator open-type="switchTab" url="/pages/home" hover-class="none">
+          <image class="tab-icon2" src="../../images/icon_6_zhuye@2x.png">
+          <view>主页</view>
+        </navigator>
+      </view>
+      <view class="buy_btn" @tap="firmOrder()">立即购买</view>
+    </view>
+    <view class="modal_wrap" wx:if="{{getInfoShow}}">
+      <view class="modal">
+        <button
+          class="modal_btn"
+          plain="true"
+          open-type="getUserInfo"
+          lang="zh_CN"
+          bindgetuserinfo="bindGetUserInfo"
+        >
+          <image class="img_modal" mode="widthFix" src="../../images/getphone.png">
+        </button>
+      </view>
     </view>
   </view>
 </template>

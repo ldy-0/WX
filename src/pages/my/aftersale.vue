@@ -1,76 +1,4 @@
 <style scoped>
-.tips {
-  width: 100%;
-  text-align: center;
-  line-height: 100rpx;
-  font-size: 30rpx;
-}
-
-.link-list > navigator {
-  position: relative;
-  margin: 5rpx 0;
-  padding-right: 50rpx;
-  line-height: 88rpx;
-  background: white;
-}
-
-.link-list text {
-  display: block;
-  text-indent: 20rpx;
-  font-size: 32rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.link-list image {
-  width: 16rpx;
-  height: 25rpx;
-  margin-top: -12rpx;
-  position: absolute;
-  right: 20rpx;
-  top: 50%;
-}
-
-.search {
-  overflow: hidden;
-  height: 108rpx;
-  font: 28rpx PingFang-SC-Medium;
-  color: #969696;
-  background: #fff;
-  text-align: center;
-}
-.search .search_content {
-  width: 690rpx;
-  line-height: 68rpx;
-  margin: 20rpx auto;
-  border-radius: 34rpx;
-  background: #f2f2f2;
-}
-
-.search_text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon-search {
-  width: 40rpx;
-  height: 40rpx;
-}
-
-.nodata {
-  margin-top: 50%;
-  font-size: 38rpx;
-  text-align: center;
-}
-
-.wire-gray {
-  height: 20rpx;
-  width: 100%;
-  background: #f4f4f4;
-}
-
 .title {
   line-height: 68rpx;
   height: 68rpx;
@@ -231,7 +159,7 @@
           <view class="waitBody">
             <repeat for="{{item.order_goods}}" item="items">
               <view class="product_info" @tap="toDetail({{item}})">
-                <image src="{{items.goods_image}}" mode="aspectFill"/>
+                <image src="{{items.goods_image}}" mode="aspectFill">
                 <view class="product">
                   <view class="product_title">{{items.goods_name}}</view>
                   <view class="row">
@@ -253,7 +181,10 @@
             </view>
             <view class="operate_info">
               <button class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
-              <view wx:if="{{item.order_state=='待退款'||item.order_state=='待退货'}}" @tap="cancelReturn({{item.refund_id}})">取消</view>
+              <view
+                wx:if="{{item.order_state=='待退款'||item.order_state=='待退货'}}"
+                @tap="cancelReturn({{item.refund_id}})"
+              >取消</view>
             </view>
           </view>
         </repeat>
@@ -327,9 +258,9 @@ export default class Aftersale extends wepy.page {
     //去订单详情
     toDetail(item) {
       console.log(item);
-       wx.navigateTo({
-          url: "../store/retundGoodDetail?refund_id=" +item.refund_id
-        });
+      wx.navigateTo({
+        url: "../store/retundGoodDetail?refund_id=" + item.refund_id
+      });
     }
   };
   //取消退款退货
@@ -388,21 +319,19 @@ export default class Aftersale extends wepy.page {
     console.log("订单列表");
     if (res.status == 0) {
       wx.hideLoading();
-      if(res.data){
+      if (res.data) {
         this.orderList = res.data;
         if (this.orderList.length == 0) {
-            this.is_empty = true;
-          } else {
-            this.is_empty = false;
+          this.is_empty = true;
+        } else {
+          this.is_empty = false;
         }
-      }else {
-        this.orderList=[]
+      } else {
+        this.orderList = [];
         this.is_empty = true;
       }
-      
-     
     } else {
-      this.is_empty = true
+      this.is_empty = true;
       wx.hideLoading();
     }
     this.$apply();

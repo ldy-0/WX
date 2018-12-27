@@ -1,247 +1,128 @@
 <style scoped>
-.tips {
+.bodycontent {
   width: 100%;
-  text-align: center;
-  line-height: 100rpx;
-  font-size: 30rpx;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  padding: 0rpx 17rpx 23rpx 17rpx;
+  display: flex;
+  background: #fff;
 }
-
-.link-list > navigator {
-  position: relative;
-  margin: 5rpx 0;
-  padding-right: 50rpx;
-  line-height: 88rpx;
-  background: white;
+.bodycontent .redlist {
+  background: #fff;
+  width: 344rpx;
+  height: 457rpx;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border-radius: 10rpx 10rpx 0 0;
+  margin-right: 20rpx;
+  margin-bottom: 19rpx;
+  border: solid 1px #f6f6f6;
 }
-
-.link-list text {
-  display: block;
-  text-indent: 20rpx;
+.bodycontent .title_page {
+  width: 100%;
+  height: 334rpx;
+  background: gray;
+}
+.bodycontent .price {
+  color: #ff4444;
   font-size: 32rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
-
-.link-list image {
-  width: 16rpx;
-  height: 25rpx;
-  margin-top: -12rpx;
-  position: absolute;
-  right: 20rpx;
-  top: 50%;
-}
-
-.search {
-  overflow: hidden;
-  height: 108rpx;
-  font: 28rpx PingFang-SC-Medium;
-  color: #969696;
-  background: #fff;
-  text-align: center;
-}
-.search .search_content {
-  width: 690rpx;
-  line-height: 68rpx;
-  margin: 20rpx auto;
-  border-radius: 34rpx;
-  background: #f2f2f2;
-}
-
-.search_text {
+.add_redinfo {
   display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon-search {
-  width: 40rpx;
-  height: 40rpx;
-}
-
-.nodata {
-  margin-top: 50%;
-  font-size: 38rpx;
-  text-align: center;
-}
-
-.wire-gray {
-  height: 20rpx;
-  width: 100%;
-  background: #f4f4f4;
-}
-
-.goods-item {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 28rpx;
-  border-bottom: 1rpx solid #e3e3e3;
-  background: #fff;
-}
-.goods-item .goods-details {
-  display: flex;
-  width: 430rpx;
-  padding-left: 21rpx;
-  height: 240rpx;
-  flex-direction: column;
   justify-content: space-between;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 0 14rpx 21rpx 11rpx;
 }
-.goods-item .goods-details view {
-  font-size: 20rpx;
-  color: #888;
-}
-.goods-item .goods-details .goods-detailsOne {
-  font-size: 30rpx;
-  color: #222222;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.goodsname {
+  color: #222;
+  width: 100%;
+  font-size: 28rpx;
+  height: 48rpx;
+  line-height: 48rpx;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-.goods-item .goods-details .goods-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.goods-item .goods-details .goods-goBtn {
-  width: 156rpx;
-  height: 56rpx;
-  color: #fff;
-  font-size: 26rpx;
-  text-align: center;
-  line-height: 56rpx;
-  background: #ff4444;
-  border-radius: 28rpx;
-}
-.goods-item image {
-  width: 240rpx;
-  height: 240rpx;
-  background: skyblue;
-}
-
-.text1 {
-  font-size: 26rpx;
-  color: #ff4444;
-}
-
-.text2 {
-  font-size: 32rpx;
-  color: #ff4444;
-  padding-left: 6rpx;
-}
-
-.text3 {
-  font-size: 24rpx;
-  color: #a1a1a1;
-  padding-left: 16rpx;
-  text-decoration: line-through;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
 }
 </style>
 
 
 <template>
   <view class="container">
-    <tab :tabOption="tab" :nowindex.sync="choiceTab" @tabitem.user="tabitem"></tab>
-    <view class='goods-list'>
-      <repeat for='{{goodsList}}' item='item'>
-        <view class='goods-item'>
-          <image src="{{item.goods_image}}" mode="aspectFill"/>
-          <view class="goods-details">
-            <view class="goods-detailsOne">{{item.goods_name}}</view>
-            <view>
-              <view><text class="text1">¥</text><text class="text2">{{item.goods_price}}</text><text class="text3">¥{{item.goods_marketprice}}</text></view>
-              <view class="goods-bottom">
-                <text>销量 {{item.goods_salenum}}</text>
-                <view class="goods-goBtn" @tap='goshopDetail' data-id="{{item.goods_id}}">{{btnType=='appointment'?'立即预约':'立即购买'}}</view>
-              </view>
+    <view class="bodycontent">
+      <repeat for="{{goodsList}}" key="index" index="index" item="item">
+        <view class="redlist" @tap="intoDetail({{item.goods_commonid}})">
+          <image class="title_page" mode="aspectFill" src="{{item.goods_image}}">
+          <view class="redinfo add_redinfo">
+            <text class="goodsname">{{item.goods_name}}</text>
+            <view class="price">
+              <text style="font-size:26rpx;">￥</text>
+              {{item.goods_price}}
             </view>
           </view>
         </view>
       </repeat>
     </view>
-    <!--暂无数据显示-->
     <placeholder :show.sync="is_empty" message="还没有此类店铺"></placeholder>
   </view>
 </template>
 <script>
 import wepy from "wepy";
-import Tab from "../../components/tab";
 import { shttp } from "../../utils/http";
 import Placeholder from "../../components/placeholder";
 export default class GoodsList extends wepy.page {
   config = {
-    navigationBarTitleText: "商品列表"
+    navigationBarTitleText: "热门推荐"
   };
   data = {
-    tab: {
-      tabList: ["综合", "最热", "新品", "价格"]
-    },
-    choiceTab: 0,
-    btnType: "",
-    shopId: null,
-    goodsList: [],
+    goodsList: [], //商品列表
     page: 1,
     is_empty: false
   };
   components = {
-    tab: Tab,
     placeholder: Placeholder
   };
   onLoad(options) {
-    this.shopId = wx.getStorageSync("shopId");
-    // console.log(options.type);
-    //判断是立即购买，还是预约
-    this.btnType = options.type;
     this.getgoodsList();
   }
   onShow() {}
   methods = {
-    async tabitem(e) {
-      this.choiceTab = e;
-      console.log(e);
+    intoDetail(id) {
+      wx.navigateTo({
+        url: `./goodsDetails?goods_commonid=${id}`
+      });
     }
   };
   async getgoodsList() {
-    wx.showLoading({
-      title: "加载中"
-    });
     const res = await shttp
-      .get(`/api/v1/member/goods?store_id=${this.shopId}`)
+      .get(`/api/v2/member/goodscommon`)
       .query({
+        store_id: 1,
+        goods_commend: 1,
+        type: "sort",
+        limit: 10,
         page: this.page
       })
       .end();
-    if (res.status == 0) {
-      let list = Array.from(res.data);
-      this.goodsList = this.goodsList.concat(list);
-      wx.hideLoading();
+    if (res.status === 0) {
+      if (res.data != null && res.data.length != 0) {
+        this.goodsList = this.goodsList.concat(res.data);
+      }
       if (this.goodsList.length == 0) {
         this.is_empty = true;
+      } else {
+        this.is_empty = false;
       }
-    } else {
       wx.hideLoading();
     }
     this.$apply();
   }
   //上拉加载
   onReachBottom() {
-    this.page = this.page + 1;
+    this.page += 1;
     this.getgoodsList();
     this.$apply();
-  }
-  goshopDetail(e) {
-    let id = e.currentTarget.dataset.id;
-    if (this.btnType === "appointment") {
-      wx.navigateTo({
-        url: `goodsDetails?goods_id=${id}&type=appointment`
-      });
-    } else {
-      wx.navigateTo({
-        url: `goodsDetails?goods_id=${id}`
-      });
-    }
   }
 }
 </script>

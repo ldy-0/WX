@@ -1,67 +1,4 @@
 <style scoped>
-.tips {
-  width: 100%;
-  text-align: center;
-  line-height: 100rpx;
-  font-size: 30rpx;
-}
-.link-list > navigator {
-  position: relative;
-  margin: 5rpx 0;
-  padding-right: 50rpx;
-  line-height: 88rpx;
-  background: white;
-}
-.link-list text {
-  display: block;
-  text-indent: 20rpx;
-  font-size: 32rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.link-list image {
-  width: 16rpx;
-  height: 25rpx;
-  margin-top: -12rpx;
-  position: absolute;
-  right: 20rpx;
-  top: 50%;
-}
-.search {
-  overflow: hidden;
-  height: 108rpx;
-  font: 28rpx PingFang-SC-Medium;
-  color: #969696;
-  background: #fff;
-  text-align: center;
-}
-.search .search_content {
-  width: 690rpx;
-  line-height: 68rpx;
-  margin: 20rpx auto;
-  border-radius: 34rpx;
-  background: #f2f2f2;
-}
-.search_text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.icon-search {
-  width: 40rpx;
-  height: 40rpx;
-}
-.nodata {
-  margin-top: 50%;
-  font-size: 38rpx;
-  text-align: center;
-}
-.wire-gray {
-  height: 20rpx;
-  width: 100%;
-  background: #f4f4f4;
-}
 .container {
   background: #f4f4f4;
   min-height: 100vh;
@@ -204,55 +141,78 @@
 }
 </style>
 <template>
-  <view class="container">         
-    <repeat for='{{order.order_goods}}' item='item'>
-      <view class='product_info'>
-        <image src='{{item.goods_image}}' mode="aspectFill"/>
-        <view class='product'>
-            <view class='product_title'>{{item.goods_name}}</view>
-            <view class='row'>
-                <view class='product_price'>¥{{item.goods_price}}</view>
-            </view>
-            <view class='row'>
-                <view class='product_standard'></view>
-                <view class='product_number'>×{{item.goods_num}}</view>
-            </view>
+  <view class="container">
+    <repeat for="{{order.order_goods}}" item="item">
+      <view class="product_info">
+        <image src="{{item.goods_image}}" mode="aspectFill">
+        <view class="product">
+          <view class="product_title">{{item.goods_name}}</view>
+          <view class="row">
+            <view class="product_price">¥{{item.goods_price}}</view>
+          </view>
+          <view class="row">
+            <view class="product_standard"></view>
+            <view class="product_number">×{{item.goods_num}}</view>
+          </view>
         </view>
       </view>
     </repeat>
-    <view class="nav-btn" @tap="showBox">      
+    <view class="nav-btn" @tap="showBox">
       <view class="nav-btnTxt1">退款原因</view>
-      <view class="nav-btnRight" wx:if="{{cause==''}}"><text>请选择</text><image class='arrow' src='../../images/icon_zuojiantou@2x.png' /></view>
-      <view class="nav-btnRight" wx:else><text>{{cause}}</text></view>      
+      <view class="nav-btnRight" wx:if="{{cause==''}}">
+        <text>请选择</text>
+        <image class="arrow" src="../../images/icon_zuojiantou@2x.png">
+      </view>
+      <view class="nav-btnRight" wx:else>
+        <text>{{cause}}</text>
+      </view>
     </view>
-    <view class="nav-btn">      
-      <view class="nav-btnTxt1">退款金额<text>¥{{order.order_goods[0].goods_price}}</text></view>  
+    <view class="nav-btn">
+      <view class="nav-btnTxt1">退款金额
+        <text>¥{{order.order_goods[0].goods_price}}</text>
+      </view>
     </view>
     <form bindsubmit="formSubmit">
-      <view class="nav-btn">      
+      <view class="nav-btn">
         <view class="nav-btnTxt1">退货说明</view>
-        <input type='text' name='txt1' class='inline' placeholder-style='font-size:28rpx;color:#888888;'  placeholder="选填"/>
+        <input
+          type="text"
+          name="txt1"
+          class="inline"
+          placeholder-style="font-size:28rpx;color:#888888;"
+          placeholder="选填"
+        >
       </view>
-      <view class="nav-btn margin-bottom" wx:if="{{type!='refund'}}">      
+      <view class="nav-btn margin-bottom" wx:if="{{type!='refund'}}">
         <view class="nav-btnTxt1">物流公司</view>
-        <input type='text' name='txt2' class='inline'  placeholder-style='font-size:28rpx;color:#888888;'  placeholder="必填"/>
+        <input
+          type="text"
+          name="txt2"
+          class="inline"
+          placeholder-style="font-size:28rpx;color:#888888;"
+          placeholder="必填"
+        >
       </view>
-      <view class="nav-btn" wx:if="{{type!='refund'}}">      
+      <view class="nav-btn" wx:if="{{type!='refund'}}">
         <view class="nav-btnTxt1">物流单号</view>
-        <input type='text' name='txt3' class='inline'  placeholder-style='font-size:28rpx;color:#888888;'  placeholder="必填"/>
+        <input
+          type="text"
+          name="txt3"
+          class="inline"
+          placeholder-style="font-size:28rpx;color:#888888;"
+          placeholder="必填"
+        >
       </view>
       <button formType="submit" class="submit-btn">提交</button>
     </form>
     <view class="discount-bg" wx:if="{{discountShow}}">
       <view class="discount-box">
         <view class="discount-title">退款原因</view>
-        <repeat for='{{causeList}}' index='index'>
-          <view class="discount-info" @tap="choice" data-index='{{index}}'>
-            {{item}}
-          </view>
+        <repeat for="{{causeList}}" index="index">
+          <view class="discount-info" @tap="choice" data-index="{{index}}">{{item}}</view>
         </repeat>
         <view class="discount-btn" @tap="discountSure">关闭</view>
-      </view>   
+      </view>
     </view>
   </view>
 </template>

@@ -1,76 +1,4 @@
 <style scoped>
-.tips {
-  width: 100%;
-  text-align: center;
-  line-height: 100rpx;
-  font-size: 30rpx;
-}
-
-.link-list > navigator {
-  position: relative;
-  margin: 5rpx 0;
-  padding-right: 50rpx;
-  line-height: 88rpx;
-  background: white;
-}
-
-.link-list text {
-  display: block;
-  text-indent: 20rpx;
-  font-size: 32rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.link-list image {
-  width: 16rpx;
-  height: 25rpx;
-  margin-top: -12rpx;
-  position: absolute;
-  right: 20rpx;
-  top: 50%;
-}
-
-.search {
-  overflow: hidden;
-  height: 108rpx;
-  font: 28rpx PingFang-SC-Medium;
-  color: #969696;
-  background: #fff;
-  text-align: center;
-}
-.search .search_content {
-  width: 690rpx;
-  line-height: 68rpx;
-  margin: 20rpx auto;
-  border-radius: 34rpx;
-  background: #f2f2f2;
-}
-
-.search_text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon-search {
-  width: 40rpx;
-  height: 40rpx;
-}
-
-.nodata {
-  margin-top: 50%;
-  font-size: 38rpx;
-  text-align: center;
-}
-
-.wire-gray {
-  height: 20rpx;
-  width: 100%;
-  background: #f4f4f4;
-}
-
 .container {
   font: 32rpx PingFang-SC-Medium;
   background: #f4f4f4;
@@ -153,17 +81,17 @@
 
 <template>
   <view class="container">
-       <view class="bodycontent">
-        <repeat for="{{materialList}}" key="index" index="index" item="item">   
-         <view class="redlist" @tap="gotoCase({{item.dynamic_id}})"> 
-             <image class="title_page" src="{{item.dynamic_images[0].url}}" mode="aspectFill"></image>  
-            <view class="redinfo">
-              <text class="prdname">{{item.dynamic_title}}</text>
-            </view>
+    <view class="bodycontent">
+      <repeat for="{{materialList}}" key="index" index="index" item="item">
+        <view class="redlist" @tap="gotoCase({{item.dynamic_id}})">
+          <image class="title_page" src="{{item.dynamic_images[0].url}}" mode="aspectFill">
+          <view class="redinfo">
+            <text class="prdname">{{item.dynamic_title}}</text>
+          </view>
         </view>
-       </repeat> 
+      </repeat>
     </view>
-   </view>
+  </view>
 </template>
 
 <script>
@@ -214,7 +142,7 @@ export default class Home extends wepy.page {
       .query({
         dynamic_type: "material",
         limit: 8,
-        page: this.page,
+        page: this.page
       })
       .end();
     if (res.status === 0) {
@@ -225,12 +153,12 @@ export default class Home extends wepy.page {
             res.data[idx].dynamic_images
           );
         });
-        this.materialList  = this.materialList.concat(res.data);
+        this.materialList = this.materialList.concat(res.data);
       }
     } else {
       wx.hideLoading();
     }
-    
+
     console.log(this.materialList);
 
     this.$apply();

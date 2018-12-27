@@ -1,76 +1,4 @@
 <style scoped>
-.tips {
-  width: 100%;
-  text-align: center;
-  line-height: 100rpx;
-  font-size: 30rpx;
-}
-
-.link-list > navigator {
-  position: relative;
-  margin: 5rpx 0;
-  padding-right: 50rpx;
-  line-height: 88rpx;
-  background: white;
-}
-
-.link-list text {
-  display: block;
-  text-indent: 20rpx;
-  font-size: 32rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.link-list image {
-  width: 16rpx;
-  height: 25rpx;
-  margin-top: -12rpx;
-  position: absolute;
-  right: 20rpx;
-  top: 50%;
-}
-
-.search {
-  overflow: hidden;
-  height: 108rpx;
-  font: 28rpx PingFang-SC-Medium;
-  color: #969696;
-  background: #fff;
-  text-align: center;
-}
-.search .search_content {
-  width: 690rpx;
-  line-height: 68rpx;
-  margin: 20rpx auto;
-  border-radius: 34rpx;
-  background: #f2f2f2;
-}
-
-.search_text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon-search {
-  width: 40rpx;
-  height: 40rpx;
-}
-
-.nodata {
-  margin-top: 50%;
-  font-size: 38rpx;
-  text-align: center;
-}
-
-.wire-gray {
-  height: 20rpx;
-  width: 100%;
-  background: #f4f4f4;
-}
-
 .container {
   font: 28rpx PingFang-SC-Medium;
   color: #000;
@@ -219,45 +147,43 @@
 
 <template>
   <view class="container">
-
-      <view class='title'>{{orderDetail.refund_state}}</view>
-       <repeat for="{{orderDetail.order_goods}}" key="index" index="index" item="item">
-      <view class='product_info around'>
-          <image  src='{{item.goods_image}}'/>
-          <view class='product'>
-              <view class='product_title'>{{item.goods_name}}</view>
-              <view class='row'>
-                  <view class='product_price'>¥{{item.goods_price}}</view>
-                  <!-- <view class='product_address'>福建福州</view> -->
-              </view>
-              <view class='row'>
-                  <view class='product_standard'>规格：{{item.spec_value|| '统一规格'}}</view>
-                  <view class='product_number'>×{{item.goods_num}}</view>
-              </view>
+    <view class="title">{{orderDetail.refund_state}}</view>
+    <repeat for="{{orderDetail.order_goods}}" key="index" index="index" item="item">
+      <view class="product_info around">
+        <image src="{{item.goods_image}}">
+        <view class="product">
+          <view class="product_title">{{item.goods_name}}</view>
+          <view class="row">
+            <view class="product_price">¥{{item.goods_price}}</view>
+            <!-- <view class='product_address'>福建福州</view> -->
           </view>
+          <view class="row">
+            <view class="product_standard">规格：{{item.spec_value|| '统一规格'}}</view>
+            <view class="product_number">×{{item.goods_num}}</view>
+          </view>
+        </view>
       </view>
-      </repeat>
-      <view class='single_row row' >
-          <view>退款原因</view>
-          <view class='description'>{{orderDetail.reason_info}}</view>
-      </view>
+    </repeat>
+    <view class="single_row row">
+      <view>退款原因</view>
+      <view class="description">{{orderDetail.reason_info}}</view>
+    </view>
 
-      <view class='split_line_row row'>
-          <view>退款金额</view>
-          <view class='price'>¥{{orderDetail.order_amount}}</view>
-      </view>
+    <view class="split_line_row row">
+      <view>退款金额</view>
+      <view class="price">¥{{orderDetail.order_amount}}</view>
+    </view>
 
-      <view class='split_line_row row'>
-          <view>退货说明</view>
-          <view class='description'>{{orderDetail.buyer_message}}</view>
-      </view>
+    <view class="split_line_row row">
+      <view>退货说明</view>
+      <view class="description">{{orderDetail.buyer_message}}</view>
+    </view>
 
-      <view class='bottom_bar'>
-          <!-- <navigator class='btn' url='./select'>填写物流单号</navigator> -->
-           <button  class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
-          <!-- <view class='btn'>查看物流</view> -->
-      </view>
-
+    <view class="bottom_bar">
+      <!-- <navigator class='btn' url='./select'>填写物流单号</navigator> -->
+      <button class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
+      <!-- <view class='btn'>查看物流</view> -->
+    </view>
   </view>
 </template>
 

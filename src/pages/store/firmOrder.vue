@@ -1,76 +1,4 @@
 <style>
-.tips {
-  width: 100%;
-  text-align: center;
-  line-height: 100rpx;
-  font-size: 30rpx;
-}
-
-.link-list > navigator {
-  position: relative;
-  margin: 5rpx 0;
-  padding-right: 50rpx;
-  line-height: 88rpx;
-  background: white;
-}
-
-.link-list text {
-  display: block;
-  text-indent: 20rpx;
-  font-size: 32rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.link-list image {
-  width: 16rpx;
-  height: 25rpx;
-  margin-top: -12rpx;
-  position: absolute;
-  right: 20rpx;
-  top: 50%;
-}
-
-.search {
-  overflow: hidden;
-  height: 108rpx;
-  font: 28rpx PingFang-SC-Medium;
-  color: #969696;
-  background: #fff;
-  text-align: center;
-}
-.search .search_content {
-  width: 690rpx;
-  line-height: 68rpx;
-  margin: 20rpx auto;
-  border-radius: 34rpx;
-  background: #f2f2f2;
-}
-
-.search_text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon-search {
-  width: 40rpx;
-  height: 40rpx;
-}
-
-.nodata {
-  margin-top: 50%;
-  font-size: 38rpx;
-  text-align: center;
-}
-
-.wire-gray {
-  height: 20rpx;
-  width: 100%;
-  background: #f4f4f4;
-}
-
 .container {
   font: 32rpx PingFang-SC-Medium;
   background: #f4f4f4;
@@ -319,44 +247,50 @@
 
 <template>
   <view class="container">
-      <navigator class='person_info_wrap around' url='/pages/my/addressList?type=order'>
-          <image src='../../images/icon_dingwei@2x.png' />
-          <view class='person_info'>
-              <view class='person'>
-                  <view>收货人：{{address.address_realname}}</view>
-                  <view>{{address.address_tel_phone}}</view>
-              </view>
-              <view>收货地址：{{address.area_info}}{{address.address_detail}}</view>
-          </view>
-          <image src='../../images/icon_zuojiantou@2x.png' />
-      </navigator> 
-      <image src='../../images/img_1@2x.png' class='split_bar' />
-      <repeat for='{{goodsList}}' index='index'  item='item'>
-          <view class='product_info around'>
-              <image src="{{item.goods_image}}" mode='aspectFill'/>
-              <view class='product'>
-                  <view class='product_title'>{{item.goods_name}}</view>
-                  <view class='row'>
-                      <view class='product_price'>¥{{item.goods_price}}</view>
-                      <!-- <view class='product_address'>福建福州</view> -->
-                  </view>
-                  <view class='row'>
-                      <view class='product_number'>×{{item.goods_num|| '1'}}</view>
-                  </view>
-              </view>
-          </view>
-      </repeat>
-      <view class='order_info'>
-          <view><text>运费：</text><text class='right'>¥{{freightList[0]|| '0'}}</text></view>
+    <navigator class="person_info_wrap around" url="/pages/my/addressList?type=order">
+      <image src="../../images/icon_dingwei@2x.png">
+      <view class="person_info">
+        <view class="person">
+          <view>收货人：{{address.address_realname}}</view>
+          <view>{{address.address_tel_phone}}</view>
+        </view>
+        <view>收货地址：{{address.area_info}}{{address.address_detail}}</view>
       </view>
-      <view class='bottom_bar'>
-          <view class='sum row'>
-              <view class='sum_number'>共计<text>{{goodsNum}}</text>件商品</view>
-              <view class='sum_price'>合计：<text>¥{{price}}</text></view>
+      <image src="../../images/icon_zuojiantou@2x.png">
+    </navigator>
+    <image src="../../images/img_1@2x.png" class="split_bar">
+    <repeat for="{{goodsList}}" index="index" item="item">
+      <view class="product_info around">
+        <image src="{{item.goods_image}}" mode="aspectFill">
+        <view class="product">
+          <view class="product_title">{{item.goods_name}}</view>
+          <view class="row">
+            <view class="product_price">¥{{item.goods_price}}</view>
+            <!-- <view class='product_address'>福建福州</view> -->
           </view>
-          <view class='btn' @tap='bought()'>提交订单</view>
+          <view class="row">
+            <view class="product_number">×{{item.goods_num|| '1'}}</view>
+          </view>
+        </view>
       </view>
-
+    </repeat>
+    <view class="order_info">
+      <view>
+        <text>运费：</text>
+        <text class="right">¥{{freightList[0]|| '0'}}</text>
+      </view>
+    </view>
+    <view class="bottom_bar">
+      <view class="sum row">
+        <view class="sum_number">共计
+          <text>{{goodsNum}}</text>件商品
+        </view>
+        <view class="sum_price">合计：
+          <text>¥{{price}}</text>
+        </view>
+      </view>
+      <view class="btn" @tap="bought()">提交订单</view>
+    </view>
   </view>
 </template>
 
@@ -395,7 +329,7 @@ export default class FirmOrder extends wepy.page {
     //订单类型
     orderType: null,
     //判断是否点击了提交
-    isclick: false,
+    isclick: false
   };
 
   components = {};

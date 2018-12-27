@@ -1,76 +1,4 @@
 <style scoped>
-.tips {
-  width: 100%;
-  text-align: center;
-  line-height: 100rpx;
-  font-size: 30rpx;
-}
-
-.link-list > navigator {
-  position: relative;
-  margin: 5rpx 0;
-  padding-right: 50rpx;
-  line-height: 88rpx;
-  background: white;
-}
-
-.link-list text {
-  display: block;
-  text-indent: 20rpx;
-  font-size: 32rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.link-list image {
-  width: 16rpx;
-  height: 25rpx;
-  margin-top: -12rpx;
-  position: absolute;
-  right: 20rpx;
-  top: 50%;
-}
-
-.search {
-  overflow: hidden;
-  height: 108rpx;
-  font: 28rpx PingFang-SC-Medium;
-  color: #969696;
-  background: #fff;
-  text-align: center;
-}
-.search .search_content {
-  width: 690rpx;
-  line-height: 68rpx;
-  margin: 20rpx auto;
-  border-radius: 34rpx;
-  background: #f2f2f2;
-}
-
-.search_text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.icon-search {
-  width: 40rpx;
-  height: 40rpx;
-}
-
-.nodata {
-  margin-top: 50%;
-  font-size: 38rpx;
-  text-align: center;
-}
-
-.wire-gray {
-  height: 20rpx;
-  width: 100%;
-  background: #f4f4f4;
-}
-
 .container {
   font: 28rpx PingFang-SC-Medium;
   color: #000;
@@ -229,8 +157,7 @@
 
 <template>
   <view class="container">
-
-      <!-- <view class='returnGoods_title'>退货寄回地址</view>
+    <!-- <view class='returnGoods_title'>退货寄回地址</view>
 
       <navigator class='person_info_wrap around' url='/pages/my/addressList?type=returnGoods'>
           <image class="icon_diwei" src='../../images/icon_dingwei@2x.png' />
@@ -241,54 +168,51 @@
               </view>
               <view>收货地址：{{address.area_info}}{{address.address_detail}}</view>
           </view>
-      </navigator> -->
-   <repeat for="{{orderDetail.order_goods}}" key="index" index="index" item="item">
-      <view class='product_info around'>
-          <image  src='{{item.goods_image}}' />
-          <view class='product'>
-              <view class='product_title'>{{item.goods_name}}</view>
-              <view class='row'>
-                  <view class='product_price'>¥{{item.goods_price}}</view>
-                  <!-- <view class='product_address'>福建福州</view> -->
-              </view>
-              <view class='row'>
-                  <view class='product_standard'>规格：{{item.spec_value|| '统一规格'}}</view>
-                  <view class='product_number'>×{{item.goods_num}}</view>
-              </view>
+    </navigator>-->
+    <repeat for="{{orderDetail.order_goods}}" key="index" index="index" item="item">
+      <view class="product_info around">
+        <image src="{{item.goods_image}}">
+        <view class="product">
+          <view class="product_title">{{item.goods_name}}</view>
+          <view class="row">
+            <view class="product_price">¥{{item.goods_price}}</view>
+            <!-- <view class='product_address'>福建福州</view> -->
           </view>
+          <view class="row">
+            <view class="product_standard">规格：{{item.spec_value|| '统一规格'}}</view>
+            <view class="product_number">×{{item.goods_num}}</view>
+          </view>
+        </view>
       </view>
-     </repeat>
-     <view class='single_row row'>
-          <view class="title">退款原因</view>
-          <picker class="mypicker" bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
-            <view class="picker">
-               {{array[index]}}
-            </view>
-           </picker>
-             <image class='arrow' src='../../images/icon_zuojiantou@2x.png' />
-      </view>
+    </repeat>
+    <view class="single_row row">
+      <view class="title">退款原因</view>
+      <picker class="mypicker" bindchange="bindPickerChange" value="{{index}}" range="{{array}}">
+        <view class="picker">{{array[index]}}</view>
+      </picker>
+      <image class="arrow" src="../../images/icon_zuojiantou@2x.png">
+    </view>
 
-      <view class='single_row'>
-          <view>退款金额</view>
-          <view class='price'>¥{{orderDetail.order_amount}}</view>
-      </view>
+    <view class="single_row">
+      <view>退款金额</view>
+      <view class="price">¥{{orderDetail.order_amount}}</view>
+    </view>
 
-      <view class='single_row'>
-          <view class="title">退货说明</view>
-           <input class='description' placeholder="选填"  bindinput="iptinfo"/>
-      </view>
+    <view class="single_row">
+      <view class="title">退货说明</view>
+      <input class="description" placeholder="选填" bindinput="iptinfo">
+    </view>
 
-      <view class='single_row'>
-          <view class="title">物流公司</view>
-           <input class='description' placeholder="必填" bindinput="iptcom" />
-      </view>
-      <view class='no_split_row'>
-          <view class="title">物流单号</view>
-           <input class='description' placeholder="必填" bindinput="iptnum" />
-      </view>
+    <view class="single_row">
+      <view class="title">物流公司</view>
+      <input class="description" placeholder="必填" bindinput="iptcom">
+    </view>
+    <view class="no_split_row">
+      <view class="title">物流单号</view>
+      <input class="description" placeholder="必填" bindinput="iptnum">
+    </view>
 
-     <view class='bottom_bar' @tap="submintMsg()">提交</view>
-      
+    <view class="bottom_bar" @tap="submintMsg()">提交</view>
   </view>
 </template>
 
@@ -390,23 +314,23 @@ export default class ReturnGoods extends wepy.page {
     console.log(res);
     if (res.status == 0) {
       wx.showToast({
-          title: '操作成功',
-          icon: "none",
-          duration: 2000
-        });
+        title: "操作成功",
+        icon: "none",
+        duration: 2000
+      });
       wx.navigateBack();
-    }else if(res.status == 1){
+    } else if (res.status == 1) {
       return wx.showToast({
-          title: res.error,
-          icon: "none",
-          duration: 2000
-        });
-    }else {
+        title: res.error,
+        icon: "none",
+        duration: 2000
+      });
+    } else {
       return wx.showToast({
-          title: "操作失败",
-          icon: "none",
-          duration: 2000
-        });
+        title: "操作失败",
+        icon: "none",
+        duration: 2000
+      });
     }
   }
   onLoad(option) {

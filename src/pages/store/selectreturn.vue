@@ -186,33 +186,31 @@
 
 <template>
   <view class="container">
-  
-      <repeat for="{{orderDetail.order_goods}}" key="index" index="index" item="item">
-      <view class='product_info around'>
-          <image src='{{item.goods_image}}' mode="aspectFill"/>
-          <view class='product'>
-              <view class='product_title'>{{item.goods_name}}</view>
-              <view class='row'>
-                  <view class='product_price'>¥{{item.goods_price}}</view>
-                  <!-- <view class='product_address'>福建福州</view> -->
-              </view>
-              <view class='row'>
-                  <view class='product_standard'>规格：{{item.goods_spec|| '统一规格'}}</view>
-                  <view class='product_number'>×{{item.goods_num}}</view>
-              </view>
+    <repeat for="{{orderDetail.order_goods}}" key="index" index="index" item="item">
+      <view class="product_info around">
+        <image src="{{item.goods_image}}" mode="aspectFill">
+        <view class="product">
+          <view class="product_title">{{item.goods_name}}</view>
+          <view class="row">
+            <view class="product_price">¥{{item.goods_price}}</view>
+            <!-- <view class='product_address'>福建福州</view> -->
           </view>
+          <view class="row">
+            <view class="product_standard">规格：{{item.goods_spec|| '统一规格'}}</view>
+            <view class="product_number">×{{item.goods_num}}</view>
+          </view>
+        </view>
       </view>
-        </repeat>
-    <repeat for='{{list}}' item='item'  >
-          <view @tap="gotoReturn({{item.url}})" class='row_between'>
-              <view class='flex'>
-                  <text class="title">{{item.name}}</text>
-                  <text>{{item.info}}</text>
-              </view>
-              <image class='arrow' src='../../images/icon_zuojiantou@2x.png' />
-          </view>
-      </repeat>
-
+    </repeat>
+    <repeat for="{{list}}" item="item">
+      <view @tap="gotoReturn({{item.url}})" class="row_between">
+        <view class="flex">
+          <text class="title">{{item.name}}</text>
+          <text>{{item.info}}</text>
+        </view>
+        <image class="arrow" src="../../images/icon_zuojiantou@2x.png">
+      </view>
+    </repeat>
   </view>
 </template>
 
@@ -251,7 +249,7 @@ export default class Select extends wepy.page {
   };
   onLoad(option) {
     this.orderDetail = JSON.parse(decodeURIComponent(option.goods));
-  
+
     console.log(this.orderDetail);
     this.$apply();
   }

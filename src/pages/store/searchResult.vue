@@ -163,32 +163,32 @@
 </style>
 
 <template>
-    <view class="container">
-        <view class='wrap'>
-            <view class='search'>
-                <image class='icon_search' src='../../images/icon_sousuo@2x.png' />
-                <input class='search_content' value='{{iptValue}}'  bindinput='getInput' auto-focus="true"   />
-                <image class='icon_cancle' src='../../images/icon_sousuo_cha@2x.png' @tap='clear()' />
-            </view>
-             <view class="cancle" @tap='search()'>搜索</view>
-        </view>
-          <view class="bodycontent">
-       <repeat for="{{goodList}}" key="index" index="index" item="item">  
-         <view class="redlist" @tap="intoDetail({{item.goods_commonid}})"> 
-             <image class="title_page" src="{{item.goods_image}}" mode='aspectFill'></image>  
-            <view class="redinfo">
-              <text class="prdname">{{item.goods_name}}</text>
-            </view>
-            <view class="price">
-              <text>￥{{item.goods_price}}</text>
-            </view>
-        </view>
-       </repeat> 
+  <view class="container">
+    <view class="wrap">
+      <view class="search">
+        <image class="icon_search" src="../../images/icon_sousuo@2x.png">
+        <input class="search_content" value="{{iptValue}}" bindinput="getInput" auto-focus="true">
+        <image class="icon_cancle" src="../../images/icon_sousuo_cha@2x.png" @tap="clear()">
+      </view>
+      <view class="cancle" @tap="search()">搜索</view>
     </view>
-        
-     <!--暂无数据显示-->
-      <placeholder :show.sync="is_empty" message="暂无相关商品呢"></placeholder> 
+    <view class="bodycontent">
+      <repeat for="{{goodList}}" key="index" index="index" item="item">
+        <view class="redlist" @tap="intoDetail({{item.goods_commonid}})">
+          <image class="title_page" src="{{item.goods_image}}" mode="aspectFill">
+          <view class="redinfo">
+            <text class="prdname">{{item.goods_name}}</text>
+          </view>
+          <view class="price">
+            <text>￥{{item.goods_price}}</text>
+          </view>
+        </view>
+      </repeat>
     </view>
+
+    <!--暂无数据显示-->
+    <placeholder :show.sync="is_empty" message="暂无相关商品呢"></placeholder>
+  </view>
 </template>
 
 <script>
