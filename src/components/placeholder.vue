@@ -23,7 +23,7 @@ export default class Placeholder extends wepy.component {
 </script>
 <style scoped>
 .empty-placeholder {
-  padding-top: 70rpx;
+  padding-top: 290rpx;
   width: 100%;
   text-align: center;
 }
@@ -34,15 +34,15 @@ export default class Placeholder extends wepy.component {
 }
 
 .icon-xl {
-  width: 363rpx;
-  height: 300rpx;
+  width: 203rpx;
+  height: 122rpx;
   display: block;
   margin: 0 auto;
 }
 
 .txt {
-  font-size: 36rpx;
-  color: #222;
-  margin-top: 60rpx;
+  font-size: 26rpx;
+  color: #848484;
+  margin-top: 26rpx;
 }
 </style>

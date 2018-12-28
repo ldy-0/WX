@@ -1,6 +1,7 @@
 <style scoped>
-
-
+page {
+  background: #fff;
+}
 .container {
   height: 100%;
   font: 28rpx PingFang-SC-Medium;
@@ -8,92 +9,109 @@
 
 .wrap {
   display: flex;
-  height: 100%;
-  background: #eee;
+  margin-top: 96rpx;
 }
 .wrap .class_list {
-  width: 195rpx;
+  position: fixed;
+  z-index: 9;
+  left: 0;
+  top: 96rpx;
+  width: 170rpx;
   height: 100%;
   text-align: center;
-  background: #f4f4f4;
   overflow-y: scroll;
   overflow-x: hidden;
   flex-shrink: 0;
+  text-align: center;
+  box-sizing: border-box;
+  border-right: 1rpx solid #eeeeee;
 }
 .wrap .class_list .class_item {
-  line-height: 110rpx;
-  height: 110rpx;
+  line-height: 54rpx;
+  height: 54rpx;
   color: #222222;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin: 25rpx 0;
 }
 .wrap .class_list .sel {
-  border-left: solid 4px #ff4444;
+  border-left: solid 6px #f17f30;
   background: #fff;
+  color: #f17f30;
 }
 .wrap .content_wrap {
-  flex-grow: 1;
-  background: #fff;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  padding: 20rpx 0 20rpx 20rpx;
+  width: 578rpx;
+  margin-left: 170rpx;
 }
 .wrap .content_wrap .row {
-  height: 320rpx;
-  font-size: 26prx;
-  width: 250rpx;
+  width: 578rpx;
+  padding: 0rpx 26rpx;
+  height: 200rpx;
+  font-size: 28prx;
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+}
+.wrap .content_wrap .row .goodimg {
+  width: 164rpx;
+  height: 164rpx;
+  border-radius: 5rpx;
+  margin-right: 20rpx;
+}
+.wrap .content_wrap .row .goodsInfo {
+  height: 200rpx;
+  width: 350rpx;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  margin-right: 15rpx;
-  overflow: hidden;
-  margin-bottom: 15rpx;
-  border-radius: 10rpx;
-  box-shadow: 0 1px 1px #ddd;
-}
-.wrap .content_wrap .row .goodimg {
-  width: 250rpx;
-  height: 200rpx;
-  flex-shrink: 0;
-  margin-right: 21rpx;
-  background: gray;
-}
-.wrap .content_wrap .row .goodsInfo {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  border-bottom: 1rpx solid #eeeeee;
+  padding-top: 20rpx;
+  padding-bottom: 10rpx;
 }
 .wrap .content_wrap .row .goodsInfo .goodsname {
-  max-height: 100rpx;
-  min-height: 70rpx;
-  color: #666666;
+  color: #222;
   width: 100%;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-  overflow: hidden;
+  font-size: 28rpx;
 }
-.wrap .content_wrap .row .goodsInfo .price {
-  height: 40rpx;
-  line-height: 40rpx;
+.price_box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.wrap .content_wrap .row .goodsInfo .price_box .price {
+  font-size: 32rpx;
   color: #ff4444;
 }
-
+.price_boxIcon {
+  width: 50rpx;
+  height: 50rpx;
+  padding-left:50rpx;
+}
 .search {
   height: 96rpx;
-  background: #f4f4f4;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-bottom: 1rpx solid #eee;
 }
 .search .search_content {
   display: flex;
   align-items: center;
-  width: 93%;
+  width: 690rpx;
   height: 60rpx;
-  border-radius: 30rpx;
-  background: #fff;
+  border-radius: 10rpx;
+  color: #666;
+  background: #ededed;
 }
 .search .search_content image {
   width: 23rpx;
@@ -105,45 +123,46 @@
 
 <template>
   <view class="container">
-     <!-- <floatingmenu></floatingmenu> -->
-      <view class="search">
-          <navigator url="./article/search" class="search_content" >
-          <image src='../images/icon_sousuo@2x.png' class="iconfont icon-search" /> 
-          <text>搜索商品</text>
-          </navigator>
+    <view class="search">
+      <navigator url="./article/search" class="search_content">
+        <image src="../images/icon_sousuo@2x.png" class="iconfont icon-search">
+        <text>搜索商品</text>
+      </navigator>
+    </view>
+    <view class="wrap">
+      <view class="class_list">
+        <repeat for="{{classList}}" index="index" item="item">
+          <view
+            class="class_item {{ checkedList[index] ? 'sel' : '' }}"
+            @tap="getTwo({{index}})"
+          >{{item.storegc_name}}</view>
+        </repeat>
       </view>
-      <view class="wrap">
-          <view class="class_list">
-              <repeat for="{{classList}}" index="index" item="item">
-                <view class="class_item {{ checkedList[index] ? 'sel' : '' }}" @tap="getTwo({{index}})">{{item.storegc_name}}</view>
-              </repeat>
-          </view>
-            <scroll-view scroll-y style="height: 100%">
-          <view class="content_wrap">
-    
-              <repeat for="{{goodsList}}" index="index" item="item">
-            <view class="row" @tap="intoDetail({{item.goods_commonid}})"> 
-                <image class="goodimg"  mode='aspectFill' src="{{item.goods_image}}"></image>  
-                <view class="goodsInfo">
-                    <text class="goodsname">{{item.goods_name}}</text> 
-                    <text class="price">￥{{item.goods_price}}</text>
-                </view>
+      <view class="content_wrap">
+        <repeat for="{{goodsList}}" index="index" item="item" wx:if="{{!is_empty}}">
+          <view class="row" @tap="intoDetail({{item.goods_commonid}})">
+            <image class="goodimg" mode="aspectFill" src="{{item.goods_image}}">
+            <view class="goodsInfo">
+              <text class="goodsname">{{item.goods_name}}</text>
+              <view class="price_box">
+                <view class="price"><text style="font-size:26rpx;">￥</text>{{item.goods_price}}</view>
+                <image @tap.stop='addCar({{item.goods_commonid}})' class="price_boxIcon" src="../images/icon_gouwuche@2x.png">     
+              </view>
             </view>
-              </repeat>
-
           </view>
-        </scroll-view>
+        </repeat>
+        <placeholder :show.sync="is_empty" message="还没有相关的内容"></placeholder>
       </view>
+    </view>
   </view>
 </template>
 
 <script>
 import wepy from "wepy";
 import { shttp } from "../utils/http";
-import Floatingmenu from "../components/floatingmenu";
+import Placeholder from "../components/placeholder";
 export default class Classify extends wepy.page {
   config = {
-    enablePullDownRefresh: true,
     navigationBarTitleText: "分类"
   };
   data = {
@@ -158,27 +177,18 @@ export default class Classify extends wepy.page {
     //当前页面
     page: 1,
     //当前一级类id
-    topId: ""
+    topId: "",
+    is_empty: false
   };
-
+  components = {
+    placeholder: Placeholder
+  };
   computed = {
     //更新视图
     updateTitle() {
       return this.title;
     }
   };
-  //下拉刷新
-  onPullDownRefresh() {
-    this.getRootCateTopLevel();
-  }
-  //上拉触底事件
-  // onReachBottom() {
-  //   console.log(this.goodsList)
-  //   if (this.goodsList.length < 10) return;
-  //      wx.showLoading({
-  //       title: "加载更多"
-  //     });
-  // }
   methods = {
     //进入商品详情
     intoDetail(id) {
@@ -189,52 +199,46 @@ export default class Classify extends wepy.page {
     },
     //获取二级商品
     getTwo(idx) {
+      wx.pageScrollTo({
+        scrollTop: 0,
+        duration: 0
+      });
       this.page = 1;
+      this.goodsList = [];
       wx.showLoading({
         title: "加载中"
       });
       this.checkedList.forEach((v, i) => (this.checkedList[i] = false));
       this.checkedList[idx] = true;
-      //console.log(this.checkedList)
-      console.log(this.classList);
       this.title = this.classList[idx].storegc_name;
       this.topId = this.classList[idx].storegc_id;
       this.getGoods();
+    },
+    addCar(id){
+    console.log(id);
     }
   };
   async getGoods() {
-    console.log("当前一级id");
-    console.log(this.topId);
-    let result = await shttp
+    const res = await shttp
       .get(`/api/v2/member/goodscommon?store_id=1`)
       .query({
         gc_id: this.topId,
-        type:'sort',
+        type: "sort",
         page: this.page,
-        limit: 3
+        limit: 10
       })
       .end();
-    //  console.log("商品")
-    //   console.log(result.data)
-    if (result.data.length == 0) {
-      wx.hideLoading();
-      wx.showToast({
-        title: "暂无相关商品",
-        icon: "none",
-        duration: 1000
-      });
-      this.goodsList = [];
-      this.$apply();
-    } else {
-      wx.hideLoading();
-      this.goodsList = result.data;
+    if (res.status === 0 && res.data.length != 0) {
+      this.goodsList = this.goodsList.concat(res.data);
     }
-
+    if (this.goodsList.length == 0) {
+      this.is_empty = true;
+    } else {
+      this.is_empty = false;
+    }
+    wx.hideLoading();
     this.$apply();
   }
-  components = {
-    floatingmenu: Floatingmenu
-  };
 
   async onLoad() {
     wx.showLoading({
@@ -247,32 +251,29 @@ export default class Classify extends wepy.page {
     wx.showLoading({
       title: "加载中"
     });
-    let res = await shttp.get(`/api/v2/member/storegc/1`).end();
-    //  console.log("进去getcate返回结果");
-    //  console.log(res.data);
     this.classList = [];
     this.checkedList = [];
-    res.data.forEach((v, i) => {
-      this.classList.push(v);
-      this.checkedList[i] = false;
-    });
-    this.checkedList[0] = true;
-    this.title = this.classList[0].storegc_name;
-    let oneid = this.classList[0].storegc_id;
-    let result = await shttp
-      .get(`/api/v2/member/goodscommon?store_id=1`)
-      .query({
-        gc_id: oneid,
-        page: 1,
-        limit: 3,
-      })
-      .end();
-    //   console.log("商品")
-    //    console.log(result)
-    this.goodsList = result.data;
+    this.page = 1;
+    let res = await shttp.get(`/api/v2/member/storegc/1`).end();
+    if (res.status === 0) {
+      res.data.forEach((v, i) => {
+        this.classList.push(v);
+        this.checkedList[i] = false;
+      });
+      this.checkedList[0] = true;
+      this.title = this.classList[0].storegc_name;
+      this.topId = this.classList[0].storegc_id;
+      this.getGoods();
+    }
+
     wx.hideLoading();
-    wx.stopPullDownRefresh();
     this.$apply();
+  }
+  //上拉加载更多
+  onReachBottom() {
+    this.page = this.page + 1;
+    //获取视频列表
+    this.getGoods();
   }
 }
 </script>

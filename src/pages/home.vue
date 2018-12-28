@@ -317,7 +317,7 @@
 .coupons-item {
   width: 380rpx;
   height: 200rpx;
-  margin-left: 30rpx;
+  margin-left: 20rpx;
   display: inline-block;
   position: relative;
 }
@@ -393,7 +393,7 @@
       </navigator>
     </view>
     <view wx:if="{{goodsList.length!=0}}">
-      <navigator url="./store/goodsList?type=hot">
+      <navigator url="./article/couponList">
         <view class="good_title">
           <view class="name">
             <text class="new_good">优惠券</text>
@@ -406,7 +406,7 @@
       </navigator>
       <scroll-view scroll-x class="viewX">
         <repeat for="{{goodsList}}" key="index" index="index" item="item">
-          <view class="coupons-item" @tap="intoDetail({{item.goods_commonid}})">
+          <view class="coupons-item" @tap="getcoupons({{item.id}})">
             <image class="coupons-itemImg" src="{{index==0?'../images/img_1_1@2x.png':'../images/img_1_2@2x.png'}}">
             <view class="coupons-txtbox">
               <view class="coupons-txt1">
@@ -438,8 +438,7 @@
             <view class="redinfo add_redinfo">
               <text class="goodsname">{{item.goods_name}}</text>
               <view class="price">
-                <text style="font-size:26rpx;">￥</text>
-                {{item.goods_price}}
+                <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
               </view>
             </view>
           </view>
@@ -464,13 +463,11 @@
             <image class="viewX-itemImg" mode="aspectFill" src="{{item.goods_image}}">
             <view class="viewX-itemGoodsname">{{item.goods_name}}</view>
             <view class="viewX-originalPrice">
-              <text style="font-size:26rpx;">￥</text>
-              {{item.goods_price}}
+              <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
             </view>
             <view class="viewX-price">
               <view>
-                <text style="font-size:26rpx;">￥</text>
-                {{item.goods_price}}
+                <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
               </view>
               <image class="viewX-itemIcon" src="../images/icon_tuangou@2x.png">
             </view>
@@ -621,6 +618,9 @@ export default class Home extends wepy.page {
         default:
           break;
       }
+    },
+    getcoupons(){
+      console.log("领取");
     }
   };
 

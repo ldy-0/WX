@@ -50,6 +50,7 @@ export default class extends wepy.app {
       "pages/article/aboutUs", //关于云仓
       "pages/article/advisory", //新闻资讯
       "pages/article/videos", //视频列表
+      "pages/article/couponList", //优惠券列表
       "pages/article/advisoryDetail", //新闻资讯详情
       "pages/article/caseDetail" //案例详情
     ],
