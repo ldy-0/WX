@@ -4,6 +4,10 @@
     1、import导入即可使用 如：import backtop from "../../components/backTop"
     2、components中声明 如：  components = {backtop};
     3、将要滚动的区域放入自定义组件中 如: <backtop> <view>....</view> </backtop>
+    注意：
+    tip: 请勿在 scroll-view 中使用 textarea、map、canvas、video 组件
+    tip: scroll-into-view 的优先级高于 scroll-top
+    tip: 在滚动 scroll-view 时会阻止页面回弹，所以在 scroll-view 中滚动，是无法触发 onPullDownRefresh
 -->
 <style >
 .icon_box {
@@ -27,7 +31,7 @@
 
 <template>
   <scroll-view
-    style="height:100%;"
+    style="position:absolute; top:0; left:0; right:0; bottom:0;"
     scroll-y="true"
     scroll-top="{{scrollTop.scroll_top}}"
     bindscroll="scrollTopFun"
@@ -52,8 +56,8 @@ export default class BackTop extends wepy.component {
   created() {}
   methods = {
     scrollTopFun: function(e) {
-    //   console.log(e.detail);
-      if (e.detail.scrollTop > 450) {
+      // console.log(e.detail);
+      if (e.detail.scrollTop > 500) {
         //触发gotop的显示条件
         this.scrollTop.goTop_show = true;
       } else {

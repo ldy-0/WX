@@ -470,7 +470,7 @@
 </style>
 
 <template>
-<backTop>
+
   <view class="container">
     <view wx:if="{{showStandard}}" class="standard-box">
       <view class="product_standard_info">
@@ -507,6 +507,7 @@
         <view class="space"></view>
       </view>
     </view>
+    <backTop>
     <view>
       <swiper
         class="goods-swiper"
@@ -585,6 +586,7 @@
         <view class="space"></view>
       </view>
     </view>
+  </backTop>
     <view class="bottom_bar">
       <view class="icon">
         <navigator open-type="switchTab" url="/pages/home" hover-class="none">
@@ -610,7 +612,6 @@
       <view class="save_btn" @tap="saveImg">保存</view>
     </view>
   </view>
-  </backTop>
 </template>
 
 <script>
