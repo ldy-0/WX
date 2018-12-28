@@ -470,6 +470,7 @@
 </style>
 
 <template>
+<backTop>
   <view class="container">
     <view wx:if="{{showStandard}}" class="standard-box">
       <view class="product_standard_info">
@@ -609,6 +610,7 @@
       <view class="save_btn" @tap="saveImg">保存</view>
     </view>
   </view>
+  </backTop>
 </template>
 
 <script>
@@ -616,6 +618,7 @@ import wepy from "wepy";
 import { shttp } from "../../utils/http";
 import { getCode } from "../../utils/user-tools";
 import getTimes from "../../utils/formatedate.js";
+import backTop from "../../components/backTop"
 import {
   showSuccessToast,
   showFailToast,
@@ -665,7 +668,9 @@ export default class GoodsDetails extends wepy.page {
     goodsBody(){ return this.goods.goods_body && this.goods.goods_body.replace(/<img/g, "<img style='display: block; width: 100%;'"); }
   };
 
-  components = {};
+  components = {
+    backTop
+  };
   methods = {
     onShareAppMessage: function(res) {
       return {
