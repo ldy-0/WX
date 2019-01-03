@@ -398,6 +398,7 @@
 </style>
 
 <template>
+
   <view class="container">
     <view wx:if="{{showStandard}}" class="standard-box">
       <view class="product_standard_info">
@@ -434,6 +435,7 @@
         <view class="space"></view>
       </view>
     </view>
+    <backTop>
     <view>
       <swiper
         class="goods-swiper"
@@ -512,6 +514,7 @@
         <view class="space"></view>
       </view>
     </view>
+  </backTop>
     <view class="bottom_bar">
       <view class="icon">
         <navigator open-type="switchTab" url="/pages/home" hover-class="none">
@@ -544,6 +547,7 @@ import wepy from "wepy";
 import { shttp } from "../../utils/http";
 import { getCode } from "../../utils/user-tools";
 import getTimes from "../../utils/formatedate.js";
+import backTop from "../../components/backTop"
 import {
   showSuccessToast,
   showFailToast,
@@ -601,7 +605,9 @@ export default class GoodsDetails extends wepy.page {
     }
   };
 
-  components = {};
+  components = {
+    backTop
+  };
   methods = {
     onShareAppMessage: function(res) {
       return {
