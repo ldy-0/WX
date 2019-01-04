@@ -565,7 +565,7 @@ export default class Home extends wepy.page {
     materialList: [], //案例列表
     newsList: [], //新闻列表
     couponList: [], //优惠券
-    groupGoodsList: [], //团购商品列表    
+    groupGoodsList: [], //团购商品列表
   };
 
   components = {};
@@ -592,10 +592,9 @@ export default class Home extends wepy.page {
     },
     //进入团购商品详情
     groupDetail(id) {
-      console.log(id);
-      // wx.navigateTo({
-      //   url: `store/goodsDetails?goods_commonid=${id}`
-      // });
+      wx.navigateTo({
+        url: `store/goodsDetails?goods_commonid=${id}&type=group`
+      });
     },
     //进入案例详情
     gotoCase(id) {

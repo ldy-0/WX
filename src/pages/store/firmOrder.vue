@@ -296,7 +296,7 @@
         @tap="discountBtn"
         class="coupon-box"
         data-index="{{index}}"
-        wx:if="{{couponList.length>0}}"
+        wx:if="{{couponList.length>0&&is_pintuan==0}}"
       >
         <view>优惠券：</view>
         <view class="coupon-boxR">
@@ -383,8 +383,6 @@ export default class FirmOrder extends wepy.page {
     ifcart: "",
     //运费列表
     freightList: [],
-    //订单类型
-    orderType: null,
     //判断是否点击了提交
     isclick: false,
     discountShow: false,
@@ -393,7 +391,9 @@ export default class FirmOrder extends wepy.page {
     coupon: null,
     checkVoucher: [],
     voucher: [],
-    scrollHeight: 250
+    scrollHeight: 250,
+    is_pintuan: 0,
+    grouponid: null //活动组id
   };
 
   components = {};
@@ -412,7 +412,10 @@ export default class FirmOrder extends wepy.page {
       cartItem = goods.goods_id + "|" + (goods.goods_num || 1);
       this.cart_id.push(cartItem);
       this.goodsNum = 1;
-      this.orderType = goods.is_virtual;
+      if (goods.rule_id) {
+        this.is_pintuan = 1;
+        this.grouponid = option.grouponid;
+      }
     } else {
       this.ifcart = 1;
       this.goodsList = JSON.parse(decodeURIComponent(option.goods));
@@ -458,7 +461,8 @@ export default class FirmOrder extends wepy.page {
       order_from: 2,
       pay_message: [],
       ifcart: this.ifcart, //购物车填1，直接购买填0,
-      voucher: this.voucher
+      voucher: this.voucher,
+      is_pintuan: this.is_pintuan
     };
     const res = await shttp
       .post("/api/v2/member/order")
@@ -472,10 +476,9 @@ export default class FirmOrder extends wepy.page {
         duration: 2000
       });
       let order_id = res.data.order_id;
-      let orderType = this.orderType;
-      let successUrl = `./bought?id=${order_id}&orderType=${orderType}`;
+      let pintuangroup_id = res.data.pintuangroup_id
       let failUrl = `/pages/store/orderdetail?orderId=${order_id}`;
-
+      let that = this;
       wx.requestPayment({
         timeStamp: res.data.timeStamp,
         nonceStr: res.data.nonceStr,
@@ -485,9 +488,15 @@ export default class FirmOrder extends wepy.page {
         success: function(res) {
           console.log("支付成功返回的结果");
           console.log(res);
-          wx.reLaunch({
-            url: successUrl
-          });
+          if (that.is_pintuan == 1) {
+            wx.reLaunch({
+              url: `./bought?id=${order_id}&orderType=group&ptId=${pintuangroup_id}`
+            });
+          } else {
+            wx.reLaunch({
+              url: `./bought?id=${order_id}&orderType=normal`
+            });
+          }
         },
         fail: function(res) {
           wx.showToast({
@@ -495,9 +504,14 @@ export default class FirmOrder extends wepy.page {
             icon: "none",
             duration: 2000
           });
-          wx.redirectTo({
-            url: failUrl
-          });
+          that.isclick = false;
+          if (that.is_pintuan == 1) {
+            console.log(res);
+          } else {
+            wx.redirectTo({
+              url: failUrl
+            });
+          }
         }
       });
     } else {
@@ -508,6 +522,7 @@ export default class FirmOrder extends wepy.page {
       });
     }
   }
+
   onShow() {
     this.isclick = false; //这里控制订单提交点击次数
     // let address = wx.getStorageSync("address");
@@ -552,14 +567,28 @@ export default class FirmOrder extends wepy.page {
   }
   //结算接口
   async closeAccount() {
-    const res = await shttp
-      .post("/api/v2/member/checkout")
-      .send({
+    let sends;
+    if (this.grouponid) {
+      sends = {
         cart_id: this.cart_id, //goods_id|num
         city_id: this.address.city_id,
         ifcart: this.ifcart, //购物车填1，直接购买填0
+        is_pintuan: this.is_pintuan,
+        voucher_list: this.checkVoucher,
+        pintuangroup_id: this.grouponid
+      };
+    } else {
+      sends = {
+        cart_id: this.cart_id, //goods_id|num
+        city_id: this.address.city_id,
+        ifcart: this.ifcart, //购物车填1，直接购买填0
+        is_pintuan: this.is_pintuan,
         voucher_list: this.checkVoucher
-      })
+      };
+    }
+    const res = await shttp
+      .post("/api/v2/member/checkout")
+      .send(sends)
       .end();
     console.log("结算");
     console.log(res);

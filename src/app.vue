@@ -47,6 +47,8 @@ export default class extends wepy.app {
       //  "pages/my/sharepage", //分销页面
       "pages/my/goodsReviews", //商品评价
       "pages/my/assessed", //商品评价完成
+      "pages/my/groupbuyList", //团购列表
+      "pages/my/groupbuyDatail", //团购详情
       "pages/article/aboutUs", //关于云仓
       "pages/article/advisory", //新闻资讯
       "pages/article/videos", //视频列表
