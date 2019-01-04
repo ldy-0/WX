@@ -251,7 +251,7 @@ export default class Bought extends wepy.page {
   }
   async getOrderInfo() {
     const res = await shttp
-      .get("/api/v1/member/order")
+      .get("/api/v2/member/order")
       .query({
         order_id: this.order_id
       })

@@ -92,7 +92,7 @@ export default class CommentList extends wepy.page {
       title: "加载中"
     });
     const res = await shttp
-      .get(`/api/v1/member/goods_evaluate`)
+      .get(`/api/v2/member/goods_evaluate`)
       .query(this.send)
       .end();
     if (res.status == 0) {

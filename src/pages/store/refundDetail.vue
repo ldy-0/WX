@@ -211,7 +211,7 @@ export default class RefundDetail extends wepy.page {
   }
   async getOrderInfo(id) {
     const res = await shttp
-      .get("/api/v1/member/refundreturn")
+      .get("/api/v2/member/refundreturn")
       .query({
         refund_id: 3,
         refund_type: 1

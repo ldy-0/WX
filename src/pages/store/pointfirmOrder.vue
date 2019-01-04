@@ -387,7 +387,7 @@ export default class FirmOrder extends wepy.page {
     }
     //先获取积分订单id
     const resOne = await shttp
-      .post("/api/v1/member/integralbuyorder")
+      .post("/api/v2/member/integralbuyorder")
       .send(params)
       .end();
     console.log(resOne);
@@ -400,7 +400,7 @@ export default class FirmOrder extends wepy.page {
     } else {
       //再获取普通订单id
       const resTow = await shttp
-        .post("/api/v1/member/order")
+        .post("/api/v2/member/order")
         .send({
           cart_id: this.cart_id, //goods_id|num
           address_id: this.address.address_id,
@@ -416,7 +416,7 @@ export default class FirmOrder extends wepy.page {
       if (resTow.status == 0) {
         //最后存入两个id的关系
         const endRes = await shttp
-          .get("/api/v1/member/writecorrespondence")
+          .get("/api/v2/member/writecorrespondence")
           .query({
             order_id: resTow.data.order_id,
             point_orderid: resOne.data.point_orderid
@@ -494,7 +494,7 @@ export default class FirmOrder extends wepy.page {
   //获取默认地址
   async getDefaultAddress() {
     const res = await shttp
-      .get("/api/v1/member/address")
+      .get("/api/v2/member/address")
       .query({})
       .end();
     if (res.data.length != 0) {
@@ -530,7 +530,7 @@ export default class FirmOrder extends wepy.page {
       console.log("购物车购买");
     }
     const res = await shttp
-      .get("/api/v1/member/integralbuy")
+      .get("/api/v2/member/integralbuy")
       .query(params)
       .end();
     console.log("结算");

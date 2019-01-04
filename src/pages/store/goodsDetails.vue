@@ -1,7 +1,9 @@
 <style>
+page {
+  background: #f5f5f5;
+}
 .container {
   font: 32rpx PingFang-SC-Medium;
-  background: #f4f4f4;
 }
 
 .column {
@@ -26,11 +28,32 @@
   display: flex;
   align-items: center;
   flex-direction: column;
+  color: #888;
+  font-size: 20rpx;
 }
 
 .goods-swiper {
   width: 100%;
   height: 750rpx;
+}
+.swiper-box {
+  width: 100%;
+  height: 750rpx;
+  position: relative;
+}
+.instructions {
+  position: absolute;
+  right: 20rpx;
+  bottom: 30rpx;
+  width: 80rpx;
+  height: 44rpx;
+  background-color: #000000;
+  border-radius: 21rpx;
+  opacity: 0.5;
+  color: #fff;
+  text-align: center;
+  line-height: 44rpx;
+  font-size: 20rpx;
 }
 .goods-swiper .goods_swiper_itme {
   width: 100%;
@@ -55,15 +78,16 @@
 }
 .product_info .goods .product_title {
   width: 560rpx;
-  color: #333;
+  color: #222222;
+  font-size: 32rpx;
 }
 .product_info .goods .share_icon {
-  width: 36rpx;
-  height: 40rpx;
+  width: 34rpx;
+  height: 34rpx;
 }
 .product_info .goods .qr_icon {
-  width: 40rpx;
-  height: 40rpx;
+  width: 38rpx;
+  height: 36rpx;
   padding: 0 10rpx;
 }
 .product_info .goods .text {
@@ -114,105 +138,114 @@
 .detail .space {
   height: 80rpx;
 }
-
-.product_standard_info {
-  background: #fff;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
-.product_standard_info .space {
+.space {
   height: 100rpx;
 }
-.product_standard_info .product {
-  border-bottom: 1rpx solid #e5e5e5;
+.product {
+  position: absolute;
+  background: #fff;
+  height: 540rpx;
+  bottom: 0;
+  left: 0;
+  width: 100%;
 }
-.product_standard_info .product .base_info {
+.product .base_info {
+  position: absolute;
   display: flex;
-  padding: 32rpx 30rpx 17rpx;
-  position: relative;
-  border-bottom: 1px solid #e5e5e5;
+  padding: 0 30rpx;
+  top: -38rpx;
+  width: 100%;
+  height: 180rpx;
 }
-.product_standard_info .product .base_info image {
+.product .base_info image {
   width: 180rpx;
   height: 180rpx;
   margin-right: 23rpx;
   border-radius: 20rpx;
 }
-.product_standard_info .product .base_info .product_standard {
+.product .base_info .product_standard {
   font-size: 24rpx;
   color: #636363;
 }
-.product_standard_info .product .base_info .delete-btn {
+.delete-btn {
   position: absolute;
   width: 28rpx;
   height: 28rpx;
-  padding: 10rpx;
-  border: 1rpx solid #888;
+  padding: 30rpx;
+  top: 0;
   right: 0;
   background: #fff;
   border-radius: 50%;
 }
-.product_standard_info .product .standard_wrap {
+.product .standard_wrap {
   background: #fff;
-  border-bottom: 1px solid #e5e5e5;
+  margin-top: 188rpx;
 }
-.product_standard_info .product .standard_wrap .standard_title {
-  margin: 22rpx 30rpx 38rpx;
-  color: #000;
+.product .standard_wrap .standard_title {
+  margin: 0 30rpx 30rpx;
+  color: #222;
+  font-size: 28rpx;
 }
-.product_standard_info .product .standard_wrap .standard_info {
+.product .standard_wrap .standard_info {
   display: flex;
   padding-left: 30rpx;
 }
-.product_standard_info .product .standard_wrap .standard_info .checked {
+.product .standard_wrap .standard_info .checked {
   color: #fff;
-  background: #ff7900;
+  background: #f17f30;
 }
-.product_standard_info .product .standard_wrap .standard_info view {
+.product .standard_wrap .standard_info view {
   margin: 0 40rpx 30rpx 0;
-  padding: 10rpx 16rpx;
-  border-radius: 10rpx;
-  background: #e5e5e5;
+  padding: 7rpx 25rpx;
+  border-radius: 5rpx;
+  border: solid 1rpx #d3d3d3;
+  font-size: 28rpx;
+  color: #333333;
 }
-.product_standard_info .product .row {
+.product .row {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.product_standard_info .product .row .number_title {
+.product .row .number_title {
   margin: 36rpx 30rpx;
-  color: #000;
+  color: #222;
+  font-size: 28rpx;
 }
-.product_standard_info .product .row .number_wrap {
+.product .row .number_wrap {
   display: flex;
-  line-height: 50rpx;
-  text-align: center;
+  margin-right: 30rpx;
+  height: 64rpx;
+  border: solid 1rpx #d3d3d3;
+  border-radius: 5rpx;
 }
-.product_standard_info .product .row .number_wrap .minus,
-.product_standard_info .product .row .number_wrap .add {
+.minus,
+.add {
   display: flex;
   align-items: center;
-  padding: 0 18rpx;
-  font-size: 48rpx;
-  color: #959595;
+  justify-content: center;
+  width: 82rpx;
 }
-.product_standard_info .product .row .number_wrap .minus .icon_minus,
-.product_standard_info .product .row .number_wrap .add .icon_minus {
+.minus-bg {
+  background-color: #f8f8f8;
+}
+.icon_minus {
   width: 19rpx;
   height: 2rpx;
 }
-.product_standard_info .product .row .number_wrap .minus .icon_add,
-.product_standard_info .product .row .number_wrap .add .icon_add {
+.icon_add {
   width: 20rpx;
   height: 20rpx;
 }
-.product_standard_info .product .row .number_wrap .number {
-  margin: 0 8rpx;
-  padding: 7rpx 25rpx;
+.number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  width: 80rpx;
   color: #333;
-  background: #e5e5e5;
-  border-radius: 10rpx;
+  border-left: 1rpx solid #d3d3d3;
+  border-right: 1rpx solid #d3d3d3;
 }
 
 .bottom_bar {
@@ -254,16 +287,16 @@
 }
 
 .warp_btn {
-  width: 100%;
+  width: 450rpx;
   height: 100%;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   border-top: 1rpx solid #e6e6e6;
 }
-.warp_btn .add_btn,
-.warp_btn .buy_btn {
-  width: 215rpx;
+.add_btn,
+.buy_btn {
+  width: 200rpx;
   text-align: center;
   height: 76rpx;
   line-height: 76rpx;
@@ -281,13 +314,13 @@
   color: #fff;
   background: #ff4444;
 }
-.warp_btn .add_btn {
+.add_btn {
   color: #fff;
   background: #3a3a47;
 }
-.warp_btn .buy_btn {
+.buy_btn {
   color: #fff;
-  background: #fc5a4f;
+  background: #f17f30;
 }
 .warp_btn .appointment-btn {
   width: 430rpx;
@@ -305,10 +338,16 @@
   font-size: 28rpx;
   margin-left: 10rpx;
 }
-
-.product_price {
+.product_name {
   font-size: 32rpx;
-  color: #fc5a4f;
+  color: #333333;
+  margin-right: 12rpx;
+  margin-top: 60rpx;
+  margin-bottom: 20rpx;
+}
+.product_price {
+  font-size: 40rpx;
+  color: #dd3d27;
   margin-right: 12rpx;
 }
 
@@ -316,7 +355,10 @@
   width: 46rpx;
   height: 42rpx;
 }
-
+.tab-icon1 {
+  width: 44rpx;
+  height: 43rpx;
+}
 .tab-icon3 {
   width: 45rpx;
   height: 43rpx;
@@ -325,7 +367,7 @@
 .standard-box {
   position: fixed;
   z-index: 9999;
-  height: calc(100vh - 104rpx);
+  height: 100vh;
   background: rgba(1, 1, 1, 0.3);
   width: 100%;
 }
@@ -374,7 +416,7 @@
 .over_model {
   position: fixed;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 99;
+  z-index: 9999;
   width: 100%;
   height: 100%;
   top: 0;
@@ -395,134 +437,174 @@
   text-align: center;
   margin-top: 60rpx;
 }
+.shareBox {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  height: 243rpx;
+}
+.shareBox-item {
+  height: 80rpx;
+  text-align: center;
+  font-size: 30rpx;
+  line-height: 80rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+.text11 {
+  font-size: 28rpx;
+}
+.text22 {
+  padding-left: 44rpx;
+  font-size: 24rpx;
+  color: #888888;
+}
+.row-btnCtn {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 30rpx;
+}
+.row-btn {
+  width: 330rpx;
+  margin: 0;
+}
 </style>
 
 <template>
-
   <view class="container">
     <view wx:if="{{showStandard}}" class="standard-box">
-      <view class="product_standard_info">
-        <view class="product">
-          <view class="base_info">
-            <image src="{{goods.goods_image}}" mode="aspectFill">
-            <view>
-              <view class="product_price">¥{{goods.goods_price}}</view>
-              <view class>库存：{{goods.goods_storage}}</view>
+      <view class="product">
+        <view class="base_info">
+          <image src="{{goods.goods_image}}" mode="aspectFill">
+          <view>
+            <view class="product_name">{{goods.goods_name}}</view>
+            <view class="product_price">
+              <text style="font-size:28rpx">¥</text>
+              {{goods.goods_price}}
             </view>
-            <image class="delete-btn" src="../../images/icon_cha@2x.png" @tap="deleteBtn">
+            <!-- <view class>库存：{{goods.goods_storage}}</view> -->
           </view>
-          <view class="standard_wrap">
-            <view class="standard_title">规格</view>
-            <view class="standard_info">
-              <repeat for="{{standards}}" index="index" item="item">
-                <view class="{{isChecked==index?'checked':''}}" @tap="checked({{index}})">{{item}}</view>
-              </repeat>
+        </view>
+        <image class="delete-btn" src="../../images/icon_cha@2x.png" @tap="deleteBtn">
+        <view class="standard_wrap">
+          <view class="standard_title">规格</view>
+          <view class="standard_info">
+            <repeat for="{{standards}}" index="index" item="item">
+              <view class="{{isChecked==index?'checked':''}}" @tap="checked({{index}})">{{item}}</view>
+            </repeat>
+          </view>
+        </view>
+        <view class="row">
+          <view class="number_title">购买数量</view>
+          <view class="number_wrap">
+            <view class="minus {{getSize==1?'minus-bg':''}}" @tap="minus">
+              <image class="icon_minus" src="../../images/icon_jian@2x.png">
             </view>
-          </view>
-          <view class="row">
-            <view class="number_title">购买数量</view>
-            <view class="number_wrap">
-              <view class="minus" @tap="minus">
-                <image class="icon_minus" src="../../images/icon_jian@2x.png">
-              </view>
-              <view class="number">{{getSize}}</view>
-              <view class="add" @tap="add">
-                <image class="icon_add" src="../../images/icon_jia@2x.png">
-              </view>
+            <view class="number">{{getSize}}</view>
+            <view class="add" @tap="add">
+              <image class="icon_add" src="../../images/icon_jia@2x.png">
             </view>
           </view>
         </view>
-        <view class="space"></view>
+        <view class="row-btnCtn">
+          <view class="add_btn row-btn" @tap="addShoppingCart()">加入购物车</view>
+          <view class="buy_btn row-btn" @tap="firmOrder()">立即购买</view>
+        </view>
       </view>
     </view>
     <backTop>
-    <view>
-      <swiper
-        class="goods-swiper"
-        indicator-active-color="{{indicatorActiveColor}}"
-        indicator-color="{{indicatorColor}}"
-        indicator-dots="{{indicatorDots}}"
-        autoplay="{{autoplay}}"
-        interval="{{interval}}"
-        duration="{{duration}}"
-        circular="true"
-      >
-        <repeat for="{{goods.goodsimagesList}}" key="index" index="index" item="item">
-          <swiper-item class="goods_swiper_itme">
-            <image
-              src="{{item.goodsimage_url}}"
-              mode="aspectFill"
-              @tap="swipclick({{item.goodsimage_url}})"
-            >
-          </swiper-item>
-        </repeat>
-      </swiper>
+      <view>
+        <view class="swiper-box">
+          <swiper
+            class="goods-swiper"
+            indicator-active-color="{{indicatorActiveColor}}"
+            indicator-color="{{indicatorColor}}"
+            indicator-dots="{{indicatorDots}}"
+            autoplay="{{autoplay}}"
+            interval="{{interval}}"
+            duration="{{duration}}"
+            circular="true"
+            bindchange="swiperchange"
+          >
+            <repeat for="{{goods.goodsimagesList}}" key="index" index="index" item="item">
+              <swiper-item class="goods_swiper_itme">
+                <image src="{{item.goodsimage_url}}" mode="aspectFill">
+              </swiper-item>
+            </repeat>
+          </swiper>
+          <view class="instructions">{{current}}/{{goods.goodsimagesList.length}}</view>
+        </view>
 
-      <view class="product_info">
-        <view class="goods">
-          <view class="goods_main_info">
-            <view class="column">
-              <view class="product_title">{{goods.goods_name}}</view>
-            </view>
-            <view class="column_center" @tap="getQrCode">
-              <image src="../../images/qr_code.png" class="qr_icon">
-            </view>
-            <button class="share" plain="true" open-type="share">
-              <view class="column_center">
-                <image src="../../images/icon_6_fenxiang@2x.png" class="share_icon">
+        <view class="product_info">
+          <view class="goods">
+            <view class="goods_main_info">
+              <view class="column">
+                <view class="product_title">{{goods.goods_name}}</view>
               </view>
-            </button>
-          </view>
-          <view class="product_price">
-            ¥{{goods.goods_price}}
-            <text class="text3">¥{{goods.goods_marketprice}}</text>
-          </view>
-          <view class="goods_other_info">
-            <!-- <view class='text'>湖北武汉</view> -->
-            <view class="text">库存：{{goods.goods_storage}}</view>
-            <view class="text">已售：{{goods.goods_salenum}}</view>
+              <view class="column_center" @tap="enshrine">
+                <image src="../../images/icon_pingfen_hl@2x.png" class="qr_icon">收藏
+              </view>
+              <view class="column_center" @tap="showShare">
+                <image src="../../images/icon_6_fenxiang@2x.png" class="share_icon">分享
+              </view>
+            </view>
+            <view class="product_price">
+              <text class="text11">¥</text>
+              {{goods.goods_price}}
+              <!-- <text class="text3">¥{{goods.goods_marketprice}}</text> -->
+              <text class="text22">运费:¥{{goods.goods_freight}}</text>
+              <text class="text22">已售：{{goods.goods_salenum}}</text>
+            </view>
+            <!-- <view class="goods_other_info">
+              <view class="text">库存：{{goods.goods_storage}}</view>
+              <view class="text">已售：{{goods.goods_salenum}}</view>
+            </view>-->
           </view>
         </view>
-      </view>
-      <view class="standard" @tap="goStandard">
-        <view>规格 {{goods.standard}}</view>
-        <image src="../../images/icon_zuojiantou@2x.png">
-      </view>
-      <view class="comment" wx:if="{{comment.data[0]}}">
-        <view>宝贝评价({{comment.pagination.total}})</view>
-        <view class="item">
-          <view class="user">
-            <image src="{{comment.data[0].geval_frommemberavatar}}" class="head">
-            {{comment.data[0].geval_frommembername}}
+        <view class="standard" @tap="goStandard">
+          <view>规格 {{goods.standard}}</view>
+          <image src="../../images/icon_zuojiantou@2x.png">
+        </view>
+        <view class="comment" wx:if="{{comment.data[0]}}">
+          <view>宝贝评价({{comment.pagination.total}})</view>
+          <view class="item">
+            <view class="user">
+              <image src="{{comment.data[0].geval_frommemberavatar}}" class="head">
+              {{comment.data[0].geval_frommembername}}
+            </view>
+            <view>{{comment.data[0].geval_content}}</view>
+            <!-- <view>一件十盒 送无纺布</view> -->
           </view>
-          <view>{{comment.data[0].geval_content}}</view>
-          <!-- <view>一件十盒 送无纺布</view> -->
+          <view class="more_btn" @tap="goComment" data-goodid="{{goods.SKUList[0].goods_id}}">查看评论</view>
         </view>
-        <view class="more_btn" @tap="goComment" data-goodid="{{goods.SKUList[0].goods_id}}">查看评论</view>
+        <view class="detail">
+          <view class="detail_title">商品详情</view>
+          <view wx:if="{{goodsimgList}}">
+            <repeat for="{{goodsimgList}}" item="item">
+              <view class="description">{{item.Repeat_title}}</view>
+              <image class="detail_img" src="{{item.Repeat_images[0].url}}" mode="widthFix">
+            </repeat>
+          </view>
+          <view wx:else>
+            <rich-text style="width: 100%; height: auto;" nodes="{{goodsBody}}"></rich-text>
+          </view>
+          <view class="space"></view>
+        </view>
       </view>
-      <view class="detail">
-        <view class="detail_title">商品详情</view>
-        <view wx:if="{{goodsimgList}}">
-          <repeat for="{{goodsimgList}}" item="item">
-            <view class="description">{{item.Repeat_title}}</view>
-            <image class="detail_img" src="{{item.Repeat_images[0].url}}" mode="widthFix">
-          </repeat>
-        </view>
-        <view wx:else>
-          <rich-text style="width: 100%; height: auto;" nodes="{{goodsBody}}"></rich-text>
-        </view>
-        <view class="space"></view>
-      </view>
-    </view>
-  </backTop>
+    </backTop>
     <view class="bottom_bar">
       <view class="icon">
         <navigator open-type="switchTab" url="/pages/home" hover-class="none">
-          <image class="tab-icon2" src="../../images/xaingqing_sy@2x.png">
+          <image class="tab-icon2" src="../../images/icon_2_shouye@2x.png">
           <view>主页</view>
         </navigator>
+        <button class="share" plain="true" open-type="contact">
+          <image class="tab-icon1" src="../../images/icon_2_kefu@2x.png">
+          <view>客服</view>
+        </button>
         <view class="red_dot_wrap">
-          <image class="tab-icon3" src="../../images/xaingqing_gwc@2x.png" @tap="goShoppingCart">
+          <image class="tab-icon3" src="../../images/icon_2_gouwuche@2x.png" @tap="goShoppingCart">
           <view>购物车</view>
           <view class="red_dot">{{carSize}}</view>
         </view>
@@ -535,9 +617,19 @@
     <!-- QT -->
     <view class="over_model" @tap="closeModel" wx:if="{{isShowQT}}" catchtouchmove="{{true}}">
       <view class="poster_model">
-        <canvas canvas-id="canvas" style="width: 300px; height: 300px;"></canvas>
+        <canvas canvas-id="canvas" style="width: 275px; height: 440px;"></canvas>
       </view>
       <view class="save_btn" @tap="saveImg">保存</view>
+    </view>
+    <!--shareBox -->
+    <view class="over_model" wx:if="{{isShare}}" catchtouchmove="{{true}}">
+      <view class="shareBox">
+        <button class="share" plain="true" open-type="share" @tap="closeShare">
+          <view class="shareBox-item">发送给朋友</view>
+        </button>
+        <view class="shareBox-item" @tap="getQrCode">生成海报</view>
+        <view class="shareBox-item" @tap="closeShare">取消</view>
+      </view>
     </view>
   </view>
 </template>
@@ -547,7 +639,7 @@ import wepy from "wepy";
 import { shttp } from "../../utils/http";
 import { getCode } from "../../utils/user-tools";
 import getTimes from "../../utils/formatedate.js";
-import backTop from "../../components/backTop"
+import backTop from "../../components/backTop";
 import {
   showSuccessToast,
   showFailToast,
@@ -558,7 +650,7 @@ export default class GoodsDetails extends wepy.page {
     navigationBarTitleText: "商品详情"
   };
   data = {
-    indicatorDots: true,
+    indicatorDots: false,
     autoplay: true,
     interval: 3000,
     duration: 200,
@@ -585,7 +677,9 @@ export default class GoodsDetails extends wepy.page {
     //商品详情图片列表
     goodsimgList: [],
     comment: null,
-    isShowQT: false
+    isShowQT: false,
+    current: 1,
+    isShare: false
   };
 
   computed = {
@@ -661,9 +755,8 @@ export default class GoodsDetails extends wepy.page {
       this.$apply();
     },
     async addShoppingCart() {
-      // console.log(this.goods)
-      if (!this.showStandard) {
-        return (this.showStandard = true);
+      if (!this.goods.standard) {
+        return this.goStandard();
       }
       if (this.goods.goods_storage < 1) {
         return wx.showToast({
@@ -738,9 +831,7 @@ export default class GoodsDetails extends wepy.page {
     console.log("开始请求商品====" + id);
     let res = {};
     //普通商品
-    res = await shttp
-      .get(`/api/v1/member/goodscommon?goods_commonid=${id}`)
-      .end();
+    res = await shttp.get(`/api/v2/member/goodscommon/${id}`).end();
     console.log(res);
     this.goods = res.data;
     this.goodsimgList =
@@ -837,10 +928,23 @@ export default class GoodsDetails extends wepy.page {
   //获取二维码
   async getQrCode() {
     this.isShowQT = true;
+    this.$apply();
+    this.isShare = false;
     wx.showLoading({ title: "loading..." });
     let content = wx.createCanvasContext("canvas");
     content.setFillStyle("#ffffff");
-    content.fillRect(0, 0, 340, 500);
+    content.fillRect(0, 0, 275, 440);
+    let goodsImg = this.goods.goods_image;
+    await this.drawImage(
+      {
+        img: goodsImg,
+        top: 0,
+        left: 0,
+        width: 275,
+        height: 275
+      },
+      content
+    );
     const res = await shttp
       .post("/api/v2/member/wxcode")
       .send({
@@ -851,17 +955,29 @@ export default class GoodsDetails extends wepy.page {
       })
       .end();
     let qrpicUrl = res.data.url;
-    console.log(qrpicUrl);
     await this.drawImage(
       {
         img: qrpicUrl.replace(/http/, "https"),
-        top: 50,
-        left: 50,
-        width: 200,
-        height: 200
+        top: 320,
+        left: 180,
+        width: 80,
+        height: 80
       },
       content
     );
+    content.fillStyle = "#000000";
+    // content.setTextAlign("center");
+    content.setFontSize(14);
+    content.fillText(this.goods.goods_name, 20, 315, 140);
+    content.fillStyle = "#dd3d27";
+    content.setFontSize(14);
+    content.fillText("￥", 20, 380);
+    content.setFontSize(21);
+    content.fillText(this.goods.goods_price, 32, 380);
+    content.fillStyle = "#b9b9b9";
+    content.setTextAlign("center");
+    content.setFontSize(6);
+    content.fillText("扫描或长按小程序码", 220, 410);
     content.draw(true);
     wx.hideLoading();
   }
@@ -937,9 +1053,6 @@ export default class GoodsDetails extends wepy.page {
               });
             }
           }
-          // fail(err){
-          //   console.log('save', err);
-          // }
         });
       }
     });
@@ -947,6 +1060,36 @@ export default class GoodsDetails extends wepy.page {
   closeModel() {
     this.isShowQT = false;
     this.$apply();
+  }
+  swiperchange(e) {
+    this.current = e.detail.current + 1;
+  }
+  async enshrine() {
+    const res = await shttp
+      .post("/api/v2/member/enshrine")
+      .send({
+        goods_commonid: this.id
+      })
+      .end();
+    if (res.status === 0) {
+      wx.showToast({
+        title: "收藏成功!",
+        icon: "success",
+        duration: 2000
+      });
+    } else if (res.status === 1) {
+      wx.showToast({
+        title: res.error,
+        icon: "none",
+        duration: 2000
+      });
+    }
+  }
+  showShare() {
+    this.isShare = true;
+  }
+  closeShare() {
+    this.isShare = false;
   }
   onUnload() {}
   deleteBtn() {

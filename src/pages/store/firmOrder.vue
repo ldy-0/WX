@@ -49,7 +49,7 @@
 .product_info image {
   width: 180rpx;
   height: 180rpx;
-  background: gray;
+  border-radius: 10rpx;
 }
 .product_info .product {
   width: 500rpx;
@@ -63,7 +63,7 @@
 }
 .product_info .product .product_price {
   font-size: 36rpx;
-  color: #ff4444;
+  color: #f17f30;
 }
 .product_info .product .product_address,
 .product_info .product .product_number {
@@ -84,28 +84,29 @@
   display: flex;
   align-items: center;
 }
-.order_info view {
-  line-height: 88rpx;
-  color: #000;
-  border-top: 1rpx solid #f4f4f4;
-}
-.order_info view .right {
+.order_info .right {
   float: right;
 }
-.order_info view .right-icon {
-  width: 22rpx;
-  height: 37rpx;
-  padding-top: 25rpx;
+.order_info .right-icon {
+  width: 10rpx;
+  height: 18rpx;
 }
-.order_info view .text {
+.order_info .text {
   display: inline-block;
   color: #636363;
 }
 .order_info .discount-num {
-  padding: 10rpx;
-  border: 1rpx solid #af0000;
-  font-size: 22rpx;
-  color: #af0000;
+  width: 110rpx;
+  height: 32rpx;
+  background-image: linear-gradient(-90deg, #fca768 0%, #fe7f82 100%),
+    linear-gradient(#343434, #343434);
+  background-blend-mode: normal, normal;
+  border-radius: 5rpx;
+  text-align: center;
+  line-height: 32rpx;
+  color: #fff;
+  font-size: 20rpx;
+  margin-right: 20rpx;
 }
 .order_info .couponInfo {
   width: 100%;
@@ -145,7 +146,7 @@
 .bottom_bar .btn {
   width: 190rpx;
   line-height: 100rpx;
-  background: #ff4444;
+  background: #f17f30;
   text-align: center;
   font-size: 30rpx;
   color: #fff;
@@ -166,7 +167,6 @@
   bottom: 0;
   background: #fff;
   border-radius: 6px 6px 0px 0px;
-  height: 1080rpx;
 }
 
 .scroll-height {
@@ -214,7 +214,7 @@
   width: 22rpx;
   height: 22rpx;
   border-radius: 50%;
-  background: #ff4444;
+  background: #f17f30;
 }
 
 .discount-infoBox {
@@ -222,7 +222,7 @@
   height: 200rpx;
   background-color: #fff3e7;
   border-radius: 6rpx;
-  color: #ff4444;
+  color: #f17f30;
   font-size: 22rpx;
 }
 
@@ -241,7 +241,20 @@
   color: #fff;
   text-align: center;
   padding: 27rpx 0;
-  background: #ff4444;
+  background: #f17f30;
+}
+.coupon-box {
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #666666;
+  font-size: 28rpx;
+  border-top: 1rpx solid #f4f4f4;
+}
+.coupon-boxR {
+  display: flex;
+  align-items: center;
 }
 </style>
 
@@ -275,9 +288,52 @@
       </view>
     </repeat>
     <view class="order_info">
-      <view>
+      <view class="coupon-box">
         <text>运费：</text>
-        <text class="right">¥{{freightList[0]|| '0'}}</text>
+        <text>¥{{freightList[0]|| '0'}}</text>
+      </view>
+      <view
+        @tap="discountBtn"
+        class="coupon-box"
+        data-index="{{index}}"
+        wx:if="{{couponList.length>0}}"
+      >
+        <view>优惠券：</view>
+        <view class="coupon-boxR">
+          <view wx:if="{{!coupon}}" class="discount-num">{{couponList.length}}张优惠券</view>
+          <text wx:else>省：{{coupon.voucher_price}}元</text>
+          <image class="right-icon" src="../../images/icon_zuojiantou@2x.png">
+        </view>
+      </view>
+    </view>
+    <view class="discount-bg" wx:if="{{discountShow}}">
+      <view class="discount-box">
+        <view class="discount-title">可用优惠券</view>
+        <image class="delete-btn" src="../../images/icon_cha@2x.png" @tap="deleteBtn">
+        <scroll-view scroll-y style="height:{{scrollHeight}}rpx">
+          <repeat for="{{couponList}}" index="index" item="coupon">
+            <view class="discount-info">
+              <view
+                class="big_circle"
+                @tap="checkShop"
+                data-coupon="{{coupon}}"
+                data-index="{{index}}"
+              >
+                <view class="{{itemIndex==index ? 'fill_circle' : ''}}"></view>
+              </view>
+              <view class="discount-infoBox">
+                <view class="discount-infoPrice">¥
+                  <text>{{coupon.voucher_price}}</text>
+                </view>
+                <view style="text-align: center;">有效期至：
+                  <text>{{coupon.voucher_enddate}}</text>
+                </view>
+                <view style="text-align: center;">无门槛使用</view>
+              </view>
+            </view>
+          </repeat>
+        </scroll-view>
+        <view class="discount-btn" @tap="discountSure">确定</view>
       </view>
     </view>
     <view class="bottom_bar">
@@ -297,6 +353,7 @@
 <script>
 import wepy from "wepy";
 import { shttp } from "../../utils/http";
+import getTimes from "../../utils/formatedate.js";
 import calc from "calculatorjs";
 import {
   showSuccessToast,
@@ -329,7 +386,14 @@ export default class FirmOrder extends wepy.page {
     //订单类型
     orderType: null,
     //判断是否点击了提交
-    isclick: false
+    isclick: false,
+    discountShow: false,
+    couponList: [],
+    itemIndex: [],
+    coupon: null,
+    checkVoucher: [],
+    voucher: [],
+    scrollHeight: 250
   };
 
   components = {};
@@ -371,7 +435,6 @@ export default class FirmOrder extends wepy.page {
     }
     this.$apply();
   }
-
   methods = {
     //提交订单
     bought() {
@@ -394,7 +457,8 @@ export default class FirmOrder extends wepy.page {
       pay_name: "online",
       order_from: 2,
       pay_message: [],
-      ifcart: this.ifcart //购物车填1，直接购买填0,
+      ifcart: this.ifcart, //购物车填1，直接购买填0,
+      voucher: this.voucher
     };
     const res = await shttp
       .post("/api/v2/member/order")
@@ -444,20 +508,26 @@ export default class FirmOrder extends wepy.page {
       });
     }
   }
-  async onShow() {
+  onShow() {
     this.isclick = false; //这里控制订单提交点击次数
-    let address = wx.getStorageSync("address");
-    if (address) {
-      this.address = address;
-      wx.removeStorageSync("address");
-      this.closeAccount();
-    } else {
-    }
+    // let address = wx.getStorageSync("address");
+    // if (address) {
+    //   this.address = address;
+    //   wx.removeStorageSync("address");
+    //   this.closeAccount();
+    // } else {
+    //   wx.showToast({
+    //     title: "请添加收货地址",
+    //     icon: "none",
+    //     duration: 2000
+    //   });
+    // }
+    this.getCouponList();
   }
   //获取默认地址
   async getDefaultAddress() {
     const res = await shttp
-      .get("/api/v1/member/address")
+      .get("/api/v2/member/address")
       .query({})
       .end();
 
@@ -488,7 +558,7 @@ export default class FirmOrder extends wepy.page {
         cart_id: this.cart_id, //goods_id|num
         city_id: this.address.city_id,
         ifcart: this.ifcart, //购物车填1，直接购买填0
-        voucher_list: []
+        voucher_list: this.checkVoucher
       })
       .end();
     console.log("结算");
@@ -497,7 +567,7 @@ export default class FirmOrder extends wepy.page {
       this.freightList = Object.values(res.data.freight_list);
       // console.log( this.freightList)
       let storePrice = Object.values(res.data.store_final_order_total);
-      this.price = storePrice[0];
+      this.price = Math.floor(storePrice[0] * 100) / 100;
     } else {
       wx.showToast({
         title: "商品无效",
@@ -506,6 +576,71 @@ export default class FirmOrder extends wepy.page {
       });
     }
     this.$apply();
+  }
+  async getCouponList() {
+    const res = await shttp
+      .get(`/api/v2/member/coupon`)
+      .query({
+        voucher_state: 1
+      })
+      .end();
+    if (res.status === 0) {
+      res.data.forEach((element, idx) => {
+        element.voucher_enddate = getTimes.formatTime(
+          element.voucher_enddate * 1000,
+          "Y-M-D"
+        );
+      });
+    }
+
+    this.couponList = res.data;
+    let listLength = this.couponList.length;
+    switch (listLength) {
+      case 1:
+        this.scrollHeight = 250;
+        break;
+      case 2:
+        this.scrollHeight = 500;
+        break;
+      case 3:
+        this.scrollHeight = 750;
+        break;
+      default:
+        break;
+    }
+    this.$apply();
+  }
+  async discountBtn(e) {
+    this.itemIndex = null;
+    this.discountShow = true;
+    this.$apply();
+  }
+
+  deleteBtn() {
+    this.itemIndex = null;
+    this.discountShow = false;
+    this.$apply();
+  }
+  checkShop(e) {
+    this.itemIndex = e.currentTarget.dataset.index;
+    this.coupon = e.currentTarget.dataset.coupon;
+    this.checkVoucher[0] =
+      this.coupon.voucher_store_id + "|" + this.coupon.vouchertemplate_id;
+    this.voucher[0] =
+      this.coupon.voucher_store_id +
+      ":" +
+      this.coupon.vouchertemplate_id +
+      "|" +
+      this.coupon.voucher_id +
+      "|" +
+      this.coupon.voucher_price;
+    this.$apply();
+  }
+  async discountSure() {
+    setTimeout(() => {
+      this.closeAccount();
+    }, 500);
+    this.discountShow = false;
   }
 }
 </script>

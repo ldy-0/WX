@@ -530,14 +530,14 @@ export default class GoodsDetails extends wepy.page {
       if (wxUserInfo != null) {
         this.getInfoShow = false;
         const res = await shttp
-          .post("/api/v1/member/memberinfo")
+          .post("/api/v2/member/memberinfo")
           .send({
             wx_name: wxUserInfo.nickName,
             wx_avatar: wxUserInfo.avatarUrl
           })
           .end();
-        //获取个人资料/api/v1/member4/profile
-        const memberRes = await shttp.get(`/api/v1/member/memberinfo`).end();
+        //获取个人资料/api/v2/member4/profile
+        const memberRes = await shttp.get(`/api/v2/member/memberinfo`).end();
         let memberInfo = memberRes.data;
         wx.setStorageSync("memberInfo", memberInfo);
         this.goodsDetails(this.id, this.options.type);
@@ -578,7 +578,7 @@ export default class GoodsDetails extends wepy.page {
   async goodsDetails(id, type) {
     console.log("开始请求商品====" + id);
     let res = {};
-    res = await shttp.get(`/api/v1/member/integralgoods?pgoods_id=${id}`).end();
+    res = await shttp.get(`/api/v2/member/integralgoods?pgoods_id=${id}`).end();
     console.log(res);
     this.goods = res.data;
     this.goodsimgList = JSON.parse(this.goods.pgoods_body);

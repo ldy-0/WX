@@ -188,7 +188,7 @@ export default class Classify extends wepy.page {
     }
 
     let result = await shttp
-      .get(`/api/v1/member/integralgoods`)
+      .get(`/api/v2/member/integralgoods`)
       .query(parmas)
       .end();
     // console.log("商品列表")
@@ -223,7 +223,7 @@ export default class Classify extends wepy.page {
     this.getRootCateTopLevel();
   }
   async getRootCateTopLevel() {
-    let res = await shttp.get(`/api/v1/member/getsubsection`).end();
+    let res = await shttp.get(`/api/v2/member/getsubsection`).end();
     console.log("进去getcate返回结果");
     console.log(res.data);
     res.data.forEach((v, i) => {
@@ -237,7 +237,7 @@ export default class Classify extends wepy.page {
     this.title = this.classList[0].psubsection_numerical;
     // let oneid = this.classList[0].psubsection_numerical;
     let result = await shttp
-      .get(`/api/v1/member/integralgoods`)
+      .get(`/api/v2/member/integralgoods`)
       .query({
         page: 1,
         limit: 100000

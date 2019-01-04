@@ -155,7 +155,7 @@ export default class PointsDetails extends wepy.page {
   //获取积分总数
   async getAllIntegral() {
     const res = await shttp
-      .get(`/api/v1/member/getintegral`)
+      .get(`/api/v2/member/getintegral`)
       .query({})
       .end();
     console.log(res);
@@ -165,7 +165,7 @@ export default class PointsDetails extends wepy.page {
   //获取积分详情列表
   async getIntegralList() {
     const res = await shttp
-      .get(`/api/v1/member/getntegralLog`)
+      .get(`/api/v2/member/getntegralLog`)
       .query({
         limit: 10,
         page: this.page

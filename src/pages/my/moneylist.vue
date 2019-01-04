@@ -150,7 +150,7 @@ export default class Mine extends wepy.page {
       };
     }
     const res = await shttp
-      .get(`/api/v1/member/withdraw?limit=10`)
+      .get(`/api/v2/member/withdraw?limit=10`)
       .query(parmas)
       .end();
     if (res.data.length != 0) {

@@ -155,7 +155,7 @@ export default class Address extends wepy.page {
 
   async delete(id, index) {
     const res = await shttp
-      .delete(`/api/v1/member/address?address_id=${id}`)
+      .delete(`/api/v2/member/address/${id}`)
       .end();
     console.log(res);
     if (res.data == 1) {
@@ -172,7 +172,7 @@ export default class Address extends wepy.page {
       mask: true
     });
     const res = await shttp
-      .get("/api/v1/member/address")
+      .get("/api/v2/member/address")
       .query({})
       .end();
     console.log(res.data);

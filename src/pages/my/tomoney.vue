@@ -209,7 +209,7 @@ export default class PointsDetails extends wepy.page {
   //获取分销金额总数
   async getAllIntegral() {
     const res = await shttp
-      .get(`/api/v1/member/withdrawinfo`)
+      .get(`/api/v2/member/withdrawinfo`)
       .query({})
       .end();
     // console.log(res)
@@ -220,7 +220,7 @@ export default class PointsDetails extends wepy.page {
   //开始提现金额
   async toGetMoney() {
     const res = await shttp
-      .post(`/api/v1/member/withdraw`)
+      .post(`/api/v2/member/withdraw`)
       .send({
         money: this.iptMoney
       })

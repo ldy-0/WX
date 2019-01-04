@@ -315,7 +315,7 @@ export default class AddAddress extends wepy.page {
   onShow() {}
   async saveAddress(address) {
     const res = await shttp
-      .post("/api/v1/member/address")
+      .post("/api/v2/member/address")
       .send({
         city_id: this.cid,
         area_id: this.areaid,
@@ -338,7 +338,7 @@ export default class AddAddress extends wepy.page {
 
   async modifyAddress(address) {
     const res = await shttp
-      .put(`/api/v1/member/address?address_id=${address.id}`)
+      .put(`/api/v2/member/address/${address.id}`)
       .send({
         city_id: this.cid,
         area_id: this.areaid,
@@ -391,7 +391,7 @@ export default class AddAddress extends wepy.page {
   //地址查询
   async getProvince() {
     const res = await shttp
-      .get("/api/v1/member/area")
+      .get("/api/v2/member/area")
       .query({
         level: 1
       })
@@ -401,7 +401,7 @@ export default class AddAddress extends wepy.page {
   }
   async getCity(pid) {
     const res = await shttp
-      .get("/api/v1/member/area")
+      .get("/api/v2/member/area")
       .query({
         level: 2,
         parentId: pid
@@ -415,7 +415,7 @@ export default class AddAddress extends wepy.page {
   }
   async getDistrict(cid) {
     const res = await shttp
-      .get("/api/v1/member/area")
+      .get("/api/v2/member/area")
       .query({
         level: 3,
         parentId: cid

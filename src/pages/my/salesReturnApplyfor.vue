@@ -337,7 +337,7 @@ export default class SalesReturnApplyfor extends wepy.page {
       }
     }
     const res = await shttp
-      .post("/api/v1/member/refundreturn")
+      .post("/api/v2/member/refundreturn")
       .send(send)
       .end();
     if (res.status == 0) {

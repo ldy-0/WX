@@ -315,7 +315,7 @@ export default class ShoppingCart extends wepy.page {
     //删除某个商品
     async delete() {
       if (this.isCheckedAll) {
-        const res = await shttp.delete(`/api/v1/member/cart`).end();
+        const res = await shttp.delete(`/api/v2/member/cart/0`).end();
         if (res.status == 0) {
           this.tableData = [];
           this.is_empty = true;
@@ -398,7 +398,7 @@ export default class ShoppingCart extends wepy.page {
       console.log(arr);
       if (arr[0].goods_num < 2) return;
       const res = await shttp
-        .put(`/api/v1/member/cart`)
+        .put(`/api/v2/member/cart/${item.cart_id}`)
         .send({
           cart_id: item.cart_id,
           quantity: item.goods_num - 1
@@ -417,7 +417,7 @@ export default class ShoppingCart extends wepy.page {
     //增加单个商品数量
     async add(item) {
       const res = await shttp
-        .put(`/api/v1/member/cart`)
+        .put(`/api/v2/member/cart/${item.cart_id}`)
         .send({
           cart_id: item.cart_id,
           quantity: Number(item.goods_num) + 1
@@ -573,7 +573,7 @@ export default class ShoppingCart extends wepy.page {
   //购物车单个或者多个删除
   async deleteItem(cartid) {
     const res = await shttp
-      .delete(`/api/v1/member/cart`)
+      .delete(`/api/v2/member/cart/${cartid}`)
       .send({
         cart_id: cartid
       })

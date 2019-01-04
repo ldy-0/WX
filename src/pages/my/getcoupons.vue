@@ -146,7 +146,7 @@ export default class Getcoupons extends wepy.page {
       title: "加载中"
     });
     const res = await shttp
-      .get(`/api/v1/member/fullreductionlist`)
+      .get(`/api/v2/member/fullreductionlist`)
       .query({
         page: this.page,
         limit: 1000
@@ -181,7 +181,7 @@ export default class Getcoupons extends wepy.page {
     //   title: "领取中..."
     // });
     const res = await shttp
-      .get(`/api/v1/member/acquireCoupon`)
+      .get(`/api/v2/member/acquireCoupon`)
       .query({
         vouchertemplate_id: id
       })

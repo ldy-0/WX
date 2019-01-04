@@ -250,7 +250,7 @@ export default class Result extends wepy.page {
   //开始搜索
   async startSearch(name) {
     let res = await shttp
-      .get(`/api/v1/member/goodscommon?store_id=1`)
+      .get(`/api/v2/member/goodscommon?store_id=1`)
       .query({
         name: name,
         page: 1,

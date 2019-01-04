@@ -198,7 +198,7 @@ export default class PointsDetails extends wepy.page {
   //获取分销金额总数
   async getAllIntegral() {
     const res = await shttp
-      .get(`/api/v1/member/withdrawinfo`)
+      .get(`/api/v2/member/withdrawinfo`)
       .query({})
       .end();
     // console.log(res)
@@ -210,7 +210,7 @@ export default class PointsDetails extends wepy.page {
   async getIntegralList() {
     this.shareList = [];
     const res = await shttp
-      .get(`/api/v1/saler/saler`)
+      .get(`/api/v2/saler/saler`)
       .query({})
       .end();
 

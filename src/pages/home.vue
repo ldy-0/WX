@@ -375,7 +375,7 @@
       </repeat>
     </swiper>
     <view class="tap_item">
-      <navigator class="item_view" url="./store/more">
+      <navigator open-type="switchTab" url="/pages/classify" class="item_view">
         <image class="item_page" src="../images/icon_1_meishi@2x.png">
         <view>美食</view>
       </navigator>
@@ -392,7 +392,7 @@
         <view>资讯</view>
       </navigator>
     </view>
-    <view wx:if="{{goodsList.length!=0}}">
+    <view wx:if="{{couponList.length!=0}}">
       <navigator url="./article/couponList">
         <view class="good_title">
           <view class="name">
@@ -405,15 +405,23 @@
         </view>
       </navigator>
       <scroll-view scroll-x class="viewX">
-        <repeat for="{{goodsList}}" key="index" index="index" item="item">
-          <view class="coupons-item" @tap="getcoupons({{item.id}})">
-            <image class="coupons-itemImg" src="{{index==0?'../images/img_1_1@2x.png':'../images/img_1_2@2x.png'}}">
+        <repeat for="{{couponList}}" key="index" index="index" item="item">
+          <view
+            class="coupons-item"
+            @tap="getcoupons"
+            data-coupon="{{item}}"
+            data-index="{{index}}"
+          >
+            <image
+              class="coupons-itemImg"
+              src="{{item.fetch_states==2?'../images/img_1_1@2x.png':'../images/img_1_2@2x.png'}}"
+            >
             <view class="coupons-txtbox">
               <view class="coupons-txt1">
-                <text>￥</text>{{20}}
+                <text>￥</text>{{item.vouchertemplate_price}}
               </view>
               <view class="coupons-txt2">无门槛使用</view>
-              <view class="coupons-txt3">有效期至：2018-10-31</view>
+              <view class="coupons-txt3">有效期至：{{item.vouchertemplate_enddate}}</view>
             </view>
           </view>
         </repeat>
@@ -445,8 +453,8 @@
         </repeat>
       </view>
     </view>
-    <view wx:if="{{goodsList.length!=0}}">
-      <navigator url="./store/goodsList?type=hot">
+    <view wx:if="{{groupGoodsList.length!=0}}">
+      <navigator url="./store/goodsList?type=group">
         <view class="good_title">
           <view class="name">
             <text class="new_good">火爆拼团</text>
@@ -458,12 +466,12 @@
         </view>
       </navigator>
       <scroll-view scroll-x class="viewX">
-        <repeat for="{{goodsList}}" key="index" index="index" item="item">
-          <view class="viewX-item" @tap="intoDetail({{item.goods_commonid}})">
-            <image class="viewX-itemImg" mode="aspectFill" src="{{item.goods_image}}">
-            <view class="viewX-itemGoodsname">{{item.goods_name}}</view>
+        <repeat for="{{groupGoodsList}}" key="index" index="index" item="item">
+          <view class="viewX-item" @tap="groupDetail({{item.rule_id}})">
+            <image class="viewX-itemImg" mode="aspectFill" src="{{item.goods.goods_image}}">
+            <view class="viewX-itemGoodsname">{{item.goods.goods_name}}</view>
             <view class="viewX-originalPrice">
-              <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
+              <text style="font-size:26rpx;">￥</text>{{item.goods.goods_price}}
             </view>
             <view class="viewX-price">
               <view>
@@ -555,7 +563,9 @@ export default class Home extends wepy.page {
     bannerList: [], //轮播图
     goodsList: [], //商品列表
     materialList: [], //案例列表
-    newsList: [] //新闻列表
+    newsList: [], //新闻列表
+    couponList: [], //优惠券
+    groupGoodsList: [], //团购商品列表    
   };
 
   components = {};
@@ -569,6 +579,8 @@ export default class Home extends wepy.page {
     this.getbannerList();
     this.getRecommendList();
     this.getNewsList();
+    this.getCouponList();
+    this.getGroupList();
   }
 
   methods = {
@@ -577,6 +589,13 @@ export default class Home extends wepy.page {
       wx.navigateTo({
         url: `store/goodsDetails?goods_commonid=${id}`
       });
+    },
+    //进入团购商品详情
+    groupDetail(id) {
+      console.log(id);
+      // wx.navigateTo({
+      //   url: `store/goodsDetails?goods_commonid=${id}`
+      // });
     },
     //进入案例详情
     gotoCase(id) {
@@ -619,8 +638,38 @@ export default class Home extends wepy.page {
           break;
       }
     },
-    getcoupons(){
-      console.log("领取");
+    async getcoupons(e) {
+      let id = e.currentTarget.dataset.coupon.vouchertemplate_id;
+      let index = e.currentTarget.dataset.index;
+      let fetch_states = e.currentTarget.dataset.coupon.fetch_states;
+      if (fetch_states == 1) {
+        return wx.showToast({
+          title: "请不要重复领取",
+          icon: "none",
+          duration: 1000
+        });
+      }
+      const res = await shttp
+        .post("/api/v2/member/coupon")
+        .send({
+          vouchertemplate_id: id
+        })
+        .end();
+      if (res.status == 0) {
+        wx.showToast({
+          title: "领取成功",
+          icon: "success",
+          duration: 2000
+        });
+        this.couponList[index].fetch_states = 1;
+        this.$apply();
+      } else if (res.status == 1) {
+        wx.showToast({
+          title: res.error,
+          icon: "none",
+          duration: 2000
+        });
+      }
     }
   };
 
@@ -630,7 +679,6 @@ export default class Home extends wepy.page {
     if (res.status == 0) {
       this.bannerList = res.data;
     }
-
     this.$apply();
   }
   //轮播图跳转
@@ -641,6 +689,21 @@ export default class Home extends wepy.page {
         url: `./article/advertisingPage?imgurl=${imgurl}`
       });
     }
+  }
+  //优惠券列表
+  async getCouponList() {
+    const res = await shttp
+      .get(`/api/v2/member/coupon/search`)
+      .query({
+        store_id: 1,
+        limit: 4,
+        page: 1
+      })
+      .end();
+    if (res.status == 0) {
+      this.couponList = res.data;
+    }
+    this.$apply();
   }
   //获取热门推荐列表
   async getRecommendList() {
@@ -656,6 +719,23 @@ export default class Home extends wepy.page {
       .end();
     if (res.status === 0) {
       this.goodsList = res.data;
+    }
+    wx.hideLoading();
+    wx.stopPullDownRefresh();
+    this.$apply();
+  }
+  //获取团购商品列表
+  async getGroupList() {
+    const res = await shttp
+      .get(`/api/v2/member/goodsgroupbuy/1/edit`)
+      .query({
+        store_id: 1,
+        limit: 4,
+        page: 1
+      })
+      .end();
+    if (res.status === 0) {
+      this.groupGoodsList = res.data;
     }
     wx.hideLoading();
     wx.stopPullDownRefresh();

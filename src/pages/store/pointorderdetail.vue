@@ -302,7 +302,7 @@ export default class PointOrderDetail extends wepy.page {
   //获取积分订单详情
   async getPointOrder(orderId) {
     const res = await shttp
-      .get("/api/v1/member/order")
+      .get("/api/v2/member/order")
       .query({
         order_id: orderId
       })

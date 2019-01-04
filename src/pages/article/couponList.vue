@@ -11,7 +11,7 @@
 }
 .coupons-itemImg {
   width: 650rpx;
-  height: 240rpx;  
+  height: 240rpx;
 }
 .coupons-txtbox {
   position: absolute;
@@ -46,19 +46,19 @@
 <template>
   <view class="container">
     <view class="my_manage" wx:if="{{!is_empty}}">
-      <repeat for="{{articleList}}" item="item">
-        <view class="coupons-item" @tap="getcoupons({{item.id}})">
+      <repeat for="{{couponList}}" item="item">
+        <view class="coupons-item" @tap="getcoupons" data-coupon="{{item}}" data-index="{{index}}">
           <image
             class="coupons-itemImg"
-            src="{{index==0?'../../images/img_1_1@2x.png':'../../images/img_1_2@2x.png'}}"
+            src="{{item.fetch_states==2?'../../images/img_1_1@2x.png':'../../images/img_1_2@2x.png'}}"
           >
           <view class="coupons-txtbox">
             <view class="coupons-txtTop">优惠券</view>
             <view class="coupons-txt1">
-              <text>￥</text>{{20}}
+              <text>￥</text>{{item.vouchertemplate_price}}
             </view>
             <view class="coupons-txt2">无门槛使用</view>
-            <view class="coupons-txt3">有效期至：2018-10-31</view>
+            <view class="coupons-txt3">有效期至：{{item.vouchertemplate_enddate}}</view>
           </view>
         </view>
       </repeat>
@@ -82,7 +82,7 @@ export default class CouponList extends wepy.page {
     //显示提示的
     is_empty: false,
     //优惠劵列表
-    articleList: [],
+    couponList: [],
     //默认第一页
     page: 1
   };
@@ -93,41 +93,35 @@ export default class CouponList extends wepy.page {
 
   onLoad(options) {
     //获取优惠劵列表
-    this.getArticleList();
+    this.getCouponList();
     this.$apply();
   }
   //上拉加载更多
   onReachBottom() {
     this.page = this.page + 1;
     //获取优惠劵列表
-    this.getArticleList();
+    this.getCouponList();
   }
   onShow() {}
   //获取优惠劵列表
-  async getArticleList() {
+  async getCouponList() {
     wx.showLoading({
       title: "加载中..."
     });
     const res = await shttp
-      .get(`/api/v2/member/information`)
+      .get(`/api/v2/member/coupon/search`)
       .query({
         limit: 10,
-        page: this.page
+        page: this.page,
+        store_id: 1
       })
       .end();
     if (res.status === 0) {
       if (res.data != null && res.data.length != 0) {
-        res.data.forEach((element, idx) => {
-          element.information_image = JSON.parse(element.information_image);
-          element.addtime = getTimes.formatTime(
-            element.addtime * 1000,
-            "Y-M-D"
-          );
-        });
-        this.articleList = this.articleList.concat(res.data);
+        this.couponList = this.couponList.concat(res.data);
       }
     }
-    if (this.articleList.length == 0) {
+    if (this.couponList.length == 0) {
       this.is_empty = true;
     } else {
       this.is_empty = false;
@@ -137,11 +131,38 @@ export default class CouponList extends wepy.page {
   }
 
   methods = {
-    //进入新闻详情
-    gotoNews(id) {
-      wx.navigateTo({
-        url: "./advisoryDetail?id=" + id
-      });
+    async getcoupons(e) {
+      let id = e.currentTarget.dataset.coupon.vouchertemplate_id;
+      let index = e.currentTarget.dataset.index;
+      let fetch_states = e.currentTarget.dataset.coupon.fetch_states;
+      if (fetch_states == 1) {
+        return wx.showToast({
+          title: "请不要重复领取",
+          icon: "none",
+          duration: 1000
+        });
+      }
+      const res = await shttp
+        .post("/api/v2/member/coupon")
+        .send({
+          vouchertemplate_id: id
+        })
+        .end();
+      if (res.status == 0) {
+        wx.showToast({
+          title: "领取成功",
+          icon: "success",
+          duration: 2000
+        });
+        this.couponList[index].fetch_states = 1;
+        this.$apply();
+      } else if (res.status == 1) {
+        wx.showToast({
+          title: res.error,
+          icon: "none",
+          duration: 2000
+        });
+      }
     }
   };
 }

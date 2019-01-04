@@ -120,7 +120,7 @@ export default class Share extends wepy.page {
   async getQt(id) {
     wx.showLoading({ title: "loading..." });
     const res = await shttp
-      .post(`/api/v1/member/qrcode`)
+      .post(`/api/v2/member/qrcode`)
       .send({})
       .end();
     console.log(res);

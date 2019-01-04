@@ -301,7 +301,7 @@ export default class ReturnGoods extends wepy.page {
 
   async refuns() {
     const res = await shttp
-      .post("/api/v1/member/refundreturn")
+      .post("/api/v2/member/refundreturn")
       .send({
         order_id: this.orderDetail.order_id,
         refund_type: 2,

@@ -170,7 +170,7 @@ export default class coupons extends wepy.page {
       title: "加载中"
     });
     const res = await shttp
-      .get(`/api/v1/member/myfullreduction`)
+      .get(`/api/v2/member/myfullreduction`)
       .query({
         page: this.page,
         limit: 1000

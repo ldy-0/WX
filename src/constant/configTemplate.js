@@ -22,7 +22,7 @@ const OSSPARAMETER = {
 //阿里云对象存储参数配置
 const OSSALIYUN = '/api/v2/admin/imgkeyali';//获取阿里云对象存储参数接口(以实际开发api文档为准)
 
-const FORMIDAPI = "/api/v1/member/formId"; //用于存放用户formId接口(以实际开发api文档为准)
+const FORMIDAPI = "/api/v2/member/formId"; //用于存放用户formId接口(以实际开发api文档为准)
 const ENV = "local";
 const DEBUG = false;
 const BASE_URL = {
