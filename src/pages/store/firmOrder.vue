@@ -256,6 +256,11 @@
   display: flex;
   align-items: center;
 }
+.msgtext {
+  width: 80%;
+  height: 80rpx;
+  font-size: 32rpx;
+}
 </style>
 
 <template>
@@ -291,6 +296,10 @@
       <view class="coupon-box">
         <text>运费：</text>
         <text>¥{{freightList[0]|| '0'}}</text>
+      </view>
+      <view class="coupon-box">
+        <text>留言</text>
+        <textarea class="msgtext"  bindinput="textVal" maxlength="140" placeholder="请输入留言..." />
       </view>
       <view
         @tap="discountBtn"
@@ -393,7 +402,8 @@ export default class FirmOrder extends wepy.page {
     voucher: [],
     scrollHeight: 250,
     is_pintuan: 0,
-    grouponid: null //活动组id
+    grouponid: null, //活动组id
+    textMsg: ''
   };
 
   components = {};
@@ -439,6 +449,9 @@ export default class FirmOrder extends wepy.page {
     this.$apply();
   }
   methods = {
+    textVal(e) {
+      this.textMsg = e.detail.value;
+    },
     //提交订单
     bought() {
       if (this.isclick) return;
@@ -459,13 +472,13 @@ export default class FirmOrder extends wepy.page {
       address_id: this.address.address_id,
       pay_name: "online",
       order_from: 2,
-      pay_message: [],
+      pay_message: [this.textMsg],
       ifcart: this.ifcart, //购物车填1，直接购买填0,
       voucher: this.voucher,
-      is_pintuan: this.is_pintuan
+      is_pintuan: this.is_pintuan,
     };
-    if(this.grouponid){
-     params.group_id = this.grouponid
+    if (this.grouponid) {
+      params.group_id = this.grouponid;
     }
     const res = await shttp
       .post("/api/v2/member/order")
