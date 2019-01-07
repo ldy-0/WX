@@ -79,7 +79,7 @@
 .container .goodsContent .goodsInfo {
   border-radius: 0 10rpx;
   padding-left: 26rpx;
-  background: #f4f4f4;
+  background: #fff;
   color: #333333;
   font-size: 28rpx;
 }
@@ -106,43 +106,121 @@
   margin: 0 auto;
   border-radius: 10rpx;
 }
+.attitude {
+  height: 100rpx;
+  border-top: solid 1rpx #f7f7f7;
+  border-bottom: solid 1rpx #f7f7f7;
+  display: flex;
+  box-sizing: border-box;
+  padding-left: 29rpx;
+  align-items: center;
+  position: relative;
+}
+.star-image {
+  width: 36rpx;
+  height: 36rpx;
+  src: "../../images/wstar.png";
+  margin-right: 10rpx;
+  margin-left: 10rpx;
+}
+.attitude-txt {
+  color: #222222;
+  font-size: 28rpx;
+  margin-right: 21rpx;
+}
+
+.fileContent {
+  width: 100%;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  padding: 23rpx;
+  display: flex;
+}
+.addicon {
+  width: 54rpx;
+  height: 61rpx;
+}
+.addfile {
+  border: dashed 2px #d9d9d9;
+}
+.img_div,
+.addfile {
+  width: 162rpx;
+  height: 162rpx;
+  margin: 19rpx 19rpx 0 0;
+  display: flex;
+  color: #aeaeae;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+.textimg {
+  color: #b6b6b6;
+  font-size: 22rpx;
+  padding-top: 20rpx;
+}
+.images {
+  width: 100%;
+  height: 100%;
+}
+.img_div {
+  position: relative;
+}
+.cha-img {
+  width: 30rpx;
+  height: 30rpx;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
 </style>
 <template>
   <view class="container">
   <repeat for="{{goodsList}}" key="index" index="index" item="item">
     <view class="warpGoodList">
-      <view class="content">
-      <textarea class="msgtext"  bindinput="textVal" data-num="{{index}}" maxlength="140" placeholder="请输入评论..." />
-      </view>
-      <view class="fileContent">
-        <repeat for="{{localimgList[index]}}" key="index" index="index" item="item">  
-          <view class="img_div">
-             <image class="images" src="{{item}}"></image>
-          </view>
-        </repeat>
-        <!-- <view class="addfile" @tap="choseimg({{index}})">
-          <image class="addicon" src="../../images/icon_tianjiatupian@2x.png"></image>
-          <text class="textimg">添加图片</text>
-        </view> -->
-      </view>
       <view wx:if="{{true}}" class="goodsContent">
          <view class="goodsSrcList">
             <image  class="goodsImg" src="{{item.goods_image}}" ></image>
             <view class="goodsInfo">
               <text class="prdname">{{item.goods_name}}</text>
+              <view>{{item.goods_pay_price}}</view>
             </view>
          </view>
       </view>
-      <view class="btn_comfir"  @tap="comfir({{item}},{{index}})">提交</view>
+       <view class='attitude'>
+        <text class="attitude-txt">评分</text>
+        <block wx:for="{{stars}}"  wx:key> 
+              <image class="star-image" bindtap="selectstar" data-key="{{item+key}}" id="Att"  src="{{item<Att?checkedSrc: normscr}}" />
+        </block>
+      </view>
+
+      <view class="content">
+      <textarea class="msgtext"  bindinput="textVal" data-num="{{index}}" maxlength="140" placeholder="请输入评论..." />
+      </view>
+     <view class="fileContent">
+        <repeat wx:if="{{cosimgList.length!=0}}" for="{{cosimgList}}" key="index" index="index" item="item">  
+          <view class="img_div">
+             <image class="images" src="{{item}}"/>
+             <image class="cha-img" @tap='clearImg({{index}})' src="../../images/icon_sousuo_cha@2x.png" alt="">
+          </view>
+        </repeat>
+        <view class="addfile" wx:if="{{cosimgList.length<6}}" @tap="choseimg(item.goods_id)">
+          <image class="addicon" src="../../images/img_shangchuan@2x.png"/>
+          <text class="textimg">添加图片</text>
+        </view>
+      </view>
+
+     <view class="btn_comfir"  @tap="comfir({{item}},{{index}})">提交</view>
     </view>
    </repeat>
+    
   </view>
 </template>
 
 <script>
 import wepy from "wepy";
 import { shttp } from "../../utils/http";
-import { uploadSeriesFile } from "../../utils/tencent-cos";
+import { uploadSeriesFile, uploadFile } from "../../utils/tencent-cos";
 export default class GoodsReviews extends wepy.page {
   config = {
     navigationBarTitleText: "商品评价"
@@ -155,47 +233,63 @@ export default class GoodsReviews extends wepy.page {
     //本地路径
     // localimgList: [],
     //要评价的商品列表
-    goodsList: [
-      // { goods_name: "牛奶", goods_image: "../../images/admin_code.png" },
-      // { goods_name: "蒙牛", goods_image: "../../images/admin_code.png" }
-    ],
+    goodsList: [],
     //订单
-    order: {}
+    order: {},
+    //send图片路径列表
+    cosimgList: [],
+    //以下为星星操作
+    //星星
+    stars: [0, 1, 2, 3, 4],
+    key: 0,
+    Att: 5,
+    //未选择星
+    normscr: "../../images/icon2_xingw@2x.png",
+    //选择星
+    checkedSrc: "../../images/icon2_xing@2x.png"
   };
 
   components = {};
   methods = {
-    //获取文字信息
-    textVal(e) {
-      // console.log("评论文字")
-      // console.log(e)
-      this.textMsg[e.currentTarget.dataset.num] = e.detail.value;
-      // console.log(this.textMsg)
+    //选择星星
+    selectstar(e) {
+      let name = e.currentTarget.id;
+      if (name == "Att") this.Att = e.currentTarget.dataset.key + 1;
     },
-    //继续添加图片
-    choseimg(idx) {
-      let that = this;
+
+    choseimg: function(imgIndex) {
+      var that = this;
       wx.chooseImage({
-        count: 9, // 默认9
-        sizeType: ["original", "compressed"], // 可以指定是原图还是压缩图，默认二者都有
+        count: 6 - Number(that.cosimgList.length), // 默认9
+        sizeType: ["original"], // 可以指定是原图还是压缩图，默认二者都有
         sourceType: ["album", "camera"], // 可以指定来源是相册还是相机，默认二者都有
-        success: function(res) {
-          console.log("图片选择成功");
-          console.log(res);
-          //  console.log(that.imgList);
-          //    console.log(res.tempFilePaths);
-          let arr = [];
-          arr = res.tempFilePaths;
-          //  that.localimgList[idx] = that.localimgList[idx].concat(filepath);
-          console.log("图片");
-          console.log(arr);
-          // that.events.upimg(filepath, that);
-          let result = uploadSeriesFile(arr);
-          console.log("返回的结果");
-          console.log(result);
-          that.$apply();
+        success: res => {
+          // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+          let tempFilePaths = res.tempFilePaths;
+          console.log(tempFilePaths);
+          for (let i = 0; i < tempFilePaths.length; i++) {
+            uploadFile(tempFilePaths[i]).then(data => {
+              console.log("对象存储图片", data);
+              if (that.cosimgList.length > 6) return;
+              that.cosimgList.push(data);
+              console.log(that.cosimgList);
+              that.$apply();
+            });
+          }
+          if (that.cosimgList.length > 6) {
+            that.cosimgList = that.cosimgList.slice(0, 6);
+          }
         }
       });
+    },
+    //获取文字信息
+    textVal(e) {
+      this.textMsg[e.currentTarget.dataset.num] = e.detail.value;
+    },
+    clearImg(idx) {
+      console.log(idx);
+      this.cosimgList.splice(idx, 1);
+      this.$apply();
     },
     //提交评价
     comfir(item, idx) {
@@ -218,41 +312,54 @@ export default class GoodsReviews extends wepy.page {
       });
     }
     this.commentList = [];
-    const res = await shttp
-      .post(`/api/v2/member/goodsevaluate`)
-      .send({
-        goods_id: item.goods_id,
-        order_id: this.order.order_id,
-        order_no: this.order.order_sn,
-        content: this.textMsg[idx],
-        goods_type: "real"
-      })
-      .end();
-    if (res.status == 0) {
-      wx.showToast({
-        title: "评价成功",
-        icon: "none",
-        duration: 2000
-      });
-      wx.navigateBack();
-    } else if(res.status == 1) {
-      wx.showToast({
-        title: res.error,
-        icon: "none",
-        duration: 2000
-      });
-    } else {
-wx.showToast({
-        title: "评价失败",
-        icon: "none",
-        duration: 2000
-      });
-    }
+    let send = {
+      goods_id: item.goods_id,
+      order_id: this.order.order_id,
+      order_no: this.order.order_sn,
+      content: this.textMsg[idx],
+      goods_type: "real",
+      geval_image: this.cosimgList,
+      score: this.Att
+    };
+    console.log(send);
+    // const res = await shttp
+    //   .post(`/api/v2/member/goodsevaluate`)
+    //   .send({
+    //     goods_id: item.goods_id,
+    //     order_id: this.order.order_id,
+    //     order_no: this.order.order_sn,
+    //     content: this.textMsg[idx],
+    //     goods_type: "real",
+    //     geval_image: this.cosimgList,
+    //     score: this.Att,
+    //   })
+    //   .end();
+    // if (res.status == 0) {
+    //   wx.showToast({
+    //     title: "评价成功",
+    //     icon: "none",
+    //     duration: 2000
+    //   });
+    //   wx.navigateBack();
+    // } else if (res.status == 1) {
+    //   wx.showToast({
+    //     title: res.error,
+    //     icon: "none",
+    //     duration: 2000
+    //   });
+    // } else {
+    //   wx.showToast({
+    //     title: "评价失败",
+    //     icon: "none",
+    //     duration: 2000
+    //   });
+    // }
     this.$apply();
   }
   onShow(options) {}
   onLoad(options) {
     this.order = JSON.parse(decodeURIComponent(options.commitList));
+    console.log(this.order);
     this.goodsList = this.goodsList.concat(this.order.order_goods);
     console.log(this.goodsList);
     return;
