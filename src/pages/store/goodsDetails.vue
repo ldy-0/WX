@@ -543,6 +543,165 @@ page {
   width: 48rpx;
   height: 12rpx;
 }
+.groupon-box {
+  width: 580rpx;
+  border-radius: 15rpx;
+  background: #fff;
+}
+.groupon-txt1 {
+  font-size: 34rpx;
+  width: 100%;
+  text-align: center;
+  padding-top: 55rpx;
+  padding-bottom: 20rpx;
+}
+.groupon-txt2 {
+  width: 100%;
+  text-align: center;
+  font-size: 28rpx;
+}
+.groupon-txt2 text {
+  color: #af0000;
+}
+.groupon-txt3 {
+  font-size: 26rpx;
+  color: #888888;
+}
+.groupon-txt3Color {
+  color: #ff7900;
+}
+.groupon-txt4 {
+  font-size: 28rpx;
+  color: #222;
+}
+.groupon-txt5 {
+  display: flex;
+  align-items: center;
+}
+.groupon-txt5 text {
+  padding-right: 10rpx;
+  font-size: 22rpx;
+  color: #888;
+}
+.groupon-tag {
+  border-top: 1rpx solid #f4f4f4;
+  padding: 20rpx;
+  background: #fff;
+}
+.groupon-tag1 {
+  font-size: 28rpx;
+  color: #888;
+  padding-right: 16rpx;
+  padding-top: 4rpx;
+}
+.groupon-tag2 {
+  padding: 10rpx 24rpx;
+  font-size: 28rpx;
+  color: #fff;
+  background: #feaa26;
+  border-radius: 25rpx;
+}
+.groupon-tag3 {
+  width: 290rpx;
+  height: 50rpx;
+  color: #fff;
+  font-size: 28rpx;
+  text-align: center;
+  line-height: 50rpx;
+  border-radius: 25rpx;
+  margin-bottom: 20rpx;
+  background: #feaa26;
+}
+.sales-box {
+  display: flex;
+}
+.groupon-btn {
+  margin: 0 auto;
+  width: 500rpx;
+  height: 86rpx;
+  text-align: center;
+  line-height: 86rpx;
+  background-color: #ff7900;
+  border-radius: 10rpx;
+  font-size: 34rpx;
+  margin-bottom: 37rpx;
+  color: #fff;
+}
+.groupon-imgList {
+  margin: 40rpx 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.grouponer-image {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: #f1f1f2;
+  border: 1rpx dotted #a0a0a0;
+  margin-right: 20rpx;
+}
+.groupon-list {
+  background: #fff;
+}
+.groupon-mb {
+  margin-bottom: 0;
+}
+.groupon-listBox {
+  margin: 0 20rpx;
+  padding: 20rpx;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border-bottom: 1rpx solid #e6e6e6;
+}
+.groupon-details {
+  display: flex;
+  width: 490rpx;
+  padding-left: 30rpx;
+  height: 80rpx;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.groupon-detailsOne {
+  font-size: 24rpx;
+  color: #222222;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.groupon-bottom {
+  font-size: 24rpx;
+}
+.groupon-bottom text {
+  color: #af0000;
+}
+.groupon-goBtn {
+  width: 120rpx;
+  height: 44rpx;
+  color: #ff7900;
+  font-size: 28rpx;
+  text-align: center;
+  line-height: 44rpx;
+  border-radius: 10rpx;
+  border: 1rpx solid #ff7900;
+}
+.groupon-active {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.headimg-itemTxt {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.group_btnBg {
+background: #a0a0a0;
+}
 </style>
 
 <template>
@@ -613,7 +772,7 @@ page {
               </swiper-item>
             </repeat>
             <repeat
-              wx:if="{{TYPE== 'group'}}"
+              wx:if="{{TYPE== 'group'||TYPE== 'grouponing'}}"
               for="{{goods.images}}"
               key="index"
               index="index"
@@ -628,7 +787,10 @@ page {
             class="instructions"
             wx:if="{{TYPE== 'normal'}}"
           >{{current}}/{{goods.goodsimagesList.length}}</view>
-          <view class="instructions" wx:if="{{TYPE== 'group'}}">{{current}}/{{goods.images.length}}</view>
+          <view
+            class="instructions"
+            wx:if="{{TYPE== 'group' ||TYPE== 'grouponing'}}"
+          >{{current}}/{{goods.images.length}}</view>
         </view>
 
         <view class="product_info">
@@ -647,7 +809,10 @@ page {
             <view class="product_price">
               <text class="text11">¥</text>
               {{goods.goods_price}}
-              <text class="text3" wx:if="{{TYPE== 'group'}}">¥{{goods.goods_marketprice}}</text>
+              <text
+                class="text3"
+                wx:if="{{TYPE== 'group'||TYPE== 'grouponing'}}"
+              >¥{{goods.goods_marketprice}}</text>
               <text class="text22">运费:¥{{goods.goods_freight}}</text>
               <text class="text22" wx:if="{{TYPE== 'normal'}}">已售：{{goods.goods_salenum}}</text>
             </view>
@@ -683,10 +848,10 @@ page {
           </view>
           <view class="headline-txt1">参团人员</view>
           <view class="headimg-list">
-            <repeat for="{{pintuanDetails.member_avatar}}" item="item">
+            <repeat for="{{pintuanDetails.members}}" item="item">
               <view class="headimg-item">
-                <image class="headimg-itemImg" src="{{item}}">
-                <view class="headimg-itemTxt">{{pintuanDetails.member_name[index]}}</view>
+                <image class="headimg-itemImg" src="{{item.member_avatar}}">
+                <view class="headimg-itemTxt">{{item.member_name}}</view>
               </view>
             </repeat>
           </view>
@@ -752,6 +917,15 @@ page {
         <view wx:if="{{TYPE== 'normal'}}" class="add_btn" @tap="addShoppingCart()">加入购物车</view>
         <view wx:if="{{TYPE== 'normal'}}" class="buy_btn" @tap="firmOrder()">立即购买</view>
         <view wx:if="{{TYPE== 'group'}}" class="buy_btn group_btn" @tap="firmGroupOrder()">发起团购</view>
+        <view
+          class="buy_btn group_btn"
+          @tap="joinGroup"
+          wx:if="{{TYPE=='grouponing'&&pintuanDetails.pintuangroup_state == 1&&pintuanDetails.is_join != 1}}"
+        >参加团购</view>
+        <view
+          class="buy_btn group_btn group_btnBg"
+          wx:if="{{TYPE=='grouponing'&&pintuanDetails.pintuangroup_state != 1||TYPE=='grouponing'&&pintuanDetails.is_join == 1}}"
+        >参加团购</view>
       </view>
     </view>
     <!-- QT -->
@@ -983,8 +1157,9 @@ export default class GoodsDetails extends wepy.page {
     if (this.scene != "undefined") {
       let qrarry = this.scene.split(";");
       //TODO:分享参数数组，0位为相关id,1位为类型
-      this.id = qrarry[0];
-      this.getType(qrarry[1]);
+      this.id = qrarry[2];
+      this.pintuangroup_id = qrarry[1];
+      this.getType(qrarry[0]);
     } else {
       this.getType(this.options.type);
     }
@@ -1005,7 +1180,7 @@ export default class GoodsDetails extends wepy.page {
       case "grouponing":
         this.TYPE = type;
         this.getgroupDetails(this.pintuangroup_id);
-        break;  
+        break;
       default:
         this.TYPE = "normal";
         this.goodsDetails(this.id);
@@ -1327,7 +1502,7 @@ export default class GoodsDetails extends wepy.page {
     if (res.status == 0) {
       this.pintuanDetails = res.data;
       //TODO:分享参团获取团详情后再获取团商品详情
-      this.groupGoodsDetails(this.pintuanDetails.goods_id); 
+      this.groupGoodsDetails(res.data.rule_id);
       //开启第一个定时器
       if (this.pintuanDetails.pintuangroup_state == 1) {
         let endTime = this.pintuanDetails.pintuangroup_endtime * 1000;
@@ -1356,6 +1531,28 @@ export default class GoodsDetails extends wepy.page {
       }
     }
     this.$apply();
+  }
+  goGroupList() {
+    wx.navigateTo({
+      url: `groupon?commonid=${this.goods.goods_id}`
+    });
+  }
+  gogroupon(e) {
+    let groupondata = e.currentTarget.dataset.groupondata;
+    wx.navigateTo({
+      url: `/pages/store/goodsDetails?scene=${"grouponing;" +
+        groupondata.pintuangroup_id}`
+    });
+  }
+  joinGroup() {
+    this.goods.goods_id = this.pintuanDetails.pintuangroup_goods_id;
+    this.goods.goods_num = 1;
+    console.log("grouponing");
+    wx.navigateTo({
+      url: `/pages/store/firmOrder?type=nocart&groupontype=grouponing&grouponid=${
+        this.pintuangroup_id
+      }&goods=${encodeURIComponent(JSON.stringify(this.goods))}`
+    });
   }
 }
 </script>

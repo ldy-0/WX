@@ -412,7 +412,7 @@ export default class FirmOrder extends wepy.page {
       cartItem = goods.goods_id + "|" + (goods.goods_num || 1);
       this.cart_id.push(cartItem);
       this.goodsNum = 1;
-      if (goods.rule_id) {
+      if (option.groupontype == "grouponing") {
         this.is_pintuan = 1;
         this.grouponid = option.grouponid;
       }
@@ -464,6 +464,9 @@ export default class FirmOrder extends wepy.page {
       voucher: this.voucher,
       is_pintuan: this.is_pintuan
     };
+    if(this.grouponid){
+     params.group_id = this.grouponid
+    }
     const res = await shttp
       .post("/api/v2/member/order")
       .send(params)
@@ -476,7 +479,7 @@ export default class FirmOrder extends wepy.page {
         duration: 2000
       });
       let order_id = res.data.order_id;
-      let pintuangroup_id = res.data.pintuangroup_id
+      let pintuangroup_id = res.data.pintuangroup_id;
       let failUrl = `/pages/store/orderdetail?orderId=${order_id}`;
       let that = this;
       wx.requestPayment({
@@ -537,6 +540,7 @@ export default class FirmOrder extends wepy.page {
     //     duration: 2000
     //   });
     // }
+    this.getDefaultAddress();
     this.getCouponList();
   }
   //获取默认地址

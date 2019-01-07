@@ -50,7 +50,7 @@
   width: 50%;
   height: 50%;
   border-radius: 50%;
-  background: #ff4444;
+  background: #f17f30;
 }
 
 .item {
@@ -64,6 +64,7 @@
 .item image {
   width: 180rpx;
   height: 180rpx;
+  border-radius: 10rpx;
 }
 .item .info {
   position: relative;
@@ -82,7 +83,7 @@
   line-height: 44rpx;
   border-radius: 22rpx;
   font-size: 37rpx;
-  color: #ff4444;
+  color: #dd3d27;
   text-align: left;
 }
 .item .info .number_wrap {
@@ -149,7 +150,7 @@
   line-height: 80rpx;
   overflow: hidden;
   border-radius: 10rpx;
-  background: #ff4444;
+  background: #f17f30;
   text-align: center;
   color: #fff;
 }
@@ -157,13 +158,13 @@
   text-align: center;
   line-height: 100rpx;
   width: 190rpx;
-  background: #ff4444;
+  background: #f17f30;
   text-align: center;
   padding: 0rpx;
   border: 0 !important;
   border-radius: 0 !important;
   color: #fff;
-  background: #ff4444;
+  background: #f17f30;
 }
 .bottomBar .share,
 .bottomBar .del {

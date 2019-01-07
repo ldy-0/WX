@@ -195,19 +195,20 @@
   margin-bottom: 20rpx;
   background: #feaa26;
 }
+
 </style>
 
 
 <template>
   <view class="container">
     <view class="product_info">
-      <image src="{{details.goods_image}}" mode="aspectFill">
+      <image src="{{details.goodsinfo.goods_image}}" mode="aspectFill">
       <view class="product">
-        <view class="product_title">{{details.goods_name}}</view>
+        <view class="product_title">{{details.goodsinfo.goods_name}}</view>
         <view class="row">
           <view class="row-text">{{details.pintuangroup_limit_number}}人团</view>
-          <view class="row-text">已团{{details.goods_salenum}}件</view>
-          <view class="product_price">¥{{details.goods_pintuan_price}}</view>
+          <!-- <view class="row-text">已团{{details.goods_salenum}}件</view> -->
+          <view class="product_price">¥{{details.rule.goods_price}}</view>
         </view>
       </view>
     </view>
@@ -222,8 +223,8 @@
         <image src="../../images/icon_pintuanzhong@2x.png">拼团中
       </view>
       <view class="groupon-imgList">
-        <repeat for="{{details.member_avatar}}" item="item">
-          <image src="{{item}}" class="grouponer-image" mode="aspectFill">
+        <repeat for="{{details.members}}" item="item">
+          <image src="{{item.member_avatar}}" class="grouponer-image" mode="aspectFill">
         </repeat>
       </view>
       <view class="groupon-txt2" wx:if="{{details.pintuangroup_state == 2&&!share}}">商家正在努力发货，请耐心等待！</view>
@@ -269,12 +270,15 @@ export default class GroupbuyDatail extends wepy.page {
     wxTimer1: null,
     pintuanId: null,
     isShowQT: false,
-    rankNum: null
+    rankNum: null,
+    orderId: null
   };
   components = {};
 
   onLoad(options) {
     this.pintuanId = options.id;
+    this.orderId = options.orderId;
+    console.log(this.orderId);
   }
 
   onShow() {
@@ -286,12 +290,7 @@ export default class GroupbuyDatail extends wepy.page {
   }
   methods = {};
   async getgroupDetails(id) {
-    const res = await shttp
-      .get(`/api/v1/member/mygroupbuy`)
-      .send({
-        pintuan_id: id
-      })
-      .end();
+    const res = await shttp.get(`/api/v2/member/mygroupbuy/${id}`).end();
     if (res.status == 0) {
       this.details = res.data;
       //开启第一个定时器
@@ -323,7 +322,7 @@ export default class GroupbuyDatail extends wepy.page {
   }
   goOrder() {
     wx.navigateTo({
-      url: `/pages/store/orderdetail?orderId=${this.details.order_id}`
+      url: `/pages/store/orderdetail?orderId=${this.orderId}`
     });
   }
   gohome() {
@@ -349,7 +348,7 @@ export default class GroupbuyDatail extends wepy.page {
       },
       content
     );
-    let goodsImg = this.details.goods_image;
+    let goodsImg = this.details.goodsinfo.goods_image;
     if (goodsImg.slice(0, 5) == "http:") {
       goodsImg = goodsImg.replace("http:", "https:");
     } else {
@@ -368,18 +367,10 @@ export default class GroupbuyDatail extends wepy.page {
     const shopId = wx.getStorageSync("shopId");
     const member_id = wx.getStorageSync("memberInfo").member_id;
     const res = await shttp
-      .post("/api/v1/member/wxcode")
+      .post("/api/v2/member/wxcode")
       .send({
         page: "pages/store/goodsDetails",
-        scene:
-          "grouponing;" +
-          this.details.pintuangroup_id +
-          ";" +
-          this.details.pintuangroup_goods_commonid +
-          ";" +
-          shopId +
-          ";" +
-          member_id,
+        scene: "grouponing;" + this.details.pintuangroup_id,
         width: 350, // 430
         is_hyaline: true // false,
       })
@@ -398,11 +389,11 @@ export default class GroupbuyDatail extends wepy.page {
     content.fillStyle = "#000000";
     content.setTextAlign("center");
     content.setFontSize(18);
-    content.fillText(this.details.goods_name, 170, 200);
+    content.fillText(this.details.goodsinfo.goods_name, 170, 200);
     content.setTextAlign("center");
     content.fillStyle = "#ff7900";
     content.setFontSize(17);
-    content.fillText("￥" + this.details.goods_pintuan_price + "元", 170, 230);
+    content.fillText("￥" + this.details.rule.goods_price + "元", 170, 230);
 
     content.draw(true);
 

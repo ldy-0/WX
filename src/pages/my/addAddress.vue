@@ -59,7 +59,7 @@
   width: 100%;
   line-height: 88rpx;
   font-size: 36rpx;
-  background: #ff4444;
+  background: #f17f30;
   text-align: center;
   color: #fff;
   border-radius: 0;

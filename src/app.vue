@@ -30,6 +30,8 @@ export default class extends wepy.app {
       "pages/store/firmOrder", //提交订单（购买)
       "pages/store/commentList", //评价表
       "pages/store/bought", //购买完成
+      "pages/store/grouponItem", // 每个团购详情展示
+      "pages/store/groupon", //店铺商品团购列表
       //   "pages/store/pointbought",//积分购买完成
       //  "pages/store/pointorderdetail",//积分订单详情
       "pages/store/orderdetail", //订单详情
@@ -43,7 +45,7 @@ export default class extends wepy.app {
       "pages/my/addAddress", //收货地址编辑
       "pages/my/orderList", //订单列表
       "pages/my/aftersale", //售后管理
-      //"pages/my/news", //我的消息
+      "pages/my/collectList", //我的收藏
       //  "pages/my/sharepage", //分销页面
       "pages/my/goodsReviews", //商品评价
       "pages/my/assessed", //商品评价完成
@@ -155,7 +157,7 @@ export default class extends wepy.app {
    * 设置全局变量
    */
   globalData = {
-    authorizationStyle: "1" //1: 强制需要用户微信信息和强制手机授权
+    authorizationStyle: "2" //1: 强制需要用户微信信息和强制手机授权
     //2：强制需要用户微信信息和不强制手机授权
     //3：强制需要用户微信信息和不需要手机授权
     //4：不强制需要用户微信信息和强制手机授权

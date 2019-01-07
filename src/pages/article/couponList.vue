@@ -46,7 +46,7 @@
 <template>
   <view class="container">
     <view class="my_manage" wx:if="{{!is_empty}}">
-      <repeat for="{{couponList}}" item="item">
+      <repeat for="{{couponList}}" item="item" wx:if="{{type=='all'}}">
         <view class="coupons-item" @tap="getcoupons" data-coupon="{{item}}" data-index="{{index}}">
           <image
             class="coupons-itemImg"
@@ -55,16 +55,34 @@
           <view class="coupons-txtbox">
             <view class="coupons-txtTop">优惠券</view>
             <view class="coupons-txt1">
-              <text>￥</text>{{item.vouchertemplate_price}}
+              <text>￥</text>
+              {{item.vouchertemplate_price}}
             </view>
             <view class="coupons-txt2">无门槛使用</view>
             <view class="coupons-txt3">有效期至：{{item.vouchertemplate_enddate}}</view>
           </view>
         </view>
       </repeat>
+      <repeat for="{{couponList}}" item="item" wx:if="{{type=='mine'}}">
+        <view class="coupons-item" data-coupon="{{item}}" data-index="{{index}}">
+          <image
+            class="coupons-itemImg"
+            src="{{item.voucher_state==1?'../../images/img_1_1@2x.png':'../../images/img_1_2@2x.png'}}"
+          >
+          <view class="coupons-txtbox">
+            <view class="coupons-txtTop">优惠券</view>
+            <view class="coupons-txt1">
+              <text>￥</text>
+              {{item.voucher_price}}
+            </view>
+            <view class="coupons-txt2">无门槛使用</view>
+            <view class="coupons-txt3">有效期至：{{item.voucher_enddate}}</view>
+          </view>
+        </view>
+      </repeat>
     </view>
     <!--暂无数据显示-->
-    <placeholder :show.sync="is_empty" message="还没有相关的内容"></placeholder>
+    <placeholder :show.sync="is_empty" message="还没有优惠券"></placeholder>
   </view>
 </template>
 
@@ -84,7 +102,8 @@ export default class CouponList extends wepy.page {
     //优惠劵列表
     couponList: [],
     //默认第一页
-    page: 1
+    page: 1,
+    type: "all"
   };
 
   components = {
@@ -93,6 +112,14 @@ export default class CouponList extends wepy.page {
 
   onLoad(options) {
     //获取优惠劵列表
+    if (options.type) {
+      this.type = options.type;
+    }
+    if (this.type == "mine") {
+      wx.setNavigationBarTitle({
+        title: "我的优惠券"
+      });
+    }
     this.getCouponList();
     this.$apply();
   }
@@ -105,11 +132,17 @@ export default class CouponList extends wepy.page {
   onShow() {}
   //获取优惠劵列表
   async getCouponList() {
+    let url = "";
+    if (this.type == "mine") {
+      url = "/api/v2/member/coupon";
+    } else {
+      url = "/api/v2/member/coupon/search";
+    }
     wx.showLoading({
       title: "加载中..."
     });
     const res = await shttp
-      .get(`/api/v2/member/coupon/search`)
+      .get(url)
       .query({
         limit: 10,
         page: this.page,
@@ -118,6 +151,14 @@ export default class CouponList extends wepy.page {
       .end();
     if (res.status === 0) {
       if (res.data != null && res.data.length != 0) {
+        if (this.type == "mine") {
+          res.data.forEach(item => {
+            item.voucher_enddate = getTimes.formatTime(
+              item.voucher_enddate * 1000,
+              "Y-M-D"
+            );
+          });
+        }
         this.couponList = this.couponList.concat(res.data);
       }
     }

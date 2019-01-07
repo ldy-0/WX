@@ -7,8 +7,8 @@ page {
 .title {
   height: 56rpx;
   line-height: 56rpx;
-  padding-right: 32rpx;
-  text-align: right;
+  padding-left: 30rpx;
+  text-align: left;
   color: #ffad10;
   background: #fff;
   font-size: 28rpx;
@@ -92,21 +92,23 @@ page {
 }
 .operate_info .Customer {
   padding: 0rpx;
-  width: 144rpx;
-  line-height: 44rpx;
+  width: 160rpx;
+  height: 60rpx;
+  line-height: 60rpx;
   margin-right: 24rpx;
   border: 1rpx solid #333;
-  border-radius: 10rpx;
-  font-size: 28rpx;
+  border-radius: 30rpx;
+  font-size: 26rpx;
   text-align: center;
 }
 .operate_info view {
-  width: 144rpx;
-  line-height: 44rpx;
+  width: 160rpx;
+  height: 60rpx;
+  line-height: 60rpx;
   margin-right: 24rpx;
   border: 1rpx solid #333;
-  border-radius: 10rpx;
-  font-size: 28rpx;
+  border-radius: 30rpx;
+  font-size: 26rpx;
   text-align: center;
 }
 
@@ -176,8 +178,8 @@ page {
       <view class="waitBody">
         <repeat for="{{orderList}}" key="index" item="order">
           <view class="title" wx:if="{{order.order_state_id==10}}">待付款</view>
-          <view class="title" wx:if="{{order.order_state_id==20}}">未发货</view>
-          <view class="title" wx:if="{{order.order_state_id==30}}">已发货</view>
+          <view class="title" wx:if="{{order.order_state_id==20}}">待发货</view>
+          <view class="title" wx:if="{{order.order_state_id==30}}">待收货</view>
           <view class="title" wx:if="{{order.order_state_id==40}}">已完成</view>
           <view @tap="goOrderDetail" data-index="{{index}}">
             <repeat for="{{order.order_goods}}" item="items">
@@ -210,14 +212,14 @@ page {
               @tap.stop="payMoney"
               data-pay="{{order.pay_sn}}"
               data-index="{{index}}"
-            >支付</view>
+            >去支付</view>
             <view
               wx:if="{{order.order_state_id==10}}"
               @tap.stop="orderCancel"
               data-id="{{order.order_id}}"
               data-paysn="{{order.pay_sn}}"
               data-index="{{index}}"
-            >取消订单</view>
+            >取消支付</view>
             <view
               wx:if="{{order.order_state_id==20||order.order_state_id==30}}"
               @tap.stop="salesReturn"
@@ -263,7 +265,7 @@ export default class OrderList extends wepy.page {
   };
   data = {
     tab: {
-      tabList: ["全部", "待支付", "待发货", "待完成", "已完成"]
+      tabList: ["全部", "待付款", "待发货", "待收货", "待评价"]
     },
     nowindex: Number,
     is_empty: true,

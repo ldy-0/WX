@@ -161,17 +161,17 @@
     <tab :tabOption="tab" :nowindex.sync="nowindex" @tabitem.user="tabitem"></tab>
     <view wx:if="{{orderList.length != 0}}">
       <repeat for="{{orderList}}" index="index" item="order">
-        <view class="title" @tap="goGroupDetail" data-pintuanid="{{order.pintuan_id}}">
+        <view class="title" @tap="goGroupDetail" data-pintuanid="{{order.pintuan_id}}" data-orderid="{{order.order.order_id}}">
           <view>{{order.pintuan_state_text}}</view>
           <view class="group-xhx">团详情</view>
         </view>
         <view data-index="{{index}}">
           <view class="product_info">
-            <image src="{{order.goods_image}}" mode="aspectFill">
+            <image src="{{order.goodsinfo.goods_image}}" mode="aspectFill">
             <view class="product">
               <view class="product_title">{{order.pintuan_goods_name}}</view>
               <view class="row">
-                <view class="product_price">¥{{order.goods_pintuan_price}}</view>
+                <view class="product_price">¥{{order.rule.goods_price}}</view>
               </view>
               <view class="row">
                 <view class="product_standard"></view>
@@ -183,8 +183,8 @@
           <view class="price_info">
             <view>实付款</view>
             <view>
-              <text class="price">¥{{order.goods_pay_price}}</text>
-              <text class="freight">运费{{order.goods_freight}}</text>
+              <text class="price">¥{{order.order.order_amount}}</text>
+              <text class="freight">运费{{order.order.shipping_fee}}</text>
             </view>
           </view>
         </view>
@@ -284,8 +284,10 @@ export default class OrderList extends wepy.page {
     },
     goGroupDetail(e) {
       let id = e.currentTarget.dataset.pintuanid;
+      let orderId = e.currentTarget.dataset.orderid
+      console.log(orderId);
       wx.navigateTo({
-        url: `/pages/my/groupbuyDatail?id=${id}`
+        url: `/pages/my/groupbuyDatail?id=${id}&orderId=${orderId}`
       });
     }
   };
@@ -294,7 +296,7 @@ export default class OrderList extends wepy.page {
       title: "加载中"
     });
     const res = await shttp
-      .get(`/api/v1/member/mygroupbuy`)
+      .get(`/api/v2/member/mygroupbuy`)
       .query(this.query)
       .end();
     if (res.status === 0) {
