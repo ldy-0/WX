@@ -124,6 +124,7 @@ page {
 
 .detail {
   margin-bottom: 20rpx;
+  background: #fff;
 }
 .detail .detail_title {
   line-height: 88rpx;
@@ -393,15 +394,14 @@ page {
   color: #000;
   background: #fff;
 }
-.comment .more_btn {
-  width: 180rpx;
-  line-height: 50rpx;
-  height: 50rpx;
-  margin: 0rpx auto;
-  color: #ff7900;
-  border-radius: 25rpx;
-  text-align: center;
-  border: 1rpx solid #ff7900;
+.more_btn {
+  display: flex;
+  align-items: center;
+}
+.more_btn text {
+  padding-right: 10rpx;
+  color: #f17f30;
+  font-size: 26rpx;
 }
 .comment .item .user {
   display: flex;
@@ -700,7 +700,33 @@ page {
   white-space: nowrap;
 }
 .group_btnBg {
-background: #a0a0a0;
+  background: #a0a0a0;
+}
+.comment-imgs {
+  margin-top: 8rpx;
+  display: flex;
+  flex-wrap: wrap;
+}
+.comment-imgItem {
+  width: 176rpx;
+  height: 176rpx;
+  margin-right: 2rpx;
+  margin-bottom: 2rpx;
+}
+.comment-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.more_btnImg {
+  width: 12rpx;
+  height: 22rpx;
+}
+.star-image {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 5rpx;
+  margin-left: 5rpx;
 }
 </style>
 
@@ -879,16 +905,32 @@ background: #a0a0a0;
             </view>
           </repeat>
         </view>
-        <view class="comment" wx:if="{{comment.data[0]}}">
-          <view>宝贝评价({{comment.pagination.total}})</view>
+        <view class="comment" wx:if="{{comment[0]}}">
+          <view class="comment-top">
+            <view>宝贝评价({{comment.pagination.total}})</view>
+            <view class="more_btn" @tap="goComment" data-goodid="{{goods.SKUList[0].goods_id}}">
+              <text>查看全部</text>
+              <image class="more_btnImg" src="../../images/icon_chakanquanbu@2x.png">
+            </view>
+          </view>
           <view class="item">
             <view class="user">
-              <image src="{{comment.data[0].geval_frommemberavatar}}" class="head">
-              {{comment.data[0].geval_frommembername}}
+              <image src="{{comment[0].geval_frommemberavatar}}" class="head">
+              {{comment[0].geval_frommembername}}
+              <block wx:for="{{comment[0].geval_scores}}" wx:key>
+                <image class="star-image" src="../../images/icon_pingfen_hl@2x.png">
+              </block>
+              <block wx:for="{{5-comment[0].geval_scores}}" wx:key>
+                <image class="star-image" src="../../images/icon_pingfen@2x.png">
+              </block>
             </view>
-            <view>{{comment.data[0].geval_content}}</view>
+            <view>{{comment[0].geval_content}}</view>
+            <view class="comment-imgs" wx:if="{{comment[0].geval_image.length>0}}">
+              <repeat for="{{comment[0].geval_image}}" item="img" index="index">
+                <image src="{{img}}" class="comment-imgItem" mode="aspectFill">
+              </repeat>
+            </view>
           </view>
-          <view class="more_btn" @tap="goComment" data-goodid="{{goods.SKUList[0].goods_id}}">查看评论</view>
         </view>
         <view class="detail">
           <view class="detail_title">商品详情</view>
@@ -1091,7 +1133,7 @@ export default class GoodsDetails extends wepy.page {
       const res = await shttp
         .post("/api/v2/member/cart")
         .send({
-          goods_id: this.goods.SKUList[0].goods_id,
+          goods_id: this.goods.goods_id,
           quantity: this.goods.goods_num || 1
         })
         .end();
@@ -1137,9 +1179,9 @@ export default class GoodsDetails extends wepy.page {
         return showFailToast("库存不足");
       }
       wx.navigateTo({
-        url:
-          "/pages/store/firmOrder?type=nocart&goods=" +
-          encodeURIComponent(JSON.stringify(this.goods))
+        url: `/pages/store/firmOrder?type=nocart&goods=${encodeURIComponent(
+          JSON.stringify(this.goods)
+        )}&groupontype=group`
       });
     }
   };
@@ -1156,8 +1198,7 @@ export default class GoodsDetails extends wepy.page {
     console.log(this.scene);
     if (this.scene != "undefined") {
       let qrarry = this.scene.split(";");
-      //TODO:分享参数数组，0位为相关id,1位为类型
-      this.id = qrarry[2];
+      //TODO:分享参数数组，0位为类型,1位为相关id
       this.pintuangroup_id = qrarry[1];
       this.getType(qrarry[0]);
     } else {
@@ -1268,7 +1309,16 @@ export default class GoodsDetails extends wepy.page {
       .get(`/api/v2/member/goodsevaluate`)
       .query(send)
       .end();
-    this.comment = res;
+    if (res.status === 0) {
+      if (res.data.length != 0 && res.data != null) {
+        this.comment = res.data;
+        this.comment[0].geval_image =
+          this.comment[0].geval_image !== ""
+            ? JSON.parse(this.comment[0].geval_image)
+            : [];
+      }
+    }
+
     this.$apply();
   }
   //评论列表

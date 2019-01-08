@@ -271,14 +271,11 @@ export default class GroupbuyDatail extends wepy.page {
     pintuanId: null,
     isShowQT: false,
     rankNum: null,
-    orderId: null
   };
   components = {};
 
   onLoad(options) {
     this.pintuanId = options.id;
-    this.orderId = options.orderId;
-    console.log(this.orderId);
   }
 
   onShow() {
@@ -322,7 +319,7 @@ export default class GroupbuyDatail extends wepy.page {
   }
   goOrder() {
     wx.navigateTo({
-      url: `/pages/store/orderdetail?orderId=${this.orderId}`
+      url: `/pages/store/orderdetail?orderId=${this.details.order.order_id}`
     });
   }
   gohome() {

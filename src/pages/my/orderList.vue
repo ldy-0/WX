@@ -226,7 +226,7 @@ page {
               data-order="{{order}}"
               data-id="{{order.order_id}}"
               data-index="{{index}}"
-            >退货/换货</view>
+            >退款</view>
             <view
               wx:if="{{order.order_state_id==30}}"
               @tap.stop="orderReceive"
@@ -321,7 +321,7 @@ export default class OrderList extends wepy.page {
         this.getList();
         break;
       case 4:
-        this.query.order_state = 40;
+        this.query.order_state = 50;
         this.getList();
         break;
       default:
@@ -363,7 +363,7 @@ export default class OrderList extends wepy.page {
           this.getList();
           break;
         case 4:
-          this.query.order_state = 40;
+          this.query.order_state = 50;
           this.getList();
           break;
         default:

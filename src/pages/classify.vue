@@ -90,7 +90,7 @@ page {
 .price_boxIcon {
   width: 50rpx;
   height: 50rpx;
-  padding-left:50rpx;
+  padding-left: 50rpx;
 }
 .search {
   height: 96rpx;
@@ -119,6 +119,153 @@ page {
   margin-left: 31rpx;
   margin-right: 2%;
 }
+.standard-box {
+  position: fixed;
+  z-index: 99999;
+  height: 100vh;
+  background: rgba(1, 1, 1, 0.3);
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+.product {
+  position: absolute;
+  background: #fff;
+  height: 540rpx;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+.product .base_info {
+  position: absolute;
+  display: flex;
+  padding: 0 30rpx;
+  top: -38rpx;
+  width: 100%;
+  height: 180rpx;
+}
+.product .base_info image {
+  width: 180rpx;
+  height: 180rpx;
+  margin-right: 23rpx;
+  border-radius: 20rpx;
+}
+.product .base_info .product_standard {
+  font-size: 24rpx;
+  color: #636363;
+}
+.delete-btn {
+  position: absolute;
+  width: 28rpx;
+  height: 28rpx;
+  padding: 30rpx;
+  top: 0;
+  right: 0;
+  background: #fff;
+  border-radius: 50%;
+}
+.product .standard_wrap {
+  background: #fff;
+  margin-top: 188rpx;
+}
+.product .standard_wrap .standard_title {
+  margin: 0 30rpx 30rpx;
+  color: #222;
+  font-size: 28rpx;
+}
+.product .standard_wrap .standard_info {
+  display: flex;
+  padding-left: 30rpx;
+}
+.product .standard_wrap .standard_info .checked {
+  color: #fff;
+  background: #f17f30;
+}
+.product .standard_wrap .standard_info view {
+  margin: 0 40rpx 30rpx 0;
+  padding: 7rpx 25rpx;
+  border-radius: 5rpx;
+  border: solid 1rpx #d3d3d3;
+  font-size: 28rpx;
+  color: #333333;
+}
+.product .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.product .row .number_title {
+  margin: 36rpx 30rpx;
+  color: #222;
+  font-size: 28rpx;
+}
+.product .row .number_wrap {
+  display: flex;
+  margin-right: 30rpx;
+  height: 64rpx;
+  border: solid 1rpx #d3d3d3;
+  border-radius: 5rpx;
+}
+.minus,
+.add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 82rpx;
+}
+.minus-bg {
+  background-color: #f8f8f8;
+}
+.icon_minus {
+  width: 19rpx;
+  height: 2rpx;
+}
+.icon_add {
+  width: 20rpx;
+  height: 20rpx;
+}
+.number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  width: 80rpx;
+  color: #333;
+  border-left: 1rpx solid #d3d3d3;
+  border-right: 1rpx solid #d3d3d3;
+}
+
+.bottom_bar {
+  position: fixed;
+  bottom: 0rpx;
+  display: flex;
+  width: 100%;
+  background: #fff;
+  height: 104rpx;
+}
+.add_btn {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  height: 76rpx;
+  line-height: 76rpx;
+  margin-right: 20rpx;
+  background: #f17f30;
+  color: #fff;
+  bottom: 0;
+}
+.product_name {
+  font-size: 32rpx;
+  color: #333333;
+  margin-right: 12rpx;
+  margin-top: 60rpx;
+  margin-bottom: 20rpx;
+}
+.product_price {
+  font-size: 40rpx;
+  color: #dd3d27;
+  margin-right: 12rpx;
+}
 </style>
 
 <template>
@@ -145,13 +292,57 @@ page {
             <view class="goodsInfo">
               <text class="goodsname">{{item.goods_name}}</text>
               <view class="price_box">
-                <view class="price"><text style="font-size:26rpx;">￥</text>{{item.goods_price}}</view>
-                <image @tap.stop='addCar({{item.goods_commonid}})' class="price_boxIcon" src="../images/icon_gouwuche@2x.png">     
+                <view class="price">
+                  <text style="font-size:26rpx;">￥</text>
+                  {{item.goods_price}}
+                </view>
+                <image
+                  @tap.stop="addCar({{item.goods_commonid}})"
+                  class="price_boxIcon"
+                  src="../images/icon_gouwuche@2x.png"
+                >
               </view>
             </view>
           </view>
         </repeat>
         <placeholder :show.sync="is_empty" message="还没有相关的内容"></placeholder>
+      </view>
+    </view>
+    <view wx:if="{{showStandard}}" class="standard-box">
+      <view class="product">
+        <view class="base_info">
+          <image src="{{goods.goods_image}}" mode="aspectFill">
+          <view>
+            <view class="product_name">{{goods.goods_name}}</view>
+            <view class="product_price">
+              <text style="font-size:28rpx">¥</text>
+              {{goods.goods_price}}
+            </view>
+            <!-- <view class>库存：{{goods.goods_storage}}</view> -->
+          </view>
+        </view>
+        <image class="delete-btn" src="../images/icon_cha@2x.png" @tap="deleteBtn">
+        <view class="standard_wrap">
+          <view class="standard_title">规格</view>
+          <view class="standard_info">
+            <repeat for="{{standards}}" index="index" item="item">
+              <view class="{{isChecked==index?'checked':''}}" @tap="checked({{index}})">{{item}}</view>
+            </repeat>
+          </view>
+        </view>
+        <view class="row">
+          <view class="number_title">购买数量</view>
+          <view class="number_wrap">
+            <view class="minus {{getSize==1?'minus-bg':''}}" @tap="minus">
+              <image class="icon_minus" src="../images/icon_jian@2x.png">
+            </view>
+            <view class="number">{{getSize}}</view>
+            <view class="add" @tap="add">
+              <image class="icon_add" src="../images/icon_jia@2x.png">
+            </view>
+          </view>
+        </view>
+        <view class="add_btn" @tap="addShoppingCart()">加入购物车</view>
       </view>
     </view>
   </view>
@@ -178,12 +369,22 @@ export default class Classify extends wepy.page {
     page: 1,
     //当前一级类id
     topId: "",
-    is_empty: false
+    is_empty: false,
+    showStandard: false,
+    // 规格列表
+    standards: [],
+    //
+    isChecked: null,
+    // 数量
+    size: 1,
+    //商品详情
+    goods: {}
   };
   components = {
     placeholder: Placeholder
   };
   computed = {
+    getSize: () => this.size,
     //更新视图
     updateTitle() {
       return this.title;
@@ -214,10 +415,61 @@ export default class Classify extends wepy.page {
       this.topId = this.classList[idx].storegc_id;
       this.getGoods();
     },
-    addCar(id){
-    console.log(id);
+    addCar(id) {
+      this.goodsDetails(id);
+      console.log(id);
+    },
+    deleteBtn() {
+      this.showStandard = false;
+    },
+    checked: index => {
+      this.isChecked = index;
+      this.goods.standard = this.standards[index];
+      this.goods.goods_storage = this.goods.SKUList[index].goods_storage;
+      this.goods.goods_price = this.goods.SKUList[index].goods_price;
+      this.goods.goods_id = this.goods.SKUList[index].goods_id;
+      this.goods.goods_num = this.size;
+      this.goods.goods_freight = this.goods.SKUList[index].goods_freight;
+      this.$apply();
+    },
+    minus() {
+      if (this.size === 1) {
+        return;
+      }
+      this.size--;
+      this.goods.goods_num = this.size;
+      this.$apply();
+    },
+    add() {
+      this.size++;
+      if (this.size > this.goods.goods_storage) {
+        this.size--;
+        return wx.showToast({
+          title: "库存不足",
+          icon: "none",
+          duration: 1000
+        });
+      }
+
+      this.goods.goods_num = this.size;
+      this.$apply();
     }
   };
+  //商品详情
+  async goodsDetails(id) {
+    const res = await shttp.get(`/api/v2/member/goodscommon/${id}`).end();
+    this.goods = res.data;
+    this.goods.goods_salenum = this.goods.SKUList[0].goods_salenum;
+    this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
+    if (res.data.spec_value) {
+      this.standards = res.data.spec_value;
+    } else {
+      this.standards = ["无"];
+    }
+    this.showStandard = true;
+    wx.hideLoading();
+    this.$apply();
+  }
   async getGoods() {
     const res = await shttp
       .get(`/api/v2/member/goodscommon?store_id=1`)
@@ -274,6 +526,62 @@ export default class Classify extends wepy.page {
     this.page = this.page + 1;
     //获取视频列表
     this.getGoods();
+  }
+  async addShoppingCart() {
+    if (!this.goods.standard) {
+      return this.goStandard();
+    }
+    if (this.goods.goods_storage < 1) {
+      return wx.showToast({
+        title: "库存不足",
+        icon: "none",
+        duration: 1000
+      });
+    }
+    console.log(this.goods);
+
+    const res = await shttp
+      .post("/api/v2/member/cart")
+      .send({
+        goods_id: this.goods.goods_id,
+        quantity: this.goods.goods_num || 1
+      })
+      .end();
+    if (res.data.cart_num) {
+      this.showStandard = false;
+      wx.showToast({
+        title: "成功加入购物车",
+        icon: "success",
+        duration: 1000
+      });
+    } else {
+      return wx.showToast({
+        title: res.error,
+        icon: "none",
+        duration: 1000
+      });
+    }
+    this.$apply();
+  }
+  goStandard() {
+    this.showStandard = true;
+    if (this.standards[0] == "无") {
+      this.isChecked = 0;
+      this.goods.standard = "无";
+      this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
+      this.goods.goods_price = this.goods.SKUList[0].goods_price;
+      this.goods.goods_id = this.goods.SKUList[0].goods_id;
+      this.goods.goods_freight = this.goods.SKUList[0].goods_freight;
+      this.goods.goods_num = this.size;
+    }
+    if (!this.goods.standard) {
+      wx.showToast({
+        title: "请选择规格!",
+        icon: "none",
+        duration: 1000
+      });
+    }
+    this.$apply();
   }
 }
 </script>

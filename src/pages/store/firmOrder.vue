@@ -258,8 +258,12 @@
 }
 .msgtext {
   width: 80%;
-  height: 80rpx;
+  height: 40rpx;
   font-size: 32rpx;
+}
+
+.coupon-boxH text {
+  padding-top: 20rpx;
 }
 </style>
 
@@ -298,8 +302,14 @@
         <text>¥{{freightList[0]|| '0'}}</text>
       </view>
       <view class="coupon-box">
-        <text>留言</text>
-        <textarea class="msgtext"  bindinput="textVal" maxlength="140" placeholder="请输入留言..." />
+        <text>备注：</text>
+        <textarea
+          class="msgtext"
+          bindinput="textVal"
+          maxlength="140"
+          placeholder="文字内容"
+          placeholder-style="font-size: 32rpx;"
+        />
       </view>
       <view
         @tap="discountBtn"
@@ -403,7 +413,7 @@ export default class FirmOrder extends wepy.page {
     scrollHeight: 250,
     is_pintuan: 0,
     grouponid: null, //活动组id
-    textMsg: ''
+    textMsg: ""
   };
 
   components = {};
@@ -422,6 +432,9 @@ export default class FirmOrder extends wepy.page {
       cartItem = goods.goods_id + "|" + (goods.goods_num || 1);
       this.cart_id.push(cartItem);
       this.goodsNum = 1;
+      if (option.groupontype == "group") {
+        this.is_pintuan = 1;
+      }
       if (option.groupontype == "grouponing") {
         this.is_pintuan = 1;
         this.grouponid = option.grouponid;
@@ -472,10 +485,10 @@ export default class FirmOrder extends wepy.page {
       address_id: this.address.address_id,
       pay_name: "online",
       order_from: 2,
-      pay_message: [this.textMsg],
+      pay_message: { 1: this.textMsg },
       ifcart: this.ifcart, //购物车填1，直接购买填0,
       voucher: this.voucher,
-      is_pintuan: this.is_pintuan,
+      is_pintuan: this.is_pintuan
     };
     if (this.grouponid) {
       params.group_id = this.grouponid;
@@ -492,7 +505,7 @@ export default class FirmOrder extends wepy.page {
         duration: 2000
       });
       let order_id = res.data.order_id;
-      let pintuangroup_id = res.data.pintuangroup_id;
+      let pintuangroup_id = res.data.pintuan_id;
       let failUrl = `/pages/store/orderdetail?orderId=${order_id}`;
       let that = this;
       wx.requestPayment({

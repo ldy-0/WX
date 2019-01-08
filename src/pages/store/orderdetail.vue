@@ -199,8 +199,8 @@
               </view>
 
               <view class="row">
-                <view class="product_standard">规格：{{items.goods_spec || "统一规格"}}</view>
-                <view class="product_number">×{{items.goods_num}}</view>
+                <view class="product_standard">规格：{{item.goods_spec || "统一规格"}}</view>
+                <view class="product_number">×{{item.goods_num}}</view>
               </view>
             </view>
           </view>

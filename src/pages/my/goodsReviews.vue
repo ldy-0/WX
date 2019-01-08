@@ -71,17 +71,22 @@
   margin-bottom: 6rpx;
 }
 .container .goodsContent .goodsImg {
-  border-radius: 10rpx 0rpx 0rpx 10rpx;
+  border-radius: 10rpx;
   width: 160rpx;
   height: 160rpx;
   flex: 0 0 auto;
 }
 .container .goodsContent .goodsInfo {
+  display: flex;
+  flex-direction:column;
+  justify-content:space-between;
   border-radius: 0 10rpx;
+  padding: 15rpx 0;
   padding-left: 26rpx;
   background: #fff;
   color: #333333;
   font-size: 28rpx;
+   
 }
 .container .goodsContent .goodsInfo .prdname {
   width: 525rpx;
@@ -119,7 +124,6 @@
 .star-image {
   width: 36rpx;
   height: 36rpx;
-  src: "../../images/wstar.png";
   margin-right: 10rpx;
   margin-left: 10rpx;
 }
@@ -167,11 +171,18 @@
   position: relative;
 }
 .cha-img {
-  width: 30rpx;
-  height: 30rpx;
+  width: 44rpx;
+  height: 44rpx;
   position: absolute;
-  top: 0;
-  right: 0;
+  top: -20rpx;
+  right: -20rpx;
+}
+.prdprice {
+  color: #dd3d27;
+  font-size: 32rpx;
+}
+.prdprice text {
+  font-size: 28rpx;
 }
 </style>
 <template>
@@ -180,16 +191,16 @@
     <view class="warpGoodList">
       <view wx:if="{{true}}" class="goodsContent">
          <view class="goodsSrcList">
-            <image  class="goodsImg" src="{{item.goods_image}}" ></image>
+            <image  class="goodsImg" src="{{item.goods_image}}" mode="aspectFill"></image>
             <view class="goodsInfo">
               <text class="prdname">{{item.goods_name}}</text>
-              <view>{{item.goods_pay_price}}</view>
+              <view class="prdprice"><text>￥</text>{{item.goods_pay_price}}</view>
             </view>
          </view>
       </view>
        <view class='attitude'>
         <text class="attitude-txt">评分</text>
-        <block wx:for="{{stars}}"  wx:key> 
+        <block wx:for="{{stars}}" wx:key> 
               <image class="star-image" bindtap="selectstar" data-key="{{item+key}}" id="Att"  src="{{item<Att?checkedSrc: normscr}}" />
         </block>
       </view>
@@ -210,7 +221,7 @@
         </view>
       </view>
 
-     <view class="btn_comfir"  @tap="comfir({{item}},{{index}})">提交</view>
+     <view class="btn_comfir" @tap="comfir({{item}},{{index}})">提交</view>
     </view>
    </repeat>
     
@@ -244,9 +255,9 @@ export default class GoodsReviews extends wepy.page {
     key: 0,
     Att: 5,
     //未选择星
-    normscr: "../../images/icon2_xingw@2x.png",
+    normscr: "../../images/icon_pingfen@2x.png",
     //选择星
-    checkedSrc: "../../images/icon2_xing@2x.png"
+    checkedSrc: "../../images/icon_pingfen_hl@2x.png"
   };
 
   components = {};
@@ -322,38 +333,38 @@ export default class GoodsReviews extends wepy.page {
       score: this.Att
     };
     console.log(send);
-    // const res = await shttp
-    //   .post(`/api/v2/member/goodsevaluate`)
-    //   .send({
-    //     goods_id: item.goods_id,
-    //     order_id: this.order.order_id,
-    //     order_no: this.order.order_sn,
-    //     content: this.textMsg[idx],
-    //     goods_type: "real",
-    //     geval_image: this.cosimgList,
-    //     score: this.Att,
-    //   })
-    //   .end();
-    // if (res.status == 0) {
-    //   wx.showToast({
-    //     title: "评价成功",
-    //     icon: "none",
-    //     duration: 2000
-    //   });
-    //   wx.navigateBack();
-    // } else if (res.status == 1) {
-    //   wx.showToast({
-    //     title: res.error,
-    //     icon: "none",
-    //     duration: 2000
-    //   });
-    // } else {
-    //   wx.showToast({
-    //     title: "评价失败",
-    //     icon: "none",
-    //     duration: 2000
-    //   });
-    // }
+    const res = await shttp
+      .post(`/api/v2/member/goodsevaluate`)
+      .send({
+        goods_id: item.goods_id,
+        order_id: this.order.order_id,
+        order_no: this.order.order_sn,
+        content: this.textMsg[idx],
+        goods_type: "real",
+        geval_image: this.cosimgList,
+        score: this.Att,
+      })
+      .end();
+    if (res.status == 0) {
+      wx.showToast({
+        title: "评价成功",
+        icon: "none",
+        duration: 2000
+      });
+      wx.navigateBack();
+    } else if (res.status == 1) {
+      wx.showToast({
+        title: res.error,
+        icon: "none",
+        duration: 2000
+      });
+    } else {
+      wx.showToast({
+        title: "评价失败",
+        icon: "none",
+        duration: 2000
+      });
+    }
     this.$apply();
   }
   onShow(options) {}

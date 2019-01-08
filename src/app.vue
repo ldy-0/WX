@@ -157,7 +157,7 @@ export default class extends wepy.app {
    * 设置全局变量
    */
   globalData = {
-    authorizationStyle: "2" //1: 强制需要用户微信信息和强制手机授权
+    authorizationStyle: "1" //1: 强制需要用户微信信息和强制手机授权 //手机号验证白名单10987654321，验证码随意，如1111
     //2：强制需要用户微信信息和不强制手机授权
     //3：强制需要用户微信信息和不需要手机授权
     //4：不强制需要用户微信信息和强制手机授权

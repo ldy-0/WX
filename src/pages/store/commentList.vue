@@ -29,6 +29,28 @@
   height: 50rpx;
   border-radius: 50%;
 }
+.comment-imgs {
+  margin-top: 8rpx;
+  display: flex;
+  flex-wrap: wrap;
+}
+.comment-imgItem {
+  width: 176rpx;
+  height: 176rpx;
+  margin-right: 2rpx;
+  margin-bottom: 2rpx;
+}
+.comment-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.star-image {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 5rpx;
+  margin-left: 5rpx;
+}
 </style>
 
 
@@ -40,9 +62,19 @@
           <view class="user">
             <image src="{{item.geval_frommemberavatar}}" class="head">
             {{item.geval_frommembername}}
+            <block wx:for="{{item.geval_scores}}" wx:key>
+                <image class="star-image" src="../../images/icon_pingfen_hl@2x.png">
+              </block>
+              <block wx:for="{{5-item.geval_scores}}" wx:key>
+                <image class="star-image" src="../../images/icon_pingfen@2x.png">
+              </block>
           </view>
           <view>{{item.geval_content}}</view>
-          <!-- <view>一件十盒 送无纺布</view> -->
+          <view class="comment-imgs" wx:if="{{item.geval_image.length>0}}">
+            <repeat for="{{item.geval_image}}" item="img" index="index">
+              <image src="{{img}}" class="comment-imgItem" mode="aspectFill">
+            </repeat>
+          </view>
         </view>
       </repeat>
     </view>
@@ -92,12 +124,16 @@ export default class CommentList extends wepy.page {
       title: "加载中"
     });
     const res = await shttp
-      .get(`/api/v2/member/goods_evaluate`)
+      .get(`/api/v2/member/goodsevaluate`)
       .query(this.send)
       .end();
     if (res.status == 0) {
       wx.hideLoading();
       if (res.data != null && res.data.length != 0) {
+        res.data.forEach(element => {
+          element.geval_image =
+            element.geval_image !== "" ? JSON.parse(element.geval_image) : [];
+        });
         this.commentList = this.commentList.concat(res.data);
       } else {
         if (this.commentList.length == 0) {

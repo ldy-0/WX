@@ -287,7 +287,7 @@ export default class OrderList extends wepy.page {
       let orderId = e.currentTarget.dataset.orderid
       console.log(orderId);
       wx.navigateTo({
-        url: `/pages/my/groupbuyDatail?id=${id}&orderId=${orderId}`
+        url: `/pages/my/groupbuyDatail?id=${id}`
       });
     }
   };

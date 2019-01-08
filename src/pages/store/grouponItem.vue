@@ -38,8 +38,8 @@
     <view class="grouponItem">
       <view class="grouponItem-l">开团者：</view>
       <view class="grouponItem-r">
-        <image src="{{groupondata.member_avatar[0]}}">
-        {{groupondata.member_name[0]}}
+        <image src="{{groupondata.members[0].member_avatar}}">
+        {{groupondata.members[0].member_name}}
       </view>
     </view>
     <view class="grouponItem">
@@ -49,10 +49,10 @@
     <view class="grouponItem">
       <view class="grouponItem-l">团成员：</view>
       <view class="grouponItem-rList">
-        <repeat for="{{groupondata.member_avatar}}" item="item">
+        <repeat for="{{groupondata.members}}" item="item">
           <view class="grouponItem-r">
-            <image src="{{item}}">
-            {{groupondata.member_name[index]}}
+            <image src="{{item.member_avatar}}">
+            {{item.member_name}}
           </view>
         </repeat>
       </view>
