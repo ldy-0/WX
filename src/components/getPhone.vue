@@ -85,9 +85,9 @@
   height: 88rpx;
   text-align: center;
   line-height: 88rpx;
-  background-color: #68d0b7;
+  background-color: #f08132;
   border-radius: 10rpx;
-  border: solid 1rpx #53caad;
+  border: solid 1rpx #f08132;
   color: #ffffff;
   font-size: 32rpx;
   margin: 30rpx auto;
@@ -111,7 +111,7 @@
   justify-content: center;
   width: 200rpx;
   height: 74rpx;
-  color: #68d0b7;
+  color: #f08132;
   font-size: 30rpx;
   overflow: hidden;
 }

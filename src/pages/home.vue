@@ -734,7 +734,9 @@ export default class Home extends wepy.page {
       })
       .end();
     if (res.status === 0) {
-      this.groupGoodsList = res.data;
+      if (res.data != null && res.data.length > 0) {
+        this.groupGoodsList = res.data;
+      }
     }
     wx.hideLoading();
     wx.stopPullDownRefresh();
