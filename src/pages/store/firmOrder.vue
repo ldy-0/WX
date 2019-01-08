@@ -683,16 +683,8 @@ export default class FirmOrder extends wepy.page {
   checkShop(e) {
     this.itemIndex = e.currentTarget.dataset.index;
     this.coupon = e.currentTarget.dataset.coupon;
-    this.checkVoucher[0] =
-      this.coupon.voucher_store_id + "|" + this.coupon.vouchertemplate_id;
-    this.voucher[0] =
-      this.coupon.voucher_store_id +
-      ":" +
-      this.coupon.vouchertemplate_id +
-      "|" +
-      this.coupon.voucher_id +
-      "|" +
-      this.coupon.voucher_price;
+    this.checkVoucher = { [this.coupon.voucher_store_id]: this.coupon.voucher_code};
+    this.voucher = { [this.coupon.voucher_store_id]: this.coupon.voucher_code};
     this.$apply();
   }
   async discountSure() {
