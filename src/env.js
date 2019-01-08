@@ -1,1 +1,1 @@
-export default { env: 'production', debug: false }
+export default { env: 'development', debug: false }
