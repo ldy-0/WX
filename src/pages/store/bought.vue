@@ -67,7 +67,7 @@
         <view>支付方式：微信支付</view>
         <view>下单时间：{{order.add_time}}</view>
         <view class="time-br"></view>
-        <view>优 惠 券：-￥{{order.voucher_price}}</view>
+        <view>优 惠 券：-￥{{order.Preferential}}</view>
         <view>实付金额：
           <text style="color:#f17f30">￥{{order.order_amount}}</text>
         </view>
@@ -83,6 +83,7 @@
 import wepy from "wepy";
 import dayjs from "dayjs";
 import { shttp } from "../../utils/http";
+import calc from "calculatorjs";
 export default class Bought extends wepy.page {
   config = {
     navigationBarTitleText: "购买完成"
@@ -126,12 +127,15 @@ export default class Bought extends wepy.page {
   async getOrderInfo() {
     const res = await shttp.get(`/api/v2/member/order/${this.option.id}`).end();
     this.order = res.data[0];
-
     if (this.order.voucher_price == null) {
       this.order.voucher_price = "0.00";
     }
-    this.orderPrice =
-      Number(this.order.order_amount) + Number(this.order.voucher_price);
+    this.orderPrice = calc
+      .add(this.order.goods_total_prices, this.order.shipping_fee)
+      .toFixed(2);
+    this.order.Preferential = calc
+      .sub(this.orderPrice, this.order.order_amount)
+      .toFixed(2);
     this.order.add_time = dayjs(this.order.add_time).format(
       "YYYY年MM月DD日 HH:mm"
     );

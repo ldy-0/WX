@@ -5,31 +5,41 @@ page {
 </style>
 <style scoped>
 .title {
-  height: 56rpx;
-  line-height: 56rpx;
+  height: 80rpx;
+  line-height: 80rpx;
   padding-left: 30rpx;
   text-align: left;
-  color: #ffad10;
+  color: #555555;
   background: #fff;
-  font-size: 28rpx;
+  font-size: 32rpx;
+  font-weight: 600;
 }
-
+.title-order40 {
+  position: relative;
+}
+.title-img1 {
+  position: absolute;
+  width: 116rpx;
+  height: 96rpx;
+  top: 0;
+  right: 10rpx;
+}
 .product_info {
   display: flex;
   justify-content: space-around;
   align-items: center;
   width: 100%;
-  height: 280rpx;
+  height: 182rpx;
   background: #f7f7f7;
 }
 .product_info image {
-  width: 200rpx;
-  height: 200rpx;
-  margin-left: 26rpx;
+  width: 142rpx;
+  height: 142rpx;
+  border-radius: 10rpx;
 }
 .product_info .product {
   width: 500rpx;
-  height: 180rpx;
+  height: 142rpx;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -64,21 +74,20 @@ page {
 
 .price_info {
   display: flex;
-  justify-content: space-between;
+  flex-direction: row-reverse;
   align-items: center;
-  height: 88rpx;
+  height: 80rpx;
   padding: 0 24rpx;
-  border-top: 1rpx solid #e5e5e5;
   background: #fff;
+  color: #222;
+  font-size: 26rpx;
 }
 .price_info .price {
-  color: #e50012;
+  font-size: 32rpx;
 }
 .price_info .freight {
   display: inline-block;
   margin-left: 10rpx;
-  font-size: 24rpx;
-  color: #888;
 }
 
 .operate_info {
@@ -101,7 +110,7 @@ page {
   font-size: 26rpx;
   text-align: center;
 }
-.operate_info view {
+.operate_infoBtn {
   width: 160rpx;
   height: 60rpx;
   line-height: 60rpx;
@@ -110,6 +119,10 @@ page {
   border-radius: 30rpx;
   font-size: 26rpx;
   text-align: center;
+}
+.operate_infoBtnCol {
+  border: 1rpx solid #f17f30;
+  color: #f17f30;
 }
 
 .no_wrap .no {
@@ -180,7 +193,10 @@ page {
           <view class="title" wx:if="{{order.order_state_id==10}}">待付款</view>
           <view class="title" wx:if="{{order.order_state_id==20}}">待发货</view>
           <view class="title" wx:if="{{order.order_state_id==30}}">待收货</view>
-          <view class="title" wx:if="{{order.order_state_id==40}}">已完成</view>
+          <view class="title title-order40" wx:if="{{order.order_state_id==40}}">
+            已完成
+            <image class="title-img1" src="../../images/img_6@2x.png">
+          </view>
           <view @tap="goOrderDetail" data-index="{{index}}">
             <repeat for="{{order.order_goods}}" item="items">
               <view class="product_info">
@@ -198,22 +214,27 @@ page {
               </view>
             </repeat>
             <view class="price_info">
-              <view>实付款</view>
               <view>
-                <text class="price">¥{{order.order_amount}}</text>
-                <text class="freight">运费{{order.shipping_fee}}</text>
+                实付款：¥<text class="price">{{order.order_amount}}</text>
+                <text class="freight" wx:if="{{order.shipping_fee!='0.00'}}">(含运费¥{{order.shipping_fee}})</text>
+              </view>
+            </view>
+            <view class="price_info" wx:if="{{order.voucher_price!='0.00'}}">
+              <view>
+                优惠券：-¥{{order.Preferential}}
               </view>
             </view>
           </view>
           <view class="operate_info">
-            <button class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
+            <button
+              wx:if="{{order.order_state_id==20||order.order_state_id==30||order.order_state_id==40||order.order_state_id==50}}"
+              class="Customer"
+              open-type="contact"
+              session-from="weapp"
+              plain="true"
+            >联系客服</button>
             <view
-              wx:if="{{order.order_state_id==10}}"
-              @tap.stop="payMoney"
-              data-pay="{{order.pay_sn}}"
-              data-index="{{index}}"
-            >去支付</view>
-            <view
+              class="operate_infoBtn"
               wx:if="{{order.order_state_id==10}}"
               @tap.stop="orderCancel"
               data-id="{{order.order_id}}"
@@ -221,6 +242,14 @@ page {
               data-index="{{index}}"
             >取消支付</view>
             <view
+              class="operate_infoBtn operate_infoBtnCol"
+              wx:if="{{order.order_state_id==10}}"
+              @tap.stop="payMoney"
+              data-pay="{{order.pay_sn}}"
+              data-index="{{index}}"
+            >去支付</view>
+            <view
+              class="operate_infoBtn operate_infoBtnCol"
               wx:if="{{order.order_state_id==20||order.order_state_id==30}}"
               @tap.stop="salesReturn"
               data-order="{{order}}"
@@ -228,12 +257,14 @@ page {
               data-index="{{index}}"
             >退款</view>
             <view
+              class="operate_infoBtn operate_infoBtnCol"
               wx:if="{{order.order_state_id==30}}"
               @tap.stop="orderReceive"
               data-id="{{order.order_id}}"
               data-index="{{index}}"
             >确认收货</view>
             <view
+              class="operate_infoBtn operate_infoBtnCol"
               wx:if="{{order.order_state_id==40&&order.evaluation_state==0}}"
               @tap.stop="evaluate"
               data-order="{{order}}"
@@ -241,7 +272,8 @@ page {
               data-index="{{index}}"
             >评价</view>
             <view
-              wx:if="{{order.order_state_id==40}}"
+              class="operate_infoBtn"
+              wx:if="{{order.order_state_id==40&&order.evaluation_state==1}}"
               @tap.stop="orderDelete"
               data-id="{{order.order_id}}"
               data-index="{{index}}"
@@ -259,6 +291,7 @@ import wepy from "wepy";
 import Tab from "../../components/tab";
 import Placeholder from "../../components/placeholder";
 import { shttp } from "../../utils/http";
+import calc from "calculatorjs";
 export default class OrderList extends wepy.page {
   config = {
     navigationBarTitleText: "订单列表"
@@ -387,6 +420,9 @@ export default class OrderList extends wepy.page {
     if (res.status === 0) {
       wx.hideLoading();
       if (res.data != null && res.data.length != 0) {
+        res.data.forEach(element => {
+          element.Preferential =calc.sub(calc.add(element.goods_total_prices,element.shipping_fee),element.order_amount).toFixed(2);
+        });
         this.showa = false;
         this.orderList = this.orderList.concat(res.data);
       }

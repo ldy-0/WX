@@ -248,7 +248,7 @@
     <!-- QT -->
     <view class="over_model" @tap="closeModel" wx:if="{{isShowQT}}" catchtouchmove="{{true}}">
       <view class="poster_model">
-        <canvas canvas-id="canvas" style="width: 340px; height: 500px;"></canvas>
+        <canvas canvas-id="canvas" style="width: 275px; height: 440px;"></canvas>
       </view>
 
       <view class="save_btn" @tap="saveImg">保存</view>
@@ -333,36 +333,18 @@ export default class GroupbuyDatail extends wepy.page {
     wx.showLoading({ title: "loading..." });
     let content = wx.createCanvasContext("canvas");
     content.setFillStyle("#ffffff");
-    content.fillRect(0, 0, 340, 500);
-    await this.drawImage(
-      {
-        img:
-          "https://admin-1256953590.cos.ap-shanghai.myqcloud.com/1537343505167%E7%BB%84-6%402x.png",
-        top: 0,
-        left: 0,
-        width: 340,
-        height: 500
-      },
-      content
-    );
+    content.fillRect(0, 0, 275, 440);
     let goodsImg = this.details.goodsinfo.goods_image;
-    if (goodsImg.slice(0, 5) == "http:") {
-      goodsImg = goodsImg.replace("http:", "https:");
-    } else {
-      goodsImg = goodsImg.replace("file", "cos.ap-shanghai");
-    }
     await this.drawImage(
       {
         img: goodsImg,
-        top: 75,
-        left: 120,
-        width: 100,
-        height: 100
+        top: 0,
+        left: 0,
+        width: 275,
+        height: 275
       },
       content
-    );
-    const shopId = wx.getStorageSync("shopId");
-    const member_id = wx.getStorageSync("memberInfo").member_id;
+    );    
     const res = await shttp
       .post("/api/v2/member/wxcode")
       .send({
@@ -376,22 +358,25 @@ export default class GroupbuyDatail extends wepy.page {
     await this.drawImage(
       {
         img: qrpicUrl.replace(/http/, "https"),
-        top: 275,
-        left: 105,
-        width: 125,
-        height: 125
+        top: 320,
+        left: 180,
+        width: 80,
+        height: 80
       },
       content
     );
     content.fillStyle = "#000000";
+    content.setFontSize(14);
+    content.fillText(this.details.goodsinfo.goods_name, 20, 315, 140);
+    content.fillStyle = "#dd3d27";
+    content.setFontSize(14);
+    content.fillText("￥", 20, 380);
+    content.setFontSize(21);
+    content.fillText(this.details.goodsinfo.goods_price, 32, 380);
+    content.fillStyle = "#b9b9b9";
     content.setTextAlign("center");
-    content.setFontSize(18);
-    content.fillText(this.details.goodsinfo.goods_name, 170, 200);
-    content.setTextAlign("center");
-    content.fillStyle = "#ff7900";
-    content.setFontSize(17);
-    content.fillText("￥" + this.details.rule.goods_price + "元", 170, 230);
-
+    content.setFontSize(6);
+    content.fillText("扫描或长按小程序码", 220, 410);
     content.draw(true);
 
     wx.hideLoading();

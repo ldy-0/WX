@@ -135,6 +135,14 @@ page {
   margin-top: 20rpx;
   margin-left: 30rpx;
 }
+.img2 {
+  width: 32rpx;
+  height: 22rpx;
+}
+.img3 {
+  width: 25rpx;
+  height: 32rpx;
+}
 </style>
 
 <template>
@@ -181,7 +189,7 @@ page {
       <repeat for="{{list}}" item="item">
         <navigator class="row_between" url="{{item.url}}">
           <view class="flex">
-            <image class="icon" src="{{item.img}}">
+            <image class="icon img{{index}}" src="{{item.img}}">
             <view>{{item.name}}</view>
           </view>
           <image class="arrow" src="../images/icon_you@2x.png">

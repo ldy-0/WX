@@ -169,6 +169,9 @@
 .boder-none {
   border: 0rpx solid #333;
 }
+.height-box {
+  height: 100rpx;
+}
 </style>
 
 <template>
@@ -252,6 +255,7 @@
         </view>
         <view class="btn" @tap="copyexpress">复制</view>
       </view>
+      <view class="height-box"></view>
       <view class="bottom_bar">
         <!-- <navigator class='btn' url='./select'>退货/换货</navigator> -->
         <button class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>

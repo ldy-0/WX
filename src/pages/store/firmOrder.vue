@@ -308,7 +308,7 @@
           bindinput="textVal"
           maxlength="140"
           placeholder="文字内容"
-          placeholder-style="font-size: 32rpx;"
+          placeholder-style="font-size: 28rpx; color:#f5f5f5"
         />
       </view>
       <view
@@ -319,8 +319,8 @@
       >
         <view>优惠券：</view>
         <view class="coupon-boxR">
-          <view wx:if="{{!coupon}}" class="discount-num">{{couponList.length}}张优惠券</view>
-          <text wx:else>省：{{coupon.voucher_price}}元</text>
+          <view wx:if="{{!Preferential}}" class="discount-num">{{couponList.length}}张优惠券</view>
+          <text wx:if="{{Preferential}}">省：{{Preferential}}元</text>
           <image class="right-icon" src="../../images/icon_zuojiantou@2x.png">
         </view>
       </view>
@@ -406,14 +406,15 @@ export default class FirmOrder extends wepy.page {
     isclick: false,
     discountShow: false,
     couponList: [],
-    itemIndex: [],
+    itemIndex: null,
     coupon: null,
     checkVoucher: [],
     voucher: [],
     scrollHeight: 250,
     is_pintuan: 0,
     grouponid: null, //活动组id
-    textMsg: ""
+    textMsg: "",
+    Preferential: null
   };
 
   components = {};
@@ -627,6 +628,10 @@ export default class FirmOrder extends wepy.page {
       // console.log( this.freightList)
       let storePrice = Object.values(res.data.store_final_order_total);
       this.price = Math.floor(storePrice[0] * 100) / 100;
+      this.Preferential = calc.sub(
+        calc.add(this.freightList, Object.values(res.data.goods_total)),
+        storePrice
+      );
     } else {
       wx.showToast({
         title: "商品无效",
@@ -670,21 +675,34 @@ export default class FirmOrder extends wepy.page {
     this.$apply();
   }
   async discountBtn(e) {
-    this.itemIndex = null;
     this.discountShow = true;
     this.$apply();
   }
 
   deleteBtn() {
-    this.itemIndex = null;
+    setTimeout(() => {
+      this.closeAccount();
+    }, 500);
     this.discountShow = false;
     this.$apply();
   }
   checkShop(e) {
-    this.itemIndex = e.currentTarget.dataset.index;
-    this.coupon = e.currentTarget.dataset.coupon;
-    this.checkVoucher = { [this.coupon.voucher_store_id]: this.coupon.voucher_code};
-    this.voucher = { [this.coupon.voucher_store_id]: this.coupon.voucher_code};
+    if (this.itemIndex == e.currentTarget.dataset.index) {
+      this.itemIndex = null;
+      this.coupon = null;
+      this.checkVoucher = [];
+      this.voucher = [];
+    } else {
+      this.itemIndex = e.currentTarget.dataset.index;
+      this.coupon = e.currentTarget.dataset.coupon;
+      this.checkVoucher = {
+        [this.coupon.voucher_store_id]: this.coupon.voucher_code
+      };
+      this.voucher = {
+        [this.coupon.voucher_store_id]: this.coupon.voucher_code
+      };
+    }
+
     this.$apply();
   }
   async discountSure() {

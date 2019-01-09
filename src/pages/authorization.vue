@@ -10,7 +10,7 @@
 .imgbox .image1 {
   width: 614rpx;
   height: 427rpx;
-  background: #e9e9e9;
+  background: #f17f30;
 }
 
 .btn {

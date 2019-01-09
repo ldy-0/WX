@@ -1197,9 +1197,13 @@ export default class GoodsDetails extends wepy.page {
     });
     console.log(this.scene);
     if (this.scene != "undefined") {
-      let qrarry = this.scene.split(";");
+       let qrarry = this.scene.split(";");
       //TODO:分享参数数组，0位为类型,1位为相关id
-      this.pintuangroup_id = qrarry[1];
+      if(qrarry[0]=='normal'){
+        this.id = qrarry[1]
+      } else {
+        this.pintuangroup_id = qrarry[1];
+      }
       this.getType(qrarry[0]);
     } else {
       this.getType(this.options.type);
@@ -1250,7 +1254,7 @@ export default class GoodsDetails extends wepy.page {
     if (res.data.spec_value) {
       this.standards = res.data.spec_value;
     } else {
-      this.standards = ["无"];
+      this.standards = ["统一规格"];
     }
     this.getComment(this.goods.SKUList[0].goods_id);
     wx.hideLoading();
@@ -1266,7 +1270,7 @@ export default class GoodsDetails extends wepy.page {
     this.goods.goods_freight = this.goods.goods.goods_freight;
     this.goods.goods_marketprice = this.goods.goods.goods_marketprice;
     this.goods.goods_image = this.goods.goods.goods_image;
-    this.standards = ["无"];
+    this.standards = ["统一规格"];
     this.getComment(this.goods.goods_id);
     if (this.TYPE == "group") {
       this.getGroupList(this.goods.goods_id);
@@ -1278,9 +1282,9 @@ export default class GoodsDetails extends wepy.page {
 
   goStandard() {
     this.showStandard = true;
-    if (this.standards[0] == "无") {
+    if (this.standards[0] == "统一规格") {
       this.isChecked = 0;
-      this.goods.standard = "无";
+      this.goods.standard = "统一规格";
       this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
       this.goods.goods_price = this.goods.SKUList[0].goods_price;
       this.goods.goods_id = this.goods.SKUList[0].goods_id;
@@ -1356,7 +1360,7 @@ export default class GoodsDetails extends wepy.page {
       .post("/api/v2/member/wxcode")
       .send({
         page: "pages/store/goodsDetails",
-        scene: this.id + ";",
+        scene: "normal;" + this.id,
         width: 350, // 430
         is_hyaline: true // false,
       })
