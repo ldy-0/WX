@@ -283,6 +283,7 @@ export default class GroupbuyDatail extends wepy.page {
     if (this.wxTimer1 != null) {
       this.wxTimer1.stop();
       this.wxTimerList = {};
+      this.wxTimer1 = null;
     }
   }
   methods = {};

@@ -67,7 +67,7 @@
         <view>支付方式：微信支付</view>
         <view>下单时间：{{order.add_time}}</view>
         <view class="time-br"></view>
-        <view>优 惠 券：-￥{{order.Preferential}}</view>
+        <view wx:if="{{order.Preferential!='0.00'}}">优 惠 券：-￥{{order.Preferential}}</view>
         <view>实付金额：
           <text style="color:#f17f30">￥{{order.order_amount}}</text>
         </view>

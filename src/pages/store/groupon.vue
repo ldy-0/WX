@@ -180,6 +180,13 @@ export default class Groupon extends wepy.page {
     let e = Number(this.nowindex);
     switch (e) {
       case 0:
+        if (this.timeDatalist.length != 0) {
+          this.timeDatalist.forEach(item => {
+            item.stop();
+          });
+          this.timeDatalist = [];
+          this.wxTimerList = {};
+        }
         this.sends.pintuangroup_state = 1;
         this.getGroupList(this.sends);
         break;
@@ -199,7 +206,6 @@ export default class Groupon extends wepy.page {
   };
   methods = {
     async tabitem(e) {
-      //订单状态：0:已取消 10:未付款 20:已付款 30:已发货 40:已收货 50：待评价
       this.nowindex = e;
       this.is_empty = false;
       this.page = 1;
@@ -266,6 +272,9 @@ export default class Groupon extends wepy.page {
       ) {
         this.groupList = res.data.pinlist;
       }
+    }
+    if (this.groupList.length == 0) {
+      this.is_empty = true;
     }
     this.$apply();
   }

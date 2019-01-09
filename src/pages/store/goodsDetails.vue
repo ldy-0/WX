@@ -1039,6 +1039,7 @@ export default class GoodsDetails extends wepy.page {
     TYPE: "normal", //normal:普通 groupon:团购 grouponing：团购进行中 bargain：砍价：bargain 砍价进行中：bargaining
     groupListshow: false,
     timeDatalist: [],
+    wxTimer1: null,
     groupInfo: [],
     wxTimerList: {},
     pintuangroup_id: null,
@@ -1191,16 +1192,28 @@ export default class GoodsDetails extends wepy.page {
     this.scene = decodeURIComponent(option.scene);
   }
   onShow() {
+    if (this.timeDatalist.length != 0) {
+      this.timeDatalist.forEach(item => {
+        item.stop();
+      });
+      this.timeDatalist = [];
+      this.wxTimerList = {};
+    }
+    if (this.wxTimer1 != null) {
+      this.wxTimer1.stop();
+      this.wxTimerList = {};
+      this.wxTimer1 = null;
+    }
     this.wxUserInfo = wx.getStorageSync("memberInfo");
     wx.showLoading({
       title: "加载中"
     });
     console.log(this.scene);
     if (this.scene != "undefined") {
-       let qrarry = this.scene.split(";");
+      let qrarry = this.scene.split(";");
       //TODO:分享参数数组，0位为类型,1位为相关id
-      if(qrarry[0]=='normal'){
-        this.id = qrarry[1]
+      if (qrarry[0] == "normal") {
+        this.id = qrarry[1];
       } else {
         this.pintuangroup_id = qrarry[1];
       }
@@ -1503,7 +1516,6 @@ export default class GoodsDetails extends wepy.page {
   closeShare() {
     this.isShare = false;
   }
-  onUnload() {}
   deleteBtn() {
     this.showStandard = false;
   }
@@ -1518,7 +1530,7 @@ export default class GoodsDetails extends wepy.page {
         pintuangroup_state: 1
       })
       .end();
-    if (res.status == 0 && res.data.pinlist.length != 0) {
+    if (res.status == 0 && res.data.length != 0) {
       this.groupListshow = true;
       let startTime = new Date().getTime();
       this.groupInfo = res.data;
@@ -1607,6 +1619,20 @@ export default class GoodsDetails extends wepy.page {
         this.pintuangroup_id
       }&goods=${encodeURIComponent(JSON.stringify(this.goods))}`
     });
+  }
+  onUnload() {
+    if (this.wxTimer1 != null) {
+      this.wxTimer1.stop();
+      this.wxTimerList = {};
+      this.wxTimer1 = null;
+    }
+    if (this.timeDatalist.length != 0) {
+      this.timeDatalist.forEach(item => {
+        item.stop();
+      });
+      this.wxTimerList = {};
+      this.timeDatalist = [];
+    }
   }
 }
 </script>

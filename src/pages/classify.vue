@@ -464,7 +464,7 @@ export default class Classify extends wepy.page {
     if (res.data.spec_value) {
       this.standards = res.data.spec_value;
     } else {
-      this.standards = ["无"];
+      this.standards = ["统一规格"];
     }
     this.showStandard = true;
     wx.hideLoading();
@@ -565,9 +565,9 @@ export default class Classify extends wepy.page {
   }
   goStandard() {
     this.showStandard = true;
-    if (this.standards[0] == "无") {
+    if (this.standards[0] == "统一规格") {
       this.isChecked = 0;
-      this.goods.standard = "无";
+      this.goods.standard = "统一规格";
       this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
       this.goods.goods_price = this.goods.SKUList[0].goods_price;
       this.goods.goods_id = this.goods.SKUList[0].goods_id;

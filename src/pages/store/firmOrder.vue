@@ -307,7 +307,7 @@
           class="msgtext"
           bindinput="textVal"
           maxlength="140"
-          placeholder="文字内容"
+          placeholder=""
           placeholder-style="font-size: 28rpx; color:#f5f5f5"
         />
       </view>

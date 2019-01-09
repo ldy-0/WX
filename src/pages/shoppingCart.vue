@@ -1,6 +1,4 @@
 <style>
-
-
 .nodata {
   margin-top: 50%;
   font-size: 38rpx;
@@ -204,57 +202,98 @@
   color: #999999;
   margin: 0 24rpx;
 }
+.empty-placeholder {
+  padding-top: 290rpx;
+  width: 100%;
+  text-align: center;
+}
+.empty-placeholder text {
+  color: #666;
+  font-size: 40rpx;
+  margin-left: 30rpx;
+}
+
+.icon-xl {
+  width: 203rpx;
+  height: 122rpx;
+  display: block;
+  margin: 0 auto;
+}
+
+.txt {
+  font-size: 26rpx;
+  color: #848484;
+  margin-top: 26rpx;
+}
+.item_view {
+  width: 210rpx;
+	height: 66rpx;
+  margin: 0 auto;
+  margin-top: 100rpx;
+	border-radius: 8rpx;
+  text-align: center;
+  line-height: 66rpx;
+	border: solid 1rpx #f17f30;
+  color: #f17f30;
+  font-size: 28rpx;
+}
 </style>
 
 <template>
   <view class="container">
-      <view wx:if="{{!is_empty}}">
-          <view class='topBar' wx:if="{{!is_empty}}">
-              <view class='fullSelect'>
-                  <view class='big_circle' @tap='checkAll'>
-                    <view class="{{checkedAll}}"></view>
-                  </view>
-                  <view>全选</view>
+    <view wx:if="{{!is_empty}}">
+      <view class="topBar" wx:if="{{!is_empty}}">
+        <view class="fullSelect">
+          <view class="big_circle" @tap="checkAll">
+            <view class="{{checkedAll}}"></view>
+          </view>
+          <view>全选</view>
+        </view>
+        <view @tap="done()" wx:if="{{isEdit}}">完成</view>
+        <view @tap="edit()" wx:else>编辑</view>
+      </view>
+      <view class="list" wx:if="{{!is_empty}}">
+        <repeat for="{{tableData}}" index="index" item="item">
+          <view class="item">
+            <view class="big_circle" @tap="check({{index}})">
+              <view class="{{tableData[index].active ? 'fill_circle' : ''}}"></view>
+            </view>
+            <image src="{{item.goods_image||item.pgoods_image}}" mode="aspectFill">
+            <view class="info">
+              <view class="desc">{{item.goods_name||item.pgoods_name}}</view>
+              <view class="price">¥{{item.goods_price|| item.pgoods_price}}</view>
+              <view class="number_wrap">
+                <view class="minus" @tap="minus({{item}})">
+                  <image src="../images/icon_jian@2x.png">
+                </view>
+                <view class="number">{{item.goods_num||item.pgoods_choosenum}}</view>
+                <view class="add" @tap="add({{item}})">
+                  <image src="../images/icon_jia@2x.png">
+                </view>
               </view>
-              <view @tap="done()" wx:if="{{isEdit}}">完成</view>
-              <view @tap="edit()" wx:else>编辑</view>
+            </view>
           </view>
-          <view class='list' wx:if="{{!is_empty}}">
-              <repeat for="{{tableData}}" index="index" item="item">
-                  <view class='item'>
-                      <view class='big_circle'  @tap='check({{index}})'>
-                          <view  class="{{tableData[index].active ? 'fill_circle' : ''}}"></view>
-                      </view>
-                      <image src="{{item.goods_image||item.pgoods_image}}" mode="aspectFill"/>
-                      <view class='info'>
-                          <view class='desc'>{{item.goods_name||item.pgoods_name}}</view>
-                          <view class='price'>¥{{item.goods_price|| item.pgoods_price}}</view>
-                          <view class='number_wrap'>
-                            <view class='minus' @tap='minus({{item}})'>
-                                <image src="../images/icon_jian@2x.png" />
-                            </view>
-                            <view class='number'>{{item.goods_num||item.pgoods_choosenum}}</view>
-                            <view class='add' @tap='add({{item}})'>
-                                <image src='../images/icon_jia@2x.png' />
-                            </view>
-                          </view>
-                      </view>
-                  </view>
-              </repeat>
-          </view>
+        </repeat>
+      </view>
 
-          <view class='bottomBar' wx:if='{{isEdit}}'>
-              <view class='del' @tap='delete'>删除</view>
-          </view>
-          <view class='bottomBar' wx:else>
-              <view class='sum'>合计：<text>¥{{allMoney}}</text></view>
-              <view class='btn'   @tap='goFirmOrder()'>结算({{countItem}})</view>
-          </view>
-         
-      </view> 
-     <!--暂无数据显示-->
-      <placeholder :show.sync="is_empty" message="购物车是空的呢"></placeholder> 
-
+      <view class="bottomBar" wx:if="{{isEdit}}">
+        <view class="del" @tap="delete">删除</view>
+      </view>
+      <view class="bottomBar" wx:else>
+        <view class="sum">合计：
+          <text>¥{{allMoney}}</text>
+        </view>
+        <view class="btn" @tap="goFirmOrder()">结算({{countItem}})</view>
+      </view>
+    </view>
+    <!--暂无数据显示-->
+    <view class="empty-placeholder row-center" wx:if="{{is_empty}}">
+      <image class="icon-xl" src="../images/null_car@2x.png">
+      <view class="txt">您的购物车有点寂寞</view>
+      <navigator open-type="switchTab" url="/pages/classify" class="item_view">
+        去逛一下
+      </navigator>
+    </view>
   </view>
 </template>
 
@@ -262,7 +301,6 @@
 import wepy from "wepy";
 import calc from "calculatorjs";
 import { shttp } from "../utils/http";
-import Placeholder from "../components/placeholder";
 import { showSuccessToast, showFailToast } from "../utils/tools";
 import { getCode } from "../utils/user-tools";
 import getTimes from "../utils/formatedate.js";
@@ -295,9 +333,7 @@ export default class ShoppingCart extends wepy.page {
       return this.data.isCheckedAll ? "fill_circle" : "";
     }
   };
-  components = {
-    placeholder: Placeholder
-  };
+  components = {};
   methods = {
     //日期修改
     bindTimeChange_start: function(e) {
@@ -498,8 +534,8 @@ export default class ShoppingCart extends wepy.page {
 
   onLoad() {}
   onShow() {
-    this.allMoney = 0
-    this.countItem = 0
+    this.allMoney = 0;
+    this.countItem = 0;
     this.wxUserInfo = wx.getStorageSync("wxUserInfo");
     // console.log(this.wxUserInfo)
 
