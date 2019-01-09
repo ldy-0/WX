@@ -78,15 +78,14 @@
 }
 .container .goodsContent .goodsInfo {
   display: flex;
-  flex-direction:column;
-  justify-content:space-between;
+  flex-direction: column;
+  justify-content: space-between;
   border-radius: 0 10rpx;
   padding: 15rpx 0;
   padding-left: 26rpx;
   background: #fff;
   color: #333333;
   font-size: 28rpx;
-   
 }
 .container .goodsContent .goodsInfo .prdname {
   width: 525rpx;
@@ -187,44 +186,68 @@
 </style>
 <template>
   <view class="container">
-  <repeat for="{{goodsList}}" key="index" index="index" item="item">
-    <view class="warpGoodList">
-      <view wx:if="{{true}}" class="goodsContent">
-         <view class="goodsSrcList">
-            <image  class="goodsImg" src="{{item.goods_image}}" mode="aspectFill"></image>
+    <repeat for="{{goodsList}}" key="index" index="index" item="item">
+      <view class="warpGoodList">
+        <view wx:if="{{true}}" class="goodsContent">
+          <view class="goodsSrcList">
+            <image class="goodsImg" src="{{item.goods_image}}" mode="aspectFill">
             <view class="goodsInfo">
               <text class="prdname">{{item.goods_name}}</text>
-              <view class="prdprice"><text>￥</text>{{item.goods_pay_price}}</view>
+              <view class="prdprice">
+                <text>￥</text>
+                {{item.goods_pay_price}}
+              </view>
             </view>
-         </view>
-      </view>
-       <view class='attitude'>
-        <text class="attitude-txt">评分</text>
-        <block wx:for="{{stars}}" wx:key> 
-              <image class="star-image" bindtap="selectstar" data-key="{{item+key}}" id="Att"  src="{{item<Att?checkedSrc: normscr}}" />
-        </block>
-      </view>
-
-      <view class="content">
-      <textarea class="msgtext"  bindinput="textVal" data-num="{{index}}" maxlength="140" placeholder="请输入评论..." />
-      </view>
-     <view class="fileContent">
-        <repeat wx:if="{{cosimgList.length!=0}}" for="{{cosimgList}}" key="index" index="index" item="item">  
-          <view class="img_div">
-             <image class="images" src="{{item}}"/>
-             <image class="cha-img" @tap='clearImg({{index}})' src="../../images/icon_sousuo_cha@2x.png" alt="">
           </view>
-        </repeat>
-        <view class="addfile" wx:if="{{cosimgList.length<6}}" @tap="choseimg(item.goods_id)">
-          <image class="addicon" src="../../images/img_shangchuan@2x.png"/>
-          <text class="textimg">添加图片</text>
         </view>
-      </view>
+        <view class="attitude">
+          <text class="attitude-txt">评分</text>
+          <repeat for="{{item.stars}}" item="pf" index="index">
+            <image
+              class="star-image"
+              @tap="selectstar"
+              data-index="{{index}}"
+              src="{{pf<item.Att?checkedSrc: normscr}}"
+            >
+          </repeat>
+        </view>
 
-     <view class="btn_comfir" @tap="comfir({{item}},{{index}})">提交</view>
-    </view>
-   </repeat>
-    
+        <view class="content">
+          <textarea
+            class="msgtext"
+            bindinput="textVal"
+            data-num="{{index}}"
+            maxlength="140"
+            placeholder="请输入评论..."
+          />
+        </view>
+        <view class="fileContent">
+          <repeat
+            wx:if="{{cosimgList.length!=0}}"
+            for="{{cosimgList}}"
+            key="index"
+            index="index"
+            item="url"
+          >
+            <view class="img_div">
+              <image class="images" src="{{url}}">
+              <image
+                class="cha-img"
+                @tap="clearImg({{index}})"
+                src="../../images/icon_sousuo_cha@2x.png"
+                alt
+              >
+            </view>
+          </repeat>
+          <view class="addfile" wx:if="{{cosimgList.length<6}}" @tap="choseimg(item.goods_id)">
+            <image class="addicon" src="../../images/img_shangchuan@2x.png">
+            <text class="textimg">添加图片</text>
+          </view>
+        </view>
+
+        <view class="btn_comfir" @tap="comfir({{item}},{{index}})">提交</view>
+      </view>
+    </repeat>
   </view>
 </template>
 
@@ -242,7 +265,7 @@ export default class GoodsReviews extends wepy.page {
     //send图片路径列表
     imgList: [],
     //本地路径
-    // localimgList: [],
+    localimgList: [],
     //要评价的商品列表
     goodsList: [],
     //订单
@@ -264,6 +287,7 @@ export default class GoodsReviews extends wepy.page {
   methods = {
     //选择星星
     selectstar(e) {
+      console.log(e);
       let name = e.currentTarget.id;
       if (name == "Att") this.Att = e.currentTarget.dataset.key + 1;
     },
@@ -342,7 +366,7 @@ export default class GoodsReviews extends wepy.page {
         content: this.textMsg[idx],
         goods_type: "real",
         geval_image: this.cosimgList,
-        score: this.Att,
+        score: this.Att
       })
       .end();
     if (res.status == 0) {
@@ -367,37 +391,18 @@ export default class GoodsReviews extends wepy.page {
     }
     this.$apply();
   }
-  onShow(options) {}
+  onShow() {}
   onLoad(options) {
     this.order = JSON.parse(decodeURIComponent(options.commitList));
-    console.log(this.order);
     this.goodsList = this.goodsList.concat(this.order.order_goods);
+
+    this.goodsList.forEach(element => {
+      element.stars = [0, 1, 2, 3, 4];
+      element.key = 0;
+      element.Att = 5;
+    });
     console.log(this.goodsList);
-    return;
-    for (let i = 0; i < this.goodsList.length; i++) {
-      let arr = [];
-      this.localimgList.push(arr);
-    }
-    console.log("二维数组");
-    console.log(this.localimgList);
-    //  this.localimgList
   }
-  events = {
-    //上传图片
-    upimg(imgurl, that) {
-      wx.uploadFile({
-        url: "http://106.14.145.66:3000/v1/public/file",
-        filePath: imgurl[0],
-        name: "images",
-        success: function(res) {
-          console.log("成功上传返回");
-          let backimg = JSON.parse(res.data);
-          that.imgList = that.imgList.concat(backimg.result);
-          console.log(that.imgList);
-          wx.hideLoading();
-        }
-      });
-    }
-  };
+  events = {};
 }
 </script>
