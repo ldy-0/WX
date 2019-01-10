@@ -826,7 +826,11 @@ page {
                 <view class="product_title">{{goods.goods_name}}</view>
               </view>
               <view wx:if="{{TYPE== 'normal'}}" class="column_center" @tap="enshrine">
-                <image src="../../images/icon_pingfen_hl@2x.png" class="qr_icon">收藏
+                <image
+                  src="{{goods.enshrine_type==1?'../../images/icon_pingfen_hl@2x.png':'../../images/icon_pingfen@2x.png'}}"
+                  class="qr_icon"
+                >
+                {{goods.enshrine_type==1?'已收藏':'收藏'}}
               </view>
               <view wx:if="{{TYPE== 'normal'}}" class="column_center" @tap="showShare">
                 <image src="../../images/icon_6_fenxiang@2x.png" class="share_icon">分享
@@ -1501,6 +1505,7 @@ export default class GoodsDetails extends wepy.page {
         icon: "success",
         duration: 2000
       });
+      this.goods.enshrine_type = 1;
     } else if (res.status === 1) {
       wx.showToast({
         title: res.error,
@@ -1508,6 +1513,7 @@ export default class GoodsDetails extends wepy.page {
         duration: 2000
       });
     }
+    this.$apply();
   }
 
   showShare() {

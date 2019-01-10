@@ -1,3 +1,8 @@
+<style>
+page {
+  background: #f4f4f4;
+}
+</style>
 <style scoped>
 .container {
   background: #f4f4f4;
@@ -186,7 +191,7 @@
 </style>
 <template>
   <view class="container">
-    <repeat for="{{goodsList}}" key="index" index="index" item="item">
+    <repeat for="{{goodsList}}" key="index" index="pindex" item="item">
       <view class="warpGoodList">
         <view wx:if="{{true}}" class="goodsContent">
           <view class="goodsSrcList">
@@ -207,6 +212,7 @@
               class="star-image"
               @tap="selectstar"
               data-index="{{index}}"
+              data-pindex="{{pindex}}"
               src="{{pf<item.Att?checkedSrc: normscr}}"
             >
           </repeat>
@@ -216,38 +222,43 @@
           <textarea
             class="msgtext"
             bindinput="textVal"
-            data-num="{{index}}"
+            data-pindex="{{pindex}}"
             maxlength="140"
             placeholder="请输入评论..."
           />
         </view>
         <view class="fileContent">
           <repeat
-            wx:if="{{cosimgList.length!=0}}"
-            for="{{cosimgList}}"
-            key="index"
+            wx:if="{{item.cosimgList.length!=0}}"
+            for="{{item.cosimgList}}"
             index="index"
             item="url"
           >
             <view class="img_div">
-              <image class="images" src="{{url}}">
+              <image class="images" src="{{url}}" mode="aspectFill">
               <image
                 class="cha-img"
-                @tap="clearImg({{index}})"
+                data-index="{{index}}"
+                data-pindex="{{pindex}}"
+                @tap="clearImg"
                 src="../../images/icon_sousuo_cha@2x.png"
                 alt
               >
             </view>
           </repeat>
-          <view class="addfile" wx:if="{{cosimgList.length<6}}" @tap="choseimg(item.goods_id)">
+          <view
+            class="addfile"
+            wx:if="{{item.cosimgList.length<6}}"
+            data-pindex="{{pindex}}"
+            @tap="choseimg"
+          >
             <image class="addicon" src="../../images/img_shangchuan@2x.png">
             <text class="textimg">添加图片</text>
           </view>
         </view>
-
-        <view class="btn_comfir" @tap="comfir({{item}},{{index}})">提交</view>
       </view>
     </repeat>
+    <view class="btn_comfir" @tap="comfir({{pindex}})">提交</view>
   </view>
 </template>
 
@@ -260,23 +271,11 @@ export default class GoodsReviews extends wepy.page {
     navigationBarTitleText: "商品评价"
   };
   data = {
-    //评论内容
-    textMsg: [],
-    //send图片路径列表
-    imgList: [],
-    //本地路径
-    localimgList: [],
     //要评价的商品列表
     goodsList: [],
     //订单
     order: {},
-    //send图片路径列表
-    cosimgList: [],
     //以下为星星操作
-    //星星
-    stars: [0, 1, 2, 3, 4],
-    key: 0,
-    Att: 5,
     //未选择星
     normscr: "../../images/icon_pingfen@2x.png",
     //选择星
@@ -287,15 +286,16 @@ export default class GoodsReviews extends wepy.page {
   methods = {
     //选择星星
     selectstar(e) {
-      console.log(e);
-      let name = e.currentTarget.id;
-      if (name == "Att") this.Att = e.currentTarget.dataset.key + 1;
+      let index = e.currentTarget.dataset.index;
+      let pindex = e.currentTarget.dataset.pindex;
+      this.goodsList[pindex].Att = index + 1;
     },
-
-    choseimg: function(imgIndex) {
+    choseimg(e) {
+      console.log(e);
+      let pindex = e.currentTarget.dataset.pindex;
       var that = this;
       wx.chooseImage({
-        count: 6 - Number(that.cosimgList.length), // 默认9
+        count: 6 - Number(that.goodsList[pindex].cosimgList.length), // 默认9
         sizeType: ["original"], // 可以指定是原图还是压缩图，默认二者都有
         sourceType: ["album", "camera"], // 可以指定来源是相册还是相机，默认二者都有
         success: res => {
@@ -305,69 +305,75 @@ export default class GoodsReviews extends wepy.page {
           for (let i = 0; i < tempFilePaths.length; i++) {
             uploadFile(tempFilePaths[i]).then(data => {
               console.log("对象存储图片", data);
-              if (that.cosimgList.length > 6) return;
-              that.cosimgList.push(data);
-              console.log(that.cosimgList);
+              if (that.goodsList[pindex].cosimgList.length > 6) return;
+              that.goodsList[pindex].cosimgList.push(data);
+              console.log(that.goodsList[pindex].cosimgList);
               that.$apply();
             });
           }
-          if (that.cosimgList.length > 6) {
-            that.cosimgList = that.cosimgList.slice(0, 6);
+          if (that.goodsList[pindex].cosimgList.length > 6) {
+            that.goodsList[pindex].cosimgList = that.cosimgList.slice(0, 6);
           }
         }
       });
     },
     //获取文字信息
     textVal(e) {
-      this.textMsg[e.currentTarget.dataset.num] = e.detail.value;
+      let pindex = e.currentTarget.dataset.pindex;
+      this.goodsList[pindex].textMsg = e.detail.value;
     },
-    clearImg(idx) {
-      console.log(idx);
-      this.cosimgList.splice(idx, 1);
+    clearImg(e) {
+      let index = e.currentTarget.dataset.index;
+      let pindex = e.currentTarget.dataset.pindex;
+      this.goodsList[pindex].cosimgList.splice(index, 1);
       this.$apply();
     },
     //提交评价
-    comfir(item, idx) {
-      // console.log(item)
-      // console.log(this.order)
-      // console.log(this.textMsg)
-      // return
-      this.sendGoodcommit(item, idx);
-      // wx.navigateTo({
-      //   url: "./assessed"
-      // });
+    comfir(idx) {
+      this.sendGoodcommit(idx);
     }
   };
-  async sendGoodcommit(item, idx) {
-    if (!this.textMsg[idx]) {
-      return wx.showToast({
-        title: "请填写评论",
-        icon: "none",
-        duration: 2000
-      });
-    }
-    this.commentList = [];
-    let send = {
-      goods_id: item.goods_id,
-      order_id: this.order.order_id,
-      order_no: this.order.order_sn,
-      content: this.textMsg[idx],
-      goods_type: "real",
-      geval_image: this.cosimgList,
-      score: this.Att
-    };
-    console.log(send);
-    const res = await shttp
-      .post(`/api/v2/member/goodsevaluate`)
-      .send({
+  onShow() {}
+  onLoad(options) {
+    this.order = JSON.parse(decodeURIComponent(options.commitList));
+    this.goodsList = this.goodsList.concat(this.order.order_goods);
+
+    this.goodsList.forEach(element => {
+      element.stars = [0, 1, 2, 3, 4];
+      element.key = 0;
+      element.Att = 5;
+      element.cosimgList = [];
+      element.textMsg = null;
+    });
+    console.log(this.goodsList);
+  }
+  sendGoodcommit(pindex) {
+    // if (!item.textMsg) {
+    //   return wx.showToast({
+    //     title: "请填写评论",
+    //     icon: "none",
+    //     duration: 2000
+    //   });
+    // }
+    this.goodsList.forEach(item => {
+      let send = {
         goods_id: item.goods_id,
         order_id: this.order.order_id,
         order_no: this.order.order_sn,
-        content: this.textMsg[idx],
+        content: item.textMsg,
         goods_type: "real",
-        geval_image: this.cosimgList,
-        score: this.Att
-      })
+        geval_image: item.cosimgList,
+        score: item.Att
+      };
+      this.sendPost(send);
+    });
+
+    this.$apply();
+  }
+  async sendPost(send) {
+    const res = await shttp
+      .post(`/api/v2/member/goodsevaluate`)
+      .send(send)
       .end();
     if (res.status == 0) {
       wx.showToast({
@@ -382,26 +388,7 @@ export default class GoodsReviews extends wepy.page {
         icon: "none",
         duration: 2000
       });
-    } else {
-      wx.showToast({
-        title: "评价失败",
-        icon: "none",
-        duration: 2000
-      });
     }
-    this.$apply();
-  }
-  onShow() {}
-  onLoad(options) {
-    this.order = JSON.parse(decodeURIComponent(options.commitList));
-    this.goodsList = this.goodsList.concat(this.order.order_goods);
-
-    this.goodsList.forEach(element => {
-      element.stars = [0, 1, 2, 3, 4];
-      element.key = 0;
-      element.Att = 5;
-    });
-    console.log(this.goodsList);
   }
   events = {};
 }

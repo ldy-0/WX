@@ -81,7 +81,7 @@
       </repeat>
     </view>
     <!--暂无数据显示-->
-    <placeholder :show.sync="is_empty" message="还没有优惠券"></placeholder>
+    <placeholder :show.sync="is_empty" message="还没有收藏呢"></placeholder>
   </view>
 </template>
 
@@ -109,18 +109,20 @@ export default class CollectList extends wepy.page {
     placeholder: Placeholder
   };
 
-  onLoad(options) {
-    //获取收藏列表
-    this.getcollectList();
-    this.$apply();
-  }
+  onLoad(options) {}
   //上拉加载更多
   onReachBottom() {
     this.page = this.page + 1;
     //获取收藏列表
     this.getcollectList();
   }
-  onShow() {}
+  onShow() {
+    //获取收藏列表
+    this.collectList = [];
+    this.page = 1;
+    this.getcollectList();
+    this.$apply();
+  }
   //获取收藏列表
   async getcollectList() {
     wx.showLoading({

@@ -154,7 +154,13 @@ export default class GoodsList extends wepy.page {
       wx.navigateTo({
         url: `./goodsDetails?goods_commonid=${id}`
       });
-    }
+    },
+    //进入团购商品详情
+    groupDetail(id) {
+      wx.navigateTo({
+        url: `./goodsDetails?goods_commonid=${id}&type=group`
+      });
+    },
   };
   async getgoodsList() {
     const res = await shttp
