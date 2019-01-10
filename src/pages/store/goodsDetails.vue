@@ -772,7 +772,6 @@ page {
         </view>
       </view>
     </view>
-    <backTop>
       <view>
         <view class="swiper-box">
           <swiper
@@ -942,7 +941,6 @@ page {
           <view class="space"></view>
         </view>
       </view>
-    </backTop>
     <view class="bottom_bar">
       <view class="icon">
         <navigator open-type="switchTab" url="/pages/home" hover-class="none">
@@ -999,7 +997,6 @@ import wepy from "wepy";
 import { shttp } from "../../utils/http";
 import { getCode } from "../../utils/user-tools";
 import getTimes from "../../utils/formatedate.js";
-import backTop from "../../components/backTop";
 import dayjs from "dayjs";
 import timer from "../../utils/wxTimer";
 import {
@@ -1068,7 +1065,6 @@ export default class GoodsDetails extends wepy.page {
   };
 
   components = {
-    backTop
   };
   methods = {
     onShareAppMessage: function(res) {

@@ -307,7 +307,7 @@
           class="msgtext"
           bindinput="textVal"
           maxlength="140"
-          placeholder=""
+          placeholder
           placeholder-style="font-size: 28rpx; color:#f5f5f5"
         />
       </view>
@@ -480,6 +480,7 @@ export default class FirmOrder extends wepy.page {
       showFailToast("缺少收货地址");
       return;
     }
+    console.log(this.is_pintuan);
     let params = {};
     params = {
       cart_id: this.cart_id, //goods_id|num
@@ -508,7 +509,7 @@ export default class FirmOrder extends wepy.page {
       let order_id = res.data.order_id;
       let pintuangroup_id = res.data.pintuan_id;
       let failUrl = `/pages/store/orderdetail?orderId=${order_id}`;
-      let that = this;
+      let is_pintuan = this.is_pintuan;
       wx.requestPayment({
         timeStamp: res.data.timeStamp,
         nonceStr: res.data.nonceStr,
@@ -518,13 +519,22 @@ export default class FirmOrder extends wepy.page {
         success: function(res) {
           console.log("支付成功返回的结果");
           console.log(res);
-          if (that.is_pintuan == 1) {
-            wx.reLaunch({
-              url: `./bought?id=${order_id}&orderType=group&ptId=${pintuangroup_id}`
+          // if (is_pintuan == 1) {
+          //   wx.reLaunch({
+          //     url: `/pages/store/bought?id=${order_id}&orderType=group&ptId=${pintuangroup_id}`
+          //   });
+          // } else {
+          //   wx.reLaunch({
+          //     url: `/pages/store/bought?id=${order_id}&orderType=normal`
+          //   });
+          // }
+          if (is_pintuan == 1) {
+            wx.redirectTo({
+              url: `/pages/store/bought?id=${order_id}&orderType=group&ptId=${pintuangroup_id}`
             });
           } else {
-            wx.reLaunch({
-              url: `./bought?id=${order_id}&orderType=normal`
+            wx.redirectTo({
+              url: `/pages/store/bought?id=${order_id}&orderType=normal`
             });
           }
         },
@@ -535,7 +545,7 @@ export default class FirmOrder extends wepy.page {
             duration: 2000
           });
           that.isclick = false;
-          if (that.is_pintuan == 1) {
+          if (is_pintuan == 1) {
             console.log(res);
           } else {
             wx.redirectTo({

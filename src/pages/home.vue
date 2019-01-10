@@ -277,6 +277,11 @@
   white-space: nowrap;
   background: #fff;
 }
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  color: transparent;
+}
 .viewX-item {
   width: 320rpx;
   height: 500rpx;

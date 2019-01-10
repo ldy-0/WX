@@ -343,7 +343,7 @@ export default class GoodsReviews extends wepy.page {
       element.key = 0;
       element.Att = 5;
       element.cosimgList = [];
-      element.textMsg = null;
+      element.textMsg = "";
     });
     console.log(this.goodsList);
   }

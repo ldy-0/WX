@@ -313,6 +313,8 @@ export default class GroupbuyDatail extends wepy.page {
           });
           wxTimer1.start(this);
           this.wxTimer1 = wxTimer1;
+        }else {
+          this.details.pintuangroup_state = 0;
         }
       }
     }
