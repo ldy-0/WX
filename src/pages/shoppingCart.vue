@@ -21,7 +21,7 @@
   display: flex;
   justify-content: space-between;
   line-height: 88rpx;
-  padding: 0 30rpx;
+  padding: 0 20rpx;
   color: #000;
   background: #ffffff;
 }
@@ -40,8 +40,8 @@
   justify-content: center;
   width: 40rpx;
   height: 40rpx;
-  margin-right: 10rpx;
-  border: 1rpx solid #282425;
+  margin-right: 20rpx;
+  border: 1rpx solid #999999;
   border-radius: 50%;
 }
 .big_circle .fill_circle {
@@ -53,16 +53,17 @@
 
 .item {
   display: flex;
-  justify-content: space-around;
   align-items: center;
   height: 250rpx;
   border-top: 1rpx solid #eeeeee;
   background: #fff;
+  padding: 0 20rpx;
 }
-.item image {
+.goodsImg {
   width: 180rpx;
   height: 180rpx;
   border-radius: 10rpx;
+  margin-right: 30rpx;
 }
 .item .info {
   position: relative;
@@ -80,46 +81,46 @@
   width: 180rpx;
   line-height: 44rpx;
   border-radius: 22rpx;
-  font-size: 37rpx;
+  font-size: 32rpx;
   color: #dd3d27;
   text-align: left;
 }
-.item .info .number_wrap {
+ .number_wrap {
   position: absolute;
-  bottom: 0rpx;
+  bottom: 10rpx;
   right: 26rpx;
   display: flex;
-  line-height: 50rpx;
-  text-align: center;
+  height: 64rpx;
+  border: solid 1rpx #d3d3d3;
+  border-radius: 5rpx;
 }
-.item .info .number_wrap .minus,
-.item .info .number_wrap .add {
-  width: 50rpx;
-  height: 50rpx;
-  color: #888;
-  background: #eeeeee;
-}
-.item .info .number_wrap .minus image,
-.item .info .number_wrap .add image {
-  width: 25rpx;
-}
-.item .info .number_wrap .minus {
+.minus,
+.add {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 82rpx;
 }
-.item .info .number_wrap .minus image {
+.minus-bg {
+  background-color: #f8f8f8;
+}
+.icon_minus {
+  width: 19rpx;
   height: 2rpx;
 }
-.item .info .number_wrap .add image {
-  height: 25rpx;
+.icon_add {
+  width: 20rpx;
+  height: 20rpx;
 }
-.item .info .number_wrap .number {
-  width: 90rpx;
-  color: #202020;
-  border-left: 1rpx solid #fff;
-  border-right: 1rpx solid #fff;
-  background: #eeeeee;
+.number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  width: 80rpx;
+  color: #333;
+  border-left: 1rpx solid #d3d3d3;
+  border-right: 1rpx solid #d3d3d3;
 }
 
 .bottomBar {
@@ -227,15 +228,23 @@
 }
 .item_view {
   width: 210rpx;
-	height: 66rpx;
+  height: 66rpx;
   margin: 0 auto;
   margin-top: 100rpx;
-	border-radius: 8rpx;
+  border-radius: 8rpx;
   text-align: center;
   line-height: 66rpx;
-	border: solid 1rpx #f17f30;
+  border: solid 1rpx #f17f30;
   color: #f17f30;
   font-size: 28rpx;
+}
+.desc {
+  font-size: 28rpx;
+  color: #333;
+}
+.desc2 {
+  font-size: 24rpx;
+  color: #999;
 }
 </style>
 
@@ -258,17 +267,21 @@
             <view class="big_circle" @tap="check({{index}})">
               <view class="{{tableData[index].active ? 'fill_circle' : ''}}"></view>
             </view>
-            <image src="{{item.goods_image||item.pgoods_image}}" mode="aspectFill">
+            <image class="goodsImg" src="{{item.goods_image}}" mode="aspectFill">
             <view class="info">
-              <view class="desc">{{item.goods_name||item.pgoods_name}}</view>
-              <view class="price">¥{{item.goods_price|| item.pgoods_price}}</view>
+              <view class="desc">{{item.goods_name}}</view>
+              <view class="price">
+                <view class="desc2">{{item.goods_spec?item.goods_spec:'统一规格'}}</view>
+                <text style="font-size:26rpx">¥</text>
+                {{item.goods_price}}
+              </view>
               <view class="number_wrap">
-                <view class="minus" @tap="minus({{item}})">
-                  <image src="../images/icon_jian@2x.png">
+                <view class="minus {{item.goods_num==1?'minus-bg':''}}" @tap="minus({{item}})">
+                  <image class="icon_minus " src="../images/icon_jian@2x.png">
                 </view>
-                <view class="number">{{item.goods_num||item.pgoods_choosenum}}</view>
+                <view class="number">{{item.goods_num}}</view>
                 <view class="add" @tap="add({{item}})">
-                  <image src="../images/icon_jia@2x.png">
+                  <image class="icon_add" src="../images/icon_jia@2x.png">
                 </view>
               </view>
             </view>
@@ -290,9 +303,7 @@
     <view class="empty-placeholder row-center" wx:if="{{is_empty}}">
       <image class="icon-xl" src="../images/null_car@2x.png">
       <view class="txt">您的购物车有点寂寞</view>
-      <navigator open-type="switchTab" url="/pages/classify" class="item_view">
-        去逛一下
-      </navigator>
+      <navigator open-type="switchTab" url="/pages/classify" class="item_view">去逛一下</navigator>
     </view>
   </view>
 </template>
@@ -596,13 +607,8 @@ export default class ShoppingCart extends wepy.page {
     if (arr.length == 0) return;
     //进行数量和价格的汇总计算
     arr.forEach(element => {
-      if (element.pgoods_choosenum) {
-        this.countItem += element.pgoods_choosenum;
-        this.allMoney = this.allMoney + element.goods_price * element.goods_num;
-      } else {
-        this.countItem += Number(element.goods_num);
-        this.allMoney = this.allMoney + element.goods_price * element.goods_num;
-      }
+      this.countItem += Number(element.goods_num);
+      this.allMoney = this.allMoney + element.goods_price * element.goods_num;
     });
     this.allMoney = this.allMoney.toFixed(2);
     this.$apply();

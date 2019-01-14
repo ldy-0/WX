@@ -303,13 +303,7 @@
       </view>
       <view class="coupon-box">
         <text>备注：</text>
-        <textarea
-          class="msgtext"
-          bindinput="textVal"
-          maxlength="140"
-          placeholder
-          placeholder-style="font-size: 28rpx; color:#f5f5f5"
-        />
+        <textarea class="msgtext" bindinput="textVal" maxlength="140"/>
       </view>
       <view
         @tap="discountBtn"
@@ -344,8 +338,8 @@
                 <view class="discount-infoPrice">¥
                   <text>{{coupon.voucher_price}}</text>
                 </view>
-                <view style="text-align: center;">有效期至：
-                  <text>{{coupon.voucher_enddate}}</text>
+                <view style="text-align: center;">
+                  <text>{{coupon.voucher_startdate}} ~ {{coupon.voucher_enddate}}</text>
                 </view>
                 <view style="text-align: center;">无门槛使用</view>
               </view>
@@ -510,6 +504,7 @@ export default class FirmOrder extends wepy.page {
       let pintuangroup_id = res.data.pintuan_id;
       let failUrl = `/pages/store/orderdetail?orderId=${order_id}`;
       let is_pintuan = this.is_pintuan;
+      let that =this
       wx.requestPayment({
         timeStamp: res.data.timeStamp,
         nonceStr: res.data.nonceStr,
@@ -539,18 +534,30 @@ export default class FirmOrder extends wepy.page {
           }
         },
         fail: function(res) {
-          wx.showToast({
-            title: "支付失败",
-            icon: "none",
-            duration: 2000
-          });
-          that.isclick = false;
-          if (is_pintuan == 1) {
-            console.log(res);
+          if (that.price == "0") {
+            if (is_pintuan == 1) {
+              wx.redirectTo({
+                url: `/pages/store/bought?id=${order_id}&orderType=group&ptId=${pintuangroup_id}`
+              });
+            } else {
+              wx.redirectTo({
+                url: `/pages/store/bought?id=${order_id}&orderType=normal`
+              });
+            }
           } else {
-            wx.redirectTo({
-              url: failUrl
+            wx.showToast({
+              title: "支付失败",
+              icon: "none",
+              duration: 2000
             });
+            that.isclick = false;
+            if (is_pintuan == 1) {
+              console.log(res);
+            } else {
+              wx.redirectTo({
+                url: failUrl
+              });
+            }
           }
         }
       });
@@ -662,6 +669,10 @@ export default class FirmOrder extends wepy.page {
       res.data.forEach((element, idx) => {
         element.voucher_enddate = getTimes.formatTime(
           element.voucher_enddate * 1000,
+          "Y-M-D"
+        );
+        element.voucher_startdate = getTimes.formatTime(
+          element.voucher_startdate * 1000,
           "Y-M-D"
         );
       });

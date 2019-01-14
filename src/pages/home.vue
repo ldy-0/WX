@@ -351,7 +351,7 @@
   font-size: 26rpx;
 }
 .coupons-txt3 {
-  font-size: 24rpx;
+  font-size: 20rpx;
 }
 </style>
 
@@ -426,7 +426,7 @@
                 <text>￥</text>{{item.vouchertemplate_price}}
               </view>
               <view class="coupons-txt2">无门槛使用</view>
-              <view class="coupons-txt3">有效期至：{{item.vouchertemplate_enddate}}</view>
+              <view class="coupons-txt3">{{item.vouchertemplate_startdate}} ~ {{item.vouchertemplate_enddate}}</view>
             </view>
           </view>
         </repeat>

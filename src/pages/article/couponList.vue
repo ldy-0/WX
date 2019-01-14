@@ -59,7 +59,7 @@
               {{item.vouchertemplate_price}}
             </view>
             <view class="coupons-txt2">无门槛使用</view>
-            <view class="coupons-txt3">有效期至：{{item.vouchertemplate_enddate}}</view>
+            <view class="coupons-txt3">{{item.vouchertemplate_startdate}} ~ {{item.vouchertemplate_enddate}}</view>
           </view>
         </view>
       </repeat>
@@ -76,7 +76,7 @@
               {{item.voucher_price}}
             </view>
             <view class="coupons-txt2">无门槛使用</view>
-            <view class="coupons-txt3">有效期至：{{item.voucher_enddate}}</view>
+            <view class="coupons-txt3">{{item.voucher_startdate}} ~ {{item.voucher_enddate}}</view>
           </view>
         </view>
       </repeat>
@@ -155,6 +155,10 @@ export default class CouponList extends wepy.page {
           res.data.forEach(item => {
             item.voucher_enddate = getTimes.formatTime(
               item.voucher_enddate * 1000,
+              "Y-M-D"
+            );
+            item.voucher_startdate = getTimes.formatTime(
+              item.voucher_startdate * 1000,
               "Y-M-D"
             );
           });

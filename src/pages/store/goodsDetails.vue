@@ -910,7 +910,7 @@ page {
         </view>
         <view class="comment" wx:if="{{comment[0]}}">
           <view class="comment-top">
-            <view>宝贝评价({{comment.pagination.total}})</view>
+            <view>宝贝评价({{comment.length}})</view>
             <view class="more_btn" @tap="goComment" data-goodid="{{goods.SKUList[0].goods_id}}">
               <text>查看全部</text>
               <image class="more_btnImg" src="../../images/icon_chakanquanbu@2x.png">
