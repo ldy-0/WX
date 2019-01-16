@@ -503,8 +503,9 @@ export default class FirmOrder extends wepy.page {
       let order_id = res.data.order_id;
       let pintuangroup_id = res.data.pintuan_id;
       let failUrl = `/pages/store/orderdetail?orderId=${order_id}`;
+      let pay_sn = res.data.pay_sn;
       let is_pintuan = this.is_pintuan;
-      let that =this
+      let that = this;
       wx.requestPayment({
         timeStamp: res.data.timeStamp,
         nonceStr: res.data.nonceStr,
@@ -552,7 +553,7 @@ export default class FirmOrder extends wepy.page {
             });
             that.isclick = false;
             if (is_pintuan == 1) {
-              console.log(res);
+              that.changerOrder(order_id, pay_sn);
             } else {
               wx.redirectTo({
                 url: failUrl
@@ -725,6 +726,12 @@ export default class FirmOrder extends wepy.page {
     }
 
     this.$apply();
+  }
+  async changerOrder(id, pay_sn ) {
+    const res = await shttp
+      .put(`/api/v2/member/orderstate/${id}`)
+      .send({ state_type: "order_cancel", pay_sn: pay_sn })
+      .end();
   }
   async discountSure() {
     setTimeout(() => {

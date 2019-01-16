@@ -492,7 +492,9 @@ export default class Classify extends wepy.page {
     this.$apply();
   }
 
-  async onLoad() {
+  onLoad() {}
+  onShow() {
+    this.page = 1;
     wx.showLoading({
       title: "加载中"
     });
@@ -505,6 +507,7 @@ export default class Classify extends wepy.page {
     });
     this.classList = [];
     this.checkedList = [];
+    this.goodsList = [];
     this.page = 1;
     let res = await shttp.get(`/api/v2/member/storegc/1`).end();
     if (res.status === 0) {
