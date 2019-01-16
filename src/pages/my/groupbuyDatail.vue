@@ -375,7 +375,7 @@ export default class GroupbuyDatail extends wepy.page {
     content.setFontSize(14);
     content.fillText("￥", 20, 380);
     content.setFontSize(21);
-    content.fillText(this.details.goodsinfo.goods_price, 32, 380);
+    content.fillText(this.details.rule.goods_price, 32, 380);
     content.fillStyle = "#b9b9b9";
     content.setTextAlign("center");
     content.setFontSize(6);
