@@ -1584,11 +1584,12 @@ export default class GoodsDetails extends wepy.page {
           let second = dayjs(endTime).diff(dayjs(startTime), "second");
           second -= diffminute;
           let beginTime = hour + ":" + minute + ":" + second;
+          let that = this
           var wxTimer1 = new timer({
             beginTime: beginTime,
             name: "wxTimer1",
             complete: function() {
-              this.pintuanDetails.pintuangroup_state = 0;
+              that.pintuanDetails.pintuangroup_state = 0;
             }
           });
           wxTimer1.start(this);

@@ -195,7 +195,6 @@
   margin-bottom: 20rpx;
   background: #feaa26;
 }
-
 </style>
 
 
@@ -239,9 +238,11 @@
       </view>
 
       <view class="btn-box">
-        <view class="groupon-btn" @tap="getQT" wx:if="{{!share}}">专属海报</view>
-
-        <view class="groupon-btn" @tap="goOrder" wx:if="{{!share}}">查看订单</view>
+        <view class="groupon-btn" @tap="getQT" wx:if="{{details.pintuangroup_state == 1}}">专属海报</view>
+        <view
+          class="groupon-btn"
+          @tap="goOrder"
+        >查看订单</view>
         <view class="groupon-btn" @tap="gohome">继续逛逛</view>
       </view>
     </view>
@@ -270,7 +271,7 @@ export default class GroupbuyDatail extends wepy.page {
     wxTimer1: null,
     pintuanId: null,
     isShowQT: false,
-    rankNum: null,
+    rankNum: null
   };
   components = {};
 
@@ -304,16 +305,17 @@ export default class GroupbuyDatail extends wepy.page {
           let second = dayjs(endTime).diff(dayjs(startTime), "second");
           second -= diffminute;
           let beginTime = hour + ":" + minute + ":" + second;
+          let that = this 
           var wxTimer1 = new timer({
             beginTime: beginTime,
             name: "wxTimer1",
             complete: function() {
-              this.details.pintuangroup_state = 0;
+              that.details.pintuangroup_state = 0;
             }
           });
           wxTimer1.start(this);
           this.wxTimer1 = wxTimer1;
-        }else {
+        } else {
           this.details.pintuangroup_state = 0;
         }
       }
@@ -347,7 +349,7 @@ export default class GroupbuyDatail extends wepy.page {
         height: 275
       },
       content
-    );    
+    );
     const res = await shttp
       .post("/api/v2/member/wxcode")
       .send({

@@ -492,9 +492,11 @@ export default class OrderList extends wepy.page {
   //取消订单  1虚拟 //订单状态,order_cancel:取消订单,order_receive:收货,order_delete:删除订单
   async orderCancel(e) {
     this.changerIndex = e.currentTarget.dataset.index;
+    let id = e.currentTarget.dataset.id
     let send;
     let pay_sn = e.currentTarget.dataset.paysn;
     send = {
+      order_id: id,
       pay_sn: pay_sn,
       state_type: "order_cancel"
     };

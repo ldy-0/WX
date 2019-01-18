@@ -379,7 +379,7 @@ export default class FirmOrder extends wepy.page {
   };
   data = {
     //地址
-    address: {},
+    address: null,
     // 购物车所有商品的规格Id
     skuIds: "",
     //要买的商品列表
@@ -418,7 +418,6 @@ export default class FirmOrder extends wepy.page {
     //进来就获取商城支付方式（固定）
     //下面判断商品来源
     this.type = option.type;
-    this.getDefaultAddress();
     if (option.type == "nocart") {
       let goods = JSON.parse(decodeURIComponent(option.goods));
       this.goodsList.push(goods);
@@ -573,19 +572,14 @@ export default class FirmOrder extends wepy.page {
 
   onShow() {
     this.isclick = false; //这里控制订单提交点击次数
-    // let address = wx.getStorageSync("address");
-    // if (address) {
-    //   this.address = address;
-    //   wx.removeStorageSync("address");
-    //   this.closeAccount();
-    // } else {
-    //   wx.showToast({
-    //     title: "请添加收货地址",
-    //     icon: "none",
-    //     duration: 2000
-    //   });
-    // }
-    this.getDefaultAddress();
+    let address = wx.getStorageSync("address");
+    if (address) {
+      this.address = address;
+      this.closeAccount();
+    } else {
+      this.getDefaultAddress();
+    }
+
     this.getCouponList();
   }
   //获取默认地址
@@ -603,6 +597,9 @@ export default class FirmOrder extends wepy.page {
           this.closeAccount();
         }
       });
+      if (this.address == null) {
+        this.address = res.data[0];
+      }
     } else {
       wx.showToast({
         title: "请填写收货地址",
@@ -727,7 +724,7 @@ export default class FirmOrder extends wepy.page {
 
     this.$apply();
   }
-  async changerOrder(id, pay_sn ) {
+  async changerOrder(id, pay_sn) {
     const res = await shttp
       .put(`/api/v2/member/orderstate/${id}`)
       .send({ state_type: "order_cancel", pay_sn: pay_sn })
