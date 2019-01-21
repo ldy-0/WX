@@ -599,6 +599,7 @@ export default class FirmOrder extends wepy.page {
       });
       if (this.address == null) {
         this.address = res.data[0];
+        this.closeAccount();
       }
     } else {
       wx.showToast({

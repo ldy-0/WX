@@ -510,7 +510,7 @@ export default class Classify extends wepy.page {
     this.goodsList = [];
     this.page = 1;
     let res = await shttp.get(`/api/v2/member/storegc/1`).end();
-    if (res.status === 0) {
+    if (res.status === 0 && res.data.length != 0) {
       res.data.forEach((v, i) => {
         this.classList.push(v);
         this.checkedList[i] = false;
