@@ -1261,15 +1261,23 @@ export default class GoodsDetails extends wepy.page {
   //商品详情
   async goodsDetails(id) {
     const res = await shttp.get(`/api/v2/member/goodscommon/${id}`).end();
-    this.goods = res.data;
-    this.goods.goods_salenum = this.goods.SKUList[0].goods_salenum;
-    this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
-    if (res.data.spec_value) {
-      this.standards = res.data.spec_value;
-    } else {
-      this.standards = ["统一规格"];
+    if(res.status == 0){
+      this.goods = res.data;
+      this.goods.goods_salenum = this.goods.goods_faker_salenum?this.goods.goods_faker_salenum:0
+      if(this.goods.SKUList.length>0){
+        this.goods.SKUList.forEach(item => {
+           this.goods.goods_salenum += item.goods_salenum;
+        });
+        this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
+      }
+      if (res.data.spec_value) {
+        this.standards = res.data.spec_value;
+      } else {
+        this.standards = ["统一规格"];
+      }
+      this.getComment(this.goods.SKUList[0].goods_id);
     }
-    this.getComment(this.goods.SKUList[0].goods_id);
+
     wx.hideLoading();
     this.$apply();
   }

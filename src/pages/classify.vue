@@ -1,15 +1,19 @@
-<style scoped>
+<style>
 page {
   background: #fff;
 }
+</style>
+<style scoped>
 .container {
   height: 100%;
+  background: #fff;
   font: 28rpx PingFang-SC-Medium;
 }
 
 .wrap {
   display: flex;
   margin-top: 96rpx;
+  background: #fff;
 }
 .wrap .class_list {
   position: fixed;
@@ -25,6 +29,7 @@ page {
   text-align: center;
   box-sizing: border-box;
   border-right: 1rpx solid #eeeeee;
+  background: #fff;
 }
 .wrap .class_list .class_item {
   line-height: 54rpx;
@@ -41,11 +46,10 @@ page {
   color: #f17f30;
 }
 .wrap .content_wrap {
-  width: 578rpx;
   margin-left: 170rpx;
 }
 .wrap .content_wrap .row {
-  width: 578rpx;
+  /* width: 578rpx; */
   padding: 0rpx 26rpx;
   height: 200rpx;
   font-size: 28prx;
