@@ -6,16 +6,16 @@
  */
 
 const BASE_URL_LOCAL = "http://127.0.0.1:3010";
-const BASE_URL_DEVELOPMENT = "https://test10.healthsource.com.cn"; //测试(以实际开发api文档为准)
+const BASE_URL_DEVELOPMENT = "https://test1.healthsource.com.cn"; //测试(以实际开发api文档为准)
 const BASE_URL_PRODUCTION = "https://www.lqstudio.cn"; //正式服(以实际开发api文档为准)
 const LOGINAPI = "/api/v2/member/login"; //登录接口(以实际开发api文档为准)
 
 //腾讯云对象存储参数配置
 const OSSPARAMETER = {
-  bucket: 'enshinongbo', //存储桶名称
-  appid: '1258024306', //腾讯云中项目APPID
-  sid: 'AKIDb6dfcV0oE710DKv6ygt0ynRFxVs5stRn', //SecretId
-  skey: 'X3Uo5DE4lHmPr9HLH4lJI6kKpJdml59g', //SecretKey
+  bucket: 'wxclassroom', //存储桶名称
+  appid: '1253114089', //腾讯云中项目APPID
+  sid: 'AKIDSnxwjKoWs20mMmTvUs43pTvdEesu7QuG', //SecretId
+  skey: 'INGzWJyRimjWGpaGk1A6qNiroY7pNjKl', //SecretKey
   region: 'sh',//对象存储所属地域
 };
 
