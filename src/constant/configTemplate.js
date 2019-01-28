@@ -7,7 +7,7 @@
 
 const BASE_URL_LOCAL = "http://127.0.0.1:3010";
 const BASE_URL_DEVELOPMENT = "https://test1.healthsource.com.cn"; //测试(以实际开发api文档为准)
-const BASE_URL_PRODUCTION = "https://www.lqstudio.cn"; //正式服(以实际开发api文档为准)
+const BASE_URL_PRODUCTION = "https://test1.healthsource.com.cn"; //正式服(以实际开发api文档为准)
 const LOGINAPI = "/api/v2/member/login"; //登录接口(以实际开发api文档为准)
 
 //腾讯云对象存储参数配置
