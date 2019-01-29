@@ -95,8 +95,8 @@
 .header-item_title {
   height: 76rpx;
   text-align: center;
-  color: #656565;
-  font-size: 32rpx;
+  color: #555;
+  font-size: 28rpx;
   line-height: 76rpx;
 }
 
@@ -108,13 +108,14 @@
 }
 
 .active .header-item_title {
-  color: #f17f30 !important;
+  font-size: 34rpx;
+  color: #10325f !important;
 }
 
 .active .header-item_line:before {
   content: "";
   width: 30rpx;
-  background-color: #f17f30;
+  background-color: #10325f;
   height: 4rpx;
 }
 </style>

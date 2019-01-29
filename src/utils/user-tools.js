@@ -35,7 +35,7 @@ const signIn = async (getUserInfo = false, shareId = "") => {
     });
   }
   if (shareId) {
-    userInfo.memberId = shareId;
+    userInfo.share_id = shareId;
   }
   if (codeInfo.status) {
     userInfo.code = codeInfo.code;

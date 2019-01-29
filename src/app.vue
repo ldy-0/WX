@@ -16,6 +16,18 @@ export default class extends wepy.app {
     pages: [
       "pages/authorization", //授权页
       "pages/home", //首页
+      "pages/store/store", // store Detail/门店详情
+      "pages/store/about", // store about/关于门店
+      "pages/select/stylist", // select stylist/选择发型师
+      "pages/select/time", // select tiem/预约时间
+      "pages/select/phone", // select phone/预约手机号
+      "pages/order/submit", // order submit/提交订单
+      "pages/order/success", // order success/下单成功
+      "pages/order/orderList", // order orderList/订单列表
+      "pages/order/detail", // order detail/订单列表
+      "pages/order/refundReason", // order refundReason/退款原因
+      "pages/order/refundSuccess", // order refundSuccess/退款成功
+      "pages/order/assess", // order assess/评价
       "pages/classify", //商品分类
       "pages/shoppingCart", //购物车
       "pages/mine", //我的
@@ -68,39 +80,36 @@ export default class extends wepy.app {
     },
     tabBar: {
       color: "#8e8e8e",
-      selectedColor: "#f17f30",
+      selectedColor: "#10325f",
       backgroundColor: "#ffffff",
       borderStyle: "block",
       list: [
         {
           pagePath: "pages/home",
           text: "首页",
-          iconPath: "./images/tab_shouye@2x.png",
-          selectedIconPath: "./images/tab_shouye_hl@2x.png"
+          iconPath: "./images/home.png",
+          selectedIconPath: "./images/home_sel.png"
         },
         {
-          pagePath: "pages/classify",
-          text: "分类",
-          iconPath: "./images/tab_fenlei@2x.png",
-          selectedIconPath: "./images/tab_fenlei_hl@2x.png"
-        },
-        {
-          pagePath: "pages/shoppingCart",
-          text: "购物车",
-          iconPath: "./images/tab_gouwuche@2x.png",
-          selectedIconPath: "./images/tab_gouwuche_hl@2x.png"
+          pagePath: "pages/order/orderList",
+          text: "订单",
+          iconPath: "./images/order.png",
+          selectedIconPath: "./images/order_sel.png"
         },
         {
           pagePath: "pages/mine",
           text: "我的",
-          iconPath: "./images/tab_wode@2x.png",
-          selectedIconPath: "./images/tab_wode_hl@2x.png"
+          iconPath: "./images/my.png",
+          selectedIconPath: "./images/my_sel.png"
         }
       ]
     },
     networkTimeout: {
       request: 10000,
       downloadFile: 10000
+    },
+    permission: {
+      'scope.userLocation': { desc: 'location' }
     }
   };
   constructor() {
@@ -110,10 +119,11 @@ export default class extends wepy.app {
     this.use("promisify");
   }
 
-  async onLaunch() {
-    console.log("onLaunch");
+  async onLaunch(app) {
+    let id = wx.getStorageSync('shareId');
+    console.error("onLaunch", id, app.query.shareId);
     //微信用户登录换取token，并将token存入本地缓存中
-    const userInfo = await signIn(false);
+    const userInfo = await signIn(false, app.query.shareId);
     if (userInfo.status === 0) {
       let auth = userInfo.data.token;
       wx.setStorageSync("token", auth);
@@ -157,7 +167,7 @@ export default class extends wepy.app {
    * 设置全局变量
    */
   globalData = {
-    authorizationStyle: "1" //1: 强制需要用户微信信息和强制手机授权 //手机号验证白名单10987654321，验证码随意，如1111
+    authorizationStyle: "3" //1: 强制需要用户微信信息和强制手机授权 //手机号验证白名单10987654321，验证码随意，如1111
     //2：强制需要用户微信信息和不强制手机授权
     //3：强制需要用户微信信息和不需要手机授权
     //4：不强制需要用户微信信息和强制手机授权

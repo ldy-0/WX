@@ -1,6 +1,6 @@
 <template>
     <view class="empty-placeholder row-center" wx:if="{{show}}">
-        <image class="icon-xl" src="../images/c1@2x.png" />
+        <image class="icon-xl" src="../images/order/empty.png" />
         <view class="txt">{{message}}</view>
     </view>
 </template>
@@ -43,6 +43,6 @@ export default class Placeholder extends wepy.component {
 .txt {
   font-size: 26rpx;
   color: #848484;
-  margin-top: 26rpx;
+  margin-top: 30rpx;
 }
 </style>

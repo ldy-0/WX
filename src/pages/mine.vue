@@ -4,37 +4,32 @@ page {
 }
 </style>
 <style scoped>
-.nodata {
-  margin-top: 50%;
-  font-size: 38rpx;
-  text-align: center;
-}
 
 .container {
   background: #fff;
   height: 100vh;
 }
 
-.my {
+.user_wrap{
   position: relative;
   width: 100%;
   height: 272rpx;
-  z-index: 0;
 }
-.bg-img {
+.user_bg{
   width: 100%;
-  height: 272rpx;
+  height: 100%;
 }
-.my .head {
+
+.user_info{
   position: absolute;
   left: 60rpx;
-  top: 60rpx;
+  top: 80rpx;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #fff;
 }
-.my .head .user-img {
+.user_avatar{
+  flex-shrink: 0;
   width: 121rpx;
   height: 121rpx;
   border-radius: 50%;
@@ -42,10 +37,22 @@ page {
   text-align: center;
   overflow: hidden;
 }
-.my .head .login {
-  padding: 22rpx;
-  font-size: 32rpx;
+.user_name{
+  margin-left: 20rpx;
+  font-size: 30rpx;
 }
+
+.item{
+  padding: 30rpx;
+  border-bottom: 2rpx solid #e4e4e4;
+  font-size: 28rpx;
+}
+.clear{
+  line-height: 1;
+  border: none;
+}
+
+
 
 .my_manage {
   position: relative;
@@ -84,69 +91,46 @@ page {
   display: flex;
   align-items: center;
 }
-.flex image {
-  margin-left: 20rpx;
-}
 
 .arrow {
   width: 16rpx;
   height: 26rpx;
 }
 
-.column_around {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  width: 100%;
-  flex-direction: column;
-  height: 100%;
-  font-size: 24rpx;
-  color: #666666;
-}
-.column_around image {
-  width: 44rpx;
-  height: 38rpx;
-  margin-top: 30rpx;
-}
-.column_around view {
-  margin-bottom: 20rpx;
-}
 
-.row_between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-sizing: border-box;
-  line-height: 88rpx;
-  border: none;
-  background: #fff;
-  font-size: 28rpx;
-  color: #888;
-  border-bottom: 1rpx solid #f5f5f5;
-  padding: 0;
-  padding-right: 30rpx;
-}
 .icon {
   width: 30rpx;
   height: 30rpx;
   margin-right: 25rpx;
 }
-.btn-list {
-  margin-top: 20rpx;
-  margin-left: 30rpx;
+
+
+.between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
+.s-fc-1{ color: #fff; }
+.s-fc-2{ color: #222; }
+
+.s-bg-1{ background: #fff; }
 </style>
 
 <template>
   <view class="container">
-    <view class="my">
-      <image class="bg-img" src="../images/bg_2@2x.png">
-      <view class="head">
-        <open-data class="user-img" type="userAvatarUrl"></open-data>
-        <open-data class="content inputStyle login" type="userNickName" lang="zh_CN"></open-data>
+
+    <view class="user_wrap">
+      <image class="user_bg" src="../images/my/bg.png">
+      <view class="user_info s-fc-1">
+        <image class='user_avatar' src='{{user.wx_avatar}}' />
+        <view class='user_name'>{{user.wx_name}}</view>
+        <!-- <open-data class="user-img" type="userAvatarUrl"></open-data> -->
+        <!-- <open-data class="content inputStyle login" type="userNickName" lang="zh_CN"></open-data> -->
       </view>
     </view>
-    <view class="my_manage">
+
+    <!-- <view class="my_manage">
       <navigator class="my_manage_title" url="/pages/my/orderList?choiceTab=0">
         <view>我的订单</view>
         <view class="flex">
@@ -176,25 +160,30 @@ page {
           <view>售后</view>
         </navigator>
       </view>
-    </view>
-    <view class="btn-list">
-      <repeat for="{{list}}" item="item">
-        <navigator class="row_between" url="{{item.url}}">
+    </view> -->
+
+    <view class="s-fc-2">
+      <repeat for="{{list}}" item="item" wx:key='index'>
+
+        <navigator class="item between" url="{{item.url}}">
           <view class="flex">
             <image class="icon" src="{{item.img}}">
             <view>{{item.name}}</view>
           </view>
           <image class="arrow" src="../images/icon_you@2x.png">
         </navigator>
+
       </repeat>
-      <button class="row_between" open-type="contact" session-from="weapp" plain="true">
+
+      <button class="clear item between" open-type="contact" session-from="weapp" plain="true">
         <view class="flex">
-          <image class="icon" src="../images/icon_4_lianxikefu@2x.png">
+          <image class="icon" src="../images/my/connect.png">
           <view>联系客服</view>
         </view>
         <image class="arrow" src="../images/icon_you@2x.png">
       </button>
     </view>
+
   </view>
 </template>
 
@@ -208,49 +197,30 @@ export default class Mine extends wepy.page {
   };
   data = {
     isTime: false, //资讯入口封住
-    wxUserInfo: null,
+    user: null,
     list: [
       {
-        name: "我的团购",
-        url: "/pages/my/groupbuyList",
-        img: "../images/icon_tuangou@2x.png"
-      },
-      {
-        name: "我的收藏",
-        url: "/pages/my/collectList",
-        img: "../images/icon_4_wodeshoucang@2x.png"
-      },
-      {
-        name: "我的优惠券",
+        name: "抵扣券",
         url: "/pages/article/couponList?type=mine",
-        img: "../images/coupons@2x.png"
+        img: "../images/my/coupon.png"
       },
-      {
-        name: "地址管理",
-        url: "/pages/my/addressList",
-        img: "../images/icon_4_dizhiguanli@2x.png"
-      }
     ]
   };
 
   components = {};
 
   onLoad(options) {
-    //获取微信个人信息
-    this.wxUserInfo = wx.getStorageSync("wxUserInfo");
+    this.user = wx.getStorageSync("memberInfo");
   }
 
   onShow() {
-    //资讯隐藏分割=====
     let timestamp = Date.parse(new Date()) / 1000;
     console.log("时间戳");
     //定在8.18 18：6分
-    //console.log(timestamp-Number(1534586760))
     if (timestamp - Number(1534586760) > 86400) {
       this.isTime = true;
       this.$apply();
     }
-    //资讯隐藏分割
   }
   methods = {};
 }

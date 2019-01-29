@@ -86,13 +86,18 @@
   margin-right: 2%;
 }
 
+.swiper_wrap{
+  display: flex;
+  justify-content: center;
+}
 .swiper {
-  height: 400rpx;
+  width: 89%; /* 670/750 */
+  height: 336rpx; /* 336/1334 */
   background: #c6c6d1;
 }
 .swiper image {
   width: 100%;
-  height: 100%;
+  height: 100%; 
 }
 
 .tap_item {
@@ -348,33 +353,137 @@
 .coupons-txt3 {
   font-size: 24rpx;
 }
+
+/*  */
+.main{
+  font: 'PingFang-SC'; 
+  padding: 0 5%; /* 40/750 */
+}
+
+.title_wrap{
+  width: 100%;
+  margin: 60rpx 0 0;
+}
+.title{
+  font-size: 38rpx;
+}
+.sub_title{
+  margin: 10rpx 0 0;
+  font-size: 24rpx;
+}
+
+.store_list{
+  width: 100%;
+  margin: 20rpx 0 0;
+}
+.store_item{
+  width: 100%;
+  margin: 40rpx 0 0;
+  padding-bottom: 40rpx;
+  border-bottom: 2rpx solid #eee;
+}
+.store_img{
+  width: 100%;
+  height: 336rpx;
+  border-radius: 10rpx;
+  /* background: gray; */
+}
+.store_name{
+  height: 1.2em;
+  line-height: 1.2;
+  margin: 30rpx 0 0;
+  font-size: 32rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.store_address{
+  margin: 15rpx 0 0;
+  font-size: 24rpx;
+}
+.address_name{
+  width: 450rpx;
+  height: 1.2em;
+  line-height: 1.2em;
+  overflow: hidden;
+}
+.i_address{
+  width: 20rpx;
+  height: 24rpx;
+  margin-right: 15rpx;
+}
+
+.between{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.s-fc-1{ color: #fff; }
+.s-fc-2{ color: #222; }
+.s-fc-3{ color: #969696; }
 </style>
 
 <template>
   <view class="container">
-    <view class="search">
+
+    <!-- <view class="search">
       <navigator url="./article/search" class="search_content">
         <image src="../images/icon_sousuo@2x.png" class="iconfont icon-search" mode="aspectFill">
         <text style="color:#666;font-size:28rpx">搜索商品</text>
       </navigator>
+    </view> -->
+
+    <view class='swiper_wrap'>
+
+      <swiper
+        class="swiper"
+        indicator-active-color="{{indicatorActiveColor}}"
+        indicator-color="{{indicatorColor}}"
+        indicator-dots="{{indicatorDots}}"
+        autoplay="{{autoplay}}"
+        interval="{{interval}}"
+        duration="{{duration}}"
+        circular="true"
+      >
+        <repeat for="{{bannerList}}" key="index" index="index" item="item">
+          <swiper-item>
+            <image src="{{item.banner_pic}}" mode="aspectFill" @tap="swipclick({{item}})">
+          </swiper-item>
+        </repeat>
+      </swiper>
+
     </view>
-    <swiper
-      class="swiper"
-      indicator-active-color="{{indicatorActiveColor}}"
-      indicator-color="{{indicatorColor}}"
-      indicator-dots="{{indicatorDots}}"
-      autoplay="{{autoplay}}"
-      interval="{{interval}}"
-      duration="{{duration}}"
-      circular="true"
-    >
-      <repeat for="{{bannerList}}" key="index" index="index" item="item">
-        <swiper-item>
-          <image src="{{item.banner_pic}}" mode="aspectFill" @tap="swipclick({{item}})">
-        </swiper-item>
-      </repeat>
-    </swiper>
-    <view class="tap_item">
+
+
+    <view class='main'>
+      <view class='title_wrap'>
+        <view class='title s-fc-2'>所有门店</view>
+        <view class='sub_title s-fc-3'>为你精选好店</view>
+      </view>
+
+      <view class='store_list'>
+        <repeat for='{{storeList}}' key='index'>
+          
+          <view class='store_item' @tap='goDetail({{item}})'>
+            <image class='store_img' src='{{item.store_img}}' mode='aspectFill' />
+            <view class='store_info'>
+              <view class='store_name s-fc-2'>{{item.store_name}}</view>
+              <view class='store_address between s-fc-3'>
+                <view class='between'>
+                  <image class='i_address' src='{{locationURL}}' />
+                  <view class='address_name'>{{item.store_address}}</view>
+                </view>
+                <view class='distance'>{{item.distance}}</view>
+              </view>
+            </view>
+          </view>
+
+        </repeat>
+      </view>
+    </view>
+
+    <!-- <view class="tap_item">
       <navigator open-type="switchTab" url="/pages/classify" class="item_view">
         <image class="item_page" src="../images/icon_1_meishi@2x.png">
         <view>美食</view>
@@ -391,8 +500,9 @@
         <image class="item_page" src="../images/icon_1_zixun@2x.png">
         <view>资讯</view>
       </navigator>
-    </view>
-    <view wx:if="{{couponList.length!=0}}">
+    </view> -->
+
+    <!-- <view wx:if="{{couponList.length!=0}}">
       <navigator url="./article/couponList">
         <view class="good_title">
           <view class="name">
@@ -426,8 +536,9 @@
           </view>
         </repeat>
       </scroll-view>
-    </view>
-    <view wx:if="{{goodsList.length!=0}}">
+    </view> -->
+
+    <!-- <view wx:if="{{goodsList.length!=0}}">
       <navigator url="./store/goodsList?type=hot">
         <view class="good_title">
           <view class="name">
@@ -452,8 +563,9 @@
           </view>
         </repeat>
       </view>
-    </view>
-    <view wx:if="{{groupGoodsList.length!=0}}">
+    </view> -->
+
+    <!-- <view wx:if="{{groupGoodsList.length!=0}}">
       <navigator url="./store/goodsList?type=group">
         <view class="good_title">
           <view class="name">
@@ -482,10 +594,10 @@
           </view>
         </repeat>
       </scroll-view>
-    </view>
+    </view> -->
 
     <!-- 案例展示开始 -->
-    <view wx:if="{{materialList.length!=0}}">
+    <!-- <view wx:if="{{materialList.length!=0}}">
       <navigator url="./store/more">
         <view class="good_title">
           <view class="name">
@@ -507,37 +619,9 @@
           </view>
         </repeat>
       </view>
-    </view>
+    </view> -->
 
     <!-- 案例展示结束 -->
-    <!-- 新闻资讯开始 -->
-    <view wx:if="{{newsList.length!=0}}">
-      <navigator url="./article/advisory">
-        <view class="good_title">
-          <view class="name">
-            <text class="new_good">新闻资讯</text>
-          </view>
-          <view class="icon_info">
-            <text class="more">更多</text>
-            <image class="icon_R" src="../images/icon_you@2x.png">
-          </view>
-        </view>
-      </navigator>
-      <view class="bodycontent">
-        <repeat for="{{newsList}}" key="index" index="index" item="item">
-          <view class="redlist news_redlist" @tap="gotoNews({{item.information_id}})">
-            <image class="title_page" src="{{item.information_image[0]}}" mode="aspectFill">
-            <view class="redinfo">
-              <text class="prdname">{{item.information_title}}</text>
-              <view class="num_info">
-                <text class="price">{{item.addtime}}</text>
-              </view>
-            </view>
-          </view>
-        </repeat>
-      </view>
-    </view>
-    <!-- 新闻资讯结束 -->
   </view>
   <!-- container结束 -->
 </template>
@@ -554,6 +638,7 @@ export default class Home extends wepy.page {
     navigationBarTitleText: "首页"
   };
   data = {
+    locationURL: '../images/location.png',
     indicatorDots: true,
     autoplay: true,
     interval: 3000,
@@ -566,24 +651,33 @@ export default class Home extends wepy.page {
     newsList: [], //新闻列表
     couponList: [], //优惠券
     groupGoodsList: [], //团购商品列表
+    //
+    storeList: [],
+    page: 1,
+    limit: 10,
+    total: 0,
+    canLoad: true,
   };
 
   components = {};
 
-  onLoad(options) {}
+  onLoad(options) {
+    // console.error('id', options.shareId);
+    this.getList();
+  }
 
   onShow() {
-    wx.showLoading({
-      title: "加载中"
-    });
     this.getbannerList();
-    this.getRecommendList();
-    this.getNewsList();
-    this.getCouponList();
-    this.getGroupList();
+    // this.getRecommendList();
+    // this.getNewsList();
+    // this.getCouponList();
+    // this.getGroupList();
   }
 
   methods = {
+    goDetail(item){
+      wx.navigateTo({ url: `/pages/store/store?id=${item.store_id}` });
+    },
     //进入商品详情
     intoDetail(id) {
       wx.navigateTo({
@@ -618,7 +712,7 @@ export default class Home extends wepy.page {
         case 1:
           console.log("1图片");
           wx.navigateTo({
-            url: `article/advertisingPage?imgurl=${e.banner_url}`
+            url: `article/advertisingPage?imgurl=${e.banner_url && (JSON.parse(e.banner_url))[0].url}`
           });
           break;
         case 2:
@@ -637,6 +731,7 @@ export default class Home extends wepy.page {
           break;
       }
     },
+
     async getcoupons(e) {
       let id = e.currentTarget.dataset.coupon.vouchertemplate_id;
       let index = e.currentTarget.dataset.index;
@@ -672,10 +767,65 @@ export default class Home extends wepy.page {
     }
   };
 
+  // util
+  getLocation(){
+    return new Promise((resolve, reject) => {
+
+      wx.getLocation({
+        success: v => resolve(v),
+        fail: e => console.error('LocationError:', e),
+      });
+
+    });
+  };
+
+  onPullDownRefresh(){
+    this.getbannerList();
+
+    this.getList(this.page = 1);
+  }
+
+  onReachBottom(){
+    if(!this.canLoad || this.total <= this.storeList.length) return ;
+
+    this.canLoad = false;
+
+    this.getList(++this.page);
+  }
+
+  // Api
+  async getList() {
+    let location, param;
+
+    wx.showLoading({ title: "加载中" });
+
+    location = await this.getLocation();
+    wx.setStorageSync('location', location);
+
+    let res = await shttp.get(`/api/v2/member/store?latitude=${location.latitude}&longitude=${location.longitude}&page=${this.page}&limit=${this.limit}`).end();
+
+    if(res && res.data){
+      res.data.forEach(v => {
+        v.store_img = v.store_images[0] ? v.store_images[0] : null;
+        v.distance = v.distance > 1000 ? `${(v.distance / 1000).toFixed(0)}KM` : `${v.distance.toFixed(0)}M`;
+      });
+
+      this.storeList = this.storeList.concat(res.data);
+      this.total = res.pagination ? res.pagination.total : this.storeList.length;
+      // console.error('storeList', this.storeList);
+      // wx.navigateTo({ url: `/pages/store/store?id=${14}` });
+    }
+
+    this.canLoad = true;
+    this.$apply();
+    wx.hideLoading();
+  }
+
   //获取轮播图
   async getbannerList() {
     const res = await shttp.get(`/api/v2/member/banner`).end();
     if (res.status == 0) {
+      res.data.forEach(v => v.banner_pic = v.banner_pic && (JSON.parse(v.banner_pic))[0].url );
       this.bannerList = res.data;
     }
     this.$apply();
@@ -689,114 +839,119 @@ export default class Home extends wepy.page {
       });
     }
   }
-  //优惠券列表
-  async getCouponList() {
-    const res = await shttp
-      .get(`/api/v2/member/coupon/search`)
-      .query({
-        store_id: 1,
-        limit: 4,
-        page: 1
-      })
-      .end();
-    if (res.status == 0) {
-      this.couponList = res.data;
-    }
-    this.$apply();
-  }
-  //获取热门推荐列表
-  async getRecommendList() {
-    const res = await shttp
-      .get(`/api/v2/member/goodscommon`)
-      .query({
-        store_id: 1,
-        goods_commend: 1,
-        type: "sort",
-        limit: 3,
-        page: 1
-      })
-      .end();
-    if (res.status === 0) {
-      this.goodsList = res.data;
-    }
-    wx.hideLoading();
-    wx.stopPullDownRefresh();
-    this.$apply();
-  }
-  //获取团购商品列表
-  async getGroupList() {
-    const res = await shttp
-      .get(`/api/v2/member/goodsgroupbuy/1/edit`)
-      .query({
-        store_id: 1,
-        limit: 4,
-        page: 1
-      })
-      .end();
-    if (res.status === 0) {
-      this.groupGoodsList = res.data;
-    }
-    wx.hideLoading();
-    wx.stopPullDownRefresh();
-    this.$apply();
-  }
-  //获取案例列表
-  async getMaterialList() {
-    const res = await shttp
-      .get(`/api/v2/member/dynamic`)
-      .query({
-        dynamic_type: "material",
-        limit: 4,
-        page: 1
-      })
-      .end();
-    let list = res.data;
-    if (res.status === 0) {
-      this.materialList = list;
-      wx.hideLoading();
-    } else {
-      wx.hideLoading();
-    }
+  // //优惠券列表
+  // async getCouponList() {
+  //   const res = await shttp
+  //     .get(`/api/v2/member/coupon/search`)
+  //     .query({
+  //       store_id: 1,
+  //       limit: 4,
+  //       page: 1
+  //     })
+  //     .end();
+  //   if (res.status == 0) {
+  //     this.couponList = res.data;
+  //   }
+  //   this.$apply();
+  // }
+  // //获取热门推荐列表
+  // async getRecommendList() {
+  //   const res = await shttp
+  //     .get(`/api/v2/member/goodscommon`)
+  //     .query({
+  //       store_id: 1,
+  //       goods_commend: 1,
+  //       type: "sort",
+  //       limit: 3,
+  //       page: 1
+  //     })
+  //     .end();
+  //   if (res.status === 0) {
+  //     this.goodsList = res.data;
+  //   }
+  //   wx.hideLoading();
+  //   wx.stopPullDownRefresh();
+  //   this.$apply();
+  // }
+  // //获取团购商品列表
+  // async getGroupList() {
+  //   const res = await shttp
+  //     .get(`/api/v2/member/goodsgroupbuy/1/edit`)
+  //     .query({
+  //       store_id: 1,
+  //       limit: 4,
+  //       page: 1
+  //     })
+  //     .end();
+  //   if (res.status === 0) {
+  //     this.groupGoodsList = res.data;
+  //   }
+  //   wx.hideLoading();
+  //   wx.stopPullDownRefresh();
+  //   this.$apply();
+  // }
+  // //获取案例列表
+  // async getMaterialList() {
+  //   const res = await shttp
+  //     .get(`/api/v2/member/dynamic`)
+  //     .query({
+  //       dynamic_type: "material",
+  //       limit: 4,
+  //       page: 1
+  //     })
+  //     .end();
+  //   let list = res.data;
+  //   if (res.status === 0) {
+  //     this.materialList = list;
+  //     wx.hideLoading();
+  //   } else {
+  //     wx.hideLoading();
+  //   }
 
-    wx.stopPullDownRefresh();
-    this.materialList.forEach((element, idx) => {
-      this.materialList[idx].dynamic_images = JSON.parse(
-        this.materialList[idx].dynamic_images
-      );
-    });
-    this.$apply();
-  }
-  //获取新闻列表
-  async getNewsList() {
-    const res = await shttp
-      .get(`/api/v2/member/information`)
-      .query({
-        limit: 4,
-        page: 1
-      })
-      .end();
-    if (res.status === 0) {
-      res.data.forEach((element, idx) => {
-        element.information_image = JSON.parse(element.information_image);
-        element.addtime = getTimes.formatTime(
-          element.addtime * 1000,
-          "Y-M-D h:m:s"
-        );
-      });
-      this.newsList = res.data;
+  //   wx.stopPullDownRefresh();
+  //   this.materialList.forEach((element, idx) => {
+  //     this.materialList[idx].dynamic_images = JSON.parse(
+  //       this.materialList[idx].dynamic_images
+  //     );
+  //   });
+  //   this.$apply();
+  // }
+  // //获取新闻列表
+  // async getNewsList() {
+  //   const res = await shttp
+  //     .get(`/api/v2/member/information`)
+  //     .query({
+  //       limit: 4,
+  //       page: 1
+  //     })
+  //     .end();
+  //   if (res.status === 0) {
+  //     res.data.forEach((element, idx) => {
+  //       element.information_image = JSON.parse(element.information_image);
+  //       element.addtime = getTimes.formatTime(
+  //         element.addtime * 1000,
+  //         "Y-M-D h:m:s"
+  //       );
+  //     });
+  //     this.newsList = res.data;
 
-      wx.hideLoading();
-    } else {
-      wx.hideLoading();
-    }
-    wx.stopPullDownRefresh();
-    this.$apply();
-  }
+  //     wx.hideLoading();
+  //   } else {
+  //     wx.hideLoading();
+  //   }
+  //   wx.stopPullDownRefresh();
+  //   this.$apply();
+  // }
+
   onShareAppMessage() {
     let path = "/pages/home";
+
+    let user = wx.getStorageSync('memberInfo');
+    console.error(user.member_id);
+
     return {
       title: "",
-      path: `/pages/authorization?path=${path}`,
+      path: `/pages/authorization?shareId=${user.member_id}`,
       success: function(res) {
         wx.showToast({
           title: "转发成功",
@@ -809,11 +964,6 @@ export default class Home extends wepy.page {
       }
     };
   }
-  //下拉刷新
-  onPullDownRefresh() {
-    this.getRecommendList();
-    this.getbannerList();
-    this.getNewsList();
-  }
+  
 }
 </script>
