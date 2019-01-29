@@ -155,14 +155,43 @@ export function test(data) {
   //     params:data
   //   })
   // }
-// auth
-  export function getAuthList_api(data) {
+// agent
+  export function getAgentList_api(data) {
     return request({
-      url: '/api/v1/admin/admin',
+      url: '/api/v1/admin/agent',
       method: 'get',
       params: data
     })
   }
+  export function addAgent_api(data) {
+    return request({
+      url: '/api/v1/admin/agent',
+      method: 'post',
+      data: data
+    })
+  }
+  export function editAgent_api(data) {
+    return request({
+      url: '/api/v1/admin/agent',
+      method: 'put',
+      data: data
+    })
+  }
+  export function deleteAgent_api(data) {
+    return request({
+      url: '/api/v1/admin/agent',
+      method: 'delete',
+      data: data
+    })
+  }
+// auth
+export function getAuthList_api(data) {
+  return request({
+    url: '/api/v1/admin/admin',
+    method: 'get',
+    params: data
+  })
+}
   export function deleteAuth_api(data) {
     return request({
       url: '/api/v1/admin/admin',
@@ -225,3 +254,99 @@ export function updateArticle(data) {
     data
   })
 }
+
+
+//------------------------------------
+export function getAgentShop_api(data) {
+  return request({
+    url: '/api/v1/admin/store',
+    method: 'get',
+    params: data
+  })
+}
+export function getShopOrderList_api(data) {
+  return request({
+    url: '/api/v1/admin/order',
+    method: 'get',
+    params: data
+  })
+}
+export function getShopOrderList_api2(data) {
+  return request({
+    url: '/api/v1/admin/vrorder',
+    method: 'get',
+    params: data
+  })
+}
+
+export function getAnswerMember_api(data) {
+  return request({
+    url: '/api/v1/admin/subscriber',
+    method: 'get',
+    params: data
+  })
+}
+export function getAnswerList_api(data) {
+  return request({
+    url: '/api/v1/admin/question',
+    method: 'get',
+    params: data
+  })
+}
+export function getHomeData_api(data) {
+  return request({
+    url: '/api/v2/seller/salesstats',
+    method: 'get',
+    params: data
+  })
+}
+//平台浏览量
+export function getFlowstats_api(data) {
+  return request({
+    url: '/api/v1/admin/flowstats',
+    method: 'get',
+    params: data
+  })
+}
+//积分比例授权
+export function getEditAuth_api(data) {
+  return request({
+    url: '/api/v1/admin/salersettingaudit',
+    method: 'get',
+    params: data
+  })
+}
+export function editEditAuth_api(data) {
+  return request({
+    url: '/api/v1/admin/salersettingaudit',
+    method: 'put',
+    data
+  })
+}
+
+// auth
+async function getAuth(params, _this) {
+  const res = await request({
+    url: '/api/v1/admin/storeinfo',
+    method: 'get',
+    params
+  })
+
+  return res.error !== '' ? _this.$message.error({ message: res.error }) : res.data
+}
+
+async function setAuth(data, _this) {
+  const res = await request({
+    url: '/api/v1/admin/editmodulelist',
+    method: 'PUT',
+    data
+  })
+
+  return res.error !== '修改成功' ? null : _this.$message.success({ message: '修改成功' })
+}
+
+export default {
+  getAuth,
+  setAuth
+}
+

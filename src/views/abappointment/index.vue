@@ -26,7 +26,7 @@
     </el-form-item>
     <el-form-item label="日期" :label-width="formLabelWidth">
       <p class="hbs-no-margin-p">
-        {{detailForm.dateTXT}}
+        {{detailForm.date}}
       </p>
     </el-form-item>
     <el-form-item label="预约店铺" :label-width="formLabelWidth">
@@ -241,8 +241,7 @@ export default {
           this.downloadLoading = false
         })
       },
-      search(){ // 此时listQuery已经改变
-        this.listQuery.page = 1
+      search(){
         this.getList()
       },
     //body

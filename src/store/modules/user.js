@@ -1,9 +1,6 @@
 import { loginByUsername,loginByAdminname, logout, getUserInfo } from '@/api/login'
-import { getToken, setToken, setStoreId, setNames, removeToken,setRoles } from '@/utils/auth'
-import api from '@/api/seller'
+import { getToken, setToken, removeToken,setRoles,setAgent } from '@/utils/auth'
 import store from '@/store'
-import Vue from "vue"
-// import { setNames } from '../../utils/auth';
 
 const user = {
   state: {
@@ -20,8 +17,7 @@ const user = {
     roles: [],
     setting: {
       articlePlatform: []
-    },
-    storeId: '' // 堂食 food storeId
+    }
   },
 
   mutations: {
@@ -56,8 +52,7 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
-    },
-    // setStoreId(s, id){ s.storeId = id} // 堂食 food storeId 
+    }
   },
 
   actions: {
@@ -97,6 +92,11 @@ const user = {
             }else{
               roles.push('admin2')
             }
+            //如果是分公司
+            if(data.data.agent_id){
+              roles.push('agentAdmin')
+              setAgent("agentAdmin")
+            }
             setRoles(JSON.stringify(roles))
             resolve()
           }else{
@@ -113,42 +113,22 @@ const user = {
     LoginByUsername({ commit }, userInfo) {
       // const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        loginByUsername(userInfo).then(async response => {
+        loginByUsername(userInfo).then(response => {
           const data = response
-          console.log('login --', data)
           if(data&&data.status===0){
             //把getuserinfo的事情做完
             const sessionID = data.data['token']
             commit('SET_TOKEN', sessionID)
-            // commit('setStoreId', data.data['store_id']) // 堂食 food storeId
             setToken(sessionID)
-            setStoreId(data.data['store_id']) // 存堂食 food storeId
             let roles = data.data.permission
             if(data.data.is_admin===1){
               roles.push('seller')
             }else{
               roles.push('seller2')
             }
-            roles.push(data.data.module_list); // 存店铺权限列表 2018/11/13
             setRoles(JSON.stringify(roles))
-            
-            // 签到模块名词修改
-            console.log('module_list : ', data.data.module_list, data.data.module_list.indexOf("class_sign|1"));
-            if( data.data.module_list.indexOf("class_sign|1") !== -1 ){
-              let res = await api.getNames(null);
-              res.data && setNames(res.data);
-              console.log('sign getNames:', res.data, res.data === undefined);
-            }
-
-
             resolve()
-          } else if (data && data.status === 1) {
-            Vue.prototype.$message({
-              message: data.error,
-              type: "warning"
-            });
-            return Promise.reject("error");
-          } else{
+          }else{
             //接口ok，权限问题，提示登出
             return Promise.reject('error')
           }
@@ -204,7 +184,6 @@ const user = {
         logout(state.token).then(() => {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
-
           removeToken()
           resolve()
         }).catch(error => {

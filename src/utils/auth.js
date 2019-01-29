@@ -3,6 +3,8 @@ import Cookies from 'js-cookie'
 const TokenKey = 'Admin-Token'
 const RolesKey = 'Admin-Roles'
 const StateKey = 'Admin-State'
+
+const AgentKey = 'Admin-Agent'
 //token or cookie
 export function getToken() {
   return Cookies.get(TokenKey)
@@ -19,22 +21,7 @@ export function getRoles() {
 export function setRoles(Roles) {
   return Cookies.set(RolesKey, Roles)
 }
-// store Id
-export function getStoreId() {
-  return Cookies.get('storeId')
-}
 
-export function setStoreId(Roles) {
-  return Cookies.set('storeId', Roles)
-}
-// signIn edit names 
-export function getNames() {
-  return Cookies.get('names')
-}
-
-export function setNames(names) {
-  return Cookies.set('names', names)
-}
 //State
 export function getState() {
   return Cookies.get(StateKey)
@@ -43,12 +30,17 @@ export function getState() {
 export function setState(State) {
   return Cookies.set(StateKey, State)
 }
-export function removeToken() {
-  // clear sigin info 清除签到相关信息
-  Cookies.remove('names');
-  Cookies.remove('storeId');
+//Agent
+export function getAgent() {
+  return Cookies.get(AgentKey)
+}
 
+export function setAgent(Agent) {
+  return Cookies.set(AgentKey, Agent)
+}
+export function removeToken() {
   Cookies.remove(RolesKey)
   Cookies.remove(StateKey)
+  Cookies.remove(AgentKey)
   return Cookies.remove(TokenKey)
 }

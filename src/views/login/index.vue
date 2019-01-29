@@ -13,24 +13,13 @@
       color #ffffff
       & *
         font-size 18px
-.forget-password
-  font-size: 10px
-  color: #ffffff
-  text-align: right
-  margin-bottom: 10px
-  cursor: pointer
-.v-modal
-  width: 0 !important
-.codebox
-  display: flex         
 </style>
 
 <template>
-<div>
   <div class="login-container">
     <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left">
       <div class="title-container">
-        <h3 class="title" :style="isAdmin?'color:#E6A23C':''">{{isAdmin?$t('login.title'):$t('login.title2')}}</h3>
+        <h3 class="title" :style="isAdmin?'color:#E6A23C':''">门店登录</h3>
         <!-- <lang-select class="set-language"></lang-select> -->
       </div>
       
@@ -57,9 +46,8 @@
         active-color="#E6A23C"
         inactive-color="#13ce66"
         active-text="我是平台"
-        inactive-text="我是商家">
+        inactive-text="我是分公司">
       </el-switch> -->
-      <div class="forget-password" @click="centerDialogVisible = true">忘记密码</div>
       <el-button type="primary" style="width:100%;margin-bottom:30px;" :loading="loading" @click.native.prevent="handleLogin">{{$t('login.logIn')}}</el-button>
 
       <!-- <div class="tips">
@@ -72,37 +60,22 @@
       </div> -->
     </el-form>
 
-      <div class="putOnRecords">
+  <!-- 
+        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{$t('login.thirdparty')}}</el-button>
+
+    <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog" append-to-body>
+      {{$t('login.thirdpartyTips')}}
+      <br/>
+      <br/>
+      <br/>
+      <social-sign />
+    </el-dialog> 
+   -->
+
+    <!-- <div class="putOnRecords">
         © 2017 - 2018 南京俊宁文化传媒有限公司   <a href="http://www.miitbeian.gov.cn">苏ICP备18029153号</a>
-      </div>
-  </div>
-  <el-dialog
-        title="重置密码"
-        :visible.sync="centerDialogVisible"
-        width="30%"
-        center>
-        <el-form :model="findForm">
-          <el-form-item label="账号手机号" label-width="90px">
-            <el-input type='text' v-model="findForm.phone" autoComplete="on" placeholder="手机号码" />
-          </el-form-item>
-          <div class="codebox">
-            <el-form-item label="验证码" label-width="90px">
-              <el-input v-model="findForm.code" autoComplete="on" placeholder="验证码" />
-            </el-form-item>
-            <el-button type="primary" style="width:30%;height:36px;margin-left:10px" @click="sendCode">{{codetimeShow?codetime+'秒后获取':'获取验证码'}}</el-button>
-          </div>
-          <el-form-item label="输入新密码" label-width="90px">
-            <el-input v-model="findForm.password1" type='password' autoComplete="on" placeholder="新密码" />
-          </el-form-item>
-          <el-form-item label="确认新密码" label-width="90px">
-            <el-input v-model="findForm.password2" type='password' autoComplete="on" placeholder="确认密码" />
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="centerDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="resetPassword">确 定</el-button>
-        </div>
-      </el-dialog>
+    </div> -->
+
   </div>
 </template>
 
@@ -110,7 +83,7 @@
 import { isvalidUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 // import SocialSign from './socialsignin'
-import { getVerificationCode, resetPassword } from "@/api/login";
+
 export default {
   components: { LangSelect },
   // components: { LangSelect, SocialSign },
@@ -118,60 +91,35 @@ export default {
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!isvalidUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
+        callback(new Error('请输入账号'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+        callback(new Error('密码不少于6位'))
       } else {
         callback()
       }
     }
     return {
       // -------------
-      isAdmin: false,
+      isAdmin: true,
       tabRole: '',
       // -------------
       loginForm: {
-        // username: 'admin',
-        // password: '1111111'
         username: '',
-        // password: '123456'
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       passwordType: 'password',
-      loading: false,
-      findForm: {
-        phone: "",
-        code: "",
-        password1: "",
-        password2: ""
-      },
-      codetimeShow: false,
-      codetime: 60,
-      centerDialogVisible: false,
+      loading: false
       // showDialog: false
     }
-  },
-  created(){
-    var userAgent = navigator.userAgent;
-    if (userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1 && !isOpera) {
-        this.$confirm(`本网站部分功能不兼容IE类浏览器，为了更好体验请更换其他浏览器如火狐、谷歌等浏览器`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          
-        }).catch(()=>{
-         
-        })
-    };
   },
   methods: {
     // --------------
@@ -189,17 +137,32 @@ export default {
           this.loading = true
           //对 平台 和 卖家 做区分
           let loginPromise
+          // if(this.isAdmin){
+          //   loginPromise = this.$store.dispatch('LoginByAdminname', {
+          //     admin_name:this.loginForm.username,
+          //     admin_password:this.loginForm.password,
+          //     captcha:1234
+          //   })
+          // }else{
+          //   loginPromise= this.$store.dispatch('LoginByUsername',{
+          //     seller_name:this.loginForm.username,
+          //     member_password:this.loginForm.password,
+          //     captcha:1234
+          //   })
+          // }
           if(this.isAdmin){
             loginPromise = this.$store.dispatch('LoginByAdminname', {
-              admin_name:this.loginForm.username,
-              admin_password:this.loginForm.password,
-              captcha:1234
+              seller_name: this.loginForm.username,
+              member_password: this.loginForm.password,
+              captcha:1234,
+              is_agent:0
             })
           }else{
-            loginPromise= this.$store.dispatch('LoginByUsername',{
+            loginPromise = this.$store.dispatch('LoginByAdminname', {
               seller_name:this.loginForm.username,
               member_password:this.loginForm.password,
-              captcha:1234
+              captcha:1234,
+              is_agent:1
             })
           }
 
@@ -215,57 +178,6 @@ export default {
           return false
         }
       })
-    },
-    /**
-     * 获取验证码
-     */
-    sendCode() {
-      if (!this.codetimeShow) {
-        let phoneReg = /^[1][0-9][0-9]{9}$/;
-        if (this.findForm.phone == "") {
-          return this.$message("请输入手机号");
-        }
-        if (!phoneReg.test(this.findForm.phone)) {
-          return this.$message("请输入正确手机号");
-        }
-        getVerificationCode({ phone: this.findForm.phone }).then(response => {
-        });
-        let that = this;
-        that.codetimeShow = true;
-        let interval = setInterval(() => {
-          if (that.codetime-- <= 0) {
-            that.codetime = 60;
-            that.codetimeShow = false;
-            clearInterval(interval);
-          }
-        }, 1000);
-      }
-    },
-    /**
-     * 重置密码
-     */
-    resetPassword() {
-      if (this.findForm.phone == "") {
-        return this.$message("请输入手机号");
-      } else if (this.findForm.code == "") {
-        return this.$message("请输入短信验证码");
-      } else if (this.findForm.password1 == "") {
-        return this.$message("请输入密码");
-      } else if (this.findForm.password2 == "") {
-        return this.$message("请确认密码");
-      } else if (this.findForm.password1 != this.findForm.password2) {
-        return this.$message("两次密码不一致");
-      }
-      resetPassword({
-        phone: this.findForm.phone,
-        code: this.findForm.code,
-        pass: this.findForm.password2
-      }).then(response => {
-        if(response.status == 0){
-          this.$message(response.data.message);
-          this.centerDialogVisible = false
-        }
-      });
     },
     afterQRScan() {
       // const hash = window.location.hash.slice(1)
@@ -285,6 +197,9 @@ export default {
       //   })
       // }
     }
+  },
+  created() {
+    // window.addEventListener('hashchange', this.afterQRScan)
   },
   destroyed() {
     // window.removeEventListener('hashchange', this.afterQRScan)
@@ -395,7 +310,7 @@ $light_gray:#eee;
     right: 35px;
     bottom: 28px;
   }
-   .putOnRecords{
+  .putOnRecords{
     position: absolute;
     bottom: 20px;
     width: 100%;

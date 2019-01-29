@@ -167,11 +167,15 @@
       </el-table-column>
     </el-table>
 </el-main>
-<!-- <el-footer>
-  <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="listQuery.page" :page-sizes="[10,20,30, 50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next" :total="total">
-  </el-pagination>
-</el-footer> -->
 </el-container>
+<el-footer>
+  <el-pagination
+    layout="prev, pager, next"
+    :total="total"
+    :page-size="10"
+     @current-change="handleCurrentChange">
+  </el-pagination>
+</el-footer>
     </div>
     
 </template>
@@ -192,11 +196,15 @@ import UploadExcelComponent from "@/components/UploadExcel/index.vue";
 export default {
   components: { UploadExcelComponent },
   created() {
-    this.getLibraryList_api();
+    this.getLibraryList_api(1, 10);
+    getLibList({ page: 1, limit: 0 }).then(res => {
+      this.total = res.data.length;
+    });
     this.getClass();
   },
   data() {
     return {
+      total: 0,
       inputFile: "",
       downloadLoading: false,
       isShowEdit: false,
@@ -221,13 +229,18 @@ export default {
     };
   },
   methods: {
+    handleCurrentChange: function(val) {
+      // console.log(`当前页: ${val}`);
+      this.getLibraryList_api(val, 10);
+    },
     getLibraryList_api: function(page, limit) {
       var data = {
-        page: 1,
-        limit: 0
+        page: page,
+        limit: limit
       };
       getLibList(data).then(res => {
         console.log("res", res);
+        this.tableData = [];
         for (var i = 0; i < res.data.length; i++) {
           var res_data = res.data[i];
           this.tableData.push({
@@ -289,6 +302,8 @@ export default {
         }
       }
       var data = {
+        page: 1,
+        limit: 0,
         classify_id: classify_id
       };
       getLibSearchClass(data).then(res => {
@@ -342,7 +357,7 @@ export default {
       postLibAddList(data).then(res => {
         console.log(res);
         this.tableData = [];
-        this.getLibraryList_api();
+        this.getLibraryList_api(1, 0);
       });
     },
     yesEdit: function() {
@@ -369,20 +384,20 @@ export default {
       putLibEditList(data).then(res => {
         console.log("edit res", res);
         this.tableData = [];
-        this.getLibraryList_api();
+        this.getLibraryList_api(1, 0);
       });
     },
-    toGetSubList: function() {
-      this.inputFile = document.getElementById("fileId").files[0];
-      console.log(this.inputFile);
-      var data = {
-        file: document.getElementById("fileId").files[0]
-      };
-      console.log("data", data);
-      postImportLib(data).then(res => {
-        console.log(res);
-      });
-    },
+    // toGetSubList: function() {
+    //   this.inputFile = document.getElementById("fileId").files[0];
+    //   console.log(this.inputFile);
+    //   var data = {
+    //     file: document.getElementById("fileId").files[0]
+    //   };
+    //   console.log("data", data);
+    //   postImportLib(data).then(res => {
+    //     console.log(res);
+    //   });
+    // },
     formatJson(filterVal, jsonData) {
       return jsonData.map(v =>
         filterVal.map(j => {
@@ -463,37 +478,37 @@ export default {
       };
       postImportLib(data)
         .then(res => {
-          console.log("resss!!", res);
+          console.log("res", res);
           this.tableData = [];
-          this.getLibraryList_api();
-        })
-        .catch(err => {
-          // this.$notify.error({
-          //   title: "上传出错",
-          //   message: "请刷新后重新上传文件"
-          // });
-          console.log("resss", err);
-          this.tableData = [];
-          this.getLibraryList_api();
-        });
-    },
-    async handleSuccess({ results, header }) {
-      console.log(results);
-      console.log(header);
-      let data = {
-        excel: results
-      };
-      postImportLib(data)
-        .then(res => {
-          console.log(res);
+          this.getLibraryList_api(1, 0);
         })
         .catch(err => {
           this.$notify.error({
             title: "上传出错",
             message: "请刷新后重新上传文件"
           });
+          console.log("err", err);
+          this.tableData = [];
+          this.getLibraryList_api(1, 0);
         });
     }
+    // async handleSuccess({ results, header }) {
+    //   console.log(results);
+    //   console.log(header);
+    //   let data = {
+    //     excel: results
+    //   };
+    //   postImportLib(data)
+    //     .then(res => {
+    //       console.log(res);
+    //     })
+    //     .catch(err => {
+    //       this.$notify.error({
+    //         title: "上传出错",
+    //         message: "请刷新后重新上传文件"
+    //       });
+    //     });
+    // }
   }
 };
 </script>

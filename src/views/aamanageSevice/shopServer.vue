@@ -14,12 +14,29 @@
   >
   <el-form :model="formForNotive" ref="ruleForm" :rules="rules" >
     <el-form-item label="添加访问量" :label-width="formLabelWidth">
-      <el-input v-model="formForNotive.visitCount" auto-complete="off"></el-input>
+      <el-input v-model="formForNotive.visitCount" @keyup.native="detectionNum" auto-complete="off"></el-input>
     </el-form-item>
   </el-form>
   <span slot="footer" class="dialog-footer">
     <el-button @click="addNewShow = false">取 消</el-button>
     <el-button  type="primary" @click="addNewNotice"
+     :disabled="waitAddNotice"
+     :loading="waitAddNotice">确 定</el-button>
+  </span>
+</el-dialog>
+<el-dialog
+  title="减少访问量"
+  :visible.sync="minusNewShow"
+  width="50%"
+  >
+  <el-form :model="formForNotive" ref="ruleForm" :rules="rules" >
+    <el-form-item label="减少访问量" :label-width="formLabelWidth">
+      <el-input v-model="formForNotive.visitCount" @keyup.native="detectionNum" auto-complete="off"></el-input>
+    </el-form-item>
+  </el-form>
+  <span slot="footer" class="dialog-footer">
+    <el-button @click="minusNewShow = false">取 消</el-button>
+    <el-button  type="primary" @click="minusNewNotice"
      :disabled="waitAddNotice"
      :loading="waitAddNotice">确 定</el-button>
   </span>
@@ -70,6 +87,10 @@
          type="primary"
           size="mini"
           @click="changeItem(scope.$index, scope.row)">添加访问量</el-button>
+          <el-button 
+         type="danger"
+          size="mini"
+          @click="changeMinus(scope.$index, scope.row)">减少访问量</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -103,6 +124,7 @@ export default {
       },
       waitAddNotice:false,
       addNewShow:false,
+      minusNewShow:false,
       // --------------------
       //out
       
@@ -131,6 +153,12 @@ export default {
     }
   },
   methods: {
+    //校验输入框输入，只能num,首位不为0
+    detectionNum(){
+        this.formForNotive.visitCount=this.formForNotive.visitCount.replace(/[^\.\d]/g,'');
+        this.formForNotive.visitCount=this.formForNotive.visitCount.replace('.','');
+        this.formForNotive.visitCount=this.formForNotive.visitCount.replace(/^[0]+[0-9]*$/gi,""); 
+    },
     //out
       async addNewNotice(){
         let res = await new Promise((res,rej)=>{
@@ -175,9 +203,51 @@ export default {
           console.error('manageShop:addGoods_api 接口错误')
         })
       },
+      async minusNewNotice(){
+        let res = await new Promise((res,rej)=>{
+          this.$refs['ruleForm'].validate((valid) => {
+            if (valid) {
+              // alert('submit!');
+              res(true)
+            } else {
+              res(false)
+              // console.log('error submit!!');
+              // return false;
+            }
+          })
+        })
+        if(!res){
+          return 
+        }
+        this.waitAddNotice = true
+        let sendData = {}
+        sendData.store_id = this.formForNotive.id
+        sendData.view = '-' + this.formForNotive.visitCount
+        changeShopServer_api(sendData).then(data=>{
+          this.waitAddNotice = false
+          this.minusNewShow = false
+          if(data.status===0){
+            this.$notify({
+              title: '成功',
+              message: '减少访问量',
+              type: 'success'
+            })
+            this.getList()
+          }else{
+            this.$notify({
+              title: '失败',
+              message: '操作失败',
+              type: 'error'
+            })
+          }
+        }).catch(e=>{
+          this.waitAddNotice = false
+          this.addNewShow = false
+          console.error('manageShop:addGoods_api 接口错误')
+        })
+      },
     //head
       search(){ // 此时listQuery已经改变
-        this.listQuery.page = 1
         this.getList()
       },
       getList() { //获取店铺列表
@@ -222,7 +292,12 @@ export default {
         this.formForNotive = Object.assign({},formForNotive)
         this.formForNotive.id = row.id
       },
-
+      changeMinus(index,row){
+        this.isAddItem = true
+        this.minusNewShow = true
+        this.formForNotive = Object.assign({},formForNotive)
+        this.formForNotive.id = row.id
+      },   
     //foot
       handleSizeChange(val) {
         this.listQuery.limit = val

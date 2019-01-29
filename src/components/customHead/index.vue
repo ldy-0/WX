@@ -1,27 +1,38 @@
 <template>
-    <!-- <el-header class='header'> -->
+    <div>
 
-      <el-form :inline="true" class="form">
+      <!-- 添加class='form'属性会不显示 -->
+      <el-form :inline="true">
 
-        <el-form-item v-if='config.showAdd'>
+        <el-form-item v-if='config.title'>
           <el-button type="primary" icon="el-icon-edit-outline" @click="showForm">{{config.title}}</el-button>
         </el-form-item>
 
-        <el-form-item v-if='config.showSearchByKeyWord'>
-            <el-input :style="{ width: config.inputWidth }" :placeholder="config.placeholder" v-model="keyword"></el-input>
+        <el-form-item v-if='config.showKeywordSearch || config.placeHolder'>
+            <el-input :style="{ width: config.width || '300px' }" :placeholder="config.placeHolder" v-model="keyword"></el-input>
             <el-button type="primary" icon="el-icon-search" @click="searchByKeyWord">查询</el-button>
         </el-form-item>
 
-        <el-form-item label="时间" v-if='config.showSearchByDate'>
+        <el-form-item label="日期查询" v-if='config.dateWidth'>
             <el-date-picker :style="{ width: config.dateWidth }" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" v-model="date">
             </el-date-picker>
             <el-button type="primary" icon="el-icon-search" @click="searchByDate">查询</el-button>
         </el-form-item>
 
-        <el-form-item :label="config.selectLabel" :label-width="config.selectWidth" v-if='config.showSelect'> 
-          <el-select placeholder="请选择" v-model='orderState' @change='changeStatus'> <!-- multiple  -->
-            <el-option v-for="item in config.categories" :key="item.id" :label="item.title" :value="item.id"></el-option>
+        <el-form-item :label="config.selectLabel" :label-width="config.selectWidth" v-if='config.categories'> 
+          <el-select placeholder="请选择" v-model='status' @change="changeStatus($event, 'single')"> <!-- multiple  -->
+            <el-option v-for="item in config.categories" :key="item.id" :label="item.title || item.name || item.label" :value="item.id"></el-option>
           </el-select>
+        </el-form-item>
+
+        <el-form-item :label="config.selectLabelList && config.selectLabelList[selectIndex]" 
+                      :label-width="config.selectWidth" 
+                      v-for='(select, selectIndex) in config.selectList' :key='selectIndex' v-if='config.selectList'> 
+
+          <el-select placeholder="请选择" v-model='statusList[selectIndex]' @change='changeStatus(selectIndex)'> <!-- multiple  -->
+            <el-option v-for="item in select" :key="item.id" :label="item.title || item.name || item.label" :value="item.id"></el-option>
+          </el-select>
+
         </el-form-item>
 
         <el-form-item label="" v-if='config.showExport'>
@@ -30,8 +41,8 @@
         </el-form-item>
 
       </el-form>
+    </div>
 
-    <!-- </el-header> -->
 </template>
 
 <script>
@@ -58,13 +69,20 @@ export default {
         }
       }
     },
+    test: {
+      type: String,
+      default: function(){
+        return 'a';
+      }
+    }
   },
 
   data() {
     return {
       keyword: '',
       date: '',
-      orderState: '',
+      status: '',
+      statusList: [],
     }
   },
   
@@ -73,22 +91,22 @@ export default {
       console.log('emit add');
       this.$emit('add');
     },
-    searchByKeyWord() {
-      console.log('search keyword:', this.keyword);
-      this.$emit('searchByKeyWord', this.keyword);
+    searchByKeyWord() { this.$emit('search', this.keyword); },
+    changeStatus(index, type) { 
+      // console.error(this.status, index, type);
+      this.$emit('searchByStatus', type === 'single' ? this.status : this.statusList, index) 
     },
     searchByDate(){
+      let date;
       console.log('search date:', this.date);
-      let date = {
-        startDate: new Date(this.date[0]).toLocaleDateString(),
-        endDate: new Date(this.date[1]).toLocaleDateString(),
-      };
+      if(this.date){
+        date = {
+          startDate: new Date(this.date[0]).toLocaleDateString(),
+          endDate: new Date(this.date[1]).toLocaleDateString(),
+        };
+      }
 
-      this.$emit('searchByDate', date);
-    },
-    changeStatus(){
-      console.log('change state', this.orderState);
-      this.$emit('changeState', this.orderState);
+      this.$emit('searchByDate', date, 'date');
     },
     async exportFile() {
       let loading = this.$loading({ fullscreen: true })
@@ -112,7 +130,8 @@ export default {
         //   loading.close() 
         // })
     },
-  }
+  },
+
 }
 </script>
 

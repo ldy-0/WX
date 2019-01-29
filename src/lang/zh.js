@@ -2,18 +2,10 @@ export default {
   route: {
     //卖家
     sellerGoods: '商品',
-
     order: '订单',
     rOrder: '实物订单',
     vOrder: '虚拟订单',
-    rGroupOrder: '实物未成团订单',
-    vGroupOrder: '虚拟未成团订单',
-    return: '退款',
-    rReturn: '实物退款',
-    vReturn: '虚拟退款',
-    groupReturn: '团购退款',
     appointment: '预约',
-    memberlist: '数据列表',
     coupon: '优惠券',
 
     server: '运营',
@@ -22,8 +14,7 @@ export default {
     serverRec: '精品推荐',
     serverAct: '动态',
     serverShop: '店铺介绍',
-    serverAllbuy: '普通团购',
-    upServerAllbuy: '等级团购',
+    serverAllbuy: '团购',
     serverKill: '砍价',
     serverSchool: '门店',
     serverGetFlow: '流量充值',
@@ -31,60 +22,28 @@ export default {
     distribution: '分销',
     vote: '投票',
 
-    // food
-    food: '餐饮',
-    desk: '餐桌',
 
-    // card
-    card: '名片',
-    parent: '家长列表',
-    clock: '打卡列表',
+    authorize: '权限列表',
+    stylist: '发型师列表',
+    refund: '退款列表',
+    comment: '评论列表',
+    storeInfo: '门店信息',
 
-    // signIn
-    // signIn: '签到列表',
-    signIn: '会员管理',
-    signin: '签到列表',
-    // course: '课程列表',
-    // teacher: '老师列表',
-    // student: '学生列表',
-    address: '门店列表',
-    appointment: '预约列表',
-    addGoods: '新增商品',
-    editname: '名词修改',
-
-    sellerAuth: '权限',
-
-    // answers:'答题',
-
-    // library: "题库",
-    // libraryList: "题目列表",
-    // libraryClass: "分类",
-
-    answer: "答题",
-    answerList: "题目列表",
-    answerLibrary: "题库",
-    memberList: "人员列表",
-    bonusMode: "奖金模式",
-    paymentMode: "付费模式",
-    payList: "付费记录",
-    answerHistory: "答题历史",
-    music: "背景音乐",
-
-    distribution: "分销",
-    distributionMenber: "人员列表",
-    withdrawalsRecord: "提现列表",
-    Setting: "设置",
     //平台
     home: '首页',
     goods: '商品',
     notice: '公告',
     manageShop: '店铺管理',
+    editAuth:'积分比例修改授权',
+    library: "题库",
+    libraryList: "题目列表",
+    libraryClass: "分类",
 
     manageSevice: '运营管理',
     shopServer: '店铺运营',
     flowPackages: '流量套餐',
     industryList: '行业列表',
-
+    agent: "分公司",
     auth: '授权管理',
     dashboard: '面板',
     introduction: '简述',
@@ -154,7 +113,7 @@ export default {
   },
   login: {
     title: '平台登录',
-    title2: '商 家 登 录',
+    title2: '分公司登录',
     logIn: '登录',
     username: '账号',
     password: '密码',

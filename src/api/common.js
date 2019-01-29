@@ -9,7 +9,7 @@ export function upFileToken_api(data) {
 }
 export function changePasswordForAdmin_api(data) {
   return request({
-    url: '/api/v1/admin/password',
+    url: '/api/v2/seller/password',
     method: 'post',
     data
   })

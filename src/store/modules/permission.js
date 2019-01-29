@@ -1,5 +1,4 @@
 import { asyncRouterMapAdmin,asyncRouterMapSeller, constantRouterMap } from '@/router'
-import { getNames } from '@/utils/auth'
 
 /**
  * 通过meta.role判断是否与当前用户权限匹配
@@ -32,20 +31,6 @@ function filterAsyncRouter(asyncRouterMap, roles) {
   return accessedRouters
 }
 
-// 过滤店铺无权限模块 2018/11/13
-function filterStoreAuth(asyncRouterMap, storeAuthList){
-  let authList = ['class_sign'],
-      // 店铺无权限列表
-      roles = storeAuthList.length ? storeAuthList.filter(v => { let arr = v.split('|'); return arr[1] == 1 ? false : true; }).map(v => v.split('|')[0]) : authList;
-
-  console.log(storeAuthList, roles);
-
-  return asyncRouterMap.filter(v => {
-    let route = v.meta.roles;
-    return roles.length ? route.indexOf(roles) === -1 ? true : false : true;
-  });
-}
-
 const permission = {
   state: {
     routers: constantRouterMap,
@@ -63,48 +48,58 @@ const permission = {
         const { roles } = data
         let accessedRouters = []
         //平台管理员
+         
         if (roles.indexOf('admin') >= 0) {
           accessedRouters = asyncRouterMapAdmin
         } 
         else if(roles.indexOf('admin2') >= 0){
           console.log('---------------',roles)
           accessedRouters = filterAsyncRouter(asyncRouterMapAdmin,roles)
-          // let authIndex = -1
-          // for(let i=0,len=asyncRouterMapAdmin.length;i<len;i++){
-          //   try{
-          //     if(asyncRouterMapAdmin[i].path=='/auth'){
-          //       authIndex = i
-          //       asyncRouterMapAdmin.splice(authIndex,1)
-          //       accessedRouters = asyncRouterMapAdmin
-          //     }
-          //   }catch(e){
-          //     console.error(i,e,'GenerateRoutes')
-          //   }
-          // }
         }
         //商家
-        else if (roles.indexOf('seller') >= 0) {
-          accessedRouters = filterStoreAuth(asyncRouterMapSeller, roles[roles.length - 1])
-        } 
-        else if(roles.indexOf('seller2') >= 0){
-          console.log('---------------',roles, data)
-            accessedRouters = filterAsyncRouter(filterStoreAuth(asyncRouterMapSeller, roles[roles.length - 1]),roles)
-            //   let authIndex = -1
-            // for(let i=0,len=asyncRouterMapSeller.length;i<len;i++){
-            // hbs:make some diff
-            // try{
-            //   if(asyncRouterMapAdmin[i].path=='/sellerAuth'){
-            //     authIndex = i
-            //     asyncRouterMapAdmin.splice(authIndex,1)
-            //     accessedRouters = asyncRouterMapAdmin
-            //   }
-            // }catch(e){
-            //   console.error(i,e,'GenerateRoutes')
-            // }
+        // else if (roles.indexOf('seller') >= 0) {
+        //   accessedRouters = asyncRouterMapSeller
+        // } 
+        // else if(roles.indexOf('seller2') >= 0){
+        //   console.log('---------------',roles)
+        //     accessedRouters = filterAsyncRouter(asyncRouterMapSeller,roles)
+        //     //   let authIndex = -1
+        //     // for(let i=0,len=asyncRouterMapSeller.length;i<len;i++){
+        //     // hbs:make some diff
+        //     // try{
+        //     //   if(asyncRouterMapAdmin[i].path=='/sellerAuth'){
+        //     //     authIndex = i
+        //     //     asyncRouterMapAdmin.splice(authIndex,1)
+        //     //     accessedRouters = asyncRouterMapAdmin
+        //     //   }
+        //     // }catch(e){
+        //     //   console.error(i,e,'GenerateRoutes')
+        //     // }
             
-            // }
-        }
+        //     // }
+        // }
         // accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
+        if (roles.indexOf('agentAdmin') >= 0) {
+          console.log(roles)
+          let tempIndex = -1
+
+          accessedRouters.forEach(function(item,index){
+            if(item.path==="/agent"){
+              tempIndex = index
+            }
+          })
+          if(tempIndex>-1){
+            accessedRouters.splice(tempIndex,1)
+          }
+          accessedRouters.forEach(function(item,index){
+            if(item.path==="/manageSevice"){
+              tempIndex = index
+            }
+          })
+          if(tempIndex>-1){
+            accessedRouters.splice(tempIndex,1)
+          }
+        }
         console.log('accessedRouters---------------',accessedRouters)
         commit('SET_ROUTERS', accessedRouters)
         resolve()

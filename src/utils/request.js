@@ -2,27 +2,30 @@ import axios from 'axios'
 import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
+import Vue from "vue";
 // import { MessageBox } from 'element-ui'
-console.log("request")
+
 // create an axios instance
 const service = axios.create({
   // withCredentials:true,
-  // baseURL: window.api, // api的base_url
   baseURL: process.env.BASE_API, // api的base_url
-  // baseURL:'http://192.168.50.252/',
   // baseURL: 'https://www.njjncm.com/', // api的base_url
-  
+  // baseURL: 'http://203.195.203.67/', // api的base_url
+  // baseURL: 'http://111.231.111.134:88/', // api的base_url
+
   timeout: 20000 // request timeout
 })
 // request interceptor
 service.interceptors.request.use(config => {
   console.log(process.env.BASE_API)
   // Do something before request is sent
-  console.log('store.getters.token',store.getters.token)
-  console.log('getToken()',getToken())
+  console.log('store.getters.token', store.getters.token)
+  console.log('getToken()', getToken())
   if (getToken()) {
     // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
+    // config.headers['token'] = "7634d00d79857d0e2230229435e4c614"
     config.headers['token'] = getToken()
+    console.log("token!!", config.headers['token'])
   }
   return config
 }, error => {
@@ -43,7 +46,7 @@ service.interceptors.response.use(
   response => {
     console.log('request.js', response)
     const res = response.data
-    if (res&&res.status === 1) {
+    if (res && res.status === 1) {
       // Message({
       //   message: res.error,
       //   type: 'error',
@@ -53,18 +56,21 @@ service.interceptors.response.use(
       //   location.reload() // 为了重新实例化vue-router对象 避免bug
       // })
       // store.dispatch('FedLogOut')
-      // return Promise.reject('request.js拦截响应 res.status == 1')
-      return response.data
-    } else if(res&&res.status === 10){
-        Message({
-          message: res.error,
-          type: 'error',
-          duration: 5 * 1000
-        })
-        store.dispatch('FedLogOut').then(() => {
-          location.reload() 
-        })
-    }else  {
+      Vue.prototype.$message({
+        message: res.error,
+        type: "warning"
+      });
+      return Promise.reject('request.js拦截响应 res.status == 1')
+    } else if (res && res.status === 10) {
+      Message({
+        message: res.error,
+        type: 'error',
+        duration: 5 * 1000
+      })
+      // store.dispatch('FedLogOut').then(() => {
+      //   location.reload()
+      // })
+    } else {
       return response.data
     }
   },

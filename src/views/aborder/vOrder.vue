@@ -22,11 +22,11 @@
         {{formForNotive.amount}}
       </p>
     </el-form-item>
-    <!-- <el-form-item label="运费" :label-width="formLabelWidth">
+    <el-form-item label="运费" :label-width="formLabelWidth">
       <p class="hbs-no-margin-p">
         {{formForNotive.trans}}
       </p>
-    </el-form-item> -->
+    </el-form-item>
     <el-form-item label="下单时间" :label-width="formLabelWidth">
       <p class="hbs-no-margin-p">
         {{formForNotive.orderTime}}
@@ -66,74 +66,33 @@
             prop="goods_price"
             >
         </el-table-column>
-        <!-- <el-table-column
+        <el-table-column
             label="编号" 
             prop="goods_num"
             >
-        </el-table-column> -->
+        </el-table-column>
         <el-table-column
             label="实付金额" 
-            prop="truePay"
+            prop="goods_pay_price"
             >
         </el-table-column>
       </el-table>
     </el-form-item>
-    <el-form-item label="赠品信息" :label-width="formLabelWidth" v-if="formForNotive.giftDetail">
+    <el-form-item label="收货信息" :label-width="formLabelWidth" v-if="formForNotive.buyerInfo">
       <el-form >
-        <el-form-item label="团购等级" :label-width="formLabelWidth">
+        <el-form-item label="收货地址" :label-width="formLabelWidth">
           <p class="hbs-no-margin-p">
-            {{formForNotive.giftDetail.rank}}
+            {{formForNotive.buyerInfo.address}}
           </p>
         </el-form-item>
-        <el-form-item label="赠品图片" :label-width="formLabelWidth">
-          <img :src="formForNotive.giftDetail.img" alt="" width="100px">
-        </el-form-item>
-      </el-form>
-    </el-form-item>
-    <el-form-item label="拼团信息" :label-width="formLabelWidth" v-if="formForNotive.member">
-      <el-form >
-        <el-form-item label="团长" :label-width="formLabelWidth">
-          <div class="group-item">
-            <img :src="formForNotive.member[0].member_avatar" alt="" width="50px" style="border-radius: 50%">
-            <div>{{formForNotive.member[0].member_truename}}</div>
-          </div>
-        </el-form-item>
-        <el-form-item label="团成员" :label-width="formLabelWidth">
-          <div class="group-list">
-            <div class="group-item" v-for="item in formForNotive.member">
-              <img :src="item.member_avatar" alt="" width="50px" style="border-radius: 50%">
-              <div>{{item.member_truename}}</div>
-            </div>
-          </div>
-        </el-form-item>
-        <el-form-item label="团容量" :label-width="formLabelWidth">
-          <p class="hbs-no-margin-p">
-            {{formForNotive.pintuangroup_limit_number}}
-          </p>
-        </el-form-item>
-        <el-form-item label="已参团人数" :label-width="formLabelWidth">
-          <p class="hbs-no-margin-p">
-            {{formForNotive.pintuangroup_joined}}
-          </p>
-        </el-form-item>
-      </el-form>
-    </el-form-item>
-    <el-form-item label="购买者微信信息" :label-width="formLabelWidth" v-if="formForNotive.buyer">
-      <div class="group-item">
-        <img :src="formForNotive.buyer.member_avatar" alt="" width="50px" style="border-radius: 50%">
-        <div>{{formForNotive.buyer.member_truename}}</div>
-      </div>
-    </el-form-item>
-    <el-form-item label="收货信息" :label-width="formLabelWidth">
-      <el-form >
         <el-form-item label="收货人" :label-width="formLabelWidth">
           <p class="hbs-no-margin-p">
-            {{formForNotive.name}}
+            {{formForNotive.buyerInfo.name}}
           </p>
         </el-form-item>
         <el-form-item label="收货人电话" :label-width="formLabelWidth">
           <p class="hbs-no-margin-p">
-            {{formForNotive.phone}}
+            {{formForNotive.buyerInfo.phone}}
           </p>
         </el-form-item>
       </el-form>
@@ -192,17 +151,6 @@
       </el-select>
     <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
     </el-form-item>
-    <el-form-item label="订单类别">
-      <el-select v-model="listQuery.order_type" placeholder="请选择">
-        <el-option
-          v-for="item in orderTypeOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-        </el-option>
-      </el-select>
-      <el-button type="primary" icon="el-icon-search" @click="search">查询</el-button>
-    </el-form-item>
     <!-- <el-form-item label="时间">
       <el-date-picker
         style="width:400px"
@@ -231,7 +179,7 @@
       style="width: 100%" >
 
       <el-table-column
-        label="商品图片"
+        label="店铺头像"
         >
         <template slot-scope="scope">
           <div style="width:100px;height:100px;align-items:center;display:flex;">
@@ -279,16 +227,11 @@
       <!-- <el-table-column
         label="类别" 
         prop="buyType"
-        > 
-      </el-table-column>-->
+        > -->
+      </el-table-column>
       <el-table-column
         label="下单时间" 
         prop="time"
-        >
-      </el-table-column>
-      <el-table-column
-        label="订单类型" 
-        prop="orderTypeTXT"
         >
       </el-table-column>
       <el-table-column
@@ -307,30 +250,11 @@
   </el-pagination>
 </el-footer>
 </el-container>
-<el-dialog
-  title="发货信息"
-  :visible.sync="centerDialogVisible"
-  width="30%"
-  center>
-  <el-form :model="findForm">
-    <el-form-item label="联系人" label-width="100px">
-      <el-input v-model="findForm.linkmanName" autoComplete="on" placeholder="姓名" />
-    </el-form-item>
-    <el-form-item label="联系电话" label-width="100px">
-      <el-input v-model="findForm.linkmanPhone" autoComplete="on" placeholder="电话号码" />
-    </el-form-item>
-  </el-form>
-  <div slot="footer" class="dialog-footer">
-    <el-button @click="centerDialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="postExpressage">确 定</el-button>
-  </div>
-</el-dialog>
 </div>
 </template>
 <script>
 //getVOrderList_api 接口异常 php :未定义变量 bannnerModel
 import {getVOrderList_api,getVOrder_api,changeVOrder_api} from '@/api/seller'
-import Moment from '@/utils/moment'
 export default {
   created(){
     this.getList()
@@ -348,7 +272,7 @@ export default {
         //excel
           tableDataAll:'',
           autoWidth:true,
-          filename:'虚拟订单Excel',
+          filename:'实物订单Excel',
           exportExcelStatus:'导出',
           downloadLoading:false,
         orderState:'',
@@ -371,25 +295,6 @@ export default {
             value: 40,
             label: '已收货'
         }],
-        orderTypeOptions:[{
-            value: '',
-            label: '全部类别'
-          },{
-            value: 1,
-            label: '普通订单'
-          }, {
-            value: 6,
-            label: '团购订单'
-          }, {
-            value: 7,
-            label: '预约订单'
-          } ,{
-            value: 8,
-            label: '预约且团购订单'
-          },{
-            value: 9,
-            label: '砍价订单'
-          }],
       // body
         listLoading: false,
         tableData: [],
@@ -402,12 +307,6 @@ export default {
         },
         total:1,
       // -------------------------
-       findForm: {
-        linkmanName: "",
-        linkmanPhone: "",
-      },
-       centerDialogVisible: false,
-       postExpressageId: null,
     }
   },
   methods: {
@@ -439,15 +338,8 @@ export default {
           return console.log('获取数据失败:handleDownload')
         }
         import('@/vendor/Export2Excel').then(excel => {
-          let tHeader = []
-          let filterVal = []
-          if(this.listQuery.order_type == 6 ||this.listQuery.order_type == 8) {
-            tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '下单时间','支付时间','商品名','商品价格','买家','买家电话','团购类型','团购结束时间','团容量','已参团人数','团长微信昵称','团成员微信昵称','购买者微信昵称']
-            filterVal = ['id','money', 'num', 'state', 'time','paytime','goods_name','goods_price', 'name','phone','groupType','groupEndTime','groupNum','groupJoinNum','groupColonel','groupList','buyer']
-          } else {
-            tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '下单时间','支付时间','商品名','商品价格','买家','买家电话']
-            filterVal = ['id','money', 'num', 'state', 'time','paytime','goods_name','goods_price', 'name','phone']
-          }
+          const tHeader = ['订单ID', '订单金额', '订单号', '订单状态', '交易日期']
+          const filterVal = ['id', 'money', 'num', 'state', 'time']
           const tableDataAll = this.tableDataAll
           const data = this.formatJson(filterVal, tableDataAll)
           excel.export_json_to_excel({
@@ -459,8 +351,7 @@ export default {
           this.downloadLoading = false
         })
       },
-      search(){ // 此时listQuery已经改变
-        this.listQuery.page = 1
+      search(){
         this.getList()
       },
     // body
@@ -479,12 +370,11 @@ export default {
       changeNewNotice(id,num){
         let sendData = {
           order_id : id,
-          shipping_code : num,
+          shipping_code : '',
           state_type:'deliver_goods'
         }
         changeVOrder_api(sendData).then((res)=>{
           if(res&&res.status===0){
-            this.centerDialogVisible = false
               this.$notify({
               title: '成功',
               message: '操作成功',
@@ -504,16 +394,19 @@ export default {
         })
       },  
       changeItem(index,raw){
-        this.postExpressageId= raw.id
-        this.centerDialogVisible = true
-        this.findForm = {
-          linkmanName: "",
-          linkmanPhone: "",
-        }
-      },
-      postExpressage() {
-        this.changeNewNotice(this.postExpressageId,this.findForm)
-        console.log(this.findForm); 
+        let id = raw.id
+        this.$confirm(`请确认您已发货`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.changeNewNotice(id)
+        }).catch(()=>{
+          this.$notify.info({
+            title: '消息',
+            message: '已取消'
+          });
+        })
       },
       lookItem(index,raw) {
         if(!raw||!raw.id){
@@ -530,28 +423,13 @@ export default {
         
         this.detailShow = true
         this.editLoading = true
-        getVOrder_api(sendData).then(res=>{
+        getVOrder_api(sendData).then(data=>{
           this.editLoading = false //detail 和 edit共用
           // this.waitAddNotice = false
-          if(res.status===0){
-            let tempForm = {}
-            let data = res.data[0]
-            if(data.group){
-              if(data.group.groupgift){
-                let groupgift = {
-                  img: data.group.groupgift.length>0?data.group.groupgift[0].url:'',
-                  rank: data.group.rank
-                }
-                tempForm.giftDetail = groupgift // 团礼物详情              
-              }
-              
-              tempForm.member = data.group.member
-              tempForm.buyer = data.group.buyer
-              tempForm.pintuangroup_limit_number = data.group.pintuangroup_limit_number
-              tempForm.pintuangroup_joined = data.group.pintuangroup_joined
-            }
-            
+          if(data.status===0){
+            data = data.data[0]
             //获取数据成功，这填充数据，三个formNative
+            let tempForm = {}
             // 编号
             tempForm.num = data.order_sn
             // 金额
@@ -565,13 +443,9 @@ export default {
             // 订单状态
             tempForm.state = data.order_state
             // 商品列表
-            data.order_goods[0].truePay = data.order_amount
             tempForm.goodsTable = data.order_goods
             // 收货信息
             tempForm.buyerInfo = data.order_reciver_info 
-
-            tempForm.name = data.reciver_name
-            tempForm.phone= data.reciver_telephone
             
             this.formForNotive = tempForm //基础form完成填充
           }else{
@@ -584,26 +458,8 @@ export default {
         }).catch(e=>{
           // this.waitAddNotice = false
           this.editLoading = false
-          console.error(e)
+          console.error('manageShop:getVOrder_api 接口错误')
         })
-      },
-      getOrderType(type){
-        switch(type){
-          case 0:
-          return "普通订单"
-          case 6:
-          return "团购订单"
-          case 7:
-          return "预约订单"
-          case 8:
-          return "团购预约订单"
-          case 9:
-          return "砍价订单"
-          case 11:
-          return "团购订单"
-          default :
-          return "普通订单"
-        }
       },
       async getList(all) {
         // 立一个flag 因为当前函数 promise化 需要检测 接口返回状态 
@@ -628,50 +484,16 @@ export default {
             }
             let tempTableData = []
             result.forEach((aData)=>{
-              if(aData.group) {
-                let groupList = ''
-                aData.group.member.forEach(item => {
-                  groupList+=item.member_truename+','
-                });
-                tempTableData.push({
-                  id:aData.order_id,
-                  storeImg:aData.order_goods[0].goods_image,
-                  num:aData.order_sn,
-                  money:aData.order_amount,
-                  time:aData.add_time,
-                  state:aData.order_state,
-                  stateID:aData.order_state_id,
-                  orderTypeTXT :this.getOrderType(aData.order_type) ,
-                  name:aData.reciver_name==''||aData.reciver_name==null?'-':aData.reciver_name,
-                  phone:aData.reciver_telephone==''||aData.reciver_telephone==null?'-':aData.reciver_telephone,
-                  goods_name:aData.order_goods[0].goods_name,
-                  goods_price:aData.order_goods[0].goods_price,
-                  paytime:aData.payment_time=='1970-01-01 08:00:00'?'-':aData.payment_time,
-                  groupColonel:aData.group.member[0].member_truename,
-                  groupList: groupList,
-                  buyer: aData.group.buyer.member_truename,
-                  groupType: aData.group.groupgift? '等级团购':'普通团购',
-                  groupJoinNum: aData.group.pintuangroup_joined,
-                  groupNum: aData.group.pintuangroup_limit_number,
-                  groupEndTime: Moment(aData.group.pintuangroup_endtime*1000).format('yyyy-MM-dd HH:mm:ss')
-                })
-              }else {
-                tempTableData.push({
-                  id:aData.order_id,
-                  storeImg:aData.order_goods[0].goods_image,
-                  num:aData.order_sn,
-                  money:aData.order_amount,
-                  time:aData.add_time,
-                  state:aData.order_state,
-                  stateID:aData.order_state_id,
-                  orderTypeTXT :this.getOrderType(aData.order_type) ,
-                  name:aData.reciver_name==''||aData.reciver_name==null?'-':aData.reciver_name,
-                  phone:aData.reciver_telephone==''||aData.reciver_telephone==null?'-':aData.reciver_telephone,
-                  goods_name:aData.order_goods[0].goods_name,
-                  goods_price:aData.order_goods[0].goods_price,
-                  paytime:aData.payment_time=='1970-01-01 08:00:00'?'-':aData.payment_time
-                })    
-              } 
+              tempTableData.push({
+                id:aData.order_id,
+                storeImg:aData.store_avatar,
+                num:aData.order_sn,
+                money:aData.order_amount,
+                time:aData.add_time,
+                state:aData.order_state,
+                stateID:aData.order_state_id,
+                // goodsList:aData.order_goods,
+              })
             })
             if(all){
               this.tableDataAll = tempTableData
