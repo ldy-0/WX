@@ -1,7 +1,7 @@
 import {upFileToken_api} from '@/api/common' 
 // const COS = require('./cos-js-sdk-v5.min.js')
 const COS = window.COS
-const Bucket = 'admin-1256953590';
+const Bucket = 'admin-1256953590'; // 'shouyipuzi-1258289459' 
 const Region = 'ap-shanghai';
 //只接受 文件数组 非类数组！！如果你想对类数组处理可以在下面进行转换
 let upLoadFile = function (allFile){

@@ -39,7 +39,7 @@
           <svg-icon icon-class="eye" />
         </span>
       </el-form-item>
-      <el-switch
+      <!-- <el-switch
         class="hbs-login-switch"
         style="display: block;"
         v-model="isAdmin" 
@@ -47,7 +47,7 @@
         inactive-color="#13ce66"
         active-text="我是平台"
         inactive-text="我是分公司">
-      </el-switch>
+      </el-switch> -->
       <el-button type="primary" style="width:100%;margin-bottom:30px;" :loading="loading" @click.native.prevent="handleLogin">{{$t('login.logIn')}}</el-button>
 
       <!-- <div class="tips">
@@ -72,9 +72,9 @@
     </el-dialog> 
    -->
 
-    <div class="putOnRecords">
+    <!-- <div class="putOnRecords">
         © 2017 - 2018 南京俊宁文化传媒有限公司   <a href="http://www.miitbeian.gov.cn">苏ICP备18029153号</a>
-    </div>
+    </div> -->
 
   </div>
 </template>

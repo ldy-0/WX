@@ -23,7 +23,14 @@ export default {
     vote: '投票',
 
 
-    sellerAuth: '权限',
+    authorize: '权限列表',
+    store: '门店列表',
+    refund: '退款列表',
+    banner: '轮播图',
+    service: '服务列表',
+    comment: '评论列表',
+    validate: '审核列表',
+    about: '关于手艺铺子',
 
     //平台
     home: '首页',

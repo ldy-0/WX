@@ -295,7 +295,7 @@ export function getAnswerList_api(data) {
 }
 export function getHomeData_api(data) {
   return request({
-    url: '/api/v1/admin/salesstats',
+    url: '/api/v2/admin/salesstats',
     method: 'get',
     params: data
   })

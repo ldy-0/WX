@@ -36,7 +36,7 @@ export const constantRouterMap = [
     redirect: 'home',
     children: [{
       path: 'home',
-      component: () => import('@/views/aahome/index'),
+      component: () => import('@/views/home/index'),
       name: 'home',
       meta: { title: 'home', icon: 'dashboard', noCache: true }
     }]
@@ -53,120 +53,217 @@ export default new Router({
 
 export let asyncRouterMapAdmin = [
   // {
-  //   path: '/goods',
+  //   path: '/notice',
   //   component: Layout,
-  //   redirect: '/goods/index',
+  //   redirect: '/notice/index',
+  //   meta: { roles: ['affiche'] },
   //   children: [{
   //     path: 'index',
-  //     component: () => import('@/views/aagoods/index'),
-  //     name: 'goods',
-  //     meta: { title: 'goods', icon: 'goods', noCache: true }
+  //     component: () => import('@/views/aanotice/index'),
+  //     name: 'notice',
+  //     meta: { title: 'notice', icon: 'notice', noCache: true, roles: ['affiche'] }
   //   }]
   // },
+  // {
+  //   path: '/manageShop',
+  //   component: Layout,
+  //   redirect: '/manageShop/index',
+  //   meta: { roles: ['store'] },
+  //   children: [{
+  //     path: 'index',
+  //     component: () => import('@/views/aamanageShop/index'),
+  //     name: 'manageShop',
+  //     meta: { title: 'manageShop', icon: 'notice', noCache: true, roles: ['store'] }
+  //   }]
+  // },
+  // {
+  //   path: '/manageSevice',
+  //   component: Layout,
+  //   redirect: '/manageSevice/shopServer',
+  //   name: 'manageSevice',
+  //   meta: { title: 'manageSevice', icon: 'notice', roles: ['manage'] },
+  //   children: [
+  //     {
+  //       path: 'shopServer',
+  //       component: () => import('@/views/aamanageSevice/shopServer'),
+  //       name: 'shopServer',
+  //       meta: { title: 'shopServer', noCache: true }
+  //     }, {
+  //       path: 'flowPackages',
+  //       component: () => import('@/views/aamanageSevice/flowPackages'),
+  //       name: 'flowPackages',
+  //       meta: { title: 'flowPackages', noCache: true }
+  //     }, {
+  //       path: 'industryList',
+  //       component: () => import('@/views/aamanageSevice/industryList'),
+  //       name: 'industryList',
+  //       meta: { title: 'industryList', noCache: true }
+  //     }
+  //   ]
+  // },
   {
-    path: '/notice',
+    path: '/store',
     component: Layout,
-    redirect: '/notice/index',
-    meta: { roles: ['affiche'] },
-    children: [{
-      path: 'index',
-      component: () => import('@/views/aanotice/index'),
-      name: 'notice',
-      meta: { title: 'notice', icon: 'notice', noCache: true, roles: ['affiche'] }
-    }]
-  },
-  {
-    path: '/manageShop',
-    component: Layout,
-    redirect: '/manageShop/index',
+    redirect: '/store/index',
     meta: { roles: ['store'] },
     children: [{
       path: 'index',
-      component: () => import('@/views/aamanageShop/index'),
-      name: 'manageShop',
-      meta: { title: 'manageShop', icon: 'notice', noCache: true, roles: ['store'] }
+      component: () => import('@/views/store/index'),
+      name: 'store',
+      meta: { title: 'store', icon: 'notice', roles: ['store'] }
     }]
   },
+  // {
+  //   path: '/stylist',
+  //   component: Layout,
+  //   redirect: '/stylist/index',
+  //   meta: { roles: ['stylist'] },
+  //   children: [{
+  //     path: 'index',
+  //     component: () => import('@/views/stylist/index'),
+  //     name: 'stylist',
+  //     meta: { title: 'stylist', icon: 'notice', roles: ['stylist'] }
+  //   }]
+  // },
   {
-    path: '/manageSevice',
+    path: '/order',
     component: Layout,
-    redirect: '/manageSevice/shopServer',
-    name: 'manageSevice',
-    meta: { title: 'manageSevice', icon: 'notice', roles: ['manage'] },
-    children: [
-      {
-        path: 'shopServer',
-        component: () => import('@/views/aamanageSevice/shopServer'),
-        name: 'shopServer',
-        meta: { title: 'shopServer', noCache: true }
-      }, {
-        path: 'flowPackages',
-        component: () => import('@/views/aamanageSevice/flowPackages'),
-        name: 'flowPackages',
-        meta: { title: 'flowPackages', noCache: true }
-      }, {
-        path: 'industryList',
-        component: () => import('@/views/aamanageSevice/industryList'),
-        name: 'industryList',
-        meta: { title: 'industryList', noCache: true }
-      }
-    ]
-  },
-  {
-    path: '/agent',
-    component: Layout,
-    redirect: '/agent/index',
-    meta: { roles: ['agent'] },
+    redirect: '/order/index',
+    meta: { roles: ['order'] },
     children: [{
       path: 'index',
-      component: () => import('@/views/aaagent/index'),
-      name: 'agent',
-      meta: { title: 'agent', icon: 'notice', roles: ['agent'] }
+      component: () => import('@/views/order/index'),
+      name: 'order',
+      meta: { title: 'order', icon: 'notice', roles: ['order'] }
     }]
   },
   {
-    path: '/auth',
+    path: '/refund',
     component: Layout,
-    redirect: '/auth/index',
+    redirect: '/refund/index',
+    meta: { roles: ['refund'] },
+    children: [{
+      path: 'index',
+      component: () => import('@/views/refund/index'),
+      name: 'refund',
+      meta: { title: 'refund', icon: 'notice', roles: ['refund'] }
+    }]
+  },
+  {
+    path: '/banner',
+    component: Layout,
+    redirect: '/banner/index',
+    meta: { roles: ['banner'] },
+    children: [{
+      path: 'index',
+      component: () => import('@/views/banner/index'),
+      name: 'banner',
+      meta: { title: 'banner', icon: 'notice', roles: ['banner'] }
+    }]
+  },
+  {
+    path: '/service',
+    component: Layout,
+    redirect: '/service/index',
+    meta: { roles: ['service'] },
+    children: [{
+      path: 'index',
+      component: () => import('@/views/service/index'),
+      name: 'service',
+      meta: { title: 'service', icon: 'notice', roles: ['service'] }
+    }]
+  },
+  {
+    path: '/coupon',
+    component: Layout,
+    redirect: '/coupon/index',
+    meta: { roles: ['coupon'] },
+    children: [{
+      path: 'index',
+      component: () => import('@/views/coupon/index'),
+      name: 'coupon',
+      meta: { title: 'coupon', icon: 'notice', roles: ['coupon'] }
+    }]
+  },
+  {
+    path: '/comment',
+    component: Layout,
+    redirect: '/comment/index',
+    meta: { roles: ['comment'] },
+    children: [{
+      path: 'index',
+      component: () => import('@/views/comment/index'),
+      name: 'comment',
+      meta: { title: 'comment', icon: 'notice', roles: ['comment'] }
+    }]
+  },
+  {
+    path: '/validate',
+    component: Layout,
+    redirect: '/validate/index',
+    meta: { roles: ['validate'] },
+    children: [{
+      path: 'index',
+      component: () => import('@/views/validate/index'),
+      name: 'validate',
+      meta: { title: 'validate', icon: 'notice', roles: ['validate'] }
+    }]
+  },
+  // {
+  //   path: '/storeInfo',
+  //   component: Layout,
+  //   redirect: '/storeInfo/index',
+  //   meta: { roles: ['storeInfo'] },
+  //   children: [{
+  //     path: 'index',
+  //     component: () => import('@/views/storeInfo/index'),
+  //     name: 'storeInfo',
+  //     meta: { title: 'storeInfo', icon: 'notice', roles: ['storeInfo'] }
+  //   }]
+  // },
+  {
+    path: '/authorize',
+    component: Layout,
+    redirect: '/authorize/index',
     meta: { roles: ['auth'] },
     children: [{
       path: 'index',
-      component: () => import('@/views/aaauth/index'),
+      component: () => import('@/views/authorize/index'),
       name: 'auth',
-      meta: { title: 'auth', icon: 'notice', roles: ['auth'] }
+      meta: { title: 'authorize', icon: 'notice', roles: ['auth'] }
     }]
   },
   {
-    path: '/editAuth',
+    path: '/about',
     component: Layout,
-    redirect: '/editAuth/index',
-    meta: { roles: ['editAuth'] },
+    redirect: '/about/index',
+    meta: { roles: ['about'] },
     children: [{
       path: 'index',
-      component: () => import('@/views/editAuth/index'),
-      name: 'editAuth',
-      meta: { title: 'editAuth', icon: 'notice', roles: ['editAuth'] }
+      component: () => import('@/views/about/index'),
+      name: 'about',
+      meta: { title: 'about', icon: 'notice', roles: ['about'] }
     }]
   },
-  {
-    path: '/library',
-    component: Layout,
-    redirect: '/library/libraryList',
-    name: 'library',
-    meta: { title: 'library', icon: 'notice', roles: ['library'] },
-    children: [{
-      path: 'libraryList',
-      component: () => import('@/views/library/libraryList'),
-      name: 'libraryList',
-      meta: { title: 'libraryList', noCache: true }
-    },
-    {
-      path: 'libraryClass',
-      component: () => import('@/views/library/libraryClass'),
-      name: 'libraryClass',
-      meta: { title: 'libraryClass', noCache: true }
-    }]
-  }
+  // {
+  //   path: '/library',
+  //   component: Layout,
+  //   redirect: '/library/libraryList',
+  //   name: 'library',
+  //   meta: { title: 'library', icon: 'notice', roles: ['library'] },
+  //   children: [{
+  //     path: 'libraryList',
+  //     component: () => import('@/views/library/libraryList'),
+  //     name: 'libraryList',
+  //     meta: { title: 'libraryList', noCache: true }
+  //   },
+  //   {
+  //     path: 'libraryClass',
+  //     component: () => import('@/views/library/libraryClass'),
+  //     name: 'libraryClass',
+  //     meta: { title: 'libraryClass', noCache: true }
+  //   }]
+  // }
   // { path: '*', redirect: '/404', hidden: true }
 ]
 
@@ -210,18 +307,6 @@ export let asyncRouterMapSeller = [
       component: () => import('@/views/abappointment/index'),
       name: 'appointment',
       meta: { title: 'appointment', icon: 'goods', noCache: true }
-    }]
-  },
-  {
-    path: '/coupon',
-    component: Layout,
-    meta: { roles: 'coupon' },
-    redirect: '/coupon/index',
-    children: [{
-      path: 'index',
-      component: () => import('@/views/abcoupon/index'),
-      name: 'coupon',
-      meta: { title: 'coupon', icon: 'goods', noCache: true }
     }]
   },
   {
@@ -291,18 +376,6 @@ export let asyncRouterMapSeller = [
       }]
     }]
   },
-  {
-    path: '/sellerAuth',
-    component: Layout,
-    redirect: '/sellerAuth/index',
-    meta: { roles: 'auth' },
-    children: [{
-      path: 'index',
-      component: () => import('@/views/absellerAuth/index'),
-      name: 'sellerAuth',
-      meta: { title: 'sellerAuth', icon: 'goods', noCache: true }
-    }]
-  }
 ]
   // {
   //   path: '/dashboard',
