@@ -23,6 +23,12 @@ export default class extends wepy.app {
       "pages/store/searchResult", //搜索结果
       // "pages/shopList", //店铺列表页
       "pages/article/advertisingPage", //banner跳转页
+      "pages/article/aboutUs", //关于云仓
+      "pages/article/advisory", //新闻资讯
+      "pages/article/videos", //视频列表
+      "pages/article/couponList", //优惠券列表
+      "pages/article/advisoryDetail", //新闻资讯详情
+      "pages/article/caseDetail", //案例详情
       "pages/store/more", //推荐更多
       "pages/store/goodsList", //商品列表
       "pages/store/goodsDetails", //商品详情
@@ -51,12 +57,7 @@ export default class extends wepy.app {
       "pages/my/assessed", //商品评价完成
       "pages/my/groupbuyList", //团购列表
       "pages/my/groupbuyDatail", //团购详情
-      "pages/article/aboutUs", //关于云仓
-      "pages/article/advisory", //新闻资讯
-      "pages/article/videos", //视频列表
-      "pages/article/couponList", //优惠券列表
-      "pages/article/advisoryDetail", //新闻资讯详情
-      "pages/article/caseDetail" //案例详情
+      
     ],
     window: {
       backgroundTextStyle: "dark",
@@ -70,7 +71,7 @@ export default class extends wepy.app {
       color: "#8e8e8e",
       selectedColor: "#f17f30",
       backgroundColor: "#ffffff",
-      borderStyle: "block",
+      borderStyle: "black",
       list: [
         {
           pagePath: "pages/home",

@@ -270,6 +270,9 @@ page {
   color: #dd3d27;
   margin-right: 12rpx;
 }
+.empty-placeholder {
+  margin-left: 120rpx;
+}
 </style>
 
 <template>

@@ -78,7 +78,7 @@ export default class Authorization extends wepy.page {
   config = {
     navigationBarTitleText: "",
     navigationBarBackgroundColor: "#f17f30",
-    navigationBarTextStyle: "#fff"
+    navigationBarTextStyle: "white"
   };
 
   data = {
