@@ -1,0 +1,558 @@
+<style lang="less">
+
+.container{
+  height: 100%;
+  font: 30rpx MicrosoftYaHei;
+  background: #f5f5f5;
+}
+
+.topBar2{
+  position: fixed;
+  top: 150rpx;
+  display: flex;
+  justify-content: center;
+  z-index:2000;
+  // align-items: center;
+  width: 100%;
+  height: 90rpx;
+  background: #f5f5f5;
+  .search_content {
+    border: 1px solid #efefee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 690rpx;
+    height: 61rpx;
+    border-radius: 20rpx;
+    background: #fff;
+    .icon-search{
+      font-size: 40rpx;
+    }
+    .search_input {
+      font-size: 29rpx;
+      color: #999;
+    }
+    image{
+      width: 30rpx;
+      height: 30rpx;
+      margin-right: 10rpx;
+    }
+  }
+  .goRight{
+    position: absolute;
+    // top: 28rpx;
+    right: 30rpx;
+    image{
+      width: 40rpx;
+      height: 40rpx;
+      line-height: 40rpx;
+      color: #333;
+    }
+  }
+}
+// .ios_topBar2{
+//   top: 200rpx;
+// }
+
+.wrap{
+  display: flex;
+  // justify-content: space-between
+  height: 100%;
+  margin: 150rpx 0 0;// 100rpx 0 0;
+  background: #fff;
+  .class_list{
+    min-width:22%;
+    background: #fff;
+    position:fixed;
+    height:100%;
+    border-right:1px solid #eee;
+    .class_item{
+      line-height: 91rpx;
+      // padding: 0 20rpx;
+      color: #999;
+      text-align: center;
+    }
+    .sel{
+      color: #e83820;
+      border-left: 6rpx solid #e83820;
+    }
+      
+  }
+  .wrap-box{
+   /*  position: absolute;;
+    right:0; */
+    height:100%;
+    width:100%;
+    // overflow:hidden;
+
+  }
+  .content_wrap{
+    width: 78%;
+    max-width:78%;
+    height: auto;
+    float:right;
+    .content_title{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 91rpx;
+      .content_desc{
+        margin: 0 48rpx;
+        color: #020202;
+      }
+      .line{
+        width: 100rpx;
+        height: 3rpx;
+        background: #000;
+      }
+    }
+    .row{
+      display: flex;
+      padding: 7rpx 0 0;
+      background: #fff;
+      .content_item{
+        margin-left: 18rpx;
+        .content_name{
+          margin: 20rpx 0;
+          font-size: 24rpx;
+          color: rgb(77,77,77);
+          text-align: center;
+        }
+        .content_img{
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 168rpx;
+          height: 168rpx;
+        }
+      }
+      .item {
+        width: 270rpx;
+        text-align: center;
+        background: #fff;
+        margin: 0 0 15rpx 15rpx;
+        padding-bottom: 15rpx;
+        .item_img{
+          width: 270rpx;
+          height: 270rpx;
+          .discover_img {
+              width: 270rpx;
+          }
+        }
+        .info {
+          box-sizing: border-box;
+          width: 270rpx;
+          // height: 252rpx;
+          padding: 0 15rpx;
+          text-align: left;
+          .name{
+            box-sizing: border-box;
+            width: 100%;
+            height: 60rpx;
+            line-height: 30rpx;
+            margin: 20rpx 0 10rpx;
+            font-size: 25rpx;
+            color: #4d4d4d;
+            overflow: hidden;
+          }
+          .origin_price {
+            font-size: 24rpx;
+            color: #999;
+            border-top: 1rpx dashed #999;
+          }
+          .other_price{
+            width: 100%;
+            height: 30rpx;
+            line-height: 30rpx;
+            font-size: 24rpx;
+            color: #4d4d4d;
+            overflow: hidden;
+          }
+          .border_bottom{
+            border-bottom: 1rpx dashed #999;
+          }
+          .discount{
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              view{
+                  font-size: 25rpx;
+                  color: #e83820;
+              }
+              image{
+                  width: 21rpx;
+                  height: 19rpx;
+              }
+          }
+        }
+        
+        
+      }
+      
+
+    }
+    .bg{
+      background: #fff;
+    }
+    
+    
+  }
+          
+}
+.ios_wrap{
+  margin: 100rpx 0 0;
+}
+  
+
+</style>
+
+<template>
+  <view class="container {{ isIos ? 'ios_container' : '' }}">
+      <topBar :topBar='topBar'></topBar>
+      
+      <!-- <view class="top_search">
+        <view class="search_read_only">
+          <navigator class="search_content" url="/pages/search">
+            <i class="iconfont icon-search"></i>
+            <view class="search_input">搜索商品</view>
+          </navigator>
+        </view>
+      </view> -->
+      <view class="topBar2 ios_topBar2"> <!-- {{isIos ? 'ios_topBar2' : ''}} -->
+        <!-- <navigator class='search goRight' url='../pages/search' wx:if='{{topBar.search}}'>
+          <image src='../images/search.png' />
+        </navigator> -->
+        <navigator class="search_content" open-type="navigate" url="/pages/search">
+          <!-- <i class="iconfont icon-search"></i> -->
+          <image src='../images/search.png' />
+          <view class="search_input">请输入搜索</view>
+        </navigator>
+      </view>
+
+      <view class="wrap {{isIos ? 'ios_wrap' : ''}}">
+          <view class="class_list">
+              <repeat for="{{classList}}" index="index" item="item">
+                  <!-- <view class="class_item {{ checkedList[index] ? 'sel' : '' }}" @tap="getTwo({{index,item.isleaf,item.id}})">{{item.name}}</view> -->
+                  <view class="class_item {{ checkedList[index] ? 'sel' : '' }}" @tap="getTwo({{index}},{{item.isleaf}},{{item.id}})">{{item.name}}</view>
+              
+              </repeat>
+          </view>
+          <view class='wrap-box'>
+          <view class="content_wrap">
+
+              <repeat for="{{goodsList}}" item="items">
+                  <view class="row {{checkedList[0] ? 'bg' : ''}}">
+                      <repeat for="{{items}}" item='item'>
+                          
+                          <view class="content_item" @tap='home({{item.id}},{{item}})' wx:if='{{oneList}}'>
+                              <view class='content_img'><image src="{{item.imgUrl}}" mode='widthFix' /></view>
+                              <view class='content_name'>{{item.name}}</view>
+                          </view> 
+                        
+                          <navigator wx-if='{{twoList}}' class="item" open-type="navigate" @tap='go({{item.id}})'>
+                              <view class='item_img'>
+                                <image class="discover_img" src="{{item.imgUrl}}" mode='widthFix' />
+                              </view>
+                              <view class="info">
+                                  <view class='name'>{{item.name}}</view>
+                                  <view class='origin_price'>原价：¥ {{item.price}} </view>
+                                  <view class='other_price'>兑换价</view>
+                                  <view class='other_price border_bottom'>¥{{item.duiPrice}}+{{item.deductionDPoint}}德分</view>
+                                  <view class='discount' wx:if="{{getIdentity}}">
+                                      <view>省 ¥{{item.point}}</view>
+                                      <image src='/images/member.png' />
+                                  </view>
+                              </view>
+                          </navigator>
+                        
+                      </repeat> 
+                  </view>
+              </repeat>
+
+          </view>
+          </view>
+      </view>
+  </view>
+</template>
+
+<script>
+import wepy from "wepy";
+import shopApi from "../api/shopApi.js";
+import topBar from '../components/navigation';
+
+export default class Classify extends wepy.page {
+  config = {
+    navigationBarTitleText: '分类',
+  }
+
+  data = {
+    topBar: {
+              tabPage: true,
+              name: '分类',
+              search: true,
+              bg: '#f5f5f5',
+              //share: { name: '商品详情', path: '/pages/comfire_order', },
+            },
+    // 一级列表
+    classList: [],
+    //
+    checkedList: [],
+    title: "",
+    goodsList: [],
+    currentType: null,
+    currentPage: 0,
+    total: null,
+    isIos: null,
+    page:0,
+    twoList:false,
+    oneList:true
+  };
+  
+  components = {
+    topBar,
+  };
+  
+  computed = {
+    //更新视图
+    updateTitle() {
+      return this.data.title;
+    },
+    getIdentity(){
+      return wx.getStorageSync('userInfo').hasIdentity;
+    }
+  };
+
+  methods = {
+    go(id){
+      
+      wx.navigateTo({
+        url: './goods_detail?id='+id,
+      }); 
+     
+    },
+    home(id){
+      wx.navigateTo({
+        url: './home_detail?id='+id,
+      });
+    },
+    // 点击回调函数
+    async getTwo(index,isleaf,id) {
+      wx.showLoading({ title: 'Loading...' });
+      let checkedList = this.data.checkedList;
+      
+      checkedList.forEach((v, i) => (checkedList[i] = false));
+      checkedList[index] = true;
+      console.log(isleaf);
+      if(isleaf === true){
+        this.oneList = false;
+        this.twoList = true;
+        
+        this.currentType = id;
+        this.goodsList = [];
+        this.$apply();
+
+        this.getGoodsList(0);
+
+        // this.total =  parseInt(data.list.count/10);
+        // this.onReachBottom(this.total);
+        // console.log(data.list);
+        wx.hideLoading();
+        return this.$apply();
+      }else if(isleaf === false){ 
+        this.oneList = true;
+        this.twoList = false;
+        const data = await shopApi.getCategory({
+          level: 2,
+          params: {
+            parentCategoryId :id   
+          }
+        });  
+
+        this.goodsList = this.events.arrlist(data);
+        console.log(this.goodsList);
+        wx.hideLoading();
+        return this.$apply();
+      }else if(isleaf === null){
+        this.oneList = true;
+        this.twoList = false;
+        const data = await shopApi.getCategory({
+          level: 2
+        });
+        this.goodsList = this.events.arrlist(data);
+        wx.hideLoading();
+        return this.$apply();
+      }
+      // 全部
+      if(checkedList[0]){
+        const data = await shopApi.getCategory({
+          level: 2
+        });
+
+        this.oneList = true;
+        this.twoList = false;
+        this.goodsList = this.events.arrlist(data);
+        
+        wx.hideLoading();
+        return this.$apply();
+      }
+
+      this.currentType = this.data.classList[index].id;
+      this.currentPage = 0;
+      this.goodsList = [];
+      
+
+      this.getGoodsList(this.currentPage);
+
+      wx.hideLoading();
+      this.$apply();
+    },
+
+  };
+      
+ events = {
+   //自定义分类列表事件
+    arrlist(params) {
+      var result = [];
+        for (var i = 0, len = params.length; i < len; i += 3) {
+          result.push(params.slice(i, i + 3));
+        }
+      return result;
+    },
+    arr2(params) {
+        var result = [];
+        for (var i = 0, len = params.length; i < len; i += 2) {
+
+            params[i].duiPrice = this.add_minus(params[i].price, -params[i].deductionDPoint/10);
+            if(params[i+1]){
+              params[i+1].duiPrice = this.add_minus(params[i+1].price, -params[i+1].deductionDPoint/10);
+            }
+            result.push(params.slice(i, i + 2));
+
+        }
+
+        return result;
+    },
+    add_minus(nub1, nub2){
+      let len1, len2, m;
+    
+      try{len1 = nub1.toString().split('.')[1].length;}catch(e){len1 = 0;}
+      try{len2 = nub2.toString().split('.')[1].length;}catch(e){len2 = 0;}
+      m = 10**Math.max(len1, len2);
+    
+      return (nub1*m+nub2*m)/m;
+    }
+
+ };
+
+  async onLoad(){
+    this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
+    this.getRootCateTopLevel();
+    // this.getGoodsList();
+
+  }
+
+  //加载更多
+  onReachBottom(tatal) {
+    let that = this;
+    that.showLoading = true;
+
+    if(this.checkedList[0]){
+      return ;
+    }
+
+    if(this.total < (this.currentPage + 1) * 10){
+      return wx.showToast({ title: '已经是最后一页了!', icon: 'none', duration: 2000, });
+    }
+    // console.log(that.page_total + "===" + that.currentPage + this.currentType);
+
+    this.getGoodsList(++this.currentPage);
+
+  };
+
+  async getGoodsList(page){
+    wx.showLoading({ title: 'Loading...', });
+
+    let res = await shopApi.getGoodsList({
+        type: 'NORMAL', //全部商品
+        params: {
+          categoryId: this.currentType == undefined ? '' : this.currentType,
+          keys: '',
+          page: Number(page),
+          size: 10,
+          // order:'price',
+          // direction:'desc',
+          // pageable: true,
+        }
+      });
+
+    if(res.count <= 0){
+
+      wx.showToast({ title: '暂无相关商品', icon: 'none', duration: 2000, });
+      
+    };
+
+    this.total = res.count;
+    this.events.arr2(res.list).forEach(v => {
+      // v[0].duiPrice = this.add_minus(v[0].price, - v[0].deductionDPoint/10);
+      // v[1].duiPrice = this.add_minus(v[1].price, - v[1].deductionDPoint/10);
+      this.goodsList.push(v);
+    });
+    console.log('-=-===-=-=-=-==');
+    console.log(this.goodsList);
+    this.$apply();
+    wx.hideLoading();
+  }
+
+  async getRootCateTopLevel() {
+    wx.showLoading({ title: 'Loading...', });
+
+    while(this.classList[0]){
+      this.classList.pop();
+      this.checkedList.pop();
+    }
+
+    const res = await shopApi.getCategory({
+      level: 1
+    });
+
+    if(!res){
+      wx.hideLoading();
+      return wx.showToast({ title: '获取分类列表信息失败!', icon: 'none', duration: 2000, });
+    }
+    // res.splice(0, 1);
+    
+    res.forEach((v, i) => {
+      this.data.classList.push(v);
+      this.data.checkedList[i] = false;
+    });
+    this.data.checkedList[0] = true;
+    this.data.title = this.data.classList[0].name;
+     
+    this.$apply();
+
+    const data = await shopApi.getCategory({
+      level: 2
+    });
+
+    // res.shift();
+    // this.goodsList=this.events.arrlist(res);
+    this.goodsList = this.events.arrlist(data);
+    
+    wx.hideLoading();
+    this.$apply();
+
+  }
+
+  add_minus(nub1, nub2){
+	  let len1, len2, m;
+	 
+    try{len1 = nub1.toString().split('.')[1].length;}catch(e){len1 = 0;}
+    try{len2 = nub2.toString().split('.')[1].length;}catch(e){len2 = 0;}
+	  m = 10**Math.max(len1, len2);
+	 
+	  return (nub1*m+nub2*m)/m;
+  }
+
+}
+</script>
+

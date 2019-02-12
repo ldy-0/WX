@@ -1,0 +1,231 @@
+<!--收藏or历史足迹列表-->
+<template name="cart-goods-list">
+  <view class="goodsList">
+
+    <repeat for="{{list}}" key="index" index="index" item="item">
+      <view class="list_box">
+        <!-- <swipeDelete :swipeData="item" @delItem.user="handleDelItem"> -->
+          <view class='main_info'>
+
+            <navigator class='goods_info' url="/pages/goods_detail?id={{item.productId}}">
+              <view class="img-box">
+                <image src="{{item.productImg}}" class="img" />
+              </view>
+              <view class="text-box">
+                <view class="goods_title">{{item.productName}}</view>
+                <view class='origin_price'>原价:￥{{item.productPrice}}</view>
+                <view class='duiPrice'>兑换价: 0德分</view>
+                <view class="cutdown_wrap" wx:if="{{getIdentity}}">
+                  <view class='cutdown'>省 ￥0| 净值：0</view>
+                  <image src='../images/member.png' />
+                </view>
+              </view>
+            </navigator>
+            <view class="icon-box" @tap='goodsUnFavorite({{item.productId}})'>
+              <image src="../images/icon/collection.png" class="img" />
+            </view>
+
+          </view>
+
+          <view class='row'>{{item.createdAt}}</view>
+        <!-- </swipeDelete> -->
+      </view>
+    </repeat>
+
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import {
+  SYSTEM_INFO,
+  USER_SPECICAL_INFO
+} from '@/utils/constant';
+import tip from '@/utils/tip'
+// import api from '@/api/api';
+import shopApi from '../api/shopApi.js';
+import SwipeDelete from './common/wepy-swipe-delete'
+export default class CollecntionList extends wepy.component {
+  props = {
+    type : {
+      default: 0
+    },
+    list: {
+      type: Object,
+      default: []
+    }
+  }
+  components = {
+    swipeDelete: SwipeDelete
+  }
+
+  onLoad() {
+    let that = this;
+    console.log(that.list)
+
+  }
+  computed = {
+    getIdentity: () => wx.getStorageSync('userInfo').hasIdentity,
+  }
+
+  //商品取消收藏
+  async delUserBrowser(goodsId) {
+    let that = this;
+    let userSpecialInfo = wepy.getStorageSync(USER_SPECICAL_INFO) || {};
+    let openId = userSpecialInfo.openid;
+    const json = await api.delUserBrowser({
+      query: {
+        openId: openId,
+        goodsId: goodsId
+      }
+    });
+    if (json.data.code == 0) {
+      console.log("===========商品取消收藏成功=========")
+      //tip.toast("取消收藏成功");
+      let retList = [];
+      for (var i = 0; i < this.list.length; i++) {
+        if (this.list[i].goodsId == goodsId) {
+          continue;
+        } else {
+          retList.push(this.list[i]);
+        }
+      }
+      this.list = retList;
+    } else {
+      tip.error(json.data.msg)
+    }
+    that.$apply();
+  }
+
+  methods = {
+    //商品取消收藏
+    async goodsUnFavorite(goodsId) {
+      const res = await shopApi.goodsUnFavorite({
+          id: goodsId
+      });
+
+      if(res){
+          tip.toast("取消收藏成功");
+          this.list = this.list.filter(v => v.productId === goodsId ? false : true);
+          return this.$apply();
+      }
+
+      tip.error("取消收藏失败");
+    },
+    handleDelItem(itemData) {
+      console.log(itemData)
+      let objType = itemData.type;
+      if (objType==1) {
+        this.delUserBrowser(itemData.goodsId);
+      } else if (objType==2) {
+        this.goodsUnFavorite(itemData.goodsId);
+      }
+    },
+    refreshList(val){
+       if (val==undefined) return;
+       console.log("val.....",val);
+        this.list = val;
+        this.$apply();
+    }
+  }
+  events = {
+
+  }
+}
+
+</script>
+<style lang="less">
+
+
+.goodsList {
+  padding-top: 15rpx;
+}
+
+.icon-box {
+  display: flex;
+  align-items: center;
+  image{
+    width: 36rpx;
+    height: 36rpx;
+  }
+}
+
+.list_box {
+  box-sizing: border-box;
+  height: 255rpx;
+  margin-bottom: 10rpx;
+  padding: 20rpx 30rpx;
+  background: #fff;
+  .main_info{
+    display: flex;
+    justify-content: space-between;
+    // padding: 15rpx 21rpx;
+    // box-sizing: border-box;
+    .goods_info{
+      display: flex;
+      // margin: 20rpx 0 0;
+      .img-box {
+        width: 157rpx;
+        height: 157rpx;
+        overflow: hidden;
+        margin-right: 20rpx;
+        .img {
+          width: 157rpx;
+          height: 157rpx;
+        }
+      }
+      .text-box {
+        width: 340rpx;
+        .goods_title {
+          width: 100%;
+          height: 30rpx;
+          line-height: 30rpx;
+          font-size: 28rpx;
+          font-weight: bold;
+          color: #333;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+        .origin_price{
+          margin: 10rpx 0;
+          font-size: 24rpx;
+          color: #aaa;
+        }
+        .duiPrice{
+          width: 332rpx;
+          height: 38rpx;
+          padding-left: 8rpx;
+          font-size: 24rpx;
+          color: #333;
+          background: #fdebe8;
+        }
+        .cutdown_wrap{
+          display: flex;
+          align-items: center;
+          .cutdown{
+            line-height: 30rpx;
+            font-size: 25rpx;
+            color: #e6002d;
+          }
+          image{
+            width: 26rpx;
+            height: 22rpx;
+          }
+        }
+        .goods_time {
+          font-size: 23rpx;
+          color: #aaa;
+          padding-top: 30rpx;
+        }
+      }
+    }
+  }
+  .row{
+    line-height: 80rpx;
+    font-size: 24rpx;
+    color: #aaa;
+    text-align: right;
+  }
+}
+
+</style>

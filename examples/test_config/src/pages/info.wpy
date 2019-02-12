@@ -1,0 +1,507 @@
+<template>
+    <view class="container info {{isIos ? 'ios_container' : ''}}">
+        <topBar :topBar='topBar'></topBar>
+
+        <view class="header {{isIos ? '' : 'wrap'}}">
+            <image class='bg' src="../images/my/bg.png"></image>
+            <view class="header_content">
+                <image class="avatarUrl" src="{{avatarUrl}}"></image>
+                <view class="nickName">
+                    <view>会员ID{{customerNumber}}</view>
+                    <view>{{nickName}}</view>
+                </view>
+            </view>
+            <view class="header_info">
+                <!-- <view class="flex-item"></view> -->
+                <navigator url="/pages/my/points?type=de">
+                    <view class="header_getScore sel">
+                        <view class='flex'>
+                            <image src="../images/my/defen.png"></image>
+                            <view class="key">德分 |</view>
+                        </view>
+                        <view class='value'>{{setPoint}}<text>分</text></view> <!-- -->
+                    </view>
+                </navigator>
+                <navigator url='/pages/my/points?type=ji'>
+                    <view class="header_cash">
+                        <view class='flex'>
+                            <image src="../images/my/jifen.png"></image>
+                            <view class='key'>积分 |</view>
+                        </view>
+                        <view class='value'>{{setCommission}}<text>分</text></view>
+                    </view>
+                </navigator>
+            </view>
+        </view>
+        
+        <view class="info_block">
+            <navigator class="item" url="./my/orderList">
+                <view class="item_content">
+                    <image class="item_img orderImg" src="../images/my/order.png"></image>
+                    <view class="text">查看订单</view>
+                </view>
+                <view class="arrow">全部订单</view>
+            </navigator>
+            <navigator class="order_item">
+                <view class="item flex-row text-center" style='border: none'>
+                    <navigator class="flex-item" url="/pages/my/orderList?status=submitted">
+                        <view class="img-box">
+                            <image class="item_img submittedImg" src="../images/my/submitted.png"></image>
+                        </view>
+                        <view class='item_name'>待付款</view>
+                        <text wx:if="{{submittedCount}}">{{submittedCount}}{{submittedCount > 99 ? '+' : ''}}</text>
+                    </navigator>
+                    <navigator class="flex-item" url="/pages/my/orderList?status=paid">
+                        <view class="img-box">
+                            <image class="item_img paidImg" src="../images/my/paid.png"></image>
+                        </view>
+                        <view class='item_name'>待发货</view>
+                        <text wx:if="{{paidCount}}">{{paidCount}}{{paidCount > 99 ? '+' : ''}}</text>
+                    </navigator>
+                    <navigator class="flex-item"  url="/pages/my/orderList?status=shipped">
+                        <view class="img-box">
+                            <image class="item_img shippedImg" src="../images/my/shipped.png"></image>
+                        </view>
+                        <view class='item_name'>待收货</view>
+                        <text wx:if="{{shippedCount}}">{{shippedCount}}{{shippedCount > 99 ? '+' : ''}}</text>
+                    </navigator>
+                    <navigator class="flex-item"  url="/pages/my/orderList?status=success">
+                        <view class="img-box">
+                            <image class="item_img commentImg" src="../images/my/comment.png"></image>
+                        </view>
+                        <view class='item_name'>已完成</view>
+                        <text wx:if="{{commentCount}}">{{commentCount}}{{commentCount > 99 ? '+' : ''}}</text>
+                    </navigator>
+                    <navigator class="flex-item"  url="/pages/my/orderList?status=refunding">
+                        <view class="img-box">
+                            <image class="item_img serverImg" src="../images/my/server_629.png"></image>
+                        </view>
+                        <view class='item_name'>售后中</view>
+                        <text wx:if="{{refundingCount}}">{{refundingCount}}{{refundingCount > 99 ? '+' : ''}}</text>
+                    </navigator>
+                </view>
+            </navigator>
+        </view>
+        <view class="info_block">
+            <navigator class="item" url="/pages/addressList">
+                <view class="item_content">
+                    <view class='box'>
+                        <image class="item_img address_img" src='../images/my/address.png'></image>
+                    </view>
+                    <view class="text">地址管理</view>
+                </view>
+                <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
+            </navigator>
+            <navigator class="item" url="/pages/collection">
+                <view class="item_content">
+                    <view class='box'>
+                        <image class="item_img collection_img" src="../images/my/collection.png"></image>
+                    </view>
+                    <view class="text">我的收藏</view>
+                </view>
+                <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
+            </navigator>
+            <navigator class="item" url="/pages/my/achievement" wx:if="{{getUser}}">
+                <view class="item_content">
+                    <view class='box'>
+                        <image class="item_img achievement_img" src="../images/my/achievement.png"></image>
+                    </view>
+                    <view class="text">我的业绩</view>
+                </view>
+                <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
+            </navigator>
+            <!-- <navigator class="item" url="/pages/income" wx:if="{{getUser}}">
+                <view class="item_content">
+                    <view class='box'>
+                        <image class="item_img icon_img" src="../images/my/income.png"></image>
+                    </view>
+                    <view class="text">我的收入</view>
+                </view>
+                <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
+            </navigator> -->
+            <navigator class="item no_border" url="/pages/my/help">
+                <view class="item_content">
+                    <view class='box'>
+                        <image class="item_img help_img" src="../images/my/help.png"></image>
+                    </view>
+                    <view class="text">帮助中心</view>
+                </view>
+                <image class='right_arrow' src='../images/order/icon_zuojiantou@2x.png' />
+            </navigator>
+        </view>
+        <!-- <navigator class='btn_wrap' url='./logistics'>
+            <view class='btn'>退出登录</view>
+        </navigator> -->
+    </view>
+</template>
+<script>
+    import wepy from 'wepy';
+    import {shttp} from '../utils/http.js';
+    import api from '@/api/api';
+    import orderApi from '../api/orderApi.js';
+    import topBar from '../components/navigation';
+    import {
+        USER_INFO, USER_SPECICAL_INFO
+    } from '@/utils/constant';
+
+    export default class Index extends wepy.page {
+        config = {
+            enablePullDownRefresh: false,
+        }
+
+        components = {
+            topBar,
+        }
+
+        data = {
+            topBar: {
+                name: '汉薇会员',
+                tabPage: true,
+                bg: '#f5f5f5',
+            },
+            detail: {},
+            avatarUrl: "",
+            nickName: "",
+            submittedCount: '', //待付款
+            paidCount: '',    //待发货
+            shippedCount: '', //待收货
+            commentCount: '', //待评价
+            refundingCount: '',          // 待售后
+            bShowBind: false,
+            pointTotal: '',     // 总德分
+            commissionTotal: '',// 总积分
+            isIos: null,
+            customerNumber:''
+        }
+
+        onLoad() {
+            let that = this;
+            this.isIos = /iOS/g.test(wx.getSystemInfoSync().system) ? true : false;
+            that.detail = {};
+            let userInfo = wepy.getStorageSync(USER_INFO);
+            // console.log(userInfo);
+            this.avatarUrl = userInfo.avatar;
+            this.nickName = userInfo.name;
+
+            wx.getSystemInfo({
+                success: res => {
+                    that.setData({
+                        winWidth: res.windowWidth
+                    })
+                }
+            });
+            
+            if(!wx.getStorageSync('userInfo').customerNumber){
+                this.customerNumber = '';               
+            }else{
+                this.customerNumber = '：'+ wx.getStorageSync('userInfo').customerNumber;
+            }
+    
+        }
+
+
+        onShow() {
+            let that = this;
+            // 查询德分积分
+            this.getPointInfo();
+
+            this.getTypeCount('submitted');
+            this.getTypeCount('paid');
+            this.getTypeCount('shipped');
+            this.getTypeCount('comment');
+            this.getTypeCount('refunding');
+
+        }
+
+        computed = {
+            getUserId: () => wx.getStorageSync('userInfo').customerNumber ? ':'+wx.getStorageSync('userInfo').customerNumber : '',
+            getIdentity(){
+                return wx.getStorageSync('userInfo').hasIdentity;
+            },
+            getUser(){
+                // wx.showToast({ title: 'has:'+wx.getStorageSync('userInfo').hasIdentity+'light:'+wx.getStorageSync('userInfo').isLighten  });
+                return wx.getStorageSync('userInfo').hasIdentity && wx.getStorageSync('userInfo').isLighten;
+            },
+          setPoint(){
+            return this.pointTotal > 10000 ? Math.floor(this.pointTotal/10000)+'w' : this.pointTotal;
+          },
+          setCommission(){
+            return this.commissionTotal > 10000 ? Math.floor(this.commissionTotal/10000)+'w' : this.commissionTotal;
+          },
+        };
+        methods = {
+
+        };
+        events = {}
+
+        // 订单数量
+        async getTypeCount(status){
+
+            let result = await orderApi.getTypeCount({
+                            params: { status },
+                        });
+                
+            switch(status){
+                case 'submitted':
+                    this.submittedCount = result;
+                    break;
+                case 'paid':
+                    this.paidCount = result;
+                    break;
+                case 'shipped':
+                    this.shippedCount = result;
+                    break;
+                case 'comment':
+                    this.commentCount = result;
+                    break;
+                case 'refunding':
+                    this.refundingCount = result;
+                    break;
+            }
+
+            this.$apply();
+            
+        }
+
+        //用户德分，积分
+        async getPointInfo() {
+            let sessionId = wx.getStorageSync('sessionId'),
+                res = await shttp.get('/v2/openapi/users/'+wx.getStorageSync('userInfo').cpId+'/points/total', sessionId).end();
+            
+            if(!res){
+                return wx.showTaast({ title: '获取德分，积分失败', icon: 'none', duration: 2000, });
+            }
+
+            this.pointTotal = res.data.pointTotal.total;
+            this.commissionTotal = res.data.commissionTotal.usableEcomm + res.data.commissionTotal.freezedEcomm// res.data.commissionTotal.total;
+            this.$apply();
+        }
+
+    }
+
+</script>
+<style lang="less">
+    .container{
+        background: #fff;
+    }
+
+    .wrap{
+        margin: 50rpx 0 0;
+    }
+
+    .header{
+        box-sizing: border-box;
+        padding: 30rpx 34rpx 0;
+        background: #fff;
+        .bg{
+            width: 678rpx;
+            height: 273rpx;
+        }
+        .header_info{
+            position: relative;
+            top: -30rpx;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            .header_cash,
+            .header_getScore {
+                display: flex;
+                align-items: center;
+                width: 316rpx;
+                height: 66rpx;
+                border-radius: 20rpx;
+                border: 1rpx solid #808080;
+                // border-bottom: 1rpx solid transparent;
+                background: #808080;
+                .flex{
+                    display: flex;
+                    align-items: center;
+                }
+                image {
+                    width: 33rpx;
+                    height: 33rpx;
+                    margin: 0 8rpx 0 14rpx;
+                }
+                .key{
+                    font-size: 30rpx;
+                    color: #fff;
+                    margin-right: 5rpx;
+                }
+                .value{
+                    display: flex;
+                    align-items: flex-end;
+                    width: 180rpx;
+                    font-size: 42rpx;
+                    color: #fff;
+                    overflow: hidden;
+                    text{
+                        font-size: 22rpx;
+                        position:relative;
+                        top:-5rpx;
+                    }
+                }
+            }
+            .sel{
+                background: #fff;
+                .key{
+                    color: #808080;
+                }
+                .value{
+                    color: #e83820;
+                }
+            }
+            
+        }
+    }
+
+    .header_content {
+        position: absolute;
+        top: 220rpx;
+        display: flex;
+        align-items: center;
+        .avatarUrl {
+            width: 122rpx;
+            height: 122rpx;
+            margin: 0 30rpx;
+            border-radius: 50%;
+        }
+        .nickName {
+            view{
+                font-size: 36rpx;
+                color: #fff;
+            }
+        }
+    }
+
+    .info_block {
+        background: #fff;
+        .item {
+            border-bottom: 1rpx solid rgba(216, 216, 216, 0.3);
+            background: #fff;
+            margin: 0 30rpx;
+            padding: 30rpx 28rpx;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .right_arrow{
+                width: 16rpx;
+                height: 26rpx;
+            }
+        }
+        .item:last-child {
+            border: none;
+        }
+        .item_content {
+            display: flex;
+            align-items: center;
+            .box{
+                width: 45rpx;
+                height: 37rpx;
+            }
+            .text {
+                margin-left: 20rpx;
+                font-size: 28rpx;
+                color: #808080;
+            }
+            
+        }
+        .img-box{
+            width:auto;
+            height:71rpx;
+            text-align:center;
+            line-height:71rpx;
+        }
+        .achievement_img,.icon_img{
+            width: 45rpx;
+            height: 45rpx;
+        }
+        .orderImg{
+            width: 39rpx;
+            height: 48rpx;
+        }
+        .commentImg,.submittedImg{
+            width: 63rpx;
+            height: 58rpx;
+        }
+        .paidImg{
+            width: 63rpx;
+            height: 59rpx;
+        }
+        .shippedImg{
+            width: 60rpx;
+            height: 71rpx;
+            margin-top:-10rpx;
+        }
+        .commentImg{
+            width: 68rpx;
+            height: 57rpx;
+        }
+        .serverImg{
+            width: 58rpx;
+            height: 55rpx;
+            margin-top:1rpx;
+        }
+        .address_img{
+            width: 36rpx;
+            height: 45rpx;
+        }
+        .collection_img{
+            width: 45rpx;
+            height: 31rpx;
+        }
+        .help_img{
+            width:39rpx;
+            height: 39rpx;
+        }
+        .arrow {
+            color: #999;
+            font-size: 24rpx;
+        }
+        .tip {
+            color: #999;
+            font-size: 24rpx;
+            margin-top: 20rpx;
+            margin-left: 60rpx;
+        }
+        .order_item {
+            .flex-item {
+                position: relative;
+                text {
+                    position: absolute;
+                    top: -10rpx;
+                    right: 57%;
+                    font-size: 22rpx;
+                    border: 1rpx solid #e83820;
+                    border-radius: 50%;
+                    color: #e83820;
+                    min-width: 35rpx;
+                    height: 35rpx;
+                    line-height: 35rpx;
+                    text-align: center;
+                }
+            }
+            /* .item_img {
+                width: 71rpx;
+                height: 71rpx;
+                margin: 18rpx 0 0;
+            } */
+        }
+    }
+
+.btn_wrap{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background: #fff;
+    .btn{
+        width: 678rpx;
+        line-height: 76rpx;
+        font-size: 30rpx;
+        color: #808080;
+        background: #f5f5f5;
+        text-align: center;
+    }
+}
+
+</style>
