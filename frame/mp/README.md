@@ -4,7 +4,13 @@
 [TOC]
 
 ## 目录
-[轮播图](#slide)
+
+  #### 1. components/组件
+  1. [slide/轮播图](#slide)
+
+  #### 2. notes/笔记
+
+***
 
 ## component
   
@@ -69,6 +75,29 @@
 
       - click: [Function]
         > 点击遮罩层时触发
+
+## notes
+
+## FAQ/常见问题
+
+   * ### config
+
+      1. page blank  
+
+          解决方法：在页面中添加下面代码
+          ```javascript
+            onReady () {
+              wx.showLoading({ title: 'Loading' })
+
+              setTimeout(() => wx.hideLoading(), 1000)
+            }
+          ```
+
+      2. 开发工具外部预览,打包时提示"error: /app.json not find"  
+
+          原因：dist目录被删除重建  
+          解决方法： 开发工具指定路径改为dist上级目录  
+          详情：[开发者工具外部预览时提示"error: /app.json not find"](https://developers.weixin.qq.com/community/develop/doc/000664874d08b0d03c672cd6a57000?highLine=app.json%2520not%2520found)
 
 ## 获取/Get 
 `git clone https://github.com/person-0/wx.git`
