@@ -7,6 +7,15 @@ function showModal(title, content, showCancel = false){
   wx.showModal({ title, content, showCancel, success });
 }
 
+function preview(current, urls){
+  let opts = {
+    current,
+    urls
+  };
+
+  wx.previewImage(opts);
+}
+
 /**
  * save concat 保存至通讯录
  * 
@@ -53,6 +62,7 @@ function stopRecord(_this, property){
 
 export default {
   showModal,
+  preview,
   saveConcat,
   record,
   stopRecord
