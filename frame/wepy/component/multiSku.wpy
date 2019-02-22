@@ -56,7 +56,8 @@ export default class multiSKu extends wepy.component {
       this.skuClassArr = this.classList.map(v => v.items);
 
       let arr = this.formatArray(v1, this.skuClassArr);
-      // console.error('format after', arr, this.skuClassArr, this.classList);
+      // console.error('format after', arr, this.skuClassArr);
+      this.checkAmount();
     }
   }
 
@@ -75,11 +76,12 @@ export default class multiSKu extends wepy.component {
 
       this.selArr[index] =  this.selArr[index] === i ? -1 : i;
 
+      // sku desc text
       skuStr = this.selArr.map((v, i) => { return v !== -1 ? this.skuClassArr[i][v].name : '' }).join().replace(/,+/g, ',').replace(/^,|,$/g, '');
       skuStr = skuStr == '' ? '请选择规格' : `已选择"${skuStr}"`;
 
       indexArr = this.findArray(this.skus.map(v => v.list), this.selArr);
-      console.error(index, i, `selArr: ${this.selArr}`, `indexArr:${indexArr}`, this.skus.map((v, i) => `${i}-${v.amount}`));
+      console.error(index, i, `selArr: ${this.selArr}`, `indexArr:${indexArr}`, this.skus.map((v, i) => `${i}-${v.amount}-${v.secureAmount}`));
 
       let priceArr = indexArr.map((v, i) => { return this.skus[v].price });
       price = this.getPrice(priceArr);
@@ -92,7 +94,17 @@ export default class multiSKu extends wepy.component {
       this.$emit('update', price, skuStr, img, goods);
 
       // Check amount
-      if(indexArr.length === 1){
+      this.checkAmount(index);
+      
+    },
+
+  }
+
+  onLoad() {
+  }
+
+  checkAmount(clickIndex){
+      if(this.selArr.filter(v => v === -1).length === 0){
         let selArr, matchArr;
 
         this.selArr.forEach((v, i) => {
@@ -103,7 +115,8 @@ export default class multiSKu extends wepy.component {
 
               let matchArr = this.findArray(this.skus.map(goods => goods.list), sel_arr);
 
-              this.classList[i].items[skuIndex].isNull = matchArr.every(goodsIndex => this.skus[goodsIndex].amount == 0);
+              // this.classList[i].items[skuIndex].isNull = matchArr.every(goodsIndex => this.skus[goodsIndex].amount == 0);
+              this.classList[i].items[skuIndex].isNull = matchArr.every(goodsIndex => this.skus[goodsIndex].amount <= this.skus[goodsIndex].secureAmount);
               // console.error(`i:${i}skuIndex:${skuIndex}`, selArr, sel_arr, matchArr, this.classList[i].items[skuIndex].isNull);
             });
 
@@ -121,19 +134,29 @@ export default class multiSKu extends wepy.component {
 
             let matchArr = this.findArray(this.skus.map(goods => goods.list), selArr);
 
-            // let amount = matchArr.map(goodsIndex => this.skus[goodsIndex].amount);
-            this.classList[i].items[skuIndex].isNull = matchArr.every(goodsIndex => this.skus[goodsIndex].amount == 0);
+            // this.classList[i].items[skuIndex].isNull = matchArr.every(goodsIndex => this.skus[goodsIndex].amount == 0);
+            this.classList[i].items[skuIndex].isNull = matchArr.every(goodsIndex => this.skus[goodsIndex].amount <= this.skus[goodsIndex].secureAmount);
             // console.error(`i:${i}skuIndex:${skuIndex}`, this.selArr, selArr, matchArr, this.skus.map(goods => goods.amount));
           });
 
         }
-      })
+      });
+
+      // add current 
+      // if(typeof clickIndex === 'number'){
+      this.selArr.forEach((v, i) => {
+        this.skuClassArr[i].forEach((sku, skuIndex) => {
+          let selArr = this.selArr.map(v => -1);
+          selArr[i] = skuIndex;
+
+          let matchArr = this.findArray(this.skus.map(goods => goods.list), selArr);
+
+          let isNull = matchArr.every(goodsIndex => this.skus[goodsIndex].amount <= this.skus[goodsIndex].secureAmount);
+          if(isNull) this.classList[i].items[skuIndex].isNull = true;
+        });
+      });
+      // }
       
-    },
-
-  }
-
-  onLoad() {
   }
 
   getPrice(priceArr){
@@ -208,14 +231,16 @@ export default class multiSKu extends wepy.component {
 
 .sku_item_wrap{
   display: flex; 
+  flex-wrap: wrap;
   padding-bottom: 30rpx;
   border-bottom: 2rpx solid #F0F0F0; 
 }
 .sku_item{
-  width: 116rpx;
+  flex-shrink: 0;
+  width: 120rpx;
   height: 56rpx;
   line-height: 56rpx;
-  margin-right: 30rpx;
+  margin: 0 40rpx 10rpx 0;
   border: 2rpx solid transparent;
   border-radius: 10rpx;
   font-size: 28rpx;
