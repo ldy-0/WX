@@ -145,7 +145,7 @@ page {
 .product {
   position: absolute;
   background: #fff;
-  height: 540rpx;
+  /* height: 540rpx; */
   bottom: 0;
   left: 0;
   width: 100%;
@@ -156,7 +156,7 @@ page {
   padding: 0 30rpx;
   top: -38rpx;
   width: 100%;
-  height: 180rpx;
+  /* height: 180rpx; */
 }
 .product .base_info image {
   width: 180rpx;
@@ -181,6 +181,7 @@ page {
 .product .standard_wrap {
   background: #fff;
   margin-top: 188rpx;
+  padding: 0 30rpx;
 }
 .product .standard_wrap .standard_title {
   margin: 0 30rpx 30rpx;
@@ -740,20 +741,27 @@ page {
             <view class="product_name">{{goods.goods_name}}</view>
             <view class="product_price">
               <text style="font-size:28rpx">¥</text>
-              {{goods.goods_price}}
+              {{isMultiSku ? multiSku.price : goods.goods_price}}
             </view>
             <!-- <view class>库存：{{goods.goods_storage}}</view> -->
           </view>
         </view>
         <image class="delete-btn" src="../../images/icon_cha@2x.png" @tap="deleteBtn">
-        <view class="standard_wrap">
+        
+        <view class="standard_wrap" wx:if='{{isMultiSku}}'>
           <view class="standard_title">规格</view>
-          <view class="standard_info">
+          <!-- <view class="standard_info">
             <repeat for="{{standards}}" index="index" item="item">
               <view class="{{isChecked==index?'checked':''}}" @tap="checked({{index}})">{{item}}</view>
             </repeat>
-          </view>
+          </view> -->
+          <scroll-view scroll-y='true' style='height: 200rpx;'>
+            <multiSku :classList.sync='skuClassList' :skus.sync='skus' :field='field' @update.user='updateSku'></multiSku>
+          </scroll-view>
         </view>
+        <view class='standard_wrap' wx:else>
+        </view>
+
         <view class="row">
           <view class="number_title">购买数量</view>
           <view class="number_wrap">
@@ -852,7 +860,7 @@ page {
           </view>
         </view>
         <view wx:if="{{TYPE== 'normal'}}" class="standard" @tap="goStandard">
-          <view>规格 {{goods.standard}}</view>
+          <view>规格 {{isMultiSku ? multiSku.skuStr : goods.standard}}</view>
           <image src="../../images/icon_zuojiantou@2x.png">
         </view>
         <view wx:if="{{TYPE=='grouponing'}}">
@@ -997,6 +1005,7 @@ import wepy from "wepy";
 import { shttp } from "../../utils/http";
 import { getCode } from "../../utils/user-tools";
 import getTimes from "../../utils/formatedate.js";
+import multiSku from '../../components/multiSku';
 import dayjs from "dayjs";
 import timer from "../../utils/wxTimer";
 import {
@@ -1044,7 +1053,13 @@ export default class GoodsDetails extends wepy.page {
     groupInfo: [],
     wxTimerList: {},
     pintuangroup_id: null,
-    pintuanDetails: null
+    pintuanDetails: null,
+    multiSku: {},
+    // sku goods field
+    field: {
+      price: 'goods_price',
+      amount: 'goods_storage',
+    }
   };
 
   computed = {
@@ -1061,10 +1076,27 @@ export default class GoodsDetails extends wepy.page {
           "<img style='display: block; width: 100%;'"
         )
       );
-    }
+    },
+    skuClassList(){ 
+      if(this.goods && this.goods.spec_value){
+        let classList,
+            spec_value = this.goods.spec_value,
+            spec_name = this.goods.spec_name;
+
+        classList = spec_name.map((v, i) => { return { name: v, items: spec_value[i].map(sku => { return { name: sku } }) } });
+        // console.error(classList); 
+        return classList;
+      }
+
+      return [];
+    },
+    skus(){ return this.goods && this.goods.SKUList },
+    isMultiSku(){ let goods = this.goods; return goods && goods.spec_name && goods.spec_name.length },
+
   };
 
   components = {
+    multiSku,
   };
   methods = {
     onShareAppMessage: function(res) {
@@ -1184,7 +1216,20 @@ export default class GoodsDetails extends wepy.page {
           JSON.stringify(this.goods)
         )}&groupontype=group`
       });
-    }
+    },
+    // udpate multi Sku
+    updateSku(price, skuStr, img, goods){
+      // console.error('udpatesku', price, skuStr, goods);
+      this.multiSku = { price, skuStr, img, goods, };
+      if(goods){
+        this.goods.standard = goods;
+        this.goods.goods_storage = goods.goods_storage;
+        this.goods.goods_price = goods.goods_price;
+        this.goods.goods_id = goods.goods_id;
+        this.goods.goods_num = this.size;
+        this.goods.goods_freight = goods.goods_freight;
+      }
+    },
   };
   onLoad(option) {
     this.options = option;
@@ -1275,6 +1320,12 @@ export default class GoodsDetails extends wepy.page {
       } else {
         this.standards = ["统一规格"];
       }
+
+      // set multi sku
+      if(this.goods.spec_value){
+        this.multiSku.price = this.getPrice(this.goods.SKUList.map(v => v.goods_price));
+      }
+
       this.getComment(this.goods.SKUList[0].goods_id);
     }
 
@@ -1644,6 +1695,15 @@ export default class GoodsDetails extends wepy.page {
       this.wxTimerList = {};
       this.timeDatalist = [];
     }
+  }
+
+  getPrice(priceArr){
+    let price = {};
+
+    price.min = Math.min.apply(null, priceArr);
+    price.max = Math.max.apply(null, priceArr);
+
+    return price.min == price.max ? price.min : `${price.min}-${price.max}`;
   }
 }
 </script>

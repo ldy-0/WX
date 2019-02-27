@@ -568,7 +568,7 @@ export default class ShoppingCart extends wepy.page {
     } else {
       this.tableData = res.data.store_cart_list["1"];
     }
-    console.log(this.tableData);
+    // console.error(this.tableData);
     if (!this.tableData || this.tableData.length == 0) {
       this.is_empty = true;
       wx.hideLoading();
@@ -577,8 +577,19 @@ export default class ShoppingCart extends wepy.page {
     }
     //console.log(this.tableData)
     for (var i = 0; i < this.tableData.length; i++) {
+      let item = this.tableData[i];
+
       for (var k in this.tableData[i]) {
+
         this.tableData[i]["active"] = false;
+      }
+
+      // format multi sku
+      if(item.goods_spec){
+        let skuStr = '';
+        for(let key in item.goods_spec) skuStr += `${item.goods_spec[key]}; `;
+        item.goods_spec = skuStr.replace(/;\s$/g, '');
+        // console.error(skuStr);
       }
     }
     this.tableData = this.tableData.filter(function(x) {

@@ -424,6 +424,8 @@ export default class OrderList extends wepy.page {
           element.Preferential =calc.sub(calc.add(element.goods_total_prices,element.shipping_fee),element.order_amount).toFixed(2);
         });
         this.showa = false;
+
+        res.data.forEach(this.format);
         this.orderList = this.orderList.concat(res.data);
       }
     } else {
@@ -434,6 +436,22 @@ export default class OrderList extends wepy.page {
     }
     this.$apply();
   }
+
+  format(order){
+    order.order_goods.forEach(v => {
+
+      let spec = v.goods_spec,
+          specStr = '';
+
+      if(spec){
+        for(let key in spec){ specStr += `${spec[key]}; `; }
+        v.goods_spec = specStr.replace(/;\s$/g, '');
+        // console.error(spec, specStr);
+      }
+
+    });
+  }
+
   //上拉加载
   onReachBottom() {
     this.page = this.page + 1;

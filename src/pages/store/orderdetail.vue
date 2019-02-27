@@ -381,6 +381,9 @@ export default class OrderDetail extends wepy.page {
       console.log("实物订单");
       console.log(res);
       console.log(opt);
+
+      res.data.forEach(this.format);
+
       this.order = res.data[0];
       this.order.add_time = dayjs(this.order.add_time).format(
         "YYYY年MM月DD日 HH:mm"
@@ -392,6 +395,22 @@ export default class OrderDetail extends wepy.page {
 
     this.$apply();
   }
+
+  format(order){
+    order.order_goods.forEach(v => {
+      let spec = v.goods_spec,
+          specStr = '';
+
+      if(spec){
+
+        for(let key in spec){ specStr += `${spec[key]}; `; }
+
+        v.goods_spec = specStr.replace(/;\s$/g, '');
+      }
+
+    });
+  }
+
   //支付
   async payMoney(e) {
     const res = await shttp
