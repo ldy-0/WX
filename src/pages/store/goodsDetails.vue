@@ -1264,6 +1264,17 @@ export default class GoodsDetails extends wepy.page {
       }
       this.getType(qrarry[0]);
     } else {
+      // revert sku info/恢复跳转前的规格设置
+      if(this.multiSku && this.multiSku.goods){
+        let goods = this.multiSku.goods;
+        this.goods.standard = goods;
+        this.goods.goods_storage = goods.goods_storage;
+        this.goods.goods_price = goods.goods_price;
+        this.goods.goods_id = goods.goods_id;
+        this.goods.goods_freight = goods.goods_freight;
+        return wx.hideLoading();
+      }
+
       this.getType(this.options.type);
     }
     if (!this.wxUserInfo.wx_name) {
