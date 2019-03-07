@@ -16,6 +16,20 @@ function preview(current, urls){
   wx.previewImage(opts);
 }
 
+function chooseImg(params){
+  return new Promise(function(resolve, reject){
+
+    wx.chooseImage({
+        sizeType: ['original', 'compressed'],
+        sourceType: ['album', 'camera'],
+        success(res){ resolve([params, res]) },
+        fail(res){ console.log('choose', res); }
+    });
+
+  });
+}
+
+
 /**
  * save concat 保存至通讯录
  * 
@@ -63,6 +77,7 @@ function stopRecord(_this, property){
 export default {
   showModal,
   preview,
+  chooseImg,
   saveConcat,
   record,
   stopRecord
