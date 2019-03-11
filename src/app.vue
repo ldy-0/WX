@@ -14,9 +14,9 @@ import { signIn } from "./utils/user-tools";
 export default class extends wepy.app {
   config = {
     pages: [
-      "pages/authorization", //授权页
+      // "pages/authorization", //授权页
+      "pages/waiterHome", //SA首页
       "pages/register", //注册
-      "pages/waiterHome", //首页1
     ],
     window: {
       backgroundTextStyle: "dark",
@@ -43,22 +43,12 @@ export default class extends wepy.app {
     console.log("onLaunch");
     //微信用户登录换取token，并将token存入本地缓存中
     const userInfo = await signIn(false);
-    if (userInfo.status === 0) {
-      let auth = userInfo.data.token;
+    console.log(userInfo);
+    if (userInfo.data.code === 1) {
+      let auth = userInfo.header.Authorization;
       wx.setStorageSync("token", auth);
-      const memberRes = await shttp.get("/api/v2/member/memberinfo").end();
-      let storageInfo = wx.getStorageSync("memberInfo");
-      let memberInfo = {
-        member_id: memberRes.data.member_id,
-        member_points: memberRes.data.member_points,
-        wx_avatar: storageInfo.wx_avatar ? storageInfo.wx_avatar : null,
-        wx_name: storageInfo.wx_name ? storageInfo.wx_name : null,
-        member_mobile: memberRes.data.member_mobile
-      };
-      wx.setStorageSync("memberInfo", memberInfo);
     }
     const updateManager = wx.getUpdateManager();
-
     updateManager.onCheckForUpdate(function(res) {
       // 请求完新版本信息的回调
       console.log(res.hasUpdate);

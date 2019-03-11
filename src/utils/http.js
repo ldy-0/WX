@@ -1,4 +1,7 @@
-import { BASE_URL, ENV } from '../constant/configConstant';
+import {
+  BASE_URL,
+  ENV
+} from '../constant/configConstant';
 import wepy from 'wepy';
 
 class rp {
@@ -32,7 +35,7 @@ class rp {
   async end() {
     let auth = wx.getStorageSync('token');
     if (auth) {
-      this.header('token', auth);
+      this.header('Authorization', auth);
     }
     let isJsonType = this.method === 'POST' || this.method === 'PUT';
     let rpOpt = {
@@ -55,7 +58,7 @@ class rp {
       rpOpt.header['Content-Type'] = 'application/x-www-form-urlencoded';
     }
     let res = await wepy.request(rpOpt);
-    return res.data;
+    return rpOpt.url.indexOf("api/v1/users/auth/login/wechat") != -1 ? res : res.data;
   }
 }
 const shttp = {
