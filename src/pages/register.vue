@@ -137,6 +137,7 @@ page {
   font-size: 32rpx;
   background: rgba(255, 255, 255, 0);
   height: 84rpx;
+  z-index: 3;
 }
 .sub_img {
   width: 504rpx;
@@ -191,7 +192,7 @@ page {
 
 <template>
   <view class="container">
-    <image class="bg_img" src="../images/bg_3@2x.png" alt>
+    <image class="bg_img" src="../images/bg.png" alt>
     <view class="user_img">
       <open-data type="userAvatarUrl"></open-data>
     </view>
@@ -203,28 +204,26 @@ page {
           class="inline"
           placeholder-style="font-size:22rpx;color:#dddddd;"
           placeholder="您的姓名"
-        >
+          value='{{user.name}}' >
       </view>
       <view class="input_box">
         <input
-          type="text"
+          type="number"
           name="phone"
           class="inline"
           placeholder-style="font-size:22rpx;color:#dddddd;"
           placeholder="您的电话"
+          value='{{user.mobile}}'
         >
       </view>
       <view class="input_box input_downbox">
         <text class="inline">{{scrollTxt1? scrollTxt1:'您的职位'}}</text>
         <image class="input_downImg" src="../images/btn_5@2x.png" alt @tap="checkScroll(1)">
         <scroll-view scroll-y style="height:230rpx" class="scroll_box" wx:if="{{checkIndex==1}}">
-          <repeat for="{{itemList1}}" index="index" item="itemtxt">
-            <view
-              class="{{itemIndex1==index ? 'check_show' : 'check_hide'}}"
-              @tap="checkShop1"
-              data-itemtxt="{{itemtxt}}"
-              data-index="{{index}}"
-            >{{itemtxt}}</view>
+          <repeat for="{{positionList}}" index="index" item="itemtxt">
+
+            <view class="{{positionIndex == index ? 'check_show' : 'check_hide'}}" @tap="checkShop1" data-itemtxt="{{itemtxt}}" data-index="{{index}}">{{itemtxt.name}}</view>
+
           </repeat>
         </scroll-view>
       </view>
@@ -232,13 +231,10 @@ page {
         <text class="inline">{{scrollTxt2? scrollTxt2:'集团'}}</text>
         <image class="input_downImg" src="../images/btn_5@2x.png" alt @tap="checkScroll(2)">
         <scroll-view scroll-y style="height:230rpx" class="scroll_box" wx:if="{{checkIndex==2}}">
-          <repeat for="{{itemList1}}" index="index" item="itemtxt">
-            <view
-              class="{{itemIndex2==index ? 'check_show' : 'check_hide'}}"
-              @tap="checkShop2"
-              data-itemtxt="{{itemtxt}}"
-              data-index="{{index}}"
-            >{{itemtxt}}</view>
+          <repeat for="{{groupList}}" index="index" item="itemtxt">
+
+            <view class="{{groupIndex == index ? 'check_show' : 'check_hide'}}" @tap="checkShop2" data-itemtxt="{{itemtxt}}" data-index="{{index}}" >{{itemtxt.groupName}}</view>
+
           </repeat>
         </scroll-view>
       </view>
@@ -246,13 +242,10 @@ page {
         <text class="inline">{{scrollTxt3? scrollTxt3:'品牌'}}</text>
         <image class="input_downImg" src="../images/btn_5@2x.png" alt @tap="checkScroll(3)">
         <scroll-view scroll-y style="height:230rpx" class="scroll_box" wx:if="{{checkIndex==3}}">
-          <repeat for="{{itemList1}}" index="index" item="itemtxt">
-            <view
-              class="{{itemIndex3==index ? 'check_show' : 'check_hide'}}"
-              @tap="checkShop3"
-              data-itemtxt="{{itemtxt}}"
-              data-index="{{index}}"
-            >{{itemtxt}}</view>
+          <repeat for="{{brandList}}" index="index" item="itemtxt">
+
+            <view class="{{brandIndex == index ? 'check_show' : 'check_hide'}}" @tap="checkShop3" data-itemtxt="{{itemtxt}}" data-index="{{index}}">{{itemtxt.brandName}}</view>
+
           </repeat>
         </scroll-view>
       </view>
@@ -264,10 +257,11 @@ page {
       </view>
       <button formType="submit" class="submit_btn">
         <image class="sub_img" src="../images/btn_4@2x.png" alt>
-        <view class="sub_txt">即刻注册 参加极护钛强服务顾问挑战赛</view>
+        <view class="sub_txt">{{isUpdate ? '修改信息' : '即刻注册 参加极护钛强服务顾问挑战赛'}}</view>
       </button>
     </form>
-    <image class="logo_img" src="../images/icon_logo@2x.png" alt>
+
+    <image class="logo_img" src="../images/logo.png" alt>
     <view class="agreement_box" wx:if="{{agreement}}">
       <image class="agreement_cha" src="../images/icon_cha@2x.png" @tap="agreementBtn" alt>
       <view
@@ -294,6 +288,7 @@ page {
 <script>
 import wepy from "wepy";
 import { shttp } from "../utils/http";
+import req from "../utils/request.js";
 export default class register extends wepy.page {
   config = {
     navigationBarTitleText: ""
@@ -303,12 +298,27 @@ export default class register extends wepy.page {
     agreement: false,
     checkIndex: null, 
     itemList1: [1, 2, 3, 4],
-    itemIndex1: 0,
-    itemIndex2: 0,
-    itemIndex3: 0,
+    positionIndex: -1,
+    groupIndex: -1,
+    brandIndex: -1,
     scrollTxt1: null,
     scrollTxt2: null,
-    scrollTxt3: null
+    scrollTxt3: null,
+    user: {},
+    adviser: {},
+    isUpdate: false,
+    brandList: [],
+    groupList: [],
+    positionList: [
+      // { id: -1, name: '未选择' },
+      { id: 1, name: '服务顾问' },
+      { id: 2, name: '服务经理' },
+      { id: 3, name: '其他' },
+      { id: 4, name: '机修工' },
+      { id: 5, name: '备件经理' },
+      { id: 6, name: '总经理' },
+    ],
+    canSubmit: true,
   };
   components = {};
   computed = {};
@@ -322,34 +332,45 @@ export default class register extends wepy.page {
     formSubmit(e) {
       let v = e.detail.value,
         phone = /^((0\d{2,3}-\d{7,8})|(1\d{10}))$/;
+
       if (!v.name) {
-        return wx.showToast({
-          title: "姓名不能为空!",
-          icon: "none",
-          duration: 1000
-        });
+        return wx.showToast({ title: "姓名不能为空!", icon: "none", duration: 1000 });
       }
       if (v.phone === "" || !phone.test(v.phone)) {
-        return wx.showToast({
-          title: "手机号格式不正确!",
-          icon: "none",
-          duration: 1000
-        });
+        return wx.showToast({ title: "手机号格式不正确!", icon: "none", duration: 1000 });
       }
+
+      if(this.positionIndex === -1) return wx.showToast({ title: "请选择职位!", icon: "none", duration: 1000 });
+      if(this.groupIndex === -1) return wx.showToast({ title: "请选择集团!", icon: "none", duration: 1000 });
+      if(this.brandIndex === -1) return wx.showToast({ title: "请选择品牌!", icon: "none", duration: 1000 });
+      console.error(this.positionIndex, this.groupIndex, this.brandIndex);
+
+      if(!this.agree){
+        return wx.showToast({ title: "请点击同意协议!", icon: "none", duration: 1000 });
+      }
+
+      if(!this.canSubmit) return console.error('cancel');
+      this.canSubmit = false;
+
+      this.save(v);
     },
     checkShop1(e) {
-      this.itemIndex1 = e.currentTarget.dataset.index;
-      this.scrollTxt1 = e.currentTarget.dataset.itemtxt;
+      this.positionIndex = e.currentTarget.dataset.index;
+      this.scrollTxt1 = e.currentTarget.dataset.itemtxt.name;
       this.checkIndex = null;
     },
     checkShop2(e) {
-      this.itemIndex2 = e.currentTarget.dataset.index;
-      this.scrollTxt2 = e.currentTarget.dataset.itemtxt;
+      let ds = e.currentTarget.dataset;
+
+      this.groupIndex = ds.index;
+      this.scrollTxt2 = ds.itemtxt.groupName;
       this.checkIndex = null;
     },
     checkShop3(e) {
-      this.itemIndex3 = e.currentTarget.dataset.index;
-      this.scrollTxt3 = e.currentTarget.dataset.itemtxt;
+      let ds = e.currentTarget.dataset;
+
+      this.brandIndex = ds.index;
+      this.scrollTxt3 = ds.itemtxt.brandName;
       this.checkIndex = null;
     },
     checkScroll(e) {
@@ -358,10 +379,109 @@ export default class register extends wepy.page {
       } else {
         this.checkIndex = e;
       }
-    }
+    },
   };
-  onLoad() {}
+
+  onLoad(opt){
+    if(opt.adviser){
+      this.isUpdate = true;
+      this.adviser = JSON.parse(decodeURIComponent(opt.adviser));
+      this.init();
+    }
+
+    this.getGroupList();
+    this.getBrandList();
+  }
+
   onShow() {}
+
+  init(){
+    let ad = this.adviser,
+        index;
+
+    this.user = {
+      name: ad.name,
+      mobile: ad.phone,
+    };
+
+    this.scrollTxt1 = this.positionList[ad.position].name;
+    this.positionIndex = ad.position;
+    this.scrollTxt2 = ad.groupName;
+    this.scrollTxt3 = ad.brandName;
+
+    this.agree = ad.agreement;
+  }
+
+  async save(v){
+    wx.showLoading({ title: 'Loading...' });
+
+    let group = this.groupList[this.groupIndex],
+        brand = this.brandList[this.brandIndex],
+        param;
+    
+    param = {
+      name: v.name,
+      phone: v.phone,
+      position: this.positionList[this.positionIndex].id,
+      groupId: group.groupId,
+      groupName: group.groupName,
+      brandId: brand.brandId,
+      brandName: brand.brandName,
+      agreement: this.agree,
+    }
+
+    let res = this.isUpdate 
+              ? await req.put(`/castrol/api/v1/seller`, param, { Authorization: wx.getStorageSync('token') })
+              : await req.post(`/castrol/api/v1/seller`, param, { Authorization: wx.getStorageSync('token') });
+
+    console.error(`register type ${this.isUpdate ? 'update' : 'add'}`, res);
+    if(res.data){
+      // if(this.isUpdate) 
+      wx.setStorageSync('adviserInfo', res.data);
+
+      return wx.redirectTo({ url: `/pages/waiterHome`, });
+    }
+
+    this.canSubmit = true;
+    wx.hideLoading();
+    wx.showModal({ content: res.moreInfo, showCancel: false });
+  }
+
+  async getBrandList(){
+    let index,
+        res = await req.get(`/castrol/api/v1/seller/brands`, {}, { Authorization: wx.getStorageSync('token') });
+
+    // console.error('brandList ', res);
+    if(!res.data){
+      return wx.showModal({ content: res.moreInfo, showCancel: false });
+    }
+
+    this.brandList = res.data;
+
+    if(this.isUpdate){
+      this.brandList.forEach((v, i) => { v.brandId == this.adviser.brandId ? index = i : null; });
+      this.brandIndex = index;
+    }
+
+    this.$apply();
+  }
+  async getGroupList(){
+    let index,
+        res = await req.get(`/castrol/api/v1/seller/groups`, {}, { Authorization: wx.getStorageSync('token') });
+    // console.error(res);
+    if(!res.data){
+      return wx.showModal({ content: res.moreInfo, showCancel: false });
+    }
+
+    this.groupList = res.data;
+
+    if(this.isUpdate){
+      this.groupList.forEach((v, i) => { v.groupId == this.adviser.groupId ? index = i : null; });
+      this.groupIndex = index;
+    }
+
+    this.$apply();
+  }
 }
 </script>
 

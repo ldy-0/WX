@@ -6,8 +6,10 @@
  */
 
 const BASE_URL_LOCAL = "http://127.0.0.1:3010";
-const BASE_URL_DEVELOPMENT = "http://castrolmini.mgcc.com.cn/castrol"; //测试(以实际开发api文档为准
-const BASE_URL_PRODUCTION = "http://castrolmini.mgcc.com.cn/castrol"; //正式服(以实际开发api文档为准)
+const BASE_URL_DEVELOPMENT = "https://castrolmini.mgcc.com.cn/castrol"; //测试(以实际开发api文档为准
+// const BASE_URL_DEVELOPMENT = 'http://192.168.31.119:8080'; //测试(以实际开发api文档为准
+const BASE_URL_PRODUCTION = "https://castrolmini.mgcc.com.cn/castrol"; //正式服(以实际开发api文档为准)
+// const BASE_URL_PRODUCTION = 'http://192.168.31.119:8080/castrol'; //测试(以实际开发api文档为准
 const LOGINAPI = "/api/v1/users/auth/login/wechat"; //登录接口(以实际开发api文档为准)
 
 //腾讯云对象存储参数配置

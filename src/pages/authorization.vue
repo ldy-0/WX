@@ -65,14 +65,15 @@
       <!-- <view class="wx_name">授权演示文字</view> -->
     </view>
     <button wx:if='{{getinfoBtn}}' class="btn" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">微信登入</button>
-    <button wx:if='{{!getinfoBtn}}' class="btn" @tap="onGotPhone">微信登入</button>
-    <getPhone wx:if='{{getPhoneShow}}' class="getPhone" @SMSPhoneNum.user="SMSPhoneFn" @WXPhoneNum.user="WXPhoneFn" @hidePhonebox.user="hideboxphone"></getPhone>  
+    <!-- <button wx:if='{{!getinfoBtn}}' class="btn" @tap="onGotPhone">微信登入</button> -->
+    <!-- <getPhone wx:if='{{getPhoneShow}}' class="getPhone" @SMSPhoneNum.user="SMSPhoneFn" @WXPhoneNum.user="WXPhoneFn" @hidePhonebox.user="hideboxphone"></getPhone>   -->
  </view>
 </template>
 
 <script>
 import wepy from "wepy";
 import { shttp } from "../utils/http";
+import req from "../utils/request.js";
 import GetPhone from "../components/getPhone";
 export default class Authorization extends wepy.page {
   config = {
@@ -87,7 +88,8 @@ export default class Authorization extends wepy.page {
     getPhoneShow: false,
     isMobileNum: true, //是否强制手机授权。默认强制
     isWxInfo: true, //是否强制用户微信信息授权。默认强制
-    getinfoBtn: true
+    getinfoBtn: true,
+    isRegister: false,
   };
 
   components = {
@@ -99,7 +101,7 @@ export default class Authorization extends wepy.page {
     } else if (options.path) {
       this.path = options.path;
     } else {
-      this.path = "/pages/home";
+      this.path = "/pages/waiterHome";
     }
   }
   onShow() {
@@ -161,6 +163,16 @@ export default class Authorization extends wepy.page {
       wx.navigateBack();
     }
   }
+  navigate(){
+    let url;
+    if(this.path == '/pages/waiterHome'){
+      url = this.isRegister ? this.path : `/pages/register`;
+    }else{
+      url = this.isRegister ? `${this.path}?type=goDraw` : `/pages/client/index?type=noRegister`;
+    }
+    console.error('navigate', url);
+    wx.navigateTo({ url });
+  }
   //本地是否缓存了用户信息
   isStorageUserInfo1() {
     this.wxUserInfo = wx.getStorageSync("memberInfo");
@@ -178,9 +190,11 @@ export default class Authorization extends wepy.page {
   }
 
   isStorageUserInfo3() {
+    // this.navigate();
     this.wxUserInfo = wx.getStorageSync("memberInfo");
     if (this.wxUserInfo.wx_name) {
-      this.goNav();
+      // this.goNav();
+      this.navigate();
     } else {
       this.getPhoneShow = false;
     }
@@ -197,20 +211,40 @@ export default class Authorization extends wepy.page {
   }
   //获取用户信息,onGotUserInfo中所用到的api接口
   async onGotUserInfo(e) {
-    console.log(e);
-    let wxUserInfo = e.detail.userInfo;
+    console.error('userinfo', e);
+    let wxUserInfo = e.detail.userInfo,
+        url;
+
     if (wxUserInfo != null) {
-      const res = await shttp
-        .post(`/api/v2/member/memberinfo`)
-        .send({
-          wx_name: wxUserInfo.nickName,
-          wx_avatar: wxUserInfo.avatarUrl
-        })
-        .end();
+      // const res = await shttp
+      //   .post(`/api/v2/member/memberinfo`)
+      //   .send({
+      //     wx_name: wxUserInfo.nickName,
+      //     wx_avatar: wxUserInfo.avatarUrl
+      //   })
+      //   .end();
       //获取用户资料存入本地缓存
-      const memberRes = await shttp.get("/api/v2/member/memberinfo").end();
-      let memberInfo = memberRes.data;
+      // const memberRes = await shttp.post(`/api/v1/users/userInfo/seller`).send({
+      console.error('path', this.path);
+      url = this.path === '/pages/waiterHome' ? `/castrol/api/v1/users/userInfo/seller` : `/castrol/api/v1/users/userInfo/owner`;
+
+      // return this.isStorageUserInfo3();
+      const memberRes = await req.post(url, {
+        encryptedData: e.detail.encryptedData,
+        iv: e.detail.iv,
+      }, { Authorization: wx.getStorageSync('token') });
+
+      console.error('login', memberRes.data);
+      // 
+      this.isRegister = memberRes.data ? true : false;
+
+      // cached userinfo
+      let memberInfo = {
+        wx_name: wxUserInfo.nickName,
+        wx_avatar: wxUserInfo.avatarUrl,
+      };
       wx.setStorageSync("memberInfo", memberInfo);
+
       switch (this.$parent.globalData.authorizationStyle) {
         case "1":
           this.isStorageUserInfo1();

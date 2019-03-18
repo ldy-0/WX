@@ -17,6 +17,21 @@ export default class extends wepy.app {
       // "pages/authorization", //授权页
       "pages/waiterHome", //SA首页
       "pages/register", //注册
+      "pages/activity/activity", // 活动规则
+      "pages/rankList/rankList", // 排行榜 
+      "pages/story/index", // 品牌故事
+      "pages/appointment/index", // 邀约 
+      "pages/appointment/poster", // 邀约海报 
+      "pages/challenge/index", // 极限挑战
+      "pages/challenge/video", // 极限挑战视频
+      "pages/limit/index", // 我的挑战
+      "pages/limit/record", // 个人挑战记录
+      "pages/client/index", // 未注册客户
+      "pages/client/draw", // 抽奖
+      "pages/client/prizeList", // 奖品列表
+      "pages/client/reupload", // 个人重传页面 
+      "pages/client/writeInfo", // 填写个人信息
+      "pages/client/poster", // 个人抽奖海报 
     ],
     window: {
       backgroundTextStyle: "dark",
@@ -40,14 +55,18 @@ export default class extends wepy.app {
   }
 
   async onLaunch() {
-    console.log("onLaunch");
     //微信用户登录换取token，并将token存入本地缓存中
     const userInfo = await signIn(false);
-    console.log(userInfo);
+    // console.error('user', userInfo);
+
     if (userInfo.data.code === 1) {
       let auth = userInfo.header.Authorization;
       wx.setStorageSync("token", auth);
+
+      // let url = true ? `/pages/waiterHome` : `/pages/client/index?type=noRegister`;
+      // wx.navigateTo({ url });
     }
+
     const updateManager = wx.getUpdateManager();
     updateManager.onCheckForUpdate(function(res) {
       // 请求完新版本信息的回调
@@ -76,7 +95,7 @@ export default class extends wepy.app {
    * 设置全局变量
    */
   globalData = {
-    authorizationStyle: "1" //1: 强制需要用户微信信息和强制手机授权 //手机号验证白名单10987654321，验证码随意，如1111
+    authorizationStyle: "3", //1: 强制需要用户微信信息和强制手机授权 //手机号验证白名单10987654321，验证码随意，如1111
     //2：强制需要用户微信信息和不强制手机授权
     //3：强制需要用户微信信息和不需要手机授权
     //4：不强制需要用户微信信息和强制手机授权
@@ -85,6 +104,22 @@ export default class extends wepy.app {
     //7：不需要用户微信信息和强制手机授权
     //8：不需要用户微信信息和不强制手机授权
     //9：不需要用户微信信息和不需要手机授权
+    adviserTabBarList: [
+      { title: "首页", path: '/pages/waiterHome', url: "../images/global/home.png", sel: "../images/global/home_sel.png" },
+      { title: "活动规则", path: '/pages/activity/activity', url: "../images/global/register.png", sel: "../images/global/register_sel.png" },
+      { title: "排行榜", path: '/pages/rankList/rankList', url: "../images/global/my.png", sel: "../images/global/my_sel.png" },
+    ],
+    clientTabBarList: [
+      { title: "首页", path: '/pages/client/index', url: "../images/global/home.png", sel: "../images/global/home_sel.png" },
+      { title: "我的奖品", path: '/pages/client/prizeList', url: "../images/global/register.png", sel: "../images/global/register_sel.png" },
+    ],
+    tabBarList: [
+      // { title: "客服", url: "../images/global/service.png", sel: "../images/global/service_sel.png", type: 'contact' },
+      // { title: "套版", path: '/pages/register', url: "../images/global/register.png", sel: "../images/global/register_sel.png" },
+      // { title: "询价", path: '/pages/ask', url: "../images/global/ask.png", sel: "../images/global/ask_sel.png" },
+      // { title: "我的", path: '/pages/mine', url: "../images/global/my.png", sel: "../images/global/my_sel.png" },
+    ],
+    tabIndex: 0,
   };
 }
 </script>
