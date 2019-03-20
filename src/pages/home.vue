@@ -100,6 +100,7 @@
   display: flex;
   width: 100%;
   align-items: center;
+  flex-wrap: wrap;
   height: 206rpx;
 }
 .tap_item .item_page {
@@ -110,6 +111,7 @@
 .tap_item .item_view {
   font-size: 24rpx;
   flex-grow: 1;
+  /* width: 25%; */
   justify-content: center;
   align-items: center;
   color: #222222;
@@ -387,6 +389,10 @@
       <navigator class="item_view" url="./store/goodsList?type=group">
         <image class="item_page" src="../images/icon_1_tuangou@2x.png">
         <view>团购</view>
+      </navigator>
+      <navigator class="item_view" url="./store/goodsList?type=group">
+        <image class="item_page" src="../images/icon_1_miaosha@2x.png">
+        <view>秒杀</view>
       </navigator>
       <navigator class="item_view" url="./article/videos">
         <image class="item_page" src="../images/icon_1_shipin@2x.png">

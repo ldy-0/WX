@@ -25,7 +25,7 @@
 .bodycontent .price {
   color: #ff4444;
   font-size: 32rpx;
-  margin-bottom:20rpx
+  margin-bottom: 20rpx;
 }
 .add_redinfo {
   display: flex;
@@ -61,7 +61,7 @@
   font-size: 32rpx;
   display: flex;
   align-items: center;
-  margin-bottom: 20rpx
+  margin-bottom: 20rpx;
 }
 .viewX-originalPrice {
   color: #222;
@@ -73,35 +73,33 @@
   margin-left: 20rpx;
 }
 </style>
-
-
 <template>
   <view class="container">
     <view class="bodycontent">
       <repeat wx:if="{{type=='hot'}}" for="{{goodsList}}" key="index" index="index" item="item">
         <view class="redlist" @tap="intoDetail({{item.goods_commonid}})">
-          <image class="title_page" mode="aspectFill" src="{{item.goods_image}}">
-          <view class="redinfo add_redinfo">
-            <text class="goodsname">{{item.goods_name}}</text>
-            <view class="price">
-              <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
+          <image class="title_page" mode="aspectFill" src="{{item.goods_image}}"/>
+            <view class="redinfo add_redinfo">
+              <text class="goodsname">{{item.goods_name}}</text>
+              <view class="price">
+                <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
+              </view>
             </view>
-          </view>
         </view>
       </repeat>
       <repeat wx:if="{{type=='group'}}" for="{{goodsList}}" key="index" index="index" item="item">
         <view class="redlist" @tap="groupDetail({{item.rule_id}})">
-          <image class="title_page" mode="aspectFill" src="{{item.goods.goods_image}}">
-          <view class="viewX-itemGoodsname">{{item.goods.goods_name}}</view>
-          <view class="viewX-originalPrice">
-            <text style="font-size:26rpx;">￥</text>{{item.goods.goods_price}}
-          </view>
-          <view class="viewX-price">
-            <view>
-              <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
+          <image class="title_page" mode="aspectFill" src="{{item.goods.goods_image}}"/>
+            <view class="viewX-itemGoodsname">{{item.goods.goods_name}}</view>
+            <view class="viewX-originalPrice">
+              <text style="font-size:26rpx;">￥</text>{{item.goods.goods_price}}
             </view>
-            <image class="viewX-itemIcon" src="../../images/icon_tuangou@2x.png">
-          </view>
+            <view class="viewX-price">
+              <view>
+                <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
+              </view>
+              <image class="viewX-itemIcon" src="../../images/icon_tuangou@2x.png"/>
+            </view>
         </view>
       </repeat>
     </view>
@@ -160,7 +158,7 @@ export default class GoodsList extends wepy.page {
       wx.navigateTo({
         url: `./goodsDetails?goods_commonid=${id}&type=group`
       });
-    },
+    }
   };
   async getgoodsList() {
     const res = await shttp
@@ -212,8 +210,6 @@ export default class GoodsList extends wepy.page {
   //上拉加载
   onReachBottom() {
     this.page += 1;
-    this.getgoodsList();
-
     switch (this.type) {
       case "group":
         this.getGroupList();
@@ -222,6 +218,7 @@ export default class GoodsList extends wepy.page {
         this.getgoodsList();
         break;
       default:
+        this.getgoodsList();
         break;
     }
 
