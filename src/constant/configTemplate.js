@@ -12,19 +12,6 @@ const BASE_URL_PRODUCTION = "https://castrolmini.mgcc.com.cn/castrol"; //正式�
 // const BASE_URL_PRODUCTION = 'http://192.168.31.119:8080/castrol'; //测试(以实际开发api文档为准
 const LOGINAPI = "/api/v1/users/auth/login/wechat"; //登录接口(以实际开发api文档为准)
 
-//腾讯云对象存储参数配置
-const OSSPARAMETER = {
-  bucket: 'wxclassroom', //存储桶名称
-  appid: '1253114089', //腾讯云中项目APPID
-  sid: 'AKIDSnxwjKoWs20mMmTvUs43pTvdEesu7QuG', //SecretId
-  skey: 'INGzWJyRimjWGpaGk1A6qNiroY7pNjKl', //SecretKey
-  region: 'sh',//对象存储所属地域
-};
-
-//阿里云对象存储参数配置
-const OSSALIYUN = '/api/v2/admin/imgkeyali';//获取阿里云对象存储参数接口(以实际开发api文档为准)
-
-const FORMIDAPI = "/api/v2/member/formId"; //用于存放用户formId接口(以实际开发api文档为准)
 const ENV = "local";
 const DEBUG = false;
 const BASE_URL = {
@@ -38,7 +25,4 @@ module.exports = {
   ENV,
   DEBUG,
   LOGINAPI,
-  FORMIDAPI,
-  OSSPARAMETER,
-  OSSALIYUN
 };
