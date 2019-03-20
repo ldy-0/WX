@@ -14,7 +14,6 @@ import { signIn } from "./utils/user-tools";
 export default class extends wepy.app {
   config = {
     pages: [
-      // "pages/authorization", //授权页
       "pages/waiterHome", //SA首页
       "pages/register", //注册
       "pages/activity/activity", // 活动规则
@@ -98,15 +97,6 @@ export default class extends wepy.app {
    * 设置全局变量
    */
   globalData = {
-    authorizationStyle: "3", //1: 强制需要用户微信信息和强制手机授权 //手机号验证白名单10987654321，验证码随意，如1111
-    //2：强制需要用户微信信息和不强制手机授权
-    //3：强制需要用户微信信息和不需要手机授权
-    //4：不强制需要用户微信信息和强制手机授权
-    //5：不强制需要用户微信信息和不强制手机授权
-    //6：不强制需要用户微信信息和不需要手机授权
-    //7：不需要用户微信信息和强制手机授权
-    //8：不需要用户微信信息和不强制手机授权
-    //9：不需要用户微信信息和不需要手机授权
     adviserTabBarList: [
       { title: "首页", path: '/pages/waiterHome', url: "../images/global/home.png", sel: "../images/global/home_sel.png" },
       { title: "活动规则", path: '/pages/activity/activity', url: "../images/global/register.png", sel: "../images/global/register_sel.png" },
@@ -115,12 +105,6 @@ export default class extends wepy.app {
     clientTabBarList: [
       { title: "首页", path: '/pages/client/index', url: "../images/global/home.png", sel: "../images/global/home_sel.png" },
       { title: "我的奖品", path: '/pages/client/prizeList', url: "../images/global/register.png", sel: "../images/global/register_sel.png" },
-    ],
-    tabBarList: [
-      // { title: "客服", url: "../images/global/service.png", sel: "../images/global/service_sel.png", type: 'contact' },
-      // { title: "套版", path: '/pages/register', url: "../images/global/register.png", sel: "../images/global/register_sel.png" },
-      // { title: "询价", path: '/pages/ask', url: "../images/global/ask.png", sel: "../images/global/ask_sel.png" },
-      // { title: "我的", path: '/pages/mine', url: "../images/global/my.png", sel: "../images/global/my_sel.png" },
     ],
     tabIndex: 0,
   };
