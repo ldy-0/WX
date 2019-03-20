@@ -3,6 +3,7 @@ page {
   height: 100%;
 }
 .container {
+  position: relative;
   height: 100%;
   overflow: hidden;
 }
@@ -23,7 +24,7 @@ page {
 }
 
 .main_wrap{
-  margin: 50rpx 0 0;
+  margin: 80rpx 0 0;
 }
 
 .btn_wrap{
@@ -87,6 +88,10 @@ page {
   align-items: center;
 }
 
+.scroll_wrap{
+  height: 1260rpx;
+}
+
 .s_fc_1{ color: #fff; }
 .s_fc_2{ color: #c49e71; }
 .s_fc_3{ color: #ddd; }
@@ -103,6 +108,8 @@ page {
     <image class="bg_img" src="../../images/bg.png" mode='aspectFill' alt>
     <!-- <image class="banner_img" src="../../images/bg_1@2x.png" alt> -->
 
+    <view class='scroll_wrap'>
+    <scroll-view scroll-y style='height: 100%;'>
 
     <view class="main_wrap s_fc_2">
 
@@ -129,7 +136,10 @@ page {
         <view>请发送给您的车主</view>
       </view>
     </toast> -->
-    <view class='s_bg_4' style='width: 100%; height: 100rpx;'></view>
+    <view class='' style='width: 100%; height: 200rpx; background: transparent;'></view>
+
+    </scroll-view>
+    </view>
 
     <tabBar :list.sync='tabBarList'></tabBar>
 
@@ -197,8 +207,11 @@ export default class Waiterhome extends wepy.page {
     async saveImg() {
       let that = this;
 
+      // console.error('---', this.goods.image.replace(/http/g, 'https'));
       let res = await mp.getImg(this.goods.image);
-      console.error('temp path ', res);
+      // console.error('getImg res:', res, '\n', res.errMsg.split(/[iI]mage/g, -Infinity));
+      if(res.errMsg) return wx.showModal({ content: res.errMsg, showCancel: false })
+
       // wx.canvasToTempFilePath({ canvasId: "canvas", x: 0, y: 0, width: 500, height: 500,
         // success: function(res) {
           // console.error('', res);

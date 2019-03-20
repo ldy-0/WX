@@ -3,6 +3,7 @@ page {
   height: 100%;
 }
 .container {
+  position: relative;
   height: 100%;
   overflow: hidden;
 }
@@ -19,7 +20,8 @@ page {
   width: 714rpx;
   height: 344rpx;
   margin: 0 auto;
-  margin-top: 18rpx;
+  /* margin-top: 18rpx; */
+  margin-top: 68rpx;
 }
 
 
@@ -106,6 +108,8 @@ page {
   height: 76rpx;
 }
 
+.activityRule_wrap{
+}
 
 .flex{
   display: flex;
@@ -123,7 +127,7 @@ page {
     <image class="bg_img" src="../../images/bg.png" mode='aspectFill' alt>
     <image class="banner_img" src="../../images/banner.png" alt>
 
-    <view class='activity_title_wrap'>
+    <view class='activity_title_wrap' @tap="showRule('btn')">
         <view class='activity_title'>
           <image class='activity_title_bg' src='../../images/activity/activity_title_bg.png' />
           <view class='activity_title_ctn s_fc_1'>{{activityTitle}}</view>
@@ -132,8 +136,8 @@ page {
 
     <viwe class="main_wrap s_fc_2">
 
-      <view class='activity_wrap' @tap="goModule('appointment')">
-        <view class="activity ">
+      <view class='activity_wrap' @tap="showRule('left')">
+        <view class="activity">
           <image class='activity_bg' src='../../images/activity/activity_bg.png' />
           <view class='activity_info_wrap s_fc_1'>
             <view class='activity_date'>{{activity.date}}</view>
@@ -144,7 +148,7 @@ page {
         <!-- <image class='i_lock' src='../../images/activity/lock.png' mode='aspectFill' /> -->
       </view>
 
-      <view class='activity_wrap' @tap="goModule('appointment')">
+      <view class='activity_wrap'>
         <view class="activity lock">
           <image class='activity_bg' src='../../images/activity/activity_bg.png' />
           <view class='activity_info_wrap s_fc_1'>
@@ -158,6 +162,7 @@ page {
 
     </viwe>
 
+    <activityRule :ruleType.sync="ruleType" wx:if="{{isShow}}" @close.user='closeRule'></activityRule>
 
     <tabBar :list.sync='tabBarList'></tabBar>
 
@@ -167,6 +172,7 @@ page {
 <script>
 import wepy from "wepy";
 import tabBar from "../../components/tabBar";
+import activityRule from "../../components/activityRule";
 import { shttp } from "../../utils/http";
 
 export default class Waiterhome extends wepy.page {
@@ -178,12 +184,15 @@ export default class Waiterhome extends wepy.page {
     activityTitle: '2019年全年极护钛强服务顾问挑战赛活动规则',
     tabBarList: [],
     user: {},
-    activity: { date: '4-5月主题', name: '极限由我极限由我', desc: '挑战自我  Show出实力挑战自我  挑战自我' },
-    activity2: { date: '8-9月主题', name: '激发高昂表现', desc: '码上行动享极限之旅' },
+    activity: { date: '4-5月主题', name: '极限由我', desc: 'Show出实力' },
+    activity2: { date: '8-9月主题', name: '激发高昂表现', desc: '码上行动' },
+    isShow: false,
+    ruleType: '',
   };
 
   components = {
     tabBar,
+    activityRule,
   };
 
   onLoad(options) {
@@ -196,6 +205,8 @@ export default class Waiterhome extends wepy.page {
   onShow() {}
 
   methods = {
+    showRule(type){ this.ruleType = type; this.isShow = !this.isShow; },
+    closeRule(){ this.isShow = !this.isShow },
     goUpdate(){
       let url = `/pages/register?user=${encodeURIComponent(JSON.stringify(this.user))}`;
       wx.navigateTo({ url, });

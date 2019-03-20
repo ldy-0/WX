@@ -22,7 +22,8 @@ page {
   width: 714rpx;
   height: 344rpx;
   margin: 0 auto;
-  margin-top: 18rpx;
+  /* margin-top: 18rpx; */
+  margin-top: 68rpx;
 }
 
 .main_container{
@@ -104,11 +105,14 @@ page {
 }
 .btn_ctn{
   position: absolute;
-  top: 25rpx;
-  left: calc(50% - 50rpx);
-  width: 100rpx;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  line-height: 80rpx;
   font-size: 25rpx;
   font-weight: bold;
+  text-align: center;
 }
 
 .tip{
@@ -194,7 +198,7 @@ export default class Waiterhome extends wepy.page {
 
   data = {
     tabBarList: [],
-    uploadTitle: '上传工单',
+    uploadTitle: '上传证明文件',
     errorInfo: ['服务顾问上传工单失败', '您可以再次上传工单推荐嘉实多极护', '专享产品的证明文件', '例如：保养工单 发票等激活奖品'],
     tipTitle: '必须使用嘉实多极护专享',
     type: 'upload',
@@ -308,7 +312,7 @@ export default class Waiterhome extends wepy.page {
     }
 
     this.type = 'error';
-    this.btnTitle = '重传工单';
+    this.btnTitle = '重传证明文件';
     this.img = error.url;
     this.error = error;
     this.canSubmit = true;
@@ -326,13 +330,19 @@ export default class Waiterhome extends wepy.page {
       // this.btnTitle = '保存图片';
 
       gb.tabIndex = 1;
-      return wx.redirectTo({ url: `/pages/client/prizeList`, });
+      // return wx.redirectTo({ url: `/pages/client/prizeList`, });
+      return this.navigateTo({ url: `/pages/client/prizeList`, });
       this.canSubmit = false;
     }
 
     this.canSubmit = true;
     this.$apply();
     wx.hideLoading();
+  }
+
+  navigateTo(url){
+    let length = getCurrentPages().length;
+    length >= 9 ? wx.reLaunch({ url }) : wx.navigateTo({ url });
   }
 
 }

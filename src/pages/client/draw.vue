@@ -19,7 +19,8 @@ page {
   width: 714rpx;
   height: 344rpx;
   margin: 0 auto;
-  margin-top: 18rpx;
+  /* margin-top: 18rpx; */
+  margin-top: 68rpx;
 }
 
 .main_wrap{
@@ -42,9 +43,9 @@ page {
 .i_pointer{
   position: absolute;
   top: calc(50% - 85rpx);
-  left: calc(50% - 65rpx);
+  left: calc(50% - 66rpx);
   z-index: 1;
-  width: 130rpx;
+  width: 132rpx;
   height: 170rpx;
 }
 
@@ -79,7 +80,7 @@ page {
   text-align: center;
 }
 .write_btn_wrap{
-  margin: 50rpx auto 0;
+  margin: 30rpx auto 0;
 }
 .write_btn_ctn{
   position: absolute;
@@ -98,11 +99,34 @@ page {
 
 .turntable_item{
   position: absolute;
+  width: 140rpx;
+  height: 80rpx;
+}
+.i_left_top_prize{
+  position: absolute;
+  top: -8rpx;
+  left: -4rpx;
+  width: 22rpx;
+  height: 22rpx;
+}
+.i_right_top_prize{
+  position: absolute;
+  bottom: 14rpx;
+  right: 8rpx;
+  width: 22rpx;
+  height: 22rpx;
+  transform: rotate(180deg);
+}
+.turntable_item_value{
   width: 130rpx;
-  height: 72rpx;
+  height: 100%;
   font-size: 22rpx;
+  font-weight: bold;
   line-height: 1.1;
   text-align: center;
+}
+.top_prize{
+  font-size: 28rpx;
 }
 .item0{
   top: 70rpx;
@@ -147,6 +171,7 @@ page {
   transition: transform 15s;
 }
 
+
 .flex{
   display: flex;
   align-items: center;
@@ -158,6 +183,7 @@ page {
 .s_fc_4{ color: #c2996f; }
 .s_fc_5{ color: #ddd; }
 .s_fc_6{ color: #000; }
+.s_fc_7{ color: #bc936c; }
 
 .s_bg_1{ background: #fff; }
 .s_bg_2{ background: #c2996f; }
@@ -176,13 +202,37 @@ page {
         <view class="init" style="transform: rotate({{rotate ? degree : 0}}deg); transition: transform {{rotate ? second : 0}}s">
           <image class='i_turntable' src='{{turntableURL}}' mode='aspectFill' />
 
-          <view class="">
-            <view class='turntable_item item0'>{{list[0].name}}</view>
-            <view class='turntable_item item1'>{{list[1].name}}</view>
-            <view class='turntable_item item2'>{{list[2].name}}</view>
-            <view class='turntable_item item3'>{{list[3].name}}</view>
-            <view class='turntable_item item4'>{{list[4].name}}</view>
-            <view class='turntable_item item5'>{{list[5].name}}</view>
+          <view class="s_fc_7">
+            <view class='turntable_item item0'>
+              <image class='i_left_top_prize' src='{{topPrizeURL}}' mode='aspectFill' wx:if="{{list[0].level}}" />
+              <image class='i_right_top_prize' src='{{topPrizeURL}}' mode='aspectFill' wx:if="{{list[0].level}}" />
+              <view class="turntable_item_value {{list[0].level ? 'top_prize' : ''}}">{{list[0].name}}</view>
+            </view>
+            <view class='turntable_item item1'>
+              <image class='i_left_top_prize' src='{{topPrizeURL}}' mode='aspectFill' wx:if="{{list[1].level}}" />
+              <image class='i_right_top_prize' src='{{topPrizeURL}}' mode='aspectFill' wx:if="{{list[1].level}}" />
+              <view class="turntable_item_value {{list[1].level ? 'top_prize' : ''}}">{{list[1].name}}</view>
+            </view>
+            <view class='turntable_item item2'>
+              <image class='i_left_top_prize' src='{{topPrizeURL}}' mode='aspectFill' wx:if="{{list[2].level}}" />
+              <image class='i_right_top_prize' src='{{topPrizeURL}}' mode='aspectFill' wx:if="{{list[2].level}}" />
+              <view class="turntable_item_value {{list[2].level ? 'top_prize' : ''}}">{{list[2].name}}</view>
+            </view>
+            <view class='turntable_item item3'>
+              <image class='i_left_top_prize' src='{{topPrizeURL}}' mode='aspectFill' wx:if="{{list[3].level}}" />
+              <image class='i_right_top_prize' src='{{topPrizeURL}}' mode='aspectFill' wx:if="{{list[3].level}}" />
+              <view class="turntable_item_value {{list[3].level ? 'top_prize' : ''}}">{{list[3].name}}</view>
+            </view>
+            <view class='turntable_item item4'>
+              <image class='i_left_top_prize' src='{{topPrizeURL}}' mode='aspectFill' wx:if="{{list[4].level}}" />
+              <image class='i_right_top_prize' src='{{topPrizeURL}}' mode='aspectFill' wx:if="{{list[4].level}}" />
+              <view class="turntable_item_value {{list[4].level ? 'top_prize' : ''}}">{{list[4].name}}</view>
+            </view>
+            <view class='turntable_item item5'>
+              <image class='i_left_top_prize' src='{{topPrizeURL}}' mode='aspectFill' wx:if="{{list[5].level}}" />
+              <image class='i_right_top_prize' src='{{topPrizeURL}}' mode='aspectFill' wx:if="{{list[5].level}}" />
+              <view class="turntable_item_value {{list[5].level ? 'top_prize' : ''}}">{{list[5].name}}</view>
+            </view>
           </view>
 
         </view>
@@ -236,6 +286,7 @@ export default class Waiterhome extends wepy.page {
   data = {
     turntableURL: '../../images/client/turntable.png', 
     pointerURL: '../../images/client/pointer.png',
+    topPrizeURL: '../../images/client/topPrize.png',
     tabBarList: [],
     playURL: '../../images/global/play.png',
     list: [],
@@ -251,6 +302,7 @@ export default class Waiterhome extends wepy.page {
     second: 0,
     goods: null,
     canSubmit: true,
+    drawEnd: false,
   };
 
   components = {
@@ -281,7 +333,8 @@ export default class Waiterhome extends wepy.page {
     goWriteInfo(){
       let url = `/pages/client/writeInfo?orderId=${this.orderId}&goods=${encodeURIComponent(JSON.stringify(this.goods))}`;
       
-      wx.redirectTo({ url, });
+      // wx.redirectTo({ url, });
+      this.navigateTo(url);
     },
     closeToast(){
       let url = `/pages/client/writeInfo?orderId=${this.orderId}&goods=${encodeURIComponent(JSON.stringify(this.goods))}`;
@@ -289,9 +342,11 @@ export default class Waiterhome extends wepy.page {
       if(this.showToast === -1) return this.showToast = 0;
 
       if(this.goods && this.goods.rewardType === 'VIRTUAL') 
-        return wx.redirectTo({ url: `/pages/client/poster?orderId=${this.orderId}&goods=${encodeURIComponent(JSON.stringify(this.goods))}` });
+        return this.navigateTo(`/pages/client/poster?orderId=${this.orderId}&goods=${encodeURIComponent(JSON.stringify(this.goods))}`);
+        // return wx.redirectTo({ url: `/pages/client/poster?orderId=${this.orderId}&goods=${encodeURIComponent(JSON.stringify(this.goods))}` });
 
-      if(this.showToast === 1){ return wx.redirectTo({ url, }); }
+      // if(this.showToast === 1){ return wx.redirectTo({ url, }); }
+      if(this.showToast === 1){ return this.navigateTo(url); }
     }
   };
 
@@ -333,11 +388,15 @@ export default class Waiterhome extends wepy.page {
     // console.error(res);
     if(res && res.data){
       this.list = res.data.rewards;
-      // console.error(encodeURIComponent(JSON.stringify(this.list[1])));
     }
     
     wx.hideLoading();
     this.$apply();
+  }
+
+  navigateTo(url){
+    let length = getCurrentPages().length;
+    length >= 9 ? wx.reLaunch({ url }) : wx.navigateTo({ url });
   }
 }
 </script>

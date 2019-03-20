@@ -91,6 +91,9 @@ export default class extends wepy.app {
       }
     });
   }
+
+  onHide(){
+  }
   /**
    * 设置全局变量
    */

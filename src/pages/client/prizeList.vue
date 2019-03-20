@@ -4,8 +4,8 @@ page {
 }
 .container {
   position: relative;
-  min-height: 100%;
-  /* overflow: hidden; */
+  height: 100%;
+  overflow: hidden;
 }
 .bg_img {
   position: absolute;
@@ -20,15 +20,36 @@ page {
   width: 714rpx;
   height: 344rpx;
   margin: 0 auto;
-  margin-top: 18rpx;
+  /* margin-top: 18rpx; */
+  margin-top: 68rpx;
 }
 
 .user_info{
   width: 650rpx;
-  height: 30rpx;
+  height: 70rpx;
   margin: 50rpx 0 0;
   padding: 0 60rpx;
   font-size: 25rpx;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.first_line{
+  display: flex;
+  align-content: center;
+}
+.name{
+  width: 240rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mobile{
+}
+.address{
+  width: 100%;
+  height: 30rpx;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -36,7 +57,7 @@ page {
 
 .main_wrap{
   position: relative;
-  padding: 90rpx 15rpx 0;
+  padding: 50rpx 15rpx 0;
 }
 
 .rank_title{
@@ -45,16 +66,19 @@ page {
   text-align: center;
 }
 .prize, .prize_value{
-  flex-basis: 10rpx;
-  flex-grow: 1;
+  flex-shrink: 0;
+  width: 214rpx;
+  /* flex-basis: 10rpx; */
+  /* flex-grow: 1; */
 }
 .status, .status_value{
-  flex-basis: 10rpx;
-  flex-grow: 3;
+  /* flex-basis: 10rpx; */
+  flex-grow: 1;
 }
 
 .rank_list{
   padding: 20rpx 0 0;  
+  min-height: 740rpx;
   font-size: 22rpx;
   text-align: center;
 }
@@ -99,6 +123,17 @@ page {
   margin: 0 40rpx;
 }
 
+.scroll_wrap{
+  height: 740rpx;
+}
+
+.ml40{
+  margin-left: 30rpx;
+}
+.mt10{
+  margin: 10rpx 0 0;
+}
+
 .s_fc_1{ color: #fff; }
 .s_fc_2{ color: #c49e71; }
 .s_fc_3{ color: #5a2f08; }
@@ -106,7 +141,8 @@ page {
 .s_fc_5{ color: #967651; }
 
 .s_bg_2{ background: #ae8459; }
-.s_bg_3{ background: rgba(40, 37, 24, 1); }
+.s_bg_3{ background: #060707 }
+.s_bg_4{ background: #201b16 }
 </style>
 
 <template>
@@ -114,7 +150,13 @@ page {
     <image class="bg_img" src="../../images/bg.png" mode='aspectFill' alt>
     <image class="banner_img" src="../../images/banner.png" alt>
 
-    <view class='user_info s_fc_1'>姓名：{{name}} 联系电话：{{mobile}}  地址信息：{{address}}</view>
+    <view class='user_info s_fc_1'>
+      <view class='first_line'>
+        <view class='name'>姓名：{{name}}</view>
+        <view class='mobile ml40'>联系电话：{{mobile}}</view>
+      </view>
+      <view class='address mt10'>地址信息：{{address}}</view>
+    </view>
 
     <view class="main_wrap s_fc_1">
 
@@ -123,10 +165,13 @@ page {
         <view class='status'>审核状态</view>
       </view>
 
+      <view class='scroll_wrap'>
+      <scroll-view scroll-y style='height: 100%;'>
+
       <view class='rank_list'>
         <repeat for='{{list}}'>
 
-          <view class='rank_item_wrap flex'>
+          <view class="rank_item_wrap flex {{index % 2 === 0 ? 's_bg_3' : 's_bg_4'}}">
             <view class='prize_value'>{{item.rewardName}}</view>
             <view class='status_value'>
               <view wx:if="{{item.orderStatus === 'SUCCESS'}}">{{item.orderStatusStr}}</view>
@@ -143,6 +188,11 @@ page {
         </repeat>
       </view>
 
+        <view class='' style='width: 100%; height: 100rpx; background: transparent;'></view>
+
+      </scroll-view>
+      </view>
+
       <!-- <view class='btn_wrap'>
         <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
         <view class='btn_ctn s_fc_3'>继续冲刺</view>
@@ -150,7 +200,6 @@ page {
 
     </view>
 
-    <view class='s_bg_3' style='width: 100%; height: 100rpx;'></view>
 
     <tabBar :list.sync='tabBarList'></tabBar>
 
@@ -182,6 +231,7 @@ export default class Waiterhome extends wepy.page {
 
   onLoad(options) {
     let gd = this.$parent.globalData;
+    gd.tabIndex = 1;
     this.tabBarList = gd.clientTabBarList;
 
     this.getList();
@@ -195,11 +245,13 @@ export default class Waiterhome extends wepy.page {
 
       let o = { info: item.reason, url: item.image, orderId: item.orderId, qrcode: item.qrCode };
       let url = `/pages/client/reupload?type=error&error=${JSON.stringify(o)}`;
-      wx.redirectTo({ url, });
+      // wx.redirectTo({ url, });
+      this.navigateTo(url);
     },
     goResult(){
       let url = `/pages/limit/index?type=result`;
-      wx.redirectTo({ url, });
+      // wx.redirectTo({ url, });
+      this.navigateTo(url);
     },
   };
 
@@ -223,6 +275,11 @@ export default class Waiterhome extends wepy.page {
 
     wx.hideLoading();
     this.$apply();
+  }
+
+  navigateTo(url){
+    let length = getCurrentPages().length;
+    length >= 9 ? wx.reLaunch({ url }) : wx.navigateTo({ url });
   }
 }
 </script>

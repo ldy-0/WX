@@ -4,7 +4,7 @@ page {
 }
 .container {
   position: relative;
-  height: 100%;
+  min-height: 100%;
   /* overflow: hidden; */
 }
 .bg_img {
@@ -24,7 +24,7 @@ page {
 }
 
 .main_wrap{
-  margin: 50rpx 0 0;
+  margin: 70rpx 0 0;
 }
 
 .btn_wrap{
@@ -64,12 +64,20 @@ page {
   text-align: center;
 }
 
-.poster_img{
-  width: 100%;
-}
 .canvas{
+  /* width: 0rpx; */
+  /* height: 2rpx; */
+  /* width: 688rpx; */
+  /* height: 1068rpx; */
   width: 325px;
   height: 510px; 
+  margin: 0 auto;
+}
+
+.poster_img{
+  /* width: 688rpx; */
+  width: 100%;
+  height: 1068rpx;
   margin: 0 auto;
 }
 
@@ -77,6 +85,22 @@ page {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.scroll_wrap{
+  height: 1260rpx;
+}
+
+.iphoneX_scroll_wrap{
+  height: 100vh;
+}
+.x_canvas{
+  width: 345px;
+  height: 610px; 
+  margin: 0 auto;
+}
+.iphoneX{
+  /* margin: 20vh 0 0; */
 }
 
 .s_fc_1{ color: #fff; }
@@ -95,25 +119,27 @@ page {
     <image class="bg_img" src="../../images/bg.png" mode='aspectFill' alt>
     <!-- <image class="banner_img" src="../../images/bg_1@2x.png" alt> -->
 
+    <view class="scroll_wrap {{isX ? 'iphoneX_scroll_wrap' : ''}}">
+    <scroll-view scroll-y style='height: 100%;'>
 
-    <view class="main_wrap s_fc_2">
+      <view class="main_wrap s_fc_2 {{isX ? 'iphoneX' : ''}}">
 
-      <!-- <image class='poster_img' src='' mode='aspectFill' /> -->
-      <canvas canvas-id="canvas" class='canvas'></canvas>
+        <!-- <image class='poster_img' src='{{poster}}' mode='aspectFill' /> -->
+        <canvas canvas-id="canvas" class="canvas {{isX ? 'x_canvas' : ''}}"></canvas>
 
-    </view>
-
-    <view class='between'>
-      <view class='btn_wrap' @tap='saveImg'>
-          <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
-          <view class='btn_ctn s_fc_4'>保存至相册</view>
       </view>
 
-      <button open-type='share' class='clear btn_wrap' plain='true' @tap='copy'>
-          <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
-          <view class='btn_ctn s_fc_4'>一键转发</view>
-      </button>
-    </view>
+      <view class='between'>
+        <view class='btn_wrap' @tap='saveImg'>
+            <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
+            <view class='btn_ctn s_fc_4'>保存至相册</view>
+        </view>
+
+        <button open-type='share' class='clear btn_wrap' plain='true' @tap='copy'>
+            <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
+            <view class='btn_ctn s_fc_4'>一键转发</view>
+        </button>
+      </view>
 
     <!-- <toast wx:if='{{showSuccess}}' @close.user='closeToast'>
       <view class='ctn_wrap s_fc_3'>
@@ -121,7 +147,10 @@ page {
         <view>请发送给您的车主</view>
       </view>
     </toast> -->
-    <view class='s_bg_4' style='width: 100%; height: 100rpx;'></view>
+      <view class='' style='width: 100%; height: 100rpx; background: transparent;'></view>
+
+    </scroll-view>
+    </view>
 
     <tabBar :list.sync='tabBarList'></tabBar>
 
@@ -142,9 +171,12 @@ export default class Waiterhome extends wepy.page {
 
   data = {
     tabBarList: [],
-    user: {},
+    user: null,
     info: '',
     showSuccess: false,
+    valueList: null,
+    poster: '',
+    isX: null,
   };
 
   components = {
@@ -153,11 +185,27 @@ export default class Waiterhome extends wepy.page {
   };
 
   onLoad(options) {
-    let gd = this.$parent.globalData;
+    let gd = this.$parent.globalData,
+        value = options.value;
     gd.tabIndex = -1;
     this.tabBarList = gd.adviserTabBarList;
 
-    this.drawQrcode();
+    let sys = wx.getSystemInfoSync();
+    this.isX = sys.screenHeight > 800;
+
+    console.error(options, sys);
+
+    // from share 
+    if(options.user){
+      this.user = JSON.parse(options.user);
+      this.valueList = JSON.parse(options.value);
+
+      return this.drawQrcode(this.user, this.valueList);
+    }
+
+    if(value) this.value = [value.substr(0, 20), value.substr(20, 20), value.substr(40, 20)];
+
+    this.drawQrcode(wx.getStorageSync('adviserInfo'), this.value);
   }
 
   onShow() {}
@@ -176,7 +224,7 @@ export default class Waiterhome extends wepy.page {
     },
     saveImg() {
       let that = this;
-      wx.canvasToTempFilePath({ canvasId: "canvas", x: 0, y: 0, width: 500, height: 500,
+      wx.canvasToTempFilePath({ canvasId: "canvas", x: 0, y: 0, width: this.isX ? 690 : 500, height: this.isX ? 610 : 500,
         success: function(res) {
           console.error('', res);
           wx.saveImageToPhotosAlbum({
@@ -205,30 +253,80 @@ export default class Waiterhome extends wepy.page {
   };
 
   onShareAppMessage(){
-    console.error('share');
-    return {};
+    let path,
+        user,
+        adviser = wx.getStorageSync('adviserInfo');
+
+    user = { name: adviser.name, phone: adviser.phone };
+    path = `/pages/appointment/poster?user=${JSON.stringify(this.user || user)}&value=${JSON.stringify(this.valueList || this.value)}`;
+    console.error('share', path, adviser);
+
+    return {
+      path,
+    };
   }
 
-  async drawQrcode(){
+  async drawQrcode(user, value){
     wx.showLoading({ content: 'Loading...' });
     let ctx = wx.createCanvasContext('canvas'),
         adviser = wx.getStorageSync('adviserInfo');
 
-    let res = await mp.getImg('http://castrolqiniu.mgcc.com.cn/Fv2ZBu1lEG5m224vKqbcxM_CngjB');
+    if(this.isX){
+      ctx.drawImage('../../images/appointment/x_poster.jpg', 0, 0, 345, 610);
 
-    ctx.drawImage('../../images/appointment/adviser.png', 0, 0, 325, 510);
+      ctx.setFontSize(11);
+      ctx.setFillStyle('#188948');
+      ctx.fillText(`${user.name}  ${user.phone}`, 65, 424);
+
+      ctx.setFontSize(11);
+      ctx.setFillStyle('#c69d75');
+      ctx.fillText(`${value[0]}`, 14, 470);
+      ctx.fillText(`${value[1]}`, 14, 484);
+      ctx.fillText(`${value[2]}`, 14, 498);
+
+      let res = await mp.getImg('https://castrolmini.mgcc.com.cn/qn/Fv2ZBu1lEG5m224vKqbcxM_CngjB');
+      // console.error('getImg res:', res.errMsg);
+      res.errMsg 
+      ? wx.showModal({ content: res.errMsg, showCancel: false })
+      : ctx.drawImage(res, 14, 550, 50, 50);
+
+      ctx.draw();
+      return wx.hideLoading();
+    }
+
+    ctx.drawImage('../../images/appointment/poster.jpg', 0, 0, 325, 510);
 
     ctx.setFontSize(11);
     ctx.setFillStyle('#188948');
-    ctx.fillText(`${adviser.name}  ${adviser.phone}`, 55, 380);
+    ctx.fillText(`${user.name}  ${user.phone}`, 55, 380);
 
-    // console.error(res);
-    ctx.drawImage(res, 14, 450, 50, 50);
+    ctx.setFontSize(11);
+    ctx.setFillStyle('#c69d75');
+    ctx.fillText(`${value[0]}`, 14, 420);
+    ctx.fillText(`${value[1]}`, 14, 432);
+    ctx.fillText(`${value[2]}`, 14, 444);
+
+    let res = await mp.getImg('https://castrolmini.mgcc.com.cn/qn/Fv2ZBu1lEG5m224vKqbcxM_CngjB');
+    // console.error('getImg res:', res.errMsg);
+    res.errMsg 
+    ? wx.showModal({ content: res.errMsg, showCancel: false })
+    : ctx.drawImage(res, 14, 450, 50, 50);
 
     ctx.draw();
+    // ctx.draw(false, setTimeout(() => {
+    //   wx.canvasToTempFilePath({ x: 0, y: 0, width: 325, height: 510, destWidth: 325, destHeight: 510, canvasId: 'canvas', 
+    //     success: e => { this.poster = e.tempFilePath; this.$apply(); },
+    //   });
+    // }));
 
+    
     // wx.canvasGetImageData({ canvasId: 'canvas', x: 100, y: 100, width: 10, height: 10, success(res){ console.error(res); }, fail(e){ console.error(e); } });
     wx.hideLoading();
+  }
+  watch = {
+    poster(v1, v2){
+      console.error(v1, v2);
+    }
   }
 }
 </script>

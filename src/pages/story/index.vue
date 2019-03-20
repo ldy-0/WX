@@ -4,7 +4,8 @@ page {
 }
 .container {
   position: relative;
-  min-height: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 .bg_img {
   position: absolute;
@@ -19,7 +20,8 @@ page {
   width: 714rpx;
   height: 344rpx;
   margin: 0 auto;
-  margin-top: 18rpx;
+  /* margin-top: 18rpx; */
+  margin-top: 68rpx;
 }
 
 .main_wrap{
@@ -31,6 +33,9 @@ page {
 
 .video_item{
   padding: 30rpx 0;
+  
+}
+.line{
   border-bottom: 2rpx solid #7d6245;
 }
 .video_title{
@@ -66,7 +71,7 @@ page {
   position: relative;
   width: 300rpx;
   height: 80rpx;
-  margin: 20rpx auto 0;
+  margin: 60rpx auto 0;
 }
 .i_btn{
   width: 100%;
@@ -79,6 +84,10 @@ page {
   width: 140rpx;
   font-size: 34rpx;
   font-weight: bold;
+}
+
+.scroll_wrap{
+  height: 51vh;
 }
 
 .flex{
@@ -103,12 +112,15 @@ page {
 
     <view class="main_wrap s_fc_1">
 
+      <view class='scroll_wrap'>
+        <scroll-view scroll-y style='height: 100%;'>
+
         <repeat for='{{list}}'>
-          <view class='video_item'>
+          <view class="video_item {{(index + 1) < list.length ? 'line' : ''}}">
             <repeat for='{{item.nameList}}' item='name'>
               <view class='video_title'>{{name}}</view>
             </repeat>
-            <video class='video' src='{{item.videoPath}}' poster='{{playURL}}' autoplay='{{index === 0}}'></video>
+            <video id="{{'video' + index}}" class='video' src='{{item.videoPath}}' play-btn-position='center' poster='{{item.content}}' autoplay='{{index === 0}}'></video>
 
             <repeat for='{{item.descList}}' item='desc' index='d_index'>
               <view class='video_desc flex s_fc_4' style='align-items: flex-start;'>
@@ -121,6 +133,9 @@ page {
 
           </view>
         </repeat>
+      
+        </scroll-view>
+      </view>
 
       <view class='btn_wrap' @tap='goHome'>
         <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
@@ -129,7 +144,7 @@ page {
 
     </view>
 
-    <view class='s_bg_3' style='width: 100%; height: 100rpx;'></view>
+    <view class='' style='width: 100%; height: 100rpx; background: transparent;'></view>
 
     <tabBar :list.sync='tabBarList'></tabBar>
 
@@ -167,6 +182,11 @@ export default class Waiterhome extends wepy.page {
 
   onShow() {}
 
+  onHide(){
+    let arr = this.list.map((v, i) => wx.createVideoContext(`video${i}`)); 
+    arr.forEach(v => { v.stop(); });
+  }
+
   methods = {
     goHome(){
       let url = `/pages/waiterHome`;
@@ -183,7 +203,7 @@ export default class Waiterhome extends wepy.page {
       vList.forEach(v => {
         let page;
 
-        v.nameList = v.title.split('\br');
+        v.nameList = v.title.split('\\br');
         v.otherData = JSON.parse(v.otherData);
         // get video descList and tip info
         page = v.otherData.needPage.filter(o => o.page === 1);

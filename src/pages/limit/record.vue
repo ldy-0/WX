@@ -4,8 +4,8 @@ page {
 }
 .container {
   position: relative;
-  min-height: 100%;
-  /* overflow: hidden; */
+  height: 100%;
+  overflow: hidden;
 }
 .bg_img {
   position: absolute;
@@ -20,7 +20,8 @@ page {
   width: 714rpx;
   height: 344rpx;
   margin: 0 auto;
-  margin-top: 18rpx;
+  /* margin-top: 18rpx; */
+  margin-top: 68rpx;
 }
 
 .main_wrap{
@@ -93,6 +94,10 @@ page {
   font-weight: bold;
 }
 
+.scroll_wrap{
+  height: 620rpx;
+}
+
 .flex{
   display: flex;
   justify-content: center;
@@ -112,6 +117,8 @@ page {
 
 .s_bg_2{ background: #ae8459; }
 .s_bg_3{ background: rgba(40, 37, 24, 1); }
+.s_bg_4{ background: #060707 }
+.s_bg_5{ background: #201b16 }
 </style>
 
 <template>
@@ -129,10 +136,13 @@ page {
         <view class='qrcode'>太阳码</view>
       </view>
 
+      <view class='scroll_wrap'>
+        <scroll-view scroll-y style='height: 100%;'>
+
       <view class='rank_list'>
         <repeat for='{{rankList}}'>
 
-          <view class='rank_item_wrap flex'>
+          <view class="rank_item_wrap flex {{index % 2 === 0 ? 's_bg_4' : 's_bg_5'}}">
             <view class='upload_time_value'>{{item.createdAt}}</view>
             <view class='status_value'>
               <view wx:if="{{item.orderStatus === 'SUCCESS'}}">{{item.orderStatusStr}}</view>
@@ -152,6 +162,9 @@ page {
         </repeat>
       </view>
 
+        </scroll-view>
+      </view>
+
       <!-- <view class='btn_wrap'>
         <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
         <view class='btn_ctn s_fc_3'>继续冲刺</view>
@@ -159,7 +172,7 @@ page {
 
     </view>
 
-    <view class='s_bg_3' style='width: 100%; height: 100rpx;'></view>
+    <view class='' style='width: 100%; height: 100rpx; background: transparent;'></view>
 
     <tabBar :list.sync='tabBarList'></tabBar>
 
@@ -201,11 +214,13 @@ export default class Waiterhome extends wepy.page {
 
       let o = { info: item.reason, url: item.image, orderId: item.orderId, qrcode: item.qrCode };
       let url = `/pages/limit/index?type=error&error=${JSON.stringify(o)}`;
-      wx.redirectTo({ url, });
+      // wx.redirectTo({ url, });
+      this.navigateTo(url);
     },
     goResult(index){
       let url = `/pages/limit/index?type=result&qrcode=${this.rankList[index].qrCode}`;
-      wx.redirectTo({ url, });
+      // wx.redirectTo({ url, });
+      this.navigateTo(url);
     },
   };
 
@@ -221,6 +236,11 @@ export default class Waiterhome extends wepy.page {
 
     wx.hideLoading();
     this.$apply();
+  }
+
+  navigateTo(url){
+    let length = getCurrentPages().length;
+    length >= 9 ? wx.reLaunch({ url }) : wx.navigateTo({ url });
   }
 }
 </script>

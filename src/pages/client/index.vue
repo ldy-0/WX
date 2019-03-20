@@ -19,7 +19,8 @@ page {
   width: 714rpx;
   height: 344rpx;
   margin: 0 auto;
-  margin-top: 18rpx;
+  /* margin-top: 18rpx; */
+  margin-top: 124rpx;
 }
 
 .main_wrap{
@@ -30,7 +31,7 @@ page {
 }
 
 .video_item{
-  padding: 30rpx 0;
+  padding: 10rpx 0 20rpx 0;
   /* border-bottom: 2rpx solid #7d6245; */
 }
 .video_title{
@@ -61,7 +62,7 @@ page {
   position: relative;
   width: 300rpx;
   height: 80rpx;
-  margin: 20rpx auto 0;
+  margin: 0rpx auto 0;
 }
 .i_btn{
   width: 100%;
@@ -80,9 +81,12 @@ page {
 }
 
 .desc_wrap{
-  margin: 35rpx 0 0;
+  margin: 25rpx 0 0;
   font-size: 22rpx;
   text-align: center;
+}
+.desc_item{
+  min-height: 22rpx;
 }
 
 .auth_btn_wrap{
@@ -95,6 +99,43 @@ page {
 .clear{
   padding: 0;
   border: none;
+}
+
+.agree_btn {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  border: solid 1rpx #ba8e60;
+  margin-right: 12rpx;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.agree_btnSpot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  background: #ba8e60;
+}
+.agree_txt {
+  font-family: HYb1gj;
+  font-size: 22rpx;
+  font-weight: normal;
+  font-stretch: normal;
+  line-height: 31px;
+  letter-spacing: 0px;
+  color: #dddddd;
+  opacity: 0.86;
+}
+.agree_downBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.x_banner_img{
+  margin: 180rpx auto 0;
 }
 
 .flex{
@@ -114,18 +155,18 @@ page {
 <template>
   <view class="container">
     <image class="bg_img" src="../../images/bg.png" mode='aspectFill' alt>
-    <image class="banner_img" src="../../images/banner.png" alt>
+    <image class="banner_img {{isX ? 'x_banner_img' : ''}}" src="../../images/banner.png" alt>
 
-    <view class="main_wrap s_fc_1">
+    <view class="main_wrap s_fc_1 {{isX ? 'x_main_wrap' : ''}}">
 
         <repeat for='{{list}}'>
           <view class='video_item'>
             <view class='video_title'>{{item.title}}</view>
-            <video class='video' src='{{item.videoPath}}' poster='{{playURL}}'></video>
+            <video class='video' src='{{item.videoPath}}' poster='{{playURL}}'  wx:if='{{!showToast}}'></video>
 
             <view class='desc_wrap s_fc_4'>
               <repeat for='{{descList}}'>
-                <view>{{item}}</view>
+                <view class='desc_item'>{{item}}</view>
               </repeat>
             </view>
             <!-- <view class='video_desc flex s_fc_4' style='align-items: flex-start;'>
@@ -135,10 +176,21 @@ page {
           </view>
         </repeat>
 
-      <navigator open-type='exit' target='miniProgram' class='btn_wrap' @tap='go'>
+      <navigator open-type='exit' target='miniProgram' class='btn_wrap' wx:if="{{type != 'goDraw'}}">
         <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
         <view class='btn_ctn s_fc_3'>{{btnTitle}}</view>
       </navigator>
+      <view class='btn_wrap' @tap='go' wx:else>
+        <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
+        <view class='btn_ctn s_fc_3'>{{btnTitle}}</view>
+      </view>
+
+      <view class="agree_downBox" wx:if="{{type === 'goDraw'}}">
+        <view class="agree_btn" @tap="changeAgree">
+          <view wx:if="{{agree}}" class="agree_btnSpot"></view>
+        </view>
+        <view class="agree_txt" @tap="changeAgreement">我已了解消费者活动机制</view>
+      </view>
 
     </view>
 
@@ -149,6 +201,10 @@ page {
       </view>
     </toast>
 
+    <consumerActivity @close.user='changeAgreement' wx:if="{{showAgreement}}"></consumerActivity>
+
+    <!-- <agreement wx:if="{{}}"></agreement> -->
+
     <tabBar :list.sync='tabBarList' wx:if="{{type !== ''}}"></tabBar>
 
   </view>
@@ -158,6 +214,7 @@ page {
 import wepy from "wepy";
 import tabBar from "../../components/tabBar";
 import toast from "../../components/toast";
+import consumerActivity from "../../components/consumerActivity";
 import { shttp } from "../../utils/http";
 import req from "../../utils/request";
 import { signIn } from "../../utils/user-tools";
@@ -169,12 +226,14 @@ export default class Waiterhome extends wepy.page {
 
   data = {
     descList: [
-      '做任何事',
-      '不仅需要发挥到百分之百',
-      '更要学会挑战极限',
-      '学会以最佳状态面对每一天',
-      '在每一次超越别人，战胜自我的过程中',
-      '发掘内心新的能量，激发高昂表现',
+      '站在每一次极限边缘',
+      '勇敢突破，为自已赢得喝彩',
+      ' ',
+      '嘉实多极护专享系列',
+      '拥有钛流体强化技术',
+      '领先科技，激发引擎设计性能',
+      '让每一次表现都是一次超越',
+      '在每一次行动中，突破极限',
     ],
     tabBarList: [],
     playURL: '../../images/global/play.png',
@@ -184,54 +243,89 @@ export default class Waiterhome extends wepy.page {
     showToast: false,
     user: {},
     orderId: null,
+    status: -1, // 0: 页面跳转进入
+    agree: false,
+    showAgreement: false,
+    isX: false,
   };
 
   components = {
     tabBar,
     toast,
+    consumerActivity,
   };
 
   async onLoad(options) {
-    let gd = this.$parent.globalData;
+    let gd = this.$parent.globalData,
+        referer = wx.getStorageSync('clientReferer'),
+        token = wx.getStorageSync('token');
     gd.tabIndex = 0;
-    gd.clientTabBarList[0].path = `/pages/client/index?scene=${options.scene}`;
+    gd.clientTabBarList[0].path = `/pages/client/index?scene=${options.scene}&status=0`;
     this.tabBarList = gd.clientTabBarList;
+    console.error('options', options);
+
+    // 海报二维码进入
+    if(options.scene === '0'){ wx.setStorageSync('clientReferer', 'poster'); return ; }
 
     //微信用户登录换取token，并将token存入本地缓存中
+    // wx.showLoading({ title: 'Loading...' });
+    // const userInfo = await signIn(false);
+    // // console.error('user', userInfo);
+
+    // if (userInfo.data.code === 1) {
+    //   let auth = userInfo.header.Authorization;
+    //   wx.setStorageSync("token", auth);
+    // }
+
+    // 抽奖码进入
+    if(options.scene && options.scene.indexOf('*') !== -1){
+      this.type = 'goDraw';
+      this.btnTitle = '立即抽奖';
+      this.orderId = Number(options.scene.substr(1));
+      wx.setStorageSync('clientReferer', 'draw');
+      this.status = options.status;
+      console.error(options, this.type, this.status);
+    }
+
+  }
+
+  async onShow() {
+    let referer = wx.getStorageSync('clientReferer');
+
+    let sys = wx.getSystemInfoSync();
+    this.isX = sys.screenHeight > 800;
+
     wx.showLoading({ title: 'Loading...' });
     const userInfo = await signIn(false);
-    // console.error('user', userInfo);
 
     if (userInfo.data.code === 1) {
       let auth = userInfo.header.Authorization;
       wx.setStorageSync("token", auth);
     }
 
-    if(options.scene && options.scene.indexOf('*') !== -1){
-      this.type = 'goDraw';
-      this.btnTitle = '立即抽奖';
-      this.orderId = Number(options.scene.substr(1));
-      console.error(options.scene, this.type);
+    if(referer !== 'poster' && this.status !== '0'){
+      this.showToast = true;
     }
 
-    this.getUserInfo();
-  }
-
-  onShow() {
-
+    this.getList();
   }
 
   methods = {
+    changeAgree(){ this.agree = !this.agree },
+    changeAgreement(){ this.showAgreement = !this.showAgreement },
     go(){
       let url;
 
       if(!this.type){ return ; } 
 
+      if(!this.agree) return wx.showModal({ content: '请了解消费者活动机制', showCancel: false });
+
       if(this.type === 'goDraw'){
         url = `/pages/client/draw?orderId=${this.orderId}`;
       }
 
-      wx.redirectTo({ url, });
+      // wx.redirectTo({ url, });
+      this.navigateTo(url);
     },
     // 查询用户是否有
     async onGotUserInfo(e){
@@ -243,12 +337,28 @@ export default class Waiterhome extends wepy.page {
         url = `/castrol/api/v1/users/userInfo/owner`;
 
         const res = await req.post(url, { encryptedData: e.detail.encryptedData, iv: e.detail.iv, }, { Authorization: wx.getStorageSync('token') });
-        console.error('login', res.data);
+        console.error('login', res);
+
+        // 已注册SA用户
+        if(res.code == 107){
+          this.type = '';
+          this.btnTitle = '我已Get!';
+          this.showToast = false;
+          wx.setStorageSync('isSA', true);
+          wx.hideLoading();
+          return this.$apply();
+        }
 
         if(res.data){
+          //TODO: 新用户和抽奖用户进sa跳转至用户首页怎么区分
+          // if(res.code === 108){
+          //   this.type = 'goDraw';
+          //   this.btnTitle = '立即抽奖';
+          // }
           this.showToast = false;
         }else{
-          return ;
+          wx.hideLoading();
+          return wx.showModal({ content: res.moreInfo, showCancel: false, });
         }
 
         // cached userinfo
@@ -266,20 +376,20 @@ export default class Waiterhome extends wepy.page {
     }
   };
   
-  getUserInfo(){
-    let user = wx.getStorageSync('clientInfo'),
-        url;
+  // getUserInfo(){
+  //   let user = wx.getStorageSync('clientInfo'),
+  //       url;
 
-    if(!user){
-      console.error('no client user');
-      this.showToast = true;
-    }else{
-      this.user = user;
-    }
+  //   if(!user){
+  //     console.error('no client user');
+  //     this.showToast = true;
+  //   }else{
+  //     this.user = user;
+  //   }
 
-    this.getList();
-    this.$apply();
-  }
+  //   this.getList();
+  //   this.$apply();
+  // }
 
   async getList(){
     let res = await req.get(`/castrol/api/v1/marketVideo`, { size: 9999 }, { 'Authorization': wx.getStorageSync('token') });
@@ -293,8 +403,8 @@ export default class Waiterhome extends wepy.page {
         v.otherData = JSON.parse(v.otherData);
         // get video descList and tip info
         page = v.otherData.needPage.filter(o => o.page === 2);
-        v.descList = page[0] && page[0].description ? page[0].description.descList : [];
-        v.tip = page[0] && page[0].description ? page[0].description.tip : '';
+        // v.descList = page[0] && page[0].description ? page[0].description.descList : [];
+        // v.tip = page[0] && page[0].description ? page[0].description.tip : '';
       });
 
       this.list = vList.filter(v => v.otherData.needPage.filter(o => o.page === 2).length);
@@ -303,6 +413,11 @@ export default class Waiterhome extends wepy.page {
 
     wx.hideLoading();
     this.$apply();
+  }
+
+  navigateTo(url){
+    let length = getCurrentPages().length;
+    length >= 9 ? wx.reLaunch({ url }) : wx.navigateTo({ url });
   }
   
 }

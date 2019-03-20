@@ -62,9 +62,17 @@ export default class Placeholder extends wepy.component {
       globalData.tabIndex = index;
 
       // console.error(url);
-      if(url) wx.redirectTo({ url });
+      if(url){
+        this.navigateTo(url);
+        // wx.redirectTo({ url });
+      }
       // console.error(index, this.list[index]);
     }
+  }
+
+  navigateTo(url){
+    let length = getCurrentPages().length;
+    length === 9 ? wx.reLaunch({ url }) : wx.navigateTo({ url });
   }
 }
 </script>

@@ -22,7 +22,8 @@ page {
   width: 714rpx;
   height: 344rpx;
   margin: 0 auto;
-  margin-top: 18rpx;
+  /* margin-top: 18rpx; */
+  margin-top: 68rpx;
 }
 
 .main_container{
@@ -153,6 +154,8 @@ page {
 .s_bg_1{ background: #fff; }
 .s_bg_2{ background: #c2996f; }
 .s_bg_3{ background: #000; }
+.s_bg_4{ background: #060707 }
+.s_bg_5{ background: #201b16 }
 </style>
 
 <template>
@@ -262,7 +265,8 @@ export default class Waiterhome extends wepy.page {
   methods = {
     goRecord(){
       let url = `/pages/limit/record`;
-      wx.navigateTo({ url, });
+      // wx.navigateTo({ url, });
+      this.navigateTo(url);
     },
     async addImg(){
       if(this.type === 'error') return ;
@@ -295,11 +299,13 @@ export default class Waiterhome extends wepy.page {
       if(!this.qrcode) return ;
 
       let res = await mp.getImg(this.qrcode);
+      // console.error('getImg res:', res.errMsg);
+      if(res.errMsg) return wx.showModal({ content: res.errMsg, showCancel: false, });
 
       let s = await mp.saveImg(res);
       console.error(s);
 
-      if(s.essMsg === ''){ 
+      if(s.errMsg === 'saveImageToPhotosAlbum:ok'){ 
         wx.showToast({ title: '保存成功', duration: 1000 });
       }
     }
@@ -363,6 +369,8 @@ export default class Waiterhome extends wepy.page {
     console.error(this.type);
     if(this.type === 'result'){
       this.qrcode = param.image;
+      this.btnTitle = '保存图片';
+      this.canSubmit = true;
       return this.$apply();
     }
 
@@ -378,12 +386,17 @@ export default class Waiterhome extends wepy.page {
       this.qrcode = this.type === 'reupload' ? this.error.qrcode : res.data;
       this.type = 'result';
       this.btnTitle = '保存图片';
-      this.canSubmit = false;
+      this.canSubmit = true;
     }
 
 
     this.$apply();
     wx.hideLoading();
+  }
+
+  navigateTo(url){
+    let length = getCurrentPages().length;
+    length >= 9 ? wx.reLaunch({ url }) : wx.navigateTo({ url });
   }
 
 }

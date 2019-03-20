@@ -5,6 +5,7 @@ page {
 .container {
   position: relative;
   height: 100%;
+  overflow: hidden;
 }
 .bg_img {
   position: absolute;
@@ -19,7 +20,8 @@ page {
   width: 714rpx;
   height: 344rpx;
   margin: 0 auto;
-  margin-top: 18rpx;
+  /* margin-top: 18rpx; */
+  margin-top: 68rpx;
 }
 
 
@@ -142,6 +144,10 @@ page {
   align-items: center;
 }
 
+.scroll_wrap{
+  height: 770rpx;
+}
+
 .mt10{
   margin: 10rpx 0 0;
 }
@@ -162,6 +168,9 @@ page {
     <image class="bg_img" src="../../images/bg.png" mode='aspectFill' alt>
     <image class="banner_img" src="../../images/banner.png" alt>
 
+    <view class='scroll_wrap'>
+    <scroll-view scroll-y style='100%;'>
+
     <view class='activity_title_wrap'>
         <!-- <view class='activity_title'> -->
           <image class='activity_title_bg' src='../../images/activity/activity_title_bg.png' />
@@ -173,8 +182,8 @@ page {
 
       <view class='appointment_wrap'>
         <view class='appointment_bg s_bg_3'></view>
-        <textarea class='appointment s_fc_1' placeholder-class="s_fc_1" @input='getInfo'></textarea> 
-        <view class='placeholder_wrap s_fc_1' wx:if="{{!info}}">
+        <textarea maxlength="60" class='appointment s_fc_1' placeholder-class="s_fc_1" value='{{info}}' bindfocus="focusTextarea" @blur='blur' @input='getInfo'></textarea> 
+        <view class='placeholder_wrap s_fc_1' wx:if="{{!(info || isFocus)}}">
           <view>请输入活动信息</view>
           <view class='mt10'>例：2019年12月12日 下午14：00</view>
           <view>在上海普陀区XXX 免费更换滤芯 胎压检测</view>
@@ -201,7 +210,10 @@ page {
       </view>
     </toast>
 
-    <view class='s_bg_4' style='height: 90rpx;'></view>
+    </scroll-view>
+    </view>
+
+    <view class='' style='height: 90rpx; background: transparent'></view>
 
     <tabBar :list.sync='tabBarList'></tabBar>
 
@@ -226,7 +238,9 @@ export default class Waiterhome extends wepy.page {
     tabBarList: [],
     user: {},
     info: '',
+    infoBackup: '',
     showSuccess: false,
+    isFocus: false,
   };
 
   components = {
@@ -239,40 +253,56 @@ export default class Waiterhome extends wepy.page {
     gd.tabIndex = -1;
     this.tabBarList = gd.adviserTabBarList;
 
-    this.getUserInfo();
+    // this.getUserInfo();
   }
 
   onShow() {}
 
   methods = {
     goPoster(){
-      let url = `/pages/appointment/poster?user=${encodeURIComponent(JSON.stringify(this.user))}`;
-      wx.navigateTo({ url, });
+      if(!this.infoBackup.length) return wx.showModal({ content: '请输入文字', showCancel: false });
+
+      // let url = `/pages/appointment/poster?user=${encodeURIComponent(JSON.stringify(this.user))}&value=${this.infoBackup}`;
+      let url = `/pages/appointment/poster?value=${this.infoBackup}`;
+      // wx.navigateTo({ url, });
+      this.navigateTo(url);
+    },
+    focusTextarea(e){
+      console.error('--focus--');
+      this.isFocus = true;
+    },
+    blur(e){
+      this.isFocus = false;
     },
     getInfo(e){
       let v = e.detail.value;
-      this.info = v;
+      this.infoBackup = this.info = v;
     },
     copy(){
       let data = this.info;
 
       wx.setClipboardData({ 
         data, 
-        success: e => { wx.hideToast(); this.showSuccess = true; this.$apply(); },
+        success: e => { wx.hideToast(); this.info = ''; this.showSuccess = true; this.$apply(); },
       });
     },
     closeToast(){
       this.showSuccess = false;
+      this.info = this.infoBackup;
     }
   };
 
-  async getUserInfo(){
-    this.user = {
-      name: '李建国',
-      address: '永达吴中路大众中心永达吴中路大众中心永达吴中路大众中心',
-      score: 100,
-      mobile: '13211122233',
-    }
+  navigateTo(url){
+    let length = getCurrentPages().length;
+    length >= 9 ? wx.reLaunch({ url }) : wx.navigateTo({ url });
   }
+  // async getUserInfo(){
+  //   this.user = {
+  //     name: '李建国',
+  //     address: '永达吴中路大众中心永达吴中路大众中心永达吴中路大众中心',
+  //     score: 100,
+  //     mobile: '13211122233',
+  //   }
+  // }
 }
 </script>

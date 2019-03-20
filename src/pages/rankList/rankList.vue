@@ -4,8 +4,8 @@ page {
 }
 .container {
   position: relative;
-  min-height: 100%;
-  /* overflow: hidden; */
+  height: 100%;
+  overflow: hidden;
 }
 .bg_img {
   position: absolute;
@@ -20,7 +20,8 @@ page {
   width: 714rpx;
   height: 344rpx;
   margin: 0 auto;
-  margin-top: 18rpx;
+  /* margin-top: 18rpx; */
+  margin-top: 68rpx;
 }
 
 .activity_title_wrap, .main_wrap{
@@ -58,6 +59,7 @@ page {
 
 .rank_list{
   padding: 20rpx 0 0;  
+  /* min-height: 740rpx; */
 }
 .rank_item_wrap{
   padding: 15rpx 0;
@@ -69,7 +71,7 @@ page {
   position: relative;
   width: 300rpx;
   height: 80rpx;
-  margin: 20rpx auto 0;
+  margin: 80rpx auto 0;
 }
 .i_btn{
   width: 100%;
@@ -101,20 +103,21 @@ page {
 .level{
   flex-shrink: 0;
   width: 100rpx;
+  text-align: center;
 }
 .interval{
   flex-shrink: 0;
   width: 360rpx;
-  /* height: 60rpx; */
-  margin: 0 40rpx;
-  /* white-space: nowrap; */
-  /* overflow: hidden; */
-  /* text-overflow: ellipsis; */
 }
 .name{
   flex-shrink: 0;
   width: 100rpx;
   text-align: center;
+  word-break: break-all;
+}
+
+.scroll_wrap{
+  height: 40vh;
 }
 
 .s_fc_1{ color: #fff; }
@@ -122,6 +125,8 @@ page {
 .s_fc_3{ color: #5a2f08; }
 
 .s_bg_2{ background: rgba(40, 37, 24, 1); }
+.s_bg_3{ background: #060707 }
+.s_bg_4{ background: #201b16 }
 </style>
 
 <template>
@@ -135,20 +140,24 @@ page {
           <view class='activity_title_ctn s_fc_1'>{{rankListTitle}}</view>
         <!-- </view> -->
     </view>
-
-    <view class=''>
     <view class="main_wrap s_fc_1">
 
-      <view class='rank_list'>
-        <repeat for='{{rankList}}'>
+      <view class='scroll_wrap'>
+      <scroll-view scroll-y style='height: 100%;'>
 
-          <view class="rank_item_wrap between">
-            <view class='level'>{{item.level}}</view>
-            <view class='interval'>{{item.groupName}}</view>
-            <view class='name'>{{item.name}}</view>
-          </view>
+        <view class='rank_list'>
+            <repeat for='{{rankList}}'>
 
-        </repeat>
+              <view class="rank_item_wrap between {{index % 2 === 0 ? 's_bg_3' : 's_bg_4'}}">
+                <view class='level'>{{item.level}}</view>
+                <view class='interval'>{{item.groupName}}</view>
+                <view class='name'>{{item.name}}</view>
+              </view>
+
+            </repeat>
+        </view>
+
+      </scroll-view>
       </view>
 
       <view class='btn_wrap' @tap='goHome'>
@@ -156,10 +165,9 @@ page {
         <view class='btn_ctn s_fc_3'>继续冲刺</view>
       </view>
 
-    </view>
+      <view class='' style='height: 270rpx; background: transparent;'></view>
     </view>
 
-    <view class='s_bg_2' style='height: 90rpx;'></view>
 
     <tabBar :list.sync='tabBarList'></tabBar>
 
@@ -194,7 +202,8 @@ export default class Waiterhome extends wepy.page {
     this.getRankList();
   }
 
-  onShow() {}
+  onShow() {
+  }
 
   methods = {
     goHome(){
@@ -202,7 +211,8 @@ export default class Waiterhome extends wepy.page {
       gb.tabIndex = 0;
 
       let url = `/pages/waiterHome`;
-      wx.redirectTo({ url, });
+      // wx.redirectTo({ url, });
+      this.navigateTo(url);
     },
     goModule(){
 
@@ -211,27 +221,20 @@ export default class Waiterhome extends wepy.page {
 
   async getRankList(){
     wx.showLoading({ content: 'Loading...' });
-    let res = await shttp.get(`/api/v1/seller/ranks`).end();
+    let res = await shttp.get(`/api/v1/seller/ranks`).query({ page: 1, limit: 10 }).end();
 
     if(res.data){
       res.data.forEach((v, i) => v.level = this.levelList[i]);
       this.rankList = res.data;
     }
-    // this.rankList = [
-    //   { name: '李X琳', address: '上海XX门店上海XX门店上海XX门店', },
-    //   { name: '李X琳', address: '上海XX门店上海XX门店上海XX门店上海XX门店', },
-    //   { name: '李X琳', address: '上海XX门店上海XX门店上海XX门店上海XX门店', },
-    //   { name: '李X琳', address: '上海XX门店上海XX门店上海XX门店上海XX门店', },
-    //   { name: '李X琳', address: '上海XX门店上海XX门店上海XX门店上海XX门店', },
-    //   { name: '李X琳', address: '上海XX门店上海XX门店上海XX门店上海XX门店', },
-    //   { name: '李X琳', address: '上海XX门店上海XX门店上海XX门店上海XX门店', },
-    //   { name: '李X琳', address: '上海XX门店上海XX门店上海XX门店上海XX门店', },
-    //   { name: '李X琳', address: '上海XX门店上海XX门店上海XX门店上海XX门店', },
-    //   { name: '李X琳', address: '上海XX门店上海XX门店上海XX门店上海XX门店', },
-    // ];
 
     this.$apply();
     wx.hideLoading();
+  }
+
+  navigateTo(url){
+    let length = getCurrentPages().length;
+    length >= 9 ? wx.reLaunch({ url }) : wx.navigateTo({ url });
   }
 }
 </script>

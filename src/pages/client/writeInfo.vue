@@ -22,7 +22,8 @@ page {
   width: 714rpx;
   height: 344rpx;
   margin: 0 auto;
-  margin-top: 18rpx;
+  /* margin-top: 18rpx; */
+  margin-top: 68rpx;
 }
 
 .main_container{
@@ -40,7 +41,7 @@ page {
   position: relative;
   width: 300rpx;
   height: 80rpx;
-  margin: 40rpx auto 0;
+  margin: 20rpx auto 0;
 }
 .i_btn{
   width: 100%;
@@ -70,14 +71,49 @@ page {
   border-radius: 12rpx;
 }
 .input{
+  height: 52rpx;
+  line-height: 52rpx;
   font-size: 22rpx;
-  line-height: 1.2;
 }
 
 .toast_title_wrap{
   margin: 70rpx 0 0;
   font-size: 35rpx;
   text-align: center;
+}
+
+.agree_btn {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  border: solid 1rpx #ba8e60;
+  margin-right: 12rpx;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.agree_btnSpot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  background: #ba8e60;
+}
+.agree_txt {
+  font-family: HYb1gj;
+  font-size: 22rpx;
+  font-weight: normal;
+  font-stretch: normal;
+  line-height: 31px;
+  letter-spacing: 0px;
+  color: #dddddd;
+  opacity: 0.86;
+}
+.agree_downBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10rpx 0 0;
 }
 
 .flex{
@@ -120,7 +156,14 @@ page {
         </view>
 
         <view class='input_wrap s_bg_4'>
-          <input class='input s_fc_6' placeholder="收获地址" placeholder-style="color: #ddd;" value='{{address}}' @input="getAddress" />
+          <input class='input s_fc_6' placeholder="收货地址" placeholder-style="color: #ddd;" value='{{address}}' @input="getAddress" />
+        </view>
+
+        <view class="agree_downBox">
+          <view class="agree_btn" @tap="changeAgree">
+            <view wx:if="{{agree}}" class="agree_btnSpot"></view>
+          </view>
+          <view class="agree_txt" @tap="changeAgreement">我已阅读并同意本协议</view>
         </view>
 
         <view class='btn_wrap' @tap='submit'>
@@ -130,6 +173,8 @@ page {
 
       </view>
     </view>
+
+    <agreement @close.user='changeAgreement' wx:if="{{showAgreement}}"></agreement>
 
     <!-- toast/弹窗 -->
     <toast wx:if="{{showToast}}" @close.user='closeToast'>
@@ -153,6 +198,7 @@ page {
 import wepy from "wepy";
 import tabBar from "../../components/tabBar";
 import toast from "../../components/toast";
+import agreement from "../../components/agreement";
 import center from "../../components/center";
 import { shttp } from "../../utils/http";
 import req from "../../utils/request";
@@ -180,11 +226,14 @@ export default class Waiterhome extends wepy.page {
     address: '',
     orderId: null,
     goods: null,
+    agree: false,
+    showAgreement: false,
   };
 
   components = {
     tabBar,
     toast,
+    agreement,
     center,
   };
 
@@ -210,6 +259,8 @@ export default class Waiterhome extends wepy.page {
   onShow() {}
 
   methods = {
+    changeAgree(){ this.agree = !this.agree },
+    changeAgreement(){ this.showAgreement = !this.showAgreement },
     getName(e){ this.name = e.detail.value; },
     getMobile(e){ this.mobile = e.detail.value; },
     getAddress(e){ this.address = e.detail.value; },
@@ -222,12 +273,16 @@ export default class Waiterhome extends wepy.page {
 
       if(!mobile.test(this.mobile)){ return wx.showModal({ content: '请输入正确的联系方式', showCancel: false, }); }
 
+      if(!this.agree) return wx.showModal({ content: '请同意协议', showCancel: false });
+
       this.save();
     },
     closeToast(){
-      console.error('close toast');
-      let url = `/pages/client/index?orderId=${this.orderId}`;
-      wx.redirectTo({ url, });
+      // console.error('close toast');
+      // let url = `/pages/client/index?scene=*${this.orderId}`;
+      let url = `/pages/client/prizeList`;
+      // wx.redirectTo({ url, });
+      this.navigateTo(url);
       // wx.navigateBack({ delta: 999 });
     }
   };
@@ -252,7 +307,8 @@ export default class Waiterhome extends wepy.page {
     this.showToast = 1;
     let infoArr = this.saveSuccessInfo;
     infoArr[0] = { value: infoArr[0], name: param.ownerName };
-    infoArr[1] = `将会在${this.goods.auditDay}个工作日内审核通过`;
+    // infoArr[1] = `将会在${this.goods.auditDay}个工作日内审核通过`;
+    infoArr[3] = `将会在7个工作日内审核通过`;
     infoArr[2] = this.goods.name;
     this.$apply();
   }
@@ -261,6 +317,11 @@ export default class Waiterhome extends wepy.page {
     this.name = '';
     this.mobile = '';
     this.address = '';
+  }
+
+  navigateTo(url){
+    let length = getCurrentPages().length;
+    length >= 9 ? wx.reLaunch({ url }) : wx.navigateTo({ url });
   }
 
 }
