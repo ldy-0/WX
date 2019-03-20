@@ -69,7 +69,7 @@
 }
 
 .x_box{
-  margin: 280rpx 0 0;
+  margin: 180rpx auto 0;
 }
 
 .flex{
@@ -162,6 +162,7 @@ import wepy from "wepy";
 export default class Rule extends wepy.component{
   props = {
     ruleType: String,
+    isX: Boolean,
   };
 
   watch = {
@@ -169,7 +170,7 @@ export default class Rule extends wepy.component{
       console.error(v1, v2);
     },
     isX(v1, v2){
-      console.error(v1, v2);
+      // console.error(v1, v2);
     }
   }
 
@@ -191,14 +192,7 @@ export default class Rule extends wepy.component{
                    ],
     statmentContent_2: ['备注：本次活动总体中奖率20%。'],                     
     statmentContent_3: ['本活动规则不构成任何合同要约，本次活动最终解释权归嘉实多所有。'],                     
-    isX: false,
   };
-
-  onShow(){
-    let sys = wx.getSystemInfoSync();
-    console.error(sys);
-    this.isX = sys.screenHeight > 800;
-  }
 
   methods = {
     close(){

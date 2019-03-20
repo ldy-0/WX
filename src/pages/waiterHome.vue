@@ -358,9 +358,10 @@ export default class Waiterhome extends wepy.page {
         const res = await req.post(url, param, { Authorization: wx.getStorageSync('token') });
         console.error('login', res.data);
 
-        // 已抽奖用户且没有扫码进入
-        if(res.code == 108){
+        // 用户且没有扫码进入(108: 已抽奖用户)
+        if(res.code == 108 || res.code == 109){
           // console.error(res);
+          wx.setStorageSync('code', res.code);
           return this.navigateTo(`/pages/client/prizeList`);
         }
 

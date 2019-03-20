@@ -279,7 +279,7 @@ export default class Waiterhome extends wepy.page {
       this.infoBackup = this.info = v;
     },
     copy(){
-      let data = this.info;
+      let data = `来店保养选嘉实多极护\r\n赢取极护品牌体验之旅特权\r\n领略专业赛道的速度与激情\r\n${this.info}`;
 
       wx.setClipboardData({ 
         data, 

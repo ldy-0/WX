@@ -276,13 +276,13 @@ export default class Waiterhome extends wepy.page {
 
       ctx.setFontSize(11);
       ctx.setFillStyle('#188948');
-      ctx.fillText(`${user.name}  ${user.phone}`, 65, 424);
+      ctx.fillText(`${user.name}  ${user.phone}`, 65, 410);
 
       ctx.setFontSize(11);
       ctx.setFillStyle('#c69d75');
-      ctx.fillText(`${value[0]}`, 14, 470);
-      ctx.fillText(`${value[1]}`, 14, 484);
-      ctx.fillText(`${value[2]}`, 14, 498);
+      ctx.fillText(`${value[0]}`, 14, 460);
+      ctx.fillText(`${value[1]}`, 14, 474);
+      ctx.fillText(`${value[2]}`, 14, 488);
 
       let res = await mp.getImg('https://castrolmini.mgcc.com.cn/qn/Fv2ZBu1lEG5m224vKqbcxM_CngjB');
       // console.error('getImg res:', res.errMsg);

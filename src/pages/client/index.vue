@@ -201,7 +201,7 @@ page {
       </view>
     </toast>
 
-    <consumerActivity @close.user='changeAgreement' wx:if="{{showAgreement}}"></consumerActivity>
+    <consumerActivity :isX.sync='isX' @close.user='changeAgreement' wx:if="{{showAgreement}}"></consumerActivity>
 
     <!-- <agreement wx:if="{{}}"></agreement> -->
 
@@ -255,9 +255,9 @@ export default class Waiterhome extends wepy.page {
     consumerActivity,
   };
 
-  async onLoad(options) {
+  onLoad(options) {
     let gd = this.$parent.globalData,
-        referer = wx.getStorageSync('clientReferer'),
+        code = wx.getStorageSync('code'),
         token = wx.getStorageSync('token');
     gd.tabIndex = 0;
     gd.clientTabBarList[0].path = `/pages/client/index?scene=${options.scene}&status=0`;
@@ -267,15 +267,11 @@ export default class Waiterhome extends wepy.page {
     // 海报二维码进入
     if(options.scene === '0'){ wx.setStorageSync('clientReferer', 'poster'); return ; }
 
-    //微信用户登录换取token，并将token存入本地缓存中
-    // wx.showLoading({ title: 'Loading...' });
-    // const userInfo = await signIn(false);
-    // // console.error('user', userInfo);
-
-    // if (userInfo.data.code === 1) {
-    //   let auth = userInfo.header.Authorization;
-    //   wx.setStorageSync("token", auth);
-    // }
+    if(code == '108'){
+      this.type = 'goDraw';
+      this.btnTitle = '立即抽奖';
+      return ;
+    }
 
     // 抽奖码进入
     if(options.scene && options.scene.indexOf('*') !== -1){
@@ -290,7 +286,8 @@ export default class Waiterhome extends wepy.page {
   }
 
   async onShow() {
-    let referer = wx.getStorageSync('clientReferer');
+    let referer = wx.getStorageSync('clientReferer'),
+        code = wx.getStorageSync('code');
 
     let sys = wx.getSystemInfoSync();
     this.isX = sys.screenHeight > 800;
@@ -303,7 +300,7 @@ export default class Waiterhome extends wepy.page {
       wx.setStorageSync("token", auth);
     }
 
-    if(referer !== 'poster' && this.status !== '0'){
+    if(referer !== 'poster' && this.status !== '0' && code != '108'){
       this.showToast = true;
     }
 
@@ -350,7 +347,6 @@ export default class Waiterhome extends wepy.page {
         }
 
         if(res.data){
-          //TODO: 新用户和抽奖用户进sa跳转至用户首页怎么区分
           // if(res.code === 108){
           //   this.type = 'goDraw';
           //   this.btnTitle = '立即抽奖';

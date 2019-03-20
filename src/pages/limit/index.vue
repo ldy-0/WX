@@ -238,6 +238,7 @@ export default class Waiterhome extends wepy.page {
     qrcode: '',
     error: null,
     canSubmit: true,
+    status: false,
   };
 
   components = {
@@ -257,7 +258,9 @@ export default class Waiterhome extends wepy.page {
       this.initError(param.error);
     }else if(param.type === 'reupload'){
       this.initReUpload();
-    }   
+    }else{
+      this.getStatus();
+    }
   }
 
   onShow() {}
@@ -281,6 +284,8 @@ export default class Waiterhome extends wepy.page {
       let url;
 
       if(!this.img) return wx.showModal({ content: '请选择图片', showCancel: false });
+
+      if(!this.status) return wx.showModal({ content: '审核还未通过，暂时无法上传工单', showCancel: false });
 
       if(!this.canSubmit) return ;
       this.canSubmit = false;
@@ -363,6 +368,19 @@ export default class Waiterhome extends wepy.page {
     this.btnTitle = '重传证明文件';
     this.img = error.url;
     this.error = error;
+  }
+
+  async getStatus(){
+    let res = await req.get(`/castrol/api/v1/seller/status`, {}, { 'Authorization': wx.getStorageSync('token'), })
+
+    // console.error(res);
+    if(res && res.code === 1){
+      this.status = res.data;
+    }else{
+      wx.showModal({ content: res.moreInfo, showCancel: false });
+    }
+
+    this.$apply();
   }
 
   async getResult(param){

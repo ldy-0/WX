@@ -58,11 +58,15 @@
 .m_top2 {
   margin-top: 50rpx;
 }
+
+.x_box{
+  margin: 80rpx auto 0;
+}
 </style>
 
 <template>
     <view class='agreement_modal' @tap='close'>
-      <view class="agreement_box">
+      <view class="agreement_box {{isX ? 'x_box' : ''}}">
 
         <view class='close_wrap'>
           <image class='i_close' src='../images/global/close.png' mode='aspectFill' />
@@ -94,7 +98,7 @@
 import wepy from "wepy";
 export default class BackTop extends wepy.component {
   props = {
-
+    isX: Boolean
   };
   data = {
   };

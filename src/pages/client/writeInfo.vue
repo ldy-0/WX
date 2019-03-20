@@ -174,7 +174,7 @@ page {
       </view>
     </view>
 
-    <agreement @close.user='changeAgreement' wx:if="{{showAgreement}}"></agreement>
+    <agreement :isX.sync='isX' @close.user='changeAgreement' wx:if="{{showAgreement}}"></agreement>
 
     <!-- toast/弹窗 -->
     <toast wx:if="{{showToast}}" @close.user='closeToast'>
@@ -228,6 +228,7 @@ export default class Waiterhome extends wepy.page {
     goods: null,
     agree: false,
     showAgreement: false,
+    isX: false,
   };
 
   components = {
@@ -243,6 +244,9 @@ export default class Waiterhome extends wepy.page {
     gd.tabIndex = -1;
     // gd.clientTabBarList[0].path = `/pages/client/index?scene=${param.orderId}`;
     this.tabBarList = gd.clientTabBarList;
+
+    let sys = wx.getSystemInfoSync();
+    this.isX = sys.screenHeight > 800;
 
     try{
       goods = JSON.parse(decodeURIComponent(param.goods)); 

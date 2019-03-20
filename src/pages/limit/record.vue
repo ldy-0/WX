@@ -26,7 +26,7 @@ page {
 
 .main_wrap{
   position: relative;
-  padding: 120rpx 15rpx 0;
+  padding: 40rpx 15rpx 0;
   /* left: calc(50% - 310rpx); */
   /* width: 620rpx; */
 }
@@ -47,11 +47,11 @@ page {
 .status, .status_value{
   flex-basis: 10rpx;
   flex-grow: 5;
-  text-align: left;
+  /* text-align: left; */
 }
 .status{
-  position: relative;
-  left: 68rpx;
+  /* position: relative; */
+  /* left: 68rpx; */
 }
 
 .rank_list{
@@ -77,9 +77,10 @@ page {
 
 .btn_wrap{
   position: relative;
-  width: 300rpx;
-  height: 80rpx;
-  margin: 20rpx auto 0;
+  width: 100rpx;
+  height: 60rpx;
+  margin: 0 0 40rpx 10rpx;
+  /* margin: 0rpx auto 40rpx; */
 }
 .i_btn{
   width: 100%;
@@ -87,11 +88,14 @@ page {
 }
 .btn_ctn{
   position: absolute;
-  top: 20rpx;
-  left: calc(50% - 70rpx);
-  width: 140rpx;
-  font-size: 34rpx;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  line-height: 60rpx;
+  font-size: 30rpx;
   font-weight: bold;
+  text-align: center;
 }
 
 .scroll_wrap{
@@ -128,6 +132,11 @@ page {
 
 
     <view class="main_wrap s_fc_1">
+
+      <view class='btn_wrap' @tap='goBack'>
+        <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
+        <view class='btn_ctn s_fc_3'>返回</view>
+      </view>     
 
       <view class='rank_title flex s_fc_1 s_bg_2'>
         <view class='upload_time'>上传时间</view>
@@ -209,6 +218,7 @@ export default class Waiterhome extends wepy.page {
   onShow() {}
 
   methods = {
+    goBack(){ wx.navigateBack({ delta: 1 }); },
     goError(index){
       let item = this.rankList[index];
 
