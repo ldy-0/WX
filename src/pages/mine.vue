@@ -224,6 +224,11 @@ export default class Mine extends wepy.page {
         img: "../images/icon_tuangou@2x.png"
       },
       {
+        name: "我的秒杀",
+        url: "/pages/activities/seckillOrder",
+        img: "../images/icon_tuangou@2x.png"
+      },
+      {
         name: "我的收藏",
         url: "/pages/my/collectList",
         img: "../images/icon_4_wodeshoucang@2x.png"

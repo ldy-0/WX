@@ -3,6 +3,7 @@ page {
   height: 100%;
   width: 100%;
   font-family: arial, "PingFang SC", "Microsoft Yahei", "Hiragino Sans GB";
+  background: #f4f4f4;
 }
 </style>
 
@@ -61,9 +62,9 @@ export default class extends wepy.app {
       "pages/my/groupbuyDatail", //团购详情
 //===============================================================
       "pages/activities/bargainDetail", //砍价商品详情      
-      "pages/activities/bargainOrder.vue", //我的砍价      
+      "pages/activities/bargainOrder", //我的砍价      
       "pages/activities/seckillDetail", //秒杀商品详情      
-      "pages/activities/seckillOrder.vue", //我的秒杀     
+      "pages/activities/seckillOrder", //我的秒杀     
 //===============================================================       
       "pages/outWeb",//外链
     ],
@@ -141,7 +142,7 @@ export default class extends wepy.app {
 
     updateManager.onCheckForUpdate(function(res) {
       // 请求完新版本信息的回调
-      console.log(res.hasUpdate);
+      // console.log(res.hasUpdate);
       if (res.hasUpdate) {
         updateManager.onUpdateReady(function() {
           wx.showModal({

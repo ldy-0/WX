@@ -76,34 +76,36 @@
 <template>
   <view class="container">
     <view class="bodycontent">
+      <!-- 普通商品 -->
       <repeat wx:if="{{type=='hot'}}" for="{{goodsList}}" key="index" index="index" item="item">
-        <view class="redlist" @tap="intoDetail({{item.goods_commonid}})">
-          <image class="title_page" mode="aspectFill" src="{{item.goods_image}}"/>
-            <view class="redinfo add_redinfo">
-              <text class="goodsname">{{item.goods_name}}</text>
-              <view class="price">
-                <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
-              </view>
+        <view class="redlist" @tap="toDetail({{item.goods_commonid}})">
+          <image class="title_page" mode="aspectFill" src="{{item.goods_image}}" />
+          <view class="redinfo add_redinfo">
+            <text class="goodsname">{{item.goods_name}}</text>
+            <view class="price">
+              <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
             </view>
+          </view>
         </view>
       </repeat>
-      <repeat wx:if="{{type=='group'}}" for="{{goodsList}}" key="index" index="index" item="item">
-        <view class="redlist" @tap="groupDetail({{item.rule_id}})">
-          <image class="title_page" mode="aspectFill" src="{{item.goods.goods_image}}"/>
-            <view class="viewX-itemGoodsname">{{item.goods.goods_name}}</view>
-            <view class="viewX-originalPrice">
-              <text style="font-size:26rpx;">￥</text>{{item.goods.goods_price}}
+      <!-- 后台商品 字段结构不同-->
+      <repeat wx:if="{{type=='group'||type=='seckill'}}" for="{{goodsList}}" key="index" index="index" item="item">
+        <view class="redlist" @tap="toDetail({{item.rule_id}})">
+          <image class="title_page" mode="aspectFill" src="{{item.goods.goods_image}}" />
+          <view class="viewX-itemGoodsname">{{item.goods.goods_name}}{{item.rule_name}}</view>
+          <view class="viewX-originalPrice">
+            <text style="font-size:26rpx;">￥</text>{{item.goods.goods_price}}
+          </view>
+          <view class="viewX-price">
+            <view>
+              <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
             </view>
-            <view class="viewX-price">
-              <view>
-                <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
-              </view>
-              <image class="viewX-itemIcon" src="../../images/icon_tuangou@2x.png"/>
-            </view>
+            <image wx:if="{{type == 'group'}}" class="viewX-itemIcon" src="../../images/icon_tuangou@2x.png" />
+          </view>
         </view>
       </repeat>
     </view>
-    <placeholder :show.sync="is_empty" message="还没有此类店铺"></placeholder>
+    <placeholder :show.sync="is_empty" message="还没有此类商品"></placeholder>
   </view>
 </template>
 <script>
@@ -132,6 +134,12 @@ export default class GoodsList extends wepy.page {
         });
         this.getGroupList();
         break;
+      case "seckill":
+        wx.setNavigationBarTitle({
+          title: "秒杀商品"
+        });
+        this.getSeckillList();
+        break;
       case "hot":
         wx.setNavigationBarTitle({
           title: "热门推荐"
@@ -148,18 +156,28 @@ export default class GoodsList extends wepy.page {
   }
   onShow() {}
   methods = {
-    intoDetail(id) {
-      wx.navigateTo({
-        url: `./goodsDetails?goods_commonid=${id}`
-      });
-    },
-    //进入团购商品详情
-    groupDetail(id) {
-      wx.navigateTo({
-        url: `./goodsDetails?goods_commonid=${id}&type=group`
-      });
+    //进入商品详情
+    toDetail(id) {
+      switch (this.type) {
+        case "group":
+          wx.navigateTo({
+            url: `./goodsDetails?goods_commonid=${id}&type=group`
+          });
+          break;
+        case "seckill":
+          wx.navigateTo({
+            url: `../activities/seckillDetail?goods_commonid=${id}`
+          });
+          break;
+        default:
+          wx.navigateTo({
+            url: `./goodsDetails?goods_commonid=${id}`
+          });
+          break;
+      }
     }
   };
+  //普通商品
   async getgoodsList() {
     const res = await shttp
       .get(`/api/v2/member/goodscommon`)
@@ -184,10 +202,33 @@ export default class GoodsList extends wepy.page {
     }
     this.$apply();
   }
-  //获取团购商品列表
+  //团购商品
   async getGroupList() {
     const res = await shttp
       .get(`/api/v2/member/goodsgroupbuy/1/edit`)
+      .query({
+        store_id: 1,
+        limit: 10,
+        page: this.page
+      })
+      .end();
+    if (res.status === 0) {
+      if (res.data != null && res.data.length != 0) {
+        this.goodsList = this.goodsList.concat(res.data);
+      }
+      if (this.goodsList.length == 0) {
+        this.is_empty = true;
+      } else {
+        this.is_empty = false;
+      }
+      wx.hideLoading();
+    }
+    this.$apply();
+  }
+  //秒杀商品
+  async getSeckillList() {
+    const res = await shttp
+      .get(`/api/v2/member/seckill`)
       .query({
         store_id: 1,
         limit: 10,

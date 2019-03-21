@@ -374,7 +374,7 @@
       interval="{{interval}}"
       duration="{{duration}}"
       circular="true"
-    >
+      >
       <repeat for="{{bannerList}}" key="index" index="index" item="item">
         <swiper-item>
           <image src="{{item.banner_pic}}" mode="aspectFill" @tap="swipclick({{item}})">
@@ -390,7 +390,7 @@
         <image class="item_page" src="../images/icon_1_tuangou@2x.png">
         <view>团购</view>
       </navigator>
-      <navigator class="item_view" url="./store/goodsList?type=group">
+      <navigator class="item_view" url="./store/goodsList?type=seckill">
         <image class="item_page" src="../images/icon_1_miaosha@2x.png">
         <view>秒杀</view>
       </navigator>
