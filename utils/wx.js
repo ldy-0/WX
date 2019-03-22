@@ -29,6 +29,62 @@ function chooseImg(params){
   });
 }
 
+async function saveImg(filePath){
+  return new Promise((resolve, reject) => {
+    let opt = {
+      filePath,
+      success(e){ resolve(e); console.error(e); },
+      fail(e){ resolve(e); }
+    };
+
+    wx.saveImageToPhotosAlbum(opt);
+  });
+}
+
+async function getImg(src){
+  return new Promise((resolve, reject) => {
+    let opt = {
+      src,
+      success(e){ resolve(e.path); },
+      fail(e){ resolve(e); }
+    }
+
+    wx.getImageInfo(opt);
+  });
+}
+
+async function uploadImg(url, filePath, header){
+  return new Promise((resolve, reject) => {
+    wx.uploadFile({
+      url,
+      filePath,
+      header,
+      name: 'file',
+      success(res){ resolve(res); },
+      fail(e){ console.error('upload file', e); }
+    });
+  });
+}
+
+/**
+ * copy to clipBoard
+ * 
+ * @param {String} data
+ * @param {Object} option
+ * @returns {Promise}
+ */
+copy(data, option){
+  return new Promise((resolve, reject) => {
+    let opt = {
+      data
+    };
+
+    opt.success = res => { if(option && option.isPreventDefault) wx.hideToast(); resolve(); };
+    opt.fail = err => { console.error('copy :', err); resolve(err); }
+
+    wx.setClipboardData(opt);
+  });
+}
 
 /**
  * save concat 保存至通讯录
@@ -78,6 +134,9 @@ export default {
   showModal,
   preview,
   chooseImg,
+  getImg,
+  saveImg,
+  uploadImg,
   saveConcat,
   record,
   stopRecord
