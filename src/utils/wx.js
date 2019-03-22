@@ -13,6 +13,9 @@ function preview(current, urls){
     urls
   };
 
+  opts.success = e => { console.error('success', e); };
+  opts.fail = e => console.error('fail', e);
+
   wx.previewImage(opts);
 }
 

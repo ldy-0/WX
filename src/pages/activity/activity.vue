@@ -49,11 +49,11 @@ page {
 .activity_title_ctn{
   position: absolute;
   top: calc(50% - 30rpx);
-  left: calc(50% - 145rpx);
-  width: 330rpx;
-  height: 60rpx;
+  left: 0;
+  width: 100%;
+  height: 60;
+  line-height: 30rpx;
   font-size: 25rpx;
-  line-height: 1.2;
   text-align: center;
 }
 
@@ -130,7 +130,12 @@ page {
     <view class='activity_title_wrap' @tap="showRule('btn')">
         <view class='activity_title'>
           <image class='activity_title_bg' src='../../images/activity/activity_title_bg.png' />
-          <view class='activity_title_ctn s_fc_1'>{{activityTitle}}</view>
+          <!-- <view class='activity_title_ctn s_fc_1'>{{activityTitle}}</view> -->
+          <view class='activity_title_ctn s_fc_1'>
+            <repeat for='{{activityTitleList}}'>
+              <view class=''>{{item}}</view>
+            </repeat>
+          </view>
         </view>
     </view>
 
@@ -181,7 +186,7 @@ export default class Waiterhome extends wepy.page {
   };
 
   data = {
-    activityTitle: '2019年全年极护钛强服务顾问挑战赛活动规则',
+    activityTitleList: ['2019年全年极护钛强服务顾问', '挑战赛活动规则'],
     tabBarList: [],
     user: {},
     activity: { date: '4-5月主题', name: '极限由我', desc: 'Show出实力' },

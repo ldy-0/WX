@@ -21,7 +21,10 @@ page {
   height: 344rpx;
   margin: 0 auto;
   /* margin-top: 18rpx; */
-  margin-top: 68rpx;
+  margin-top: 128rpx;
+}
+.s_banner_img{
+  margin: 68rpx auto 0;
 }
 
 .activity_title_wrap, .main_wrap{
@@ -41,7 +44,7 @@ page {
 }
 
 .activity_title_wrap{
-  margin: 50rpx 0 0;
+  margin: 30rpx 0 0;
   height: 88rpx;
   /* border: 2rpx solid #7d6245; */
 }
@@ -71,7 +74,7 @@ page {
   position: relative;
   width: 300rpx;
   height: 80rpx;
-  margin: 80rpx auto 0;
+  margin: 20rpx auto 0;
 }
 .i_btn{
   width: 100%;
@@ -132,7 +135,7 @@ page {
 <template>
   <view class="container">
     <image class="bg_img" src="../../images/bg.png" mode='aspectFill' alt>
-    <image class="banner_img" src="../../images/banner.png" alt>
+    <image class="banner_img {{isSmallScreen ? 's_banner_img' : ''}}" src="../../images/banner.png" alt>
 
     <view class='activity_title_wrap'>
         <!-- <view class='activity_title'> -->
@@ -189,6 +192,7 @@ export default class Waiterhome extends wepy.page {
     tabBarList: [],
     rankList: [],
     levelList: ['第一名', '第二名', '第三名', '第四名', '第五名', '第六名', '第七名', '第八名', '第九名', '第十名'],
+    isSmallScreen: false,
   };
 
   components = {
@@ -198,6 +202,10 @@ export default class Waiterhome extends wepy.page {
   onLoad(options) {
     let gd = this.$parent.globalData;
     this.tabBarList = gd.adviserTabBarList;
+
+    let sys = wx.getSystemInfoSync();
+    this.isSmallScreen = sys.screenHeight < 568;
+    // this.isSmallScreen = sys.screenHeight < 568 || /Huawei|HUAWEI/g.test(sys.brand);
 
     this.getRankList();
   }
@@ -219,12 +227,20 @@ export default class Waiterhome extends wepy.page {
     }
   };
 
+  format(v, i){
+    let pattern = /^[\u4e00-\u9fa5]/g.test(v.name) && v.name.length === 3 ? /\S(?=\S$)/g : /\S$/g;
+    // console.error('高丹华'.replace(/\S(?=\S$)/g, '*'));
+
+    v.level = this.levelList[i];
+    v.name = v.name.replace(pattern, '*');
+  }
+
   async getRankList(){
     wx.showLoading({ content: 'Loading...' });
     let res = await shttp.get(`/api/v1/seller/ranks`).query({ page: 1, limit: 10 }).end();
 
     if(res.data){
-      res.data.forEach((v, i) => v.level = this.levelList[i]);
+      res.data.forEach(this.format.bind(this));
       this.rankList = res.data;
     }
 

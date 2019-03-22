@@ -4,8 +4,8 @@ page {
 }
 .container {
   position: relative;
-  min-height: 100%;
-  /* overflow: hidden; */
+  height: 100%;
+  overflow: hidden;
 }
 .bg_img {
   position: absolute;
@@ -65,6 +65,9 @@ page {
 }
 
 .canvas{
+  /* position: absolute; */
+  /* top: -1000rpx; */
+  /* left: -2000rpx; */
   /* width: 0rpx; */
   /* height: 2rpx; */
   /* width: 688rpx; */
@@ -75,9 +78,10 @@ page {
 }
 
 .poster_img{
-  /* width: 688rpx; */
-  width: 100%;
+  width: 688rpx;
+  /* width: 100%; */
   height: 1068rpx;
+  /* height: 1068rpx; */
   margin: 0 auto;
 }
 
@@ -100,7 +104,7 @@ page {
   margin: 0 auto;
 }
 .iphoneX{
-  /* margin: 20vh 0 0; */
+  margin: 10vh 0 0;
 }
 
 .s_fc_1{ color: #fff; }
@@ -120,11 +124,11 @@ page {
     <!-- <image class="banner_img" src="../../images/bg_1@2x.png" alt> -->
 
     <view class="scroll_wrap {{isX ? 'iphoneX_scroll_wrap' : ''}}">
-    <scroll-view scroll-y style='height: 100%;'>
+    <scroll-view scroll-y="{{canScroll ? true : false}}" style='height: 100%;'>
 
       <view class="main_wrap s_fc_2 {{isX ? 'iphoneX' : ''}}">
 
-        <!-- <image class='poster_img' src='{{poster}}' mode='aspectFill' /> -->
+        <!-- <image class='poster_img' src='{{poster}}' /> -->
         <canvas canvas-id="canvas" class="canvas {{isX ? 'x_canvas' : ''}}"></canvas>
 
       </view>
@@ -135,19 +139,14 @@ page {
             <view class='btn_ctn s_fc_4'>保存至相册</view>
         </view>
 
-        <button open-type='share' class='clear btn_wrap' plain='true' @tap='copy'>
+        <button open-type='share' class='clear btn_wrap' plain='true' wx:if="{{!user}}">
             <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
             <view class='btn_ctn s_fc_4'>一键转发</view>
         </button>
+
       </view>
 
-    <!-- <toast wx:if='{{showSuccess}}' @close.user='closeToast'>
-      <view class='ctn_wrap s_fc_3'>
-        <view>已复制成功</view>
-        <view>请发送给您的车主</view>
-      </view>
-    </toast> -->
-      <view class='' style='width: 100%; height: 100rpx; background: transparent;'></view>
+      <view class='' style='width: 100%; height: 200rpx; background: transparent;'></view>
 
     </scroll-view>
     </view>
@@ -177,6 +176,7 @@ export default class Waiterhome extends wepy.page {
     valueList: null,
     poster: '',
     isX: null,
+    canScroll: false,
   };
 
   components = {
@@ -186,45 +186,45 @@ export default class Waiterhome extends wepy.page {
 
   onLoad(options) {
     let gd = this.$parent.globalData,
+        adviser = wx.getStorageSync('adviserInfo'),
         value = options.value;
     gd.tabIndex = -1;
     this.tabBarList = gd.adviserTabBarList;
 
     let sys = wx.getSystemInfoSync();
     this.isX = sys.screenHeight > 800;
-
-    console.error(options, sys);
+    this.canScroll = sys.screenHeight <= 568 || /Huawei|HUAWEI/g.test(sys.brand);
+    // console.error(options, sys);
 
     // from share 
     if(options.user){
       this.user = JSON.parse(options.user);
       this.valueList = JSON.parse(options.value);
 
+      if(!adviser) this.tabBarList = gd.clientTabBarList;
+
       return this.drawQrcode(this.user, this.valueList);
     }
 
+    value = value.replace(/\n|\u21B5/g, '，'); // value.split('\u21B5');
+    // if(value) this.value = [value[0] + '，', value[1] ? value[1] + '，' : '', value[2] ? value[2] + '，' : ''];
     if(value) this.value = [value.substr(0, 20), value.substr(20, 20), value.substr(40, 20)];
 
-    this.drawQrcode(wx.getStorageSync('adviserInfo'), this.value);
+    this.drawQrcode(adviser, this.value);
   }
 
-  onShow() {}
+  onShow() {
+    
+  }
+  
 
   methods = {
-    // copy(){
-    //   let data = this.info;
-
-    //   wx.setClipboardData({ 
-    //     data, 
-    //     success: e => { wx.hideToast(); this.showSuccess = true; this.$apply(); },
-    //   });
-    // },
     closeToast(){
       this.showSuccess = false;
     },
     saveImg() {
       let that = this;
-      wx.canvasToTempFilePath({ canvasId: "canvas", x: 0, y: 0, width: this.isX ? 690 : 500, height: this.isX ? 610 : 500,
+      wx.canvasToTempFilePath({ canvasId: "canvas", x: 0, y: 0, width: this.isX ? 690 : 500, height: this.isX ? 610 : 510,
         success: function(res) {
           console.error('', res);
           wx.saveImageToPhotosAlbum({
@@ -315,9 +315,10 @@ export default class Waiterhome extends wepy.page {
     ctx.draw();
     // ctx.draw(false, setTimeout(() => {
     //   wx.canvasToTempFilePath({ x: 0, y: 0, width: 325, height: 510, destWidth: 325, destHeight: 510, canvasId: 'canvas', 
-    //     success: e => { this.poster = e.tempFilePath; this.$apply(); },
+    //     success: e => { this.poster = e.tempFilePath; console.error(this.poster); this.$apply(); },
+    //     fail: e => console.error(e),
     //   });
-    // }));
+    // }, 200));
 
     
     // wx.canvasGetImageData({ canvasId: 'canvas', x: 100, y: 100, width: 10, height: 10, success(res){ console.error(res); }, fail(e){ console.error(e); } });

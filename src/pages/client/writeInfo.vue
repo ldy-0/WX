@@ -57,7 +57,7 @@ page {
 }
 
 .tip{
-  margin: 30rpx auto 80rpx;
+  margin: 30rpx auto 60rpx;
   font-size: 22rpx;
   text-align: center;
 }
@@ -212,7 +212,7 @@ export default class Waiterhome extends wepy.page {
   data = {
     centerConfig: {
       size: 38,
-      top: 60,
+      top: 30,
     },
     tabBarList: [],
     titleList: ['恭喜您，获得', 'XXXXXXX'],

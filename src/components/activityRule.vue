@@ -64,6 +64,19 @@
   margin: 10rpx auto 0;
   font-size: 21rpx;
 }
+
+.qrcode_wrap{
+  position: relative;
+  top: -10rpx;
+  left: calc(50% - 50rpx);
+  width: 100rpx;
+  height: 100rpx;
+}
+.qrcode_img{
+  width: 100%;
+  height: 100%;
+}
+
 .mt30{
   margin-top: 30rpx;
 }
@@ -116,6 +129,7 @@
           </view>
 
           <view class="agreement_title">{{thirdTitle}}</view>
+          <!-- <view class="sub_title">{{thirdSubTitle}}</view> -->
           <view class='content_wrap'>
             <repeat for="{{thirdContent}}">
               <view class="agreement_txt">{{item}}</view>
@@ -134,6 +148,18 @@
               <view class="agreement_txt">{{item}}</view>
             </repeat>
           </view>
+
+          <view class='content_wrap'>
+            <repeat for="{{qrcodeContent}}">
+              <view class="agreement_txt">{{item}}</view>
+            </repeat>
+          </view>
+
+          <view class='qrcode_wrap' @tap.stop='previewImg'>
+            <image class='qrcode_img' src='{{qrcodeURL}}' mode='aspectFill' />
+          </view>
+
+          <view style='height: 200rpx; background: transparent;'></view>
 
         </view>
 
@@ -218,7 +244,7 @@
             </repeat>
           </view>
 
-          <view style='height: 100rpx; background: transparent;'></view>
+          <view style='height: 200rpx; background: transparent;'></view>
 
         </view>
 
@@ -232,6 +258,7 @@
 
 <script>
 import wepy from "wepy";
+import mp from '../utils/wx';
 
 export default class Rule extends wepy.component{
   props = {
@@ -255,6 +282,7 @@ export default class Rule extends wepy.component{
                     '特此注明：只有在“嘉实多销售智多星”微信公众平台进行认证过的服务顾问或在小程序上注册过的服务顾问才能使用此次的活动积分兑换奖励，未进行认证的参与人员所获得的积分无效。',
                 ],
     thirdTitle: '三、年度极限由我，激发高昂表现，极护钛强服务顾问',
+    // thirdSubTitle: '服务顾问',
     thirdContent: ['活动结束后主办方将结合积分和互动性评选出年度极限由我，激发高昂表现，极护钛强服务顾问'],
     fourthTitle: '重要声明：',
     fourthContent: ['活动奖品产生的个人所得税(如适用)由获奖用户自行承担，嘉实多有权代扣代缴。参加活动需要详细填写注册信息，\
@@ -262,6 +290,9 @@ export default class Rule extends wepy.component{
                     方有资格领奖。同一身份在一个活动中只可获奖一次，不可重复获奖。',
                    ],
     fifthContent: ['本活动规则不构成任何合同要约，本次活动最终解释权归嘉实多所有。'],
+    qrcodeContent: ['更多服务知识、积分礼品，请扫二维码，关注“嘉实多销售智多星”公众平台。'],
+    qrcodeURL: '/images/activity/qrcode.jpg',
+    showQrcode: false,
 
     l_timeTitle: '活动时间',
     l_timeContent: ['2019年4月1日-2019年5月31日'],
@@ -273,14 +304,16 @@ export default class Rule extends wepy.component{
     l_ruleContent_1: ['挑战者根据视频主题“极限由我，激发高昂表现”进行抖音短视频创作拍摄并且发布同时需带有标签#极限由我#或#激发高昂表现#或#嘉实多极护#于抖音平台发布，\
                    同时视频内需有嘉实多LOGO或极护专享产品露出；主办方将会根据视频创意、质量及点赞数为依据，评选出四个优秀视频。'],
     l_rewardTitle_1: '4月【极限挑战】活动奖励',
-    l_rewardContent_1: ['入选者通过“嘉实多销售智多星”公众平台联系主办方后，会得到50点积分奖励！优秀视频中的Top1还可获得嘉实多极护品牌体验之旅特权。'],
+    // l_rewardContent_1: ['入选者通过“嘉实多销售智多星”公众平台联系主办方后，会得到50点积分奖励！优秀视频中的Top1还可获得嘉实多极护品牌体验之旅特权。'],
+    l_rewardContent_1: ['短视频被选中并展示在极限挑战活动页面的入选者，在通过“嘉实多销售智多星”公众平台主动联系主办方后，可获得50点积分奖励！入选视频为Top1的用户，还可获得嘉实多极护品牌体验之旅的特权。'],
     l_ruleTitle_2: '二．5月【极限挑战】参与规则',
     l_ruleContent_2: ['服务顾问输入自己“花式推极护”的话术，提交后可观看主办方审核后的所有话术，并挑选自己认为优秀的话术点赞。'],
     l_rewardTitle_2: '5月【极限挑战】活动奖励',
     l_rewardContent_2: ['服务顾问上传的话术每获得10个赞即可获得1点积分，同时在活动结束后获得点赞数最高的服务顾问还可获得嘉实多极护品牌体验之旅特权。'],
     l_ruleTitle_3: '三．4-5月【我的极限挑战成果】参与规则',
     l_ruleContent_3: ['通过拍照上传成功推荐嘉实多极护专享产品的证明文件，例如：保养工单，发票等。 ',
-                      '并可以分享太阳码邀请消费者参与抽奖；消费者在其活动页面进行抽奖，如中奖并审核通过后，便可在7个工作日内收到礼品。'],
+                      '可以生成太阳码并分享给到邀请消费者参与抽奖（每个上传证明文件生成的太阳码只有一次抽奖机会）；消费者在其活动页面进行抽奖，如中奖并审核通过后，便可在7个工作日内收到礼品。'],
+                      // '并可以分享太阳码邀请消费者参与抽奖；消费者在其活动页面进行抽奖，如中奖并审核通过后，便可在7个工作日内收到礼品。'],
     l_rewardTitle_3: '4-5月【我的极限挑战成果】活动奖励',
     l_rewardContent_3: ['服务顾问上传成功推荐嘉实多极护专享产品的证明文件，例如：保养工单，发票等；通过审核后即可获得1点积分。'],
     l_importTitle: '奖励导入方式',
@@ -295,6 +328,16 @@ export default class Rule extends wepy.component{
   };
 
   methods = {
+    async previewImg(){
+      let url = 'https://castrolmini.mgcc.com.cn/qn/FnIf0X_BKP6oUsGot7yvERRqhVjW';
+      // let urlRes = await mp.uploadImg(`https://castrolmini.mgcc.com.cn/oss/api/v1/upload`, this.qrcodeURL, {
+      //   'content-type': 'multipart/form-data',
+      //   'Authorization': wx.getStorageSync('token'),
+      // });
+      // console.error('url', urlRes.data);
+      let res = await mp.preview(url, [url]);
+    },
+    closeScale(){ this.showQrcode = false; },
     close(){
       this.$emit('close');
     }

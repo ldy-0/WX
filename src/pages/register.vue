@@ -469,6 +469,7 @@ export default class register extends wepy.page {
     console.error(`register type ${this.isUpdate ? 'update' : 'add'}`, res);
     if(res.data){
       wx.setStorageSync('adviserInfo', res.data);
+      wx.removeStorageSync('code');
 
       // return wx.redirectTo({ url: `/pages/waiterHome`, });
       return this.navigateTo(`/pages/waiterHome`);

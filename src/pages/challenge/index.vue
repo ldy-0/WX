@@ -32,7 +32,7 @@ page {
 }
 
 .top_list{
-  margin: 40rpx 0 0; 
+  margin: 20rpx 0 0 20rpx; 
   width: 100%;
   white-space: nowrap;
 }
@@ -63,11 +63,12 @@ page {
   width: 80rpx;
   height: 80rpx;
 }
-.top_1{
+.checked{
   top: 0;
   width: 230rpx;
   height: 350rpx;
-  margin: 0 4rpx 0 20rpx;
+  margin: 0 4rpx 0 0;
+  /* margin: 0 4rpx 0 20rpx; */
 }
 .i_first{
   position: absolute;
@@ -78,13 +79,13 @@ page {
 }
 
 .rule_title{
-  margin: 40rpx 0 20rpx 0;
+  margin: 20rpx 0 20rpx 0;
   font-size: 22rpx;
   font-weight: bold;
 }
 .rule_desc{
   margin: 8rpx 0 0;
-  line-height: 36rpx;
+  line-height: 32rpx;
   font-size: 22rpx;
 }
 .dot{
@@ -152,10 +153,10 @@ page {
     <image class="bg_img" src="../../images/bg.png" mode='aspectFill' alt>
     <image class="banner_img" src="../../images/banner.png" alt>
 
-    <scroll-view scroll-x class='top_list'>
+    <scroll-view scroll-x scroll-into-view='{{checkId}}' class='top_list'>
         <repeat for='{{list}}'>
 
-          <view class="top_item {{index ? '' : 'top_1'}}" @tap='goDetail({{index}})'>
+          <view id="{{item.douYinName}}" class="top_item {{checkedIndex === index ? 'checked' : ''}}" @tap='goDetail({{index}})'>
             <image class='top_item_bg' src='{{item.douYinPicture}}' mode='aspectFill' />
 
             <image class='i_index' src='{{indexURL}}' mode='aspectFill' />
@@ -227,7 +228,8 @@ export default class Waiterhome extends wepy.page {
       { name: '挑战者需根据主题《极限由我，激发高昂表现》进行短视频创作并带有标签#极限由我#或#激发高昂表现#或#嘉实多极护#于抖音平台发布；' },
       { name: '视频内容需有嘉实多LOGO或极护专享产品露出；' },
       { name: '主办方将会根据视频创意，质量及点赞数为依据，评选出四个优秀视频，入选者每人还会得到额外50积分奖励！ 优秀视频中的Top1还可获得嘉实多极护品牌体验之旅特权 领略专业赛道的速度与激情.' },
-      { name: '需入选者在销售智多星平台联系工作人员获得积分。' },
+      // { name: '入选者（按活动规则在抖音平台上传视频后，经过主办方筛选，展示在该页面的视频创作者）通过“嘉实多销售智多星”公众平台联系主办方后获得积分奖励' },
+      { name: '短视频被选中并展示在该页面的入选者，在通过 “嘉实多销售智多星”公众平台主动联系主办方后，可以获得积分奖励。' },
     ],
     tabBarList: [],
     indexURL: '../../images/challenge/index.png',
@@ -237,6 +239,9 @@ export default class Waiterhome extends wepy.page {
     video: {},
     videoCtx: null,
     isX: false,
+    checkedIndex: 0,
+    position: '300rpx',
+    checkId: '',
   };
 
   components = {
@@ -263,6 +268,8 @@ export default class Waiterhome extends wepy.page {
       if(!o.fullScreen) this.showVideo = false;
     },
     goDetail(index){
+      this.checkedIndex = index;
+      this.checkId = this.list[index].douYinName;
       
       this.video = this.list[index];
 

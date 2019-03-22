@@ -3,6 +3,7 @@ page {
   height: 100%;
   width: 100%;
   font-family: arial, "PingFang SC", "Microsoft Yahei", "Hiragino Sans GB";
+  background: rgb(37, 34, 24);
 }
 </style>
 
@@ -38,7 +39,7 @@ export default class extends wepy.app {
       navigationBarTitleText: "",
       navigationBarTextStyle: "black",
       enablePullDownRefresh: false,
-      backgroundColor: "#EFEFEF",
+      backgroundColor: "#252218",
       navigationStyle: "custom"
     },
     networkTimeout: {
@@ -55,16 +56,16 @@ export default class extends wepy.app {
 
   async onLaunch() {
     //微信用户登录换取token，并将token存入本地缓存中
-    const userInfo = await signIn(false);
+    // const userInfo = await signIn(false);
     // console.error('user', userInfo);
 
-    if (userInfo.data.code === 1) {
-      let auth = userInfo.header.Authorization;
-      wx.setStorageSync("token", auth);
+    // if (userInfo.data.code === 1) {
+    //   let auth = userInfo.header.Authorization;
+    //   wx.setStorageSync("token", auth);
 
-      // let url = true ? `/pages/waiterHome` : `/pages/client/index?type=noRegister`;
-      // wx.navigateTo({ url });
-    }
+    //   // let url = true ? `/pages/waiterHome` : `/pages/client/index?type=noRegister`;
+    //   // wx.navigateTo({ url });
+    // }
 
     const updateManager = wx.getUpdateManager();
     updateManager.onCheckForUpdate(function(res) {

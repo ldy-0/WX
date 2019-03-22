@@ -20,7 +20,7 @@ page {
   height: 344rpx;
   margin: 0 auto;
   /* margin-top: 18rpx; */
-  margin-top: 124rpx;
+  margin-top: 68rpx;
 }
 
 .main_wrap{
@@ -138,6 +138,19 @@ page {
   margin: 180rpx auto 0;
 }
 
+.exit_title{
+  margin: 80rpx 0 0;
+  font-size: 36rpx;
+  text-align: center;
+}
+.exit_btn_wrap{
+  position: relative;
+  top: 60rpx;
+  left: calc(50% - 150rpx);
+  width: 300rpx;
+  height: 80rpx;
+}
+
 .flex{
   display: flex;
   align-items: center;
@@ -147,6 +160,7 @@ page {
 .s_fc_2{ color: #c49e71; }
 .s_fc_3{ color: #5a2f08; }
 .s_fc_4{ color: #c2996f; }
+.s_fc_5{ color: #ddd; }
 
 .s_bg_1{ background: #fff; }
 .s_bg_2{ background: #c2996f; }
@@ -176,16 +190,18 @@ page {
           </view>
         </repeat>
 
-      <navigator open-type='exit' target='miniProgram' class='btn_wrap' wx:if="{{type != 'goDraw'}}">
+      <!-- <navigator open-type='exit' target='miniProgram' class='btn_wrap' wx:if="{{type != 'goDraw'}}"> -->
+      <view class='btn_wrap' @tap='changeExit' wx:if="{{canShow && type != 'goDraw'}}">
         <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
         <view class='btn_ctn s_fc_3'>{{btnTitle}}</view>
-      </navigator>
-      <view class='btn_wrap' @tap='go' wx:else>
+      </view>
+      <!-- </navigator> -->
+      <view class='btn_wrap' @tap='go' wx:if="{{canShow && type == 'goDraw'}}">
         <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
         <view class='btn_ctn s_fc_3'>{{btnTitle}}</view>
       </view>
 
-      <view class="agree_downBox" wx:if="{{type === 'goDraw'}}">
+      <view class="agree_downBox" wx:if="{{canShow && type === 'goDraw'}}">
         <view class="agree_btn" @tap="changeAgree">
           <view wx:if="{{agree}}" class="agree_btnSpot"></view>
         </view>
@@ -194,16 +210,21 @@ page {
 
     </view>
 
-    <toast wx:if="{{showToast}}">
+    <toast @close.user='closeToast' wx:if="{{showToast && !showExit}}">
       <view class='auth_btn_wrap'>
         <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
-        <button class="clear btn_ctn s_fc_3" plain='true' open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">微信登入</button>
+        <button class="clear btn_ctn s_fc_3" plain='true' open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo" wx:if="{{!showExit}}">微信登入</button>
+      </view>
+    </toast>
+    <toast @close.user='closeToast' wx:if="{{showToast && showExit}}">
+      <view class='exit_title s_fc_5'>是否确认退出小程序</view>
+      <view class='exit_btn_wrap'>
+        <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
+        <navigator open-type='exit' target='miniProgram' class="clear btn_ctn s_fc_3" plain='true' lang="zh_CN" wx:if="{{showExit}}">确认</navigator>
       </view>
     </toast>
 
     <consumerActivity :isX.sync='isX' @close.user='changeAgreement' wx:if="{{showAgreement}}"></consumerActivity>
-
-    <!-- <agreement wx:if="{{}}"></agreement> -->
 
     <tabBar :list.sync='tabBarList' wx:if="{{type !== ''}}"></tabBar>
 
@@ -247,6 +268,8 @@ export default class Waiterhome extends wepy.page {
     agree: false,
     showAgreement: false,
     isX: false,
+    showExit: false,
+    canShow: false,
   };
 
   components = {
@@ -270,6 +293,7 @@ export default class Waiterhome extends wepy.page {
     if(code == '108'){
       this.type = 'goDraw';
       this.btnTitle = '立即抽奖';
+      this.orderId = Number(options.scene.substr(1));
       return ;
     }
 
@@ -283,8 +307,7 @@ export default class Waiterhome extends wepy.page {
       console.error(options, this.type, this.status);
     }
 
-  }
-
+  } 
   async onShow() {
     let referer = wx.getStorageSync('clientReferer'),
         code = wx.getStorageSync('code');
@@ -298,11 +321,15 @@ export default class Waiterhome extends wepy.page {
     if (userInfo.data.code === 1) {
       let auth = userInfo.header.Authorization;
       wx.setStorageSync("token", auth);
+    }else{
+      return wx.showModal({ content: userInfo.data.error, showCancel: false });
     }
 
     if(referer !== 'poster' && this.status !== '0' && code != '108'){
       this.showToast = true;
     }
+
+    this.canShow = true;
 
     this.getList();
   }
@@ -310,6 +337,8 @@ export default class Waiterhome extends wepy.page {
   methods = {
     changeAgree(){ this.agree = !this.agree },
     changeAgreement(){ this.showAgreement = !this.showAgreement },
+    changeExit(){ this.showToast = this.showExit = true; },
+    closeToast(){ if(this.showExit) this.showToast = this.showExit = false; },
     go(){
       let url;
 
@@ -352,6 +381,7 @@ export default class Waiterhome extends wepy.page {
           //   this.btnTitle = '立即抽奖';
           // }
           this.showToast = false;
+          wx.setStorageSync('code', 108);
         }else{
           wx.hideLoading();
           return wx.showModal({ content: res.moreInfo, showCancel: false, });
@@ -372,21 +402,6 @@ export default class Waiterhome extends wepy.page {
     }
   };
   
-  // getUserInfo(){
-  //   let user = wx.getStorageSync('clientInfo'),
-  //       url;
-
-  //   if(!user){
-  //     console.error('no client user');
-  //     this.showToast = true;
-  //   }else{
-  //     this.user = user;
-  //   }
-
-  //   this.getList();
-  //   this.$apply();
-  // }
-
   async getList(){
     let res = await req.get(`/castrol/api/v1/marketVideo`, { size: 9999 }, { 'Authorization': wx.getStorageSync('token') });
 
@@ -405,6 +420,9 @@ export default class Waiterhome extends wepy.page {
 
       this.list = vList.filter(v => v.otherData.needPage.filter(o => o.page === 2).length);
       // console.error(this.list, vList);
+    }else{
+      wx.hideLoading();
+      return wx.showModal({ content: res.moreInfo, showCancel: false, });
     }
 
     wx.hideLoading();

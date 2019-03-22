@@ -36,6 +36,9 @@ page {
   height: 530rpx;
   margin: 100rpx auto 0;
 }
+.s_turntable_wrap{
+  margin: 30rpx auto 0;
+}
 .i_turntable{
   width: 100%;
   height: 100%;
@@ -53,7 +56,10 @@ page {
   position: relative;
   width: 300rpx;
   height: 80rpx;
-  margin: 50rpx auto 0;
+  margin: 100rpx auto 0;
+}
+.s_btn_wrap{
+  margin: 30rpx auto 0;
 }
 .i_btn{
   width: 100%;
@@ -196,7 +202,7 @@ page {
 
     <view class="main_wrap s_fc_6">
 
-      <view class="turntable_wrap">
+      <view class="turntable_wrap {{isSmallScreen ? 's_turntable_wrap' : ''}}">
         <image class='i_pointer' src='{{pointerURL}}' mode='aspectFill' />
 
         <view class="init" style="transform: rotate({{rotate ? degree : 0}}deg); transition: transform {{rotate ? second : 0}}s">
@@ -239,7 +245,7 @@ page {
 
       </view>
 
-      <view class='btn_wrap' @tap="go">
+      <view class="btn_wrap {{isSmallScreen ? 's_btn_wrap' : ''}}" @tap="go">
         <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
         <view class='btn_ctn s_fc_3'>{{btnTitle}}</view>
       </view>
@@ -303,6 +309,7 @@ export default class Waiterhome extends wepy.page {
     goods: null,
     canSubmit: true,
     drawEnd: false,
+    isSmallScreen: false,
   };
 
   components = {
@@ -316,7 +323,12 @@ export default class Waiterhome extends wepy.page {
     // gd.clientTabBarList[0].path = `/pages/client/index?scene=${options.orderId}`;
     this.tabBarList = gd.clientTabBarList;
 
+    let sys = wx.getSystemInfoSync();
+    console.error(sys);
+    this.isSmallScreen = sys.screenHeight < 568 || /Huawei|HUAWEI/g.test(sys.brand);
+
     this.orderId = options.orderId;
+    console.error('draw orderId', options.orderId);
     this.$apply();
 
     this.getList(); 

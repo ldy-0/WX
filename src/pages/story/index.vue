@@ -71,7 +71,7 @@ page {
   position: relative;
   width: 300rpx;
   height: 80rpx;
-  margin: 60rpx auto 0;
+  margin: 40rpx auto 0;
 }
 .i_btn{
   width: 100%;
@@ -87,7 +87,7 @@ page {
 }
 
 .scroll_wrap{
-  height: 51vh;
+  height: 50vh;
 }
 
 .flex{
@@ -187,10 +187,15 @@ export default class Waiterhome extends wepy.page {
     arr.forEach(v => { v.stop(); });
   }
 
+  onUnload(){
+    let arr = this.list.map((v, i) => wx.createVideoContext(`video${i}`)); 
+    arr.forEach(v => { v.stop(); });
+  }
+
   methods = {
     goHome(){
       let url = `/pages/waiterHome`;
-      wx.navigateBack({ detail: 1, });
+      wx.navigateBack({ delta: 1, });
     },
   };
 

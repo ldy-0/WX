@@ -62,6 +62,7 @@ page {
 .user_name, .user_address{
   width: 120rpx;
   height: 30rpx;
+  line-height: 1.2;
   font-weight: bold;
   white-space: wrap;
   overflow: hidden;
@@ -70,6 +71,7 @@ page {
 .user_address{
   flex-shrink: 0;
   width: 220rpx;
+  line-height: 1.2;
   overflow: hidden;
 }
 
@@ -96,8 +98,8 @@ page {
   justify-content: center;
 }
 .main_bg {
-  /* width: 650rpx; */
-  /* height: 650rpx; */
+  width: 655rpx;
+  height: 655rpx;
 }
 
 .appointment_wrap, .story_wrap, .limit_wrap, .challenge_wrap{
@@ -185,12 +187,21 @@ page {
 }
 
 .scroll_wrap{
-  height: 650rpx;
+  height: 680rpx;
 }
 
 .clear{
   padding: 0;
   border: none;
+}
+
+.modal{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
 }
 
 .flex{
@@ -227,8 +238,9 @@ page {
         <image class="info_btn" src="../images/my_btn.png" alt @tap='goUpdate' />
       </view>
 
-    <!-- <view class='scroll_wrap'> -->
-      <!-- <scroll-view scroll-y style='height: 100%;'> -->
+    <view class='scroll_wrap'>
+      <scroll-view scroll-y="{{canScroll ? true : false}}" style='height: 100%;'>
+
         <view class="main_wrap s_fc_2">
           <image class="main_bg" style='width: {{height}}rpx; height: {{height}}rpx;' src="../images/module_bg.png" alt>
 
@@ -254,9 +266,10 @@ page {
 
         </view>
 
-        <!-- <view class='' style='width: 100%; height: 100rpx; background: transparent;'></view> -->
-      <!-- </scroll-view> -->
-    <!-- </view> -->
+        <view style='width: 100%; height: 200rpx; background: transparent;'></view>
+      </scroll-view>
+    </view>
+
     </view>
 
     <!-- <view class='logo_wrap'>
@@ -299,6 +312,7 @@ export default class Waiterhome extends wepy.page {
     user: {},
     scene: null,
     height: 650,
+    canScroll: false,
   };
 
   components = {
@@ -307,14 +321,27 @@ export default class Waiterhome extends wepy.page {
   };
 
   onLoad(options) {
-    let gd = this.$parent.globalData;
+    let gd = this.$parent.globalData,
+        adviser = wx.getStorageSync('adviserInfo'),
+        code = wx.getStorageSync('code'),
+        referer = wx.getStorageSync('clientReferer');
+
     this.tabBarList = gd.adviserTabBarList;
+
+    let sys = wx.getSystemInfoSync();
+    this.canScroll = sys.screenHeight < 568;
+    // this.canScroll = sys.screenHeight < 568 || /Huawei|HUAWEI/g.test(sys.brand);
 
     // 是否通过扫码进入
     if(options.scene){
       // console.error(options.scene);
       this.scene = options.scene;
+    }else{
+      console.error(code == '108', adviser);
+      if(code == '108') return wx.reLaunch({ url: `/pages/client/prizeList` });
+      if(referer == 'poster' && !adviser) return wx.reLaunch({ url: `/pages/client/index?scene=0` });
     }
+
   }
 
   onShow() {
@@ -323,7 +350,7 @@ export default class Waiterhome extends wepy.page {
 
     let s = wx.getSystemInfoSync();
     this.height = this.height - (s.screenWidth - s.windowWidth) * s.pixelRatio;
-    console.error(this.height, s);
+    // console.error(this.height, s);
   }
 
   methods = {
@@ -359,11 +386,12 @@ export default class Waiterhome extends wepy.page {
         console.error('login', res.data);
 
         // 用户且没有扫码进入(108: 已抽奖用户)
-        if(res.code == 108 || res.code == 109){
-          // console.error(res);
+        if(res.code == 108){
           wx.setStorageSync('code', res.code);
           return this.navigateTo(`/pages/client/prizeList`);
         }
+        // 未抽奖用户
+        if(res.code == 109) return this.navigateTo(`/pages/client/index?scene=0`);
 
         if(res.data){
           wx.setStorageSync('adviserInfo', res.data);
@@ -402,6 +430,8 @@ export default class Waiterhome extends wepy.page {
     const userInfo = await signIn(false);
     if (userInfo.data.code === 1) {
       wx.setStorageSync("token", userInfo.header.Authorization);
+    }else{
+      return wx.showModal({ content: userInfo.data.error, showCancel: false });
     }
 
     // if(this.user.wx_name && !adviser) return wx.redirectTo({ url: `/pages/register` });
@@ -420,6 +450,7 @@ export default class Waiterhome extends wepy.page {
   // 获取微信用户信息
   getUserInfo(){
     let user = wx.getStorageSync('memberInfo'),
+        code = wx.getSystemInfoSync('code'),
         url;
 
     // 

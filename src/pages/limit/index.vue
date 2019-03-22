@@ -85,7 +85,7 @@ page {
 }
 .upload_title{
   margin-left: 10rpx;
-  font-size: 36rpx;
+  font-size: 32rpx;
 }
 .img{
   width: 100%;
@@ -118,7 +118,7 @@ page {
 }
 
 .result_title{
-  width: 500rpx;
+  /* width: 500rpx; */
   margin: 70rpx auto 0; 
   font-size: 36rpx;
   text-align: center;
@@ -194,7 +194,13 @@ page {
 
     <!-- result -->
     <view wx:if="{{type === 'result'}}">
-      <view class='result_title s_fc_5'>{{resultTitle}}</view>
+
+      <view class='result_title s_fc_5'>
+        <repeat for="{{resultTitleList}}">
+          <view class='result_title_item'>{{item}}</view>
+        </repeat>
+      </view>
+
       <image class='qrcode' src='{{qrcode}}' mode='aspectFill' />
 
       <view class='btn_wrap' @tap='saveQrcode'>
@@ -224,17 +230,19 @@ export default class Waiterhome extends wepy.page {
 
   data = {
     tabBarList: [],
-    uploadTitle: '上传证明文件',
+    uploadTitle: '点击打开相册上传相关证明文件',
     tipConfig: {
       size: 22,
       top: 30,
     },
-    tipTitle: ['请上传成功推荐嘉实多极护', '专享产品的证明文件，例如：保养工单，发票等'],
+    tipTitle: ['请上传成功推荐嘉实多极护专享产品', '证明文件，例如：保养工单，发票等'],
     type: 'upload',
     list: [],
     img: '',
-    btnTitle: '上传证明文件',
-    resultTitle: '上传成功！推荐车主扫码抽奖通过验证后即可获得相应积分',
+    btnTitle: '确认上传',
+    // resultTitle: '上传成功！推荐车主扫码抽奖通过验证后即可获得相应积分',
+    resultTitleList: ['上传成功！通过验证后即可获得相应积分。',
+                      '请分享太阳码供车主扫码抽奖。'],
     qrcode: '',
     error: null,
     canSubmit: true,
@@ -274,6 +282,8 @@ export default class Waiterhome extends wepy.page {
     async addImg(){
       if(this.type === 'error') return ;
 
+      if(!this.status) return wx.showModal({ content: '活动4月1日正式开始，敬请期待！', showCancel: false });
+
       let res = await mp.chooseImg();
       // console.error('img', res); 
 
@@ -282,10 +292,14 @@ export default class Waiterhome extends wepy.page {
     },
     async go(){
       let url;
+          // currentTime = new Date().getTime(),
+          // endTime = new Date(2019, 3, 1).getTime();
+
+      // if(currentTime < endTime) return wx.showModal({ content: '活动4月1日正式开始，敬请期待！', showCancel: false });
+      if(!this.status) return wx.showModal({ content: '活动4月1日正式开始，敬请期待！', showCancel: false });
+      // if(!this.status) return wx.showModal({ content: '审核还未通过，暂时无法上传工单', showCancel: false });
 
       if(!this.img) return wx.showModal({ content: '请选择图片', showCancel: false });
-
-      if(!this.status) return wx.showModal({ content: '审核还未通过，暂时无法上传工单', showCancel: false });
 
       if(!this.canSubmit) return ;
       this.canSubmit = false;
@@ -326,7 +340,7 @@ export default class Waiterhome extends wepy.page {
       'content-type': 'multipart/form-data',
       'Authorization': wx.getStorageSync('token'),
     });
-    // console.error(res);
+    // console.error('getqrcode:', res);
 
     if(res && res.data){
       let o, opt;
@@ -398,13 +412,14 @@ export default class Waiterhome extends wepy.page {
               ? await req.post(`/castrol/api/v1/order/seller/upload`, param, { 'Authorization': wx.getStorageSync('token'), })
               : await req.post(`/castrol/api/v1/order/status`, param, { 'Authorization': wx.getStorageSync('token'), }); 
 
+    console.error(res);
     if(res && res.data){
-      console.error(res);
-
       this.qrcode = this.type === 'reupload' ? this.error.qrcode : res.data;
       this.type = 'result';
       this.btnTitle = '保存图片';
       this.canSubmit = true;
+    }else{
+      wx.showModal({ content: res.moreInfo, showCancel: false });
     }
 
 
