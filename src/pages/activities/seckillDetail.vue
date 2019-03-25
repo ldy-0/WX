@@ -549,6 +549,7 @@
 
 <template>
   <view class="container">
+    <!-- 规格栏 -->
     <view wx:if="{{showStandard}}" class="standard-box">
       <view class="product">
         <view class="base_info">
@@ -638,6 +639,9 @@
         </view>
       </view>
       <view class="seckill_info">
+        <view>规格：{{goods.spec||'单规格'}}</view>
+      </view>
+      <view class="seckill_info">
         <view class="text">总数：
           <text>{{goods.limit_num}}</text>
         </view>
@@ -648,7 +652,7 @@
       <view class="comment" wx:if="{{comment[0]}}">
         <view class="comment-top">
           <view>宝贝评价({{comment.length}})</view>
-          <view class="more_btn" @tap="goComment" data-goodid="{{goods.SKUList[0].goods_id}}">
+          <view class="more_btn" @tap="goComment">
             <text>查看全部</text>
             <image class="more_btnImg" src="../../images/icon_chakanquanbu@2x.png">
           </view>
@@ -920,6 +924,17 @@ export default class secKill extends wepy.page {
     if (res.status == 0) {
       let that = this;
       this.goods = res.data;
+      //规格显示
+      if(this.goods.goods.goods_spec){
+        let spec = this.goods.goods.goods_spec;
+        this.goods.spec = '';
+        for(let i in spec){
+          this.goods.spec +=`${i}:${spec[i]}/ `;
+        }
+        this.goods.spec = this.goods.spec.replace(/\/\s$/g,'');
+      }
+      //传参到firmOrder的解析
+      this.goods.spec_name = this.goods.goods.goods_spec;
       this.goods.goods_image = res.data.goods.goods_image;
       this.goods.goods_name = res.data.goods.goods_name;
       let endTime = new Date(res.data.end_time).getTime();
@@ -996,12 +1011,8 @@ export default class secKill extends wepy.page {
     this.$apply();
   }
   goComment(e) {
-    let id = e.currentTarget.dataset.goodid;
-    let virtual = this.goods.is_virtual;
-    let appoint = this.goods.is_appoint;
-    console.log(id);
     wx.navigateTo({
-      url: `./commentList?goodsId=${id}&virtual=${virtual}&appoint=${appoint}`
+      url: `../store/commentList?goodsId=${this.goods.goods_id}`
     });
     this.$apply();
   }

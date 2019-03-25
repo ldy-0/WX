@@ -286,6 +286,7 @@
         <image src="{{item.goods_image}}" mode="aspectFill">
         <view class="product">
           <view class="product_title">{{item.goods_name}}</view>
+          <view class="product_title">{{item.spec}}</view>
           <view class="row">
             <view class="product_price">¥{{item.goods_price}}</view>
           </view>
@@ -408,7 +409,8 @@ export default class FirmOrder extends wepy.page {
     grouponid: null, //活动组id
     textMsg: "",
     Preferential: null,
-    seckill_id:null   //秒杀商品参数
+    seckill_id:null ,  //秒杀商品参数
+    ifcut:0,    //砍价商品参数
   };
 
   components = {};
@@ -432,6 +434,10 @@ export default class FirmOrder extends wepy.page {
       }
       if(option.groupontype == 'seckill'){
         this.seckill_id = goods.goods_id
+        goods.goods_num = 1;
+      }
+      if(option.groupontype == 'bargain'){
+        this.ifcut = 1
         goods.goods_num = 1;
       }
       let cartItem = "";
@@ -495,6 +501,9 @@ export default class FirmOrder extends wepy.page {
     if (this.seckill_id) {
       params.seckill_id = this.seckill_id;
     }
+    if (this.ifcut) {
+      params.ifcut = this.ifcut;
+    }
     const res = await shttp
       .post("/api/v2/member/order")
       .send(params)
@@ -519,8 +528,7 @@ export default class FirmOrder extends wepy.page {
         signType: "MD5",
         paySign: res.data.paySign,
         success: function(res) {
-          console.log("支付成功返回的结果");
-          console.log(res);
+          console.log("支付成功返回的结果",res);
           // if (is_pintuan == 1) {
           //   wx.reLaunch({
           //     url: `/pages/store/bought?id=${order_id}&orderType=group&ptId=${pintuangroup_id}`
@@ -559,6 +567,8 @@ export default class FirmOrder extends wepy.page {
             });
             that.isclick = false;
             if (is_pintuan == 1) {
+              that.changerOrder(order_id, pay_sn);
+            }else if(that.seckill_id){
               that.changerOrder(order_id, pay_sn);
             } else {
               wx.redirectTo({
@@ -653,7 +663,7 @@ export default class FirmOrder extends wepy.page {
       );
     } else {
       wx.showToast({
-        title: "商品无效",
+        title: res.error,
         icon: "none",
         duration: 1000
       });

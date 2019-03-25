@@ -386,6 +386,10 @@
         <image class="item_page" src="../images/icon_1_meishi@2x.png">
         <view>美食</view>
       </navigator>
+      <navigator class="item_view" url="./store/goodsList?type=bargain">
+        <image class="item_page" src="../images/icon_1_tuangou@2x.png">
+        <view>砍价</view>
+      </navigator>
       <navigator class="item_view" url="./store/goodsList?type=group">
         <image class="item_page" src="../images/icon_1_tuangou@2x.png">
         <view>团购</view>

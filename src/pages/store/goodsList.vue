@@ -89,7 +89,7 @@
         </view>
       </repeat>
       <!-- 后台商品 字段结构不同-->
-      <repeat wx:if="{{type=='group'||type=='seckill'}}" for="{{goodsList}}" key="index" index="index" item="item">
+      <repeat wx:if="{{type=='group'||type=='seckill'||type=='bargain'}}" for="{{goodsList}}" key="index" index="index" item="item">
         <view class="redlist" @tap="toDetail({{item.rule_id}})">
           <image class="title_page" mode="aspectFill" src="{{item.goods.goods_image}}" />
           <view class="viewX-itemGoodsname">{{item.goods.goods_name}}{{item.rule_name}}</view>
@@ -140,6 +140,12 @@ export default class GoodsList extends wepy.page {
         });
         this.getSeckillList();
         break;
+      case "bargain":
+        wx.setNavigationBarTitle({
+          title: "砍价商品"
+        });
+        this.getBargainList();
+        break;
       case "hot":
         wx.setNavigationBarTitle({
           title: "热门推荐"
@@ -167,6 +173,11 @@ export default class GoodsList extends wepy.page {
         case "seckill":
           wx.navigateTo({
             url: `../activities/seckillDetail?goods_commonid=${id}`
+          });
+          break;
+        case "bargain":
+          wx.navigateTo({
+            url: `../activities/bargainDetail?goods_commonid=${id}`
           });
           break;
         default:
@@ -238,6 +249,34 @@ export default class GoodsList extends wepy.page {
     if (res.status === 0) {
       if (res.data != null && res.data.length != 0) {
         this.goodsList = this.goodsList.concat(res.data);
+      }
+      if (this.goodsList.length == 0) {
+        this.is_empty = true;
+      } else {
+        this.is_empty = false;
+      }
+      wx.hideLoading();
+    }
+    this.$apply();
+  }
+  //砍价商品
+  async getBargainList() {
+    const res = await shttp
+      .get(`/api/v2/member/cutgoods`)
+      .query({
+        store_id: 1,
+        limit: 10,
+        page: this.page
+      })
+      .end();
+    if (res.status === 0) {
+      if (res.data != null && res.data.length != 0) {
+        let result = res.data;
+        result.forEach(element => {
+          element.rule_id = element.cutprice_id
+        });
+        this.goodsList = this.goodsList.concat(result);
+        
       }
       if (this.goodsList.length == 0) {
         this.is_empty = true;

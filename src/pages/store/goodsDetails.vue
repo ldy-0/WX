@@ -802,6 +802,7 @@ page {
           <view class="goods_main_info">
             <view class="column">
               <view class="product_title">{{goods.goods_name}}</view>
+              <view class="product_title" wx:if="{{TYPE== 'group'||TYPE== 'grouponing'}}">{{goods.spec ||'单规格商品'}}</view>
             </view>
             <view wx:if="{{TYPE== 'normal'}}" class="column_center" @tap="enshrine">
               <image src="{{goods.enshrine_type==1?'../../images/icon_pingfen_hl@2x.png':'../../images/icon_pingfen@2x.png'}}" class="qr_icon">
@@ -882,7 +883,7 @@ page {
       <view class="comment" wx:if="{{comment[0]}}">
         <view class="comment-top">
           <view>宝贝评价({{comment.length}})</view>
-          <view class="more_btn" @tap="goComment" data-goodid="{{goods.SKUList[0].goods_id}}">
+          <view class="more_btn" @tap="goComment" data-goodid="{{goods.SKUList[0].goods_id || goods.goods_id}}">
             <text>查看全部</text>
             <image class="more_btnImg" src="../../images/icon_chakanquanbu@2x.png">
           </view>
@@ -1319,6 +1320,15 @@ export default class GoodsDetails extends wepy.page {
     const res = await shttp.get(`/api/v2/member/goodsgroupbuy/${id}`).end();
     if (res.status == 0) {
       this.goods = res.data;
+      //规格显示
+      if(this.goods.goods.goods_spec){
+        let spec = this.goods.goods.goods_spec;
+        this.goods.spec = '';
+        for(let i in spec){
+          this.goods.spec +=`${i}:${spec[i]}/ `;
+        }
+        this.goods.spec = this.goods.spec.replace(/\/\s$/g,'');
+      }
       this.goods.goods_salenum = this.goods.goods.goods_salenum;
       this.goods.goods_storage = this.goods.goods.goods_storage;
       this.goods.goods_name = this.goods.goods.goods_name;
@@ -1396,11 +1406,8 @@ export default class GoodsDetails extends wepy.page {
   //评论列表
   goComment(e) {
     let id = e.currentTarget.dataset.goodid;
-    let virtual = this.goods.is_virtual;
-    let appoint = this.goods.is_appoint;
-    console.log(id);
     wx.navigateTo({
-      url: `./commentList?goodsId=${id}&virtual=${virtual}&appoint=${appoint}`
+      url: `./commentList?goodsId=${id}`
     });
     this.$apply();
   }
