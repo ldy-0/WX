@@ -1,9 +1,8 @@
-<style>
+
+<style scoped>
 page {
   background: #fff;
 }
-</style>
-<style scoped>
 .nodata {
   margin-top: 50%;
   font-size: 38rpx;
@@ -11,12 +10,12 @@ page {
 }
 
 .container {
-  background: #fff;
+  background: rgb(244, 244, 244);
   height: 100vh;
 }
 
 .my {
-  position: relative;
+  /* position: relative; */
   width: 100%;
   height: 272rpx;
   z-index: 0;
@@ -48,14 +47,15 @@ page {
 }
 
 .my_manage {
-  position: relative;
+  /* position: relative; */
   z-index: 99;
-  width: 690rpx;
+  width: 100%;
   height: 230rpx;
   margin: 0 auto;
-  margin-top: -40rpx;
-  border-radius: 24rpx 24rpx 0 0;
-  box-shadow: 0px 0px 10px 0px rgba(241, 231, 225, 0.6);
+  margin-bottom: 20rpx;
+  /* margin-top: 0rpx;
+  border-radius: 24rpx 24rpx 0 0; */
+  /* box-shadow: 0px 0px 10px 0px rgba(241, 231, 225, 0.6); */
 }
 .my_manage_title {
   display: flex;
@@ -64,9 +64,9 @@ page {
   height: 68rpx;
   padding: 0 18rpx;
   font-size: 24rpx;
-  color: #636363;
+  color: #222222;
   background: #fff;
-  border-radius: 24rpx 24rpx 0 0;
+  /* border-radius: 24rpx 24rpx 0 0; */
 }
 
 .my_manage_status {
@@ -79,7 +79,9 @@ page {
   border-top: 1rpx solid #eee;
   border-bottom: 1rpx solid #eee;
 }
-
+.my_manage .flex{
+  color: #8f8f8f;
+}
 .flex {
   display: flex;
   align-items: center;
@@ -123,8 +125,11 @@ page {
   font-size: 28rpx;
   color: #888;
   border-bottom: 1rpx solid #f5f5f5;
-  padding: 0;
-  padding-right: 30rpx;
+  padding:  0 30rpx 0;
+  /* padding-right: 30rpx; */
+}
+.row_between .flex{
+  color: #222222;
 }
 .icon {
   width: 30rpx;
@@ -133,7 +138,7 @@ page {
 }
 .btn-list {
   margin-top: 20rpx;
-  margin-left: 30rpx;
+  /* margin-left: 30rpx; */
 }
 .img2 {
   width: 32rpx;
@@ -142,6 +147,32 @@ page {
 .img3 {
   width: 25rpx;
   height: 32rpx;
+}
+.my_assets{
+  background-color: #fff;
+  display:flex;
+  justify-content: space-around;
+  height: 150rpx;
+  margin-bottom: 20rpx;
+}
+.my_assets .assets{
+	color: #222222;
+  text-align:center;
+  font-family: PingFang-SC-Medium;
+  letter-spacing: 1rpx;
+  font-weight: normal;
+	font-stretch: normal;
+  margin-top:35rpx;
+
+}
+.my_assets .assets text{
+  width: 80rpx;
+	font-size: 38rpx;
+	color: #5bbd5b;
+}
+.my_assets .assets view{
+	font-size: 28rpx;
+	color: #222222;
 }
 </style>
 
@@ -154,11 +185,29 @@ page {
         <open-data class="content inputStyle login" type="userNickName" lang="zh_CN"></open-data>
       </view>
     </view>
+    <view class="my_assets">
+      <view class="assets">
+          <text>0.00</text>
+          <view>余额</view>
+      </view>
+      <view class="assets">
+          <text>0.00</text>
+          <view>德分</view>
+      </view>
+      <view class="assets">
+          <text>0.00</text>
+          <view>积分</view>
+      </view>
+      <view class="assets">
+          <text>0.00</text>
+          <view>优惠券</view>
+      </view>
+    </view>
     <view class="my_manage">
       <navigator class="my_manage_title" url="/pages/my/orderList?choiceTab=0">
         <view>我的订单</view>
         <view class="flex">
-          <view>全部订单</view>
+          <view>查看全部订单</view>
           <image class="arrow" src="../images/icon_zuojiantou@2x.png">
         </view>
       </navigator>
@@ -221,18 +270,18 @@ export default class Mine extends wepy.page {
       {
         name: "我的团购",
         url: "/pages/my/groupbuyList",
-        img: "../images/icon_tuangou@2x.png"
+        img: "../images/icon_4_wodetuangou@2x.png"
       },
       {
         name: "我的收藏",
         url: "/pages/my/collectList",
         img: "../images/icon_4_wodeshoucang@2x.png"
       },
-      {
-        name: "我的优惠券",
-        url: "/pages/article/couponList?type=mine",
-        img: "../images/coupons@2x.png"
-      },
+      // {
+      //   name: "我的优惠券",
+      //   url: "/pages/article/couponList?type=mine",
+      //   img: "../images/coupons@2x.png"
+      // },
       {
         name: "地址管理",
         url: "/pages/my/addressList",
