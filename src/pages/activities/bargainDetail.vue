@@ -296,6 +296,17 @@ page {
   align-items: center;
   border-top: 1rpx solid #e6e6e6;
 }
+.warp_btn2 {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  border-top: 1rpx solid #e6e6e6;
+}
+.share_btn{
+  width: 350rpx;
+}
 .add_btn,
 .buy_btn {
   width: 200rpx;
@@ -303,7 +314,7 @@ page {
   height: 76rpx;
   line-height: 76rpx;
   border-radius: 10rpx;
-  margin-right: 20rpx;
+  margin:0 10rpx;
 }
 .warp_btn .buttonStyle {
   text-align: center;
@@ -323,6 +334,9 @@ page {
 .buy_btn {
   color: #fff;
   background: #f17f30;
+}
+.share_btn{
+  width: 350rpx;
 }
 .warp_btn .appointment-btn {
   width: 430rpx;
@@ -928,7 +942,7 @@ page {
     </view>
     <!-- bottom bar -->
     <view class="bottom_bar">
-      <view class="icon">
+      <view class="icon" wx:if="{{TYPE == 'bargain'}}">
         <navigator open-type="switchTab" url="/pages/home" hover-class="none">
           <image class="tab-icon2" src="../../images/icon_2_shouye@2x.png">
             <view>主页</view>
@@ -938,11 +952,11 @@ page {
             <view>客服</view>
         </button>
       </view>
-      <view class="warp_btn">
-        <view class='add_btn' wx:if="{{TYPE == 'bargaining'&&!share}}" @tap='getBargainQT'>生成海报</view>
+      <view class="{{TYPE=='bargain'?'warp_btn':'warp_btn2'}}">
+        <view class='add_btn share_btn' wx:if="{{TYPE == 'bargaining'&&!share}}" @tap='getBargainQT'>生成海报</view>
         <button class='buy_btn share_btn' wx:if="{{TYPE == 'bargaining'&&!share}}" open-type="share" id='1'>邀请好友砍价</button>
-        <view class='add_btn' wx:if="{{TYPE == 'bargaining'&&share}}" @tap='goJoin'>我也要参加</view>
-        <view class='buy_btn' wx:if="{{TYPE == 'bargaining'&&share}}" @tap='goBargain'>帮忙砍价</view>
+        <view class='buy_btn share_btn' wx:if="{{TYPE == 'bargaining'&&share}}" @tap='goJoin'>我也要参加</view>
+        <view class='buy_btn share_btn' wx:if="{{TYPE == 'bargaining'&&share}}" @tap='goBargain'>帮忙砍价</view>
         <view class='buy_btn appointment-btn' wx:if="{{TYPE == 'bargain'}}" @tap='startBargain'>发起砍价</view>
       </view>
     </view>
@@ -986,6 +1000,8 @@ export default class GoodsDetails extends wepy.page {
   };
   data = {
     //砍价
+    canbargain:false,
+    memberId:0,
     active_id:null,
     bargainPercent:0,
     bargainInfo:{},
@@ -1085,11 +1101,13 @@ export default class GoodsDetails extends wepy.page {
     onShareAppMessage: function(res) {
       let shopId = wx.getStorageSync("shopId");
       let member_id = wx.getStorageSync("memberInfo").member_id;
+      console.log(this.id);
+      console.log(this.active_id);
       if (res.from === "button") {
         if (res.target.id == 1) {
           return {
             title: this.goods.goods_name,
-            path: `pages/activities/bargainDetail?scene=${this.id};${this.active_id};bargaining;&share=true`,
+            path: `pages/activities/bargainDetail?scene=${this.id};${this.active_id};bargaining;true;${member_id}`,
             success: function(res) {
               // 转发成功
               wx.showToast({
@@ -1175,6 +1193,8 @@ export default class GoodsDetails extends wepy.page {
     this.scene = decodeURIComponent(option.scene);
   }
   async onShow() {
+    this.memberId = wx.getStorageSync("memberInfo").member_id;
+    console.log(this.memberId);
     if (this.scene != "undefined") {
       let qrarry = this.scene.split(";");
       this.id = qrarry[0];
@@ -1182,6 +1202,7 @@ export default class GoodsDetails extends wepy.page {
       this.TYPE = qrarry[2];
       if (qrarry[3] == "false") this.share = false;
       if (qrarry[3] == "true") this.share = true;
+      this.memberId = qrarry[4];
     }
     if(this.TYPE == 'bargaining'){
       this.getBargainGoods() ;
@@ -1224,6 +1245,7 @@ export default class GoodsDetails extends wepy.page {
     if (res.status == 0) {
       this.TYPE = "bargaining";
       this.showStandard = false;
+      this.active_id = res.data;
       this.getBargainGoods();
     } else {
       wx.showToast({
@@ -1232,12 +1254,14 @@ export default class GoodsDetails extends wepy.page {
         duration: 1000
       });
     }
+    this.$apply();
   }
   async getBargainGoods() {
     const res = await shttp
       .get(`/api/v2/member/cutprice`)
       .query({
-        cutprice_activity_id:this.active_id
+        cutprice_activity_id:this.active_id,
+        member_id:this.memberId
       })
       .end();
     if (res.status == 0) {
@@ -1288,11 +1312,7 @@ export default class GoodsDetails extends wepy.page {
       });
     }
     const res = await shttp
-      .post("/api/v2/member/cutprice")
-      .send({
-        goods_id: this.goodsId,
-        member_id: this.memberId
-      })
+      .put("/api/v2/member/cutprice/"+this.active_id)
       .end();
     if (res.status == 0) {
       this.getBargainGoods();
@@ -1308,7 +1328,7 @@ export default class GoodsDetails extends wepy.page {
     if (this.canbargain) {
       wx.redirectTo({
         url: `/pages/activities/bargainDetail?goods_commonid=${
-          this.cutprice.cutprice_id
+          this.id
         }`
       });
     } else {
@@ -1424,11 +1444,12 @@ export default class GoodsDetails extends wepy.page {
       },
       content
     );
+    const member_id = wx.getStorageSync("memberInfo").member_id;
     const res = await shttp
       .post("/api/v2/member/wxcode")
       .send({
         page: "pages/activities/bargainDetail",
-        scene: this.id+";"+this.active_id+";"+"bargaining;"+"true",
+        scene: this.id+";"+this.active_id+";"+"bargaining;"+"true;"+member_id,
         width: 350, // 430
         is_hyaline: true // false,
       })

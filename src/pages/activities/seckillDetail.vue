@@ -604,7 +604,7 @@
         <view wx:if="{{countStatus}}" class="countDown-box">
           <view class="countDown-txt">
             <text class="countDown-txt1">还剩</text>
-            <!-- <text class="countDown-txt3">{{wxTimerList['wxTimer1'].d!=0?wxTimerList['wxTimer1'].d+'天':''}}</text> -->
+            <text class="countDown-txt3">{{wxTimerList['wxTimer1'].d!=0?wxTimerList['wxTimer1'].d+'天':''}}</text>
             <text class="countDown-txt2">{{wxTimerList['wxTimer1'].h1}}</text>
             <text class="countDown-txt2">{{wxTimerList['wxTimer1'].h2}}</text>:
             <text class="countDown-txt2">{{wxTimerList['wxTimer1'].m1}}</text>
@@ -937,13 +937,16 @@ export default class secKill extends wepy.page {
       this.goods.spec_name = this.goods.goods.goods_spec;
       this.goods.goods_image = res.data.goods.goods_image;
       this.goods.goods_name = res.data.goods.goods_name;
+      // 重要提示：ios不支持2019-1-1 00:00:00格式，需替换为2019/1/1 00:00:00
+      res.data.start_time = res.data.start_time.replace(/\-/g, '/');
+      res.data.end_time = res.data.end_time.replace(/\-/g, '/');
       let endTime = new Date(res.data.end_time).getTime();
-      let startTime = new Date().getTime();
-      let beginTime = new Date(res.data.start_time).getTime();
+      let nowTime = new Date().getTime();
+      let startTime = new Date(res.data.start_time).getTime();
       //计时器
-      if (this.goods.rule_status == 1&&startTime < beginTime) {
+      if (this.goods.rule_status == 1&&nowTime < startTime) {
         this.timeStatus = false;
-        let wxTimer1 =  this.compareTime(startTime,beginTime,function(){
+        let wxTimer1 =  this.compareTime(nowTime,startTime,function(){
             that.wxTimer1.stop();
             that.timeStatus = true;
             that.$apply();
@@ -951,9 +954,9 @@ export default class secKill extends wepy.page {
         });
         wxTimer1.start(this);
         this.wxTimer1 = wxTimer1;
-      } else if (this.goods.rule_status == 1 && startTime < endTime) {
+      } else if (this.goods.rule_status == 1 && nowTime < endTime) {
         this.timeStatus = true;
-        let wxTimer1 = this.compareTime(startTime,endTime,function(){
+        let wxTimer1 = this.compareTime(nowTime,endTime,function(){
             that.wxTimer1.stop();
             that.countStatus = false;
             that.timeStatus = false;
@@ -961,7 +964,8 @@ export default class secKill extends wepy.page {
         });
         wxTimer1.start(this);
         this.wxTimer1 = wxTimer1;
-      } else if (this.goods.rule_status == 3 || startTime > endTime) {
+      } else if (this.goods.rule_status == 3 || nowTime > endTime) {
+        this.wxTimer1 = new timer({});
         this.countStatus = false;
         this.timeStatus = false;
       }
@@ -972,13 +976,19 @@ export default class secKill extends wepy.page {
   }
   compareTime(startTime,endTime,callBack){
         let hour = dayjs(endTime).diff(dayjs(startTime), "hour");
+        console.log(hour);
         let diffhour = hour * 60;
         let minute = dayjs(endTime).diff(dayjs(startTime), "minute");
+        console.log(minute);
         let diffminute = minute * 60;
         minute -= diffhour;
         let second = dayjs(endTime).diff(dayjs(startTime), "second");
         second -= diffminute;
+        if(hour<10) hour = '0'+hour
+        if(minute<10) minute = '0'+minute
+        if(second<10) second = '0'+second
         let beginTime = hour + ":" + minute + ":" + second;
+        console.log(beginTime);
         return new timer({
           beginTime: beginTime,
           name: "wxTimer1",

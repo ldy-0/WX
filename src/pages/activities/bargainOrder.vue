@@ -214,6 +214,7 @@ export default class BargainList extends wepy.page {
           return result
   }
   async getList() {
+    let memberId = wx.getStorageSync("memberInfo").member_id;
     wx.showLoading({
       title: "加载中"
     });
@@ -225,7 +226,8 @@ export default class BargainList extends wepy.page {
       .get(`/api/v2/member/cutprice`)
       .query({
         page: this.page,
-        cutprice_activity_states:status
+        cutprice_activity_states:status,
+        member_id:memberId
       })
       .end();
     if (res.status === 0) {
@@ -257,7 +259,8 @@ export default class BargainList extends wepy.page {
           this.timeDatalist.push(wxTimer);
         }
       });
-      this.list = this.list.concat(res.data);
+      // this.list = this.list.concat(res.data);
+      this.list = res.data;
       if (this.list.length == 0) {
         this.is_empty = true;
       }
@@ -267,14 +270,15 @@ export default class BargainList extends wepy.page {
       }
       wx.hideLoading();
     }
+    console.log(this.timeDatalist);
     this.$apply();
   }
   goBargain(e) {
     let item = e.currentTarget.dataset.item;
-    const shopId = wx.getStorageSync("shopId");
+    const member_id = wx.getStorageSync("memberInfo").member_id;
     if (this.status == 1) {
       wx.navigateTo({
-        url:`/pages/activities/bargainDetail?scene=${item.cutprice.cutprice_id};${item.cutprice_activity_id};bargaining;false`
+        url:`/pages/activities/bargainDetail?scene=${item.cutprice.cutprice_id};${item.cutprice_activity_id};bargaining;false;${member_id}`
       });
     }
   }
@@ -304,11 +308,11 @@ export default class BargainList extends wepy.page {
     });
   }
   //上拉加载
-  onReachBottom() {
-    this.page = this.page + 1;
-    this.getList();
-    this.$apply();
-  }
+  // onReachBottom() {
+  //   this.page = this.page + 1;
+  //   this.getList();
+  //   this.$apply();
+  // }
   onUnload() {
     if (this.timeDatalist.length != 0) {
       this.timeDatalist.forEach(item => {

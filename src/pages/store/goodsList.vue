@@ -273,10 +273,9 @@ export default class GoodsList extends wepy.page {
       if (res.data != null && res.data.length != 0) {
         let result = res.data;
         result.forEach(element => {
-          element.rule_id = element.cutprice_id
+          element.rule_id = element.cutprice_id;
         });
         this.goodsList = this.goodsList.concat(result);
-        
       }
       if (this.goodsList.length == 0) {
         this.is_empty = true;
@@ -296,6 +295,12 @@ export default class GoodsList extends wepy.page {
         break;
       case "hot":
         this.getgoodsList();
+        break;
+      case "seckill":
+        this.getSeckillList();
+        break;
+      case "bargain":
+        this.getBargainList();
         break;
       default:
         this.getgoodsList();
