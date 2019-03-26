@@ -151,6 +151,10 @@ page {
   height: 80rpx;
 }
 
+.x_agreement{
+  margin: 40rpx 0 0;
+}
+
 .flex{
   display: flex;
   align-items: center;
@@ -201,7 +205,7 @@ page {
         <view class='btn_ctn s_fc_3'>{{btnTitle}}</view>
       </view>
 
-      <view class="agree_downBox" wx:if="{{canShow && type === 'goDraw'}}">
+      <view class="agree_downBox {{isX ? 'x_agreement' : ''}}" wx:if="{{canShow && type === 'goDraw'}}">
         <view class="agree_btn" @tap="changeAgree">
           <view wx:if="{{agree}}" class="agree_btnSpot"></view>
         </view>

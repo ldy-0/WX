@@ -71,7 +71,15 @@ export default class Placeholder extends wepy.component {
   }
 
   navigateTo(url){
-    let length = getCurrentPages().length;
+    let canClear,
+        pageList = getCurrentPages(),
+        length = pageList.length;
+
+    canClear = pageList.some(v => ['pages/appointment/index', 'pages/limit/index', 'pages/story/index', 'pages/challenge/index'].indexOf(v.route) !== -1);
+    if(canClear){
+      return wx.navigateBack({ delta: 1 });
+    }
+
     length === 9 ? wx.reLaunch({ url }) : wx.navigateTo({ url });
   }
 }

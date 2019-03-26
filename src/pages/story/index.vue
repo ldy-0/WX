@@ -28,6 +28,7 @@ page {
   position: relative;
   left: calc(50% - 325rpx);
   width: 650rpx;
+  height: 50vh;
   margin: 15rpx 0 0;
 }
 
@@ -115,38 +116,48 @@ page {
       <view class='scroll_wrap'>
         <scroll-view scroll-y style='height: 100%;'>
 
-        <repeat for='{{list}}'>
-          <view class="video_item {{(index + 1) < list.length ? 'line' : ''}}">
-            <repeat for='{{item.nameList}}' item='name'>
-              <view class='video_title'>{{name}}</view>
-            </repeat>
-            <video id="{{'video' + index}}" class='video' src='{{item.videoPath}}' play-btn-position='center' poster='{{item.content}}' autoplay='{{index === 0}}'></video>
+          <view>
 
-            <repeat for='{{item.descList}}' item='desc' index='d_index'>
-              <view class='video_desc flex s_fc_4' style='align-items: flex-start;'>
-                <view class='dot s_bg_2'></view>
-                <view class=''>{{desc}}</view>
+            <repeat for='{{list}}'>
+              <view class="video_item {{(index + 1) < list.length ? 'line' : ''}}">
+                <repeat for='{{item.nameList}}' item='name'>
+                  <view class='video_title'>{{name}}</view>
+                </repeat>
+                <video id="{{'video' + index}}" 
+                       class='video' 
+                       play-btn-position='center'
+                       src='{{item.videoPath}}' 
+                       poster='{{item.content}}'
+                       autoplay='{{item.isPlaying}}' wx:if="{{item.isPlaying}}"></video>
+                <image class='video' src='{{item.content}}' mode='aspectFill' @tap='playing({{index}})' wx:else />
+
+                <repeat for='{{item.descList}}' item='desc' index='d_index'>
+                  <view class='video_desc flex s_fc_4' style='align-items: flex-start;'>
+                    <view class='dot s_bg_2'></view>
+                    <view class=''>{{desc}}</view>
+                  </view>
+                </repeat>
+
+                <view class='video_tip s_fc_4' wx:if="{{item.tip}}">{{item.tip}}</view>
+
               </view>
             </repeat>
 
-            <view class='video_tip s_fc_4' wx:if="{{item.tip}}">{{item.tip}}</view>
-
           </view>
-        </repeat>
-      
-        </scroll-view>
+        
+          </scroll-view>
+        </view>
+
       </view>
 
       <view class='btn_wrap' @tap='goHome'>
-        <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
-        <view class='btn_ctn s_fc_3'>我已Get!</view>
+          <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
+          <view class='btn_ctn s_fc_3'>我已Get!</view>
       </view>
 
-    </view>
+      <view class='' style='width: 100%; height: 100rpx; background: transparent;'></view>
 
-    <view class='' style='width: 100%; height: 100rpx; background: transparent;'></view>
-
-    <tabBar :list.sync='tabBarList'></tabBar>
+      <tabBar :list.sync='tabBarList'></tabBar>
 
   </view>
 </template>
@@ -160,6 +171,7 @@ import req from "../../utils/request";
 export default class Waiterhome extends wepy.page {
   config = {
     navigationBarTitleText: "",
+    disableScroll: true,
   };
 
   data = {
@@ -193,6 +205,11 @@ export default class Waiterhome extends wepy.page {
   }
 
   methods = {
+    playing(index){
+      this.list.forEach((v, i) => {
+        v.isPlaying = i === index;
+      });
+    },
     goHome(){
       let url = `/pages/waiterHome`;
       wx.navigateBack({ delta: 1, });
@@ -205,8 +222,10 @@ export default class Waiterhome extends wepy.page {
 
     if(res && res.data){
       let vList = res.data.marketVideos;
-      vList.forEach(v => {
+      vList.forEach((v, i) => {
         let page;
+
+        v.isPlaying = i === 0 ? true : false;
 
         v.nameList = v.title.split('\\br');
         v.otherData = JSON.parse(v.otherData);
