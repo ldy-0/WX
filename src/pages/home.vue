@@ -100,6 +100,7 @@
   display: flex;
   width: 100%;
   align-items: center;
+  flex-wrap: wrap;
   height: 206rpx;
 }
 .tap_item .item_page {
@@ -110,6 +111,7 @@
 .tap_item .item_view {
   font-size: 24rpx;
   flex-grow: 1;
+  /* width: 25%; */
   justify-content: center;
   align-items: center;
   color: #222222;
@@ -174,6 +176,7 @@
   margin-right: 20rpx;
   margin-bottom: 19rpx;
   border: solid 1px #f6f6f6;
+  position: relative;
 }
 .bodycontent .title_page {
   width: 100%;
@@ -387,6 +390,41 @@
   font-size: 24rpx;
   top: 94rpx;
 }
+.countDown-box {
+  position: absolute;
+  height: 50rpx;
+  width: 100%;
+  top: 285rpx;
+  left: 0;
+  z-index: 9;
+  background: rgba(254, 170, 38, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.countDown-txt {
+  color: #fff;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: center;
+  font-size: 18rpx;
+}
+.countDown-txt .countDown-txt1 {
+  color: #fff;
+  font-size: 20rpx;
+}
+.countDown-txt .countDown-txt2 {
+  display: inline-block;
+  width: 22rpx;
+  height: 26rpx;
+  background: #fff;
+  color: #f17f30;
+  text-align: center;
+  line-height: 26rpx;
+  margin: 0 6rpx;
+  font-size: 20rpx;
+}
 </style>
 
 <template>
@@ -394,19 +432,10 @@
     <view class="search">
       <navigator url="./article/search" class="search_content">
         <image src="../images/icon_sousuo@2x.png" class="iconfont icon-search" mode="aspectFill">
-        <text style="color:#666;font-size:28rpx">搜索商品</text>
+          <text style="color:#666;font-size:28rpx">搜索商品</text>
       </navigator>
     </view>
-    <swiper
-      class="swiper"
-      indicator-active-color="{{indicatorActiveColor}}"
-      indicator-color="{{indicatorColor}}"
-      indicator-dots="{{indicatorDots}}"
-      autoplay="{{autoplay}}"
-      interval="{{interval}}"
-      duration="{{duration}}"
-      circular="true"
-    >
+    <swiper class="swiper" indicator-active-color="{{indicatorActiveColor}}" indicator-color="{{indicatorColor}}" indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" circular="true">
       <repeat for="{{bannerList}}" key="index" index="index" item="item">
         <swiper-item>
           <image src="{{item.banner_pic}}" mode="aspectFill" @tap="swipclick({{item}})">
@@ -418,13 +447,20 @@
         <image class="item_page" src="../images/icon_1_kanjia@2x.png">
         <view>砍价</view>
       </navigator>
-      <!-- <navigator open-type="switchTab" url="/pages/classify" class="item_view">
-        <image class="item_page" src="../images/icon_1_meishi@2x.png">
-        <view>美食</view>
-      </navigator> -->
+     <navigator>
+          <view>美食</view>
+      </navigator>
+      <navigator class="item_view" url="./store/goodsList?type=bargain">
+        <image class="item_page" src="../images/icon_1_tuangou@2x.png">
+          <view>砍价</view>
+      </navigator>
       <navigator class="item_view" url="./store/goodsList?type=group">
         <image class="item_page" src="../images/icon_1_tuangou@2x.png">
-        <view>团购</view>
+          <view>团购</view>
+      </navigator>
+      <navigator class="item_view" url="./store/goodsList?type=seckill">
+        <image class="item_page" src="../images/icon_1_miaosha@2x.png">
+          <view>秒杀</view>
       </navigator>
       <navigator class="item_view" url="./store/goodsList?type=group">
         <image class="item_page" src="../images/icon_1_miaosha@2x.png">
@@ -447,6 +483,16 @@
       <image class="vImg" src = "../images/img_1@2x.png"/>
     </view>
     </navigator>
+    <navigator>
+        <image class="item_page" src="../images/icon_1_shipin@2x.png">
+          <view>视频</view>
+      </navigator>
+      <navigator class="item_view" url="./article/advisory">
+        <image class="item_page" src="../images/icon_1_zixun@2x.png">
+          <view>资讯</view>
+      </navigator>
+    </view>
+    <!-- 优惠券 -->
     <view wx:if="{{couponList.length!=0}}">
       <navigator url="./article/couponList">
         <view class="good_title">
@@ -461,32 +507,25 @@
       </navigator>
       <scroll-view scroll-x class="viewX">
         <repeat for="{{couponList}}" key="index" index="index" item="item">
-          <view
-            class="coupons-item"
-            @tap="getcoupons"
-            data-coupon="{{item}}"
-            data-index="{{index}}"
-          >
-            <image
-              class="coupons-itemImg"
-              src="{{item.fetch_states==2?'../images/img_1_1@2x.png':'../images/img_1_2@2x.png'}}"
-            >
-            <view class="coupons-txtbox">
-              <view class="coupons-txt1">
-                <text>￥</text>{{item.vouchertemplate_price}}
+          <view class="coupons-item" @tap="getcoupons" data-coupon="{{item}}" data-index="{{index}}">
+            <image class="coupons-itemImg" src="{{item.fetch_states==2?'../images/img_1_1@2x.png':'../images/img_1_2@2x.png'}}">
+              <view class="coupons-txtbox">
+                <view class="coupons-txt1">
+                  <text>￥</text>{{item.vouchertemplate_price}}
+                </view>
+                <view class="coupons-txt2">无门槛使用</view>
+                <view class="coupons-txt3">{{item.vouchertemplate_startdate}} ~ {{item.vouchertemplate_enddate}}</view>
               </view>
-              <view class="coupons-txt2">无门槛使用</view>
-              <view class="coupons-txt3">{{item.vouchertemplate_startdate}} ~ {{item.vouchertemplate_enddate}}</view>
-            </view>
           </view>
         </repeat>
       </scroll-view>
     </view>
+    <!-- 推荐 -->
     <view wx:if="{{goodsList.length!=0}}">
       <navigator url="./store/goodsList?type=hot">
         <view class="good_title">
           <view class="name">
-            <text class="new_good">热门推荐</text>
+            <text class="new_good">热门商品</text>
           </view>
           <view class="icon_info">
             <text class="more">更多</text>
@@ -498,16 +537,17 @@
         <repeat for="{{goodsList}}" key="index" index="index" item="item">
           <view class="redlist" @tap="intoDetail({{item.goods_commonid}})">
             <image class="title_page" mode="aspectFill" src="{{item.goods_image}}">
-            <view class="redinfo add_redinfo">
-              <text class="goodsname">{{item.goods_name}}</text>
-              <view class="price">
-                <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
+              <view class="redinfo add_redinfo">
+                <text class="goodsname">{{item.goods_name}}</text>
+                <view class="price">
+                  <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
+                </view>
               </view>
-            </view>
           </view>
         </repeat>
       </view>
     </view>
+    <!-- 团购推荐 -->
     <view wx:if="{{groupGoodsList.length!=0}}">
       <navigator url="./store/goodsList?type=group">
         <view class="good_title">
@@ -524,21 +564,89 @@
         <repeat for="{{groupGoodsList}}" key="index" index="index" item="item">
           <view class="viewX-item" @tap="groupDetail({{item.rule_id}})">
             <image class="viewX-itemImg" mode="aspectFill" src="{{item.goods.goods_image}}">
-            <view class="viewX-itemGoodsname">{{item.goods.goods_name}}</view>
-            <view class="viewX-originalPrice">
-              <text style="font-size:26rpx;">￥</text>{{item.goods.goods_price}}
-            </view>
-            <view class="viewX-price">
-              <view>
-                <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
+              <view class="viewX-itemGoodsname">{{item.goods.goods_name}}</view>
+              <view class="viewX-originalPrice">
+                <text style="font-size:26rpx;">￥</text>{{item.goods.goods_price}}
               </view>
-              <image class="viewX-itemIcon" src="../images/icon_tuangou@2x.png">
-            </view>
+              <view class="viewX-price">
+                <view>
+                  <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
+                </view>
+                <image class="viewX-itemIcon" src="../images/icon_tuangou@2x.png">
+              </view>
           </view>
         </repeat>
       </scroll-view>
     </view>
-
+    <!-- 秒杀推荐 -->
+    <view wx:if="{{seckillList.length!=0}}">
+      <navigator url="./store/goodsList?type=seckill">
+        <view class="good_title">
+          <view class="name">
+            <text class="new_good">极限秒杀</text>
+          </view>
+          <view class="icon_info">
+            <text class="more">更多</text>
+            <image class="icon_R" src="../images/icon_you@2x.png">
+          </view>
+        </view>
+      </navigator>
+      <view class="bodycontent">
+        <repeat for="{{seckillList}}" key="index" index="index" item="item">
+          <view class="redlist" @tap="seckillDetail({{item.rule_id}})">
+            <image class="title_page" mode="aspectFill" src="{{item.goods.goods_image}}">
+              <view class="countDown-box" >
+                <view class="countDown-txt" wx:if="{{item.show==3}}">
+                  还剩
+                  <!-- <text class="countDown-txt2">{{wxTimerList[index].d!=0?wxTimerList[index].d+'天':''}} </text> -->
+                  <text class="countDown-txt2">{{wxTimerList[index].h1}}</text>
+                  <text class="countDown-txt2">{{wxTimerList[index].h2}}</text>:
+                  <text class="countDown-txt2">{{wxTimerList[index].m1}}</text>
+                  <text class="countDown-txt2">{{wxTimerList[index].m2}}</text>:
+                  <text class="countDown-txt2">{{wxTimerList[index].s1}}</text>
+                  <text class="countDown-txt2">{{wxTimerList[index].s2}}</text>
+                </view>
+                <view class="countDown-txt" wx:if="{{item.show==1}}">即将开始</view>
+                <view class="countDown-txt" wx:if="{{item.show==2}}">活动结束</view>
+              </view>
+              <view class="redinfo add_redinfo">
+                <text class="goodsname">{{item.goods.goods_name}}</text>
+                <view class="price">
+                  <text style="font-size:26rpx;">秒杀价￥</text>{{item.goods_price}}
+                </view>
+              </view>
+          </view>
+        </repeat>
+      </view>
+    </view>
+    <!-- 砍价推荐 -->
+    <view wx:if="{{bargainList.length!=0}}">
+      <navigator url="./store/goodsList?type=bargain">
+        <view class="good_title">
+          <view class="name">
+            <text class="new_good">热门砍价</text>
+          </view>
+          <view class="icon_info">
+            <text class="more">更多</text>
+            <image class="icon_R" src="../images/icon_you@2x.png">
+          </view>
+        </view>
+      </navigator>
+      <view class="bodycontent">
+        <repeat for="{{bargainList}}" key="index" index="index" item="item">
+          <view class="redlist" @tap="bargainDetail({{item.cutprice_id}})">
+            <image class="title_page" mode="aspectFill" src="{{item.goods.goods_image}}">
+              <view class="redinfo add_redinfo">
+                <text class="goodsname">{{item.goods_name}}</text>
+                <view class="price">
+                  <text style="font-size:26rpx;color:#0f0f0f;text-decoration: line-through;">￥{{item.goods.goods_price}}</text>
+                  <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
+                </view>
+              </view>
+          </view>
+        </repeat>
+      </view>
+    </view>
     <!-- 案例展示开始 -->
     <view wx:if="{{materialList.length!=0}}">
       <navigator url="./store/more">
@@ -556,9 +664,9 @@
         <repeat for="{{materialList}}" key="index" index="index" item="item">
           <view class="redlist case_redlist" @tap="gotoCase({{item.dynamic_id}})">
             <image class="case_title_page" src="{{item.dynamic_images[0].url}}" mode="aspectFill">
-            <view class="redinfo">
-              <text class="prdname">{{item.dynamic_title}}</text>
-            </view>
+              <view class="redinfo">
+                <text class="prdname">{{item.dynamic_title}}</text>
+              </view>
           </view>
         </repeat>
       </view>
@@ -582,12 +690,12 @@
         <repeat for="{{newsList}}" key="index" index="index" item="item">
           <view class="redlist news_redlist" @tap="gotoNews({{item.information_id}})">
             <image class="title_page" src="{{item.information_image[0]}}" mode="aspectFill">
-            <view class="redinfo">
-              <text class="prdname">{{item.information_title}}</text>
-              <view class="num_info">
-                <text class="price">{{item.addtime}}</text>
+              <view class="redinfo">
+                <text class="prdname">{{item.information_title}}</text>
+                <view class="num_info">
+                  <text class="price">{{item.addtime}}</text>
+                </view>
               </view>
-            </view>
           </view>
         </repeat>
       </view>
@@ -602,6 +710,8 @@ import wepy from "wepy";
 import { getCode } from "../utils/user-tools";
 import { shttp } from "../utils/http";
 import getTimes from "../utils/formatedate.js";
+import dayjs from "dayjs";
+import timer from "../utils/wxTimer";
 import { showSuccessToast, showFailToast, exploitToast } from "../utils/tools";
 export default class Home extends wepy.page {
   config = {
@@ -609,6 +719,8 @@ export default class Home extends wepy.page {
     navigationBarTitleText: "首页"
   };
   data = {
+    wxTimerList: {},
+    timeDatalist: [],
     indicatorDots: true,
     autoplay: true,
     interval: 3000,
@@ -621,6 +733,8 @@ export default class Home extends wepy.page {
     newsList: [], //新闻列表
     couponList: [], //优惠券
     groupGoodsList: [], //团购商品列表
+    bargainList: [],
+    seckillList: []
   };
 
   components = {};
@@ -636,6 +750,8 @@ export default class Home extends wepy.page {
     this.getNewsList();
     this.getCouponList();
     this.getGroupList();
+    this.getBargain();
+    this.getSeckill();
   }
 
   methods = {
@@ -649,6 +765,18 @@ export default class Home extends wepy.page {
     groupDetail(id) {
       wx.navigateTo({
         url: `store/goodsDetails?goods_commonid=${id}&type=group`
+      });
+    },
+    //进入秒杀商品详情
+    seckillDetail(id) {
+      wx.navigateTo({
+        url: `activities/seckillDetail?goods_commonid=${id}`
+      });
+    },
+    //进入砍价商品详情
+    bargainDetail(id) {
+      wx.navigateTo({
+        url: `activities/bargainDetail?goods_commonid=${id}`
       });
     },
     //进入案例详情
@@ -767,7 +895,7 @@ export default class Home extends wepy.page {
         store_id: 1,
         goods_commend: 1,
         type: "sort",
-        limit: 3,
+        limit: 4,
         page: 1
       })
       .end();
@@ -792,6 +920,79 @@ export default class Home extends wepy.page {
       if (res.data != null && res.data.length > 0) {
         this.groupGoodsList = res.data;
       }
+    }
+    wx.hideLoading();
+    wx.stopPullDownRefresh();
+    this.$apply();
+  }
+  //获取秒杀推荐列表
+  async getSeckill() {
+    const res = await shttp
+      .get(`/api/v2/member/seckill`)
+      .query({
+        store_id: 1,
+        rule_commend: 1,
+        type: "sort",
+        limit: 4,
+        page: 1
+      })
+      .end();
+    if (res.status === 0) {
+      this.seckillList = res.data||[];
+
+      res.data.forEach((item, index) => {
+        item.start_time = item.start_time.replace(/\-/g, '/');
+        item.end_time = item.end_time.replace(/\-/g, '/');
+        let startTime = new Date(item.start_time).getTime();
+        let endTime = new Date(item.end_time).getTime();
+        let nowTime = new Date().getTime();
+        if(startTime>nowTime){
+          item.show = 1;
+        }else if(nowTime>endTime){
+          item.show = 2
+        }else{
+          item.show =3
+        }
+        let hour = dayjs(endTime).diff(dayjs(nowTime), "hour");
+        let diffhour = hour * 60;
+        let minute = dayjs(endTime).diff(dayjs(nowTime), "minute");
+        let diffminute = minute * 60;
+        minute -= diffhour;
+        let second = dayjs(endTime).diff(dayjs(nowTime), "second");
+        second -= diffminute;
+        if(hour<10) hour = '0'+hour
+        if(minute<10) minute = '0'+minute
+        if(second<10) second = '0'+second
+        let beginTime = hour + ":" + minute + ":" + second;
+        let wxTimer = index;
+        wxTimer = new timer({
+          beginTime: beginTime,
+          name: wxTimer,
+          complete: function() {}
+        });
+        wxTimer.start(this);
+        this.timeDatalist.push(wxTimer);
+      });
+    }
+    console.log(this.timeDatalist);
+    wx.hideLoading();
+    wx.stopPullDownRefresh();
+    this.$apply();
+  }
+  //获取砍价推荐列表
+  async getBargain() {
+    const res = await shttp
+      .get(`/api/v2/member/cutgoods`)
+      .query({
+        store_id: 1,
+        cutprice_commend: 1,
+        type: "sort",
+        limit: 6,
+        page: 1
+      })
+      .end();
+    if (res.status === 0) {
+      this.bargainList = res.data;
     }
     wx.hideLoading();
     wx.stopPullDownRefresh();
@@ -871,6 +1072,24 @@ export default class Home extends wepy.page {
     this.getRecommendList();
     this.getbannerList();
     this.getNewsList();
+  }
+  onUnload() {
+    if (this.timeDatalist.length != 0) {
+      this.timeDatalist.forEach(item => {
+        item.stop();
+      });
+      this.wxTimerList = {};
+      this.timeDatalist = [];
+    }
+  }
+  onHide(){
+    if (this.timeDatalist.length != 0) {
+      this.timeDatalist.forEach(item => {
+        item.stop();
+      });
+      this.wxTimerList = {};
+      this.timeDatalist = [];
+    }
   }
 }
 </script>

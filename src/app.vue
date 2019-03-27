@@ -3,6 +3,7 @@ page {
   height: 100%;
   width: 100%;
   font-family: arial, "PingFang SC", "Microsoft Yahei", "Hiragino Sans GB";
+  background: #f4f4f4;
 }
 </style>
 
@@ -19,6 +20,7 @@ export default class extends wepy.app {
       "pages/classify", //商品分类
       "pages/shoppingCart", //购物车
       "pages/mine", //我的
+//==============================================================
       "pages/article/search", //搜索
       "pages/store/searchResult", //搜索结果
       // "pages/shopList", //店铺列表页
@@ -29,6 +31,7 @@ export default class extends wepy.app {
       "pages/article/couponList", //优惠券列表
       "pages/article/advisoryDetail", //新闻资讯详情
       "pages/article/caseDetail", //案例详情
+//=============================================================
       "pages/store/more", //推荐更多
       "pages/store/goodsList", //商品列表
       "pages/store/goodsDetails", //商品详情
@@ -46,7 +49,7 @@ export default class extends wepy.app {
       "pages/store/refundDetail", //退款详情
       "pages/store/retundgood", //退货
       "pages/store/retundGoodDetail", //退货详情
-      "pages/outWeb",//外链
+//==============================================================
       "pages/my/addressList", //收货地址列表
       "pages/my/addAddress", //收货地址编辑
       "pages/my/orderList", //订单列表
@@ -60,6 +63,13 @@ export default class extends wepy.app {
       "pages/my/vipDetails",//会员详情页
       "pages/my/vipRegister",//会员注册页
       
+//===============================================================
+      "pages/activities/bargainDetail", //砍价商品详情      
+      "pages/activities/bargainOrder", //我的砍价      
+      "pages/activities/seckillDetail", //秒杀商品详情      
+      "pages/activities/seckillOrder", //我的秒杀     
+//===============================================================       
+      "pages/outWeb",//外链
     ],
     window: {
       backgroundTextStyle: "dark",
@@ -135,7 +145,7 @@ export default class extends wepy.app {
 
     updateManager.onCheckForUpdate(function(res) {
       // 请求完新版本信息的回调
-      console.log(res.hasUpdate);
+      // console.log(res.hasUpdate);
       if (res.hasUpdate) {
         updateManager.onUpdateReady(function() {
           wx.showModal({

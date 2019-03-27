@@ -286,9 +286,9 @@
         <image src="{{item.goods_image}}" mode="aspectFill">
         <view class="product">
           <view class="product_title">{{item.goods_name}}</view>
+          <view class="product_title">{{item.spec}}</view>
           <view class="row">
             <view class="product_price">¥{{item.goods_price}}</view>
-            <!-- <view class='product_address'>福建福州</view> -->
           </view>
           <view class="row">
             <view class="product_number">×{{item.goods_num|| '1'}}</view>
@@ -408,23 +408,22 @@ export default class FirmOrder extends wepy.page {
     is_pintuan: 0,
     grouponid: null, //活动组id
     textMsg: "",
-    Preferential: null
+    Preferential: null,
+    seckill_id:null ,  //秒杀商品参数
+    ifcut:0,    //砍价商品参数
   };
 
   components = {};
 
   onLoad(option) {
     this.isclick = false; //这里控制订单提交点击次数
-    //进来就获取商城支付方式（固定）
-    //下面判断商品来源
+    //下面判断商品来源 nocart:直接购买 cart:购物车过来的
     this.type = option.type;
     if (option.type == "nocart") {
       let goods = JSON.parse(decodeURIComponent(option.goods));
+      console.log(goods);
       this.goodsList.push(goods);
       this.ifcart = 0;
-      let cartItem = "";
-      cartItem = goods.goods_id + "|" + (goods.goods_num || 1);
-      this.cart_id.push(cartItem);
       this.goodsNum = 1;
       if (option.groupontype == "group") {
         this.is_pintuan = 1;
@@ -433,6 +432,17 @@ export default class FirmOrder extends wepy.page {
         this.is_pintuan = 1;
         this.grouponid = option.grouponid;
       }
+      if(option.groupontype == 'seckill'){
+        this.seckill_id = goods.goods_id
+        goods.goods_num = 1;
+      }
+      if(option.groupontype == 'bargain'){
+        this.ifcut = 1
+        goods.goods_num = 1;
+      }
+      let cartItem = "";
+      cartItem = goods.goods_id + "|" + (goods.goods_num || 1);
+      this.cart_id.push(cartItem);
     } else {
       this.ifcart = 1;
       this.goodsList = JSON.parse(decodeURIComponent(option.goods));
@@ -488,6 +498,12 @@ export default class FirmOrder extends wepy.page {
     if (this.grouponid) {
       params.group_id = this.grouponid;
     }
+    if (this.seckill_id) {
+      params.seckill_id = this.seckill_id;
+    }
+    if (this.ifcut) {
+      params.ifcut = this.ifcut;
+    }
     const res = await shttp
       .post("/api/v2/member/order")
       .send(params)
@@ -512,8 +528,7 @@ export default class FirmOrder extends wepy.page {
         signType: "MD5",
         paySign: res.data.paySign,
         success: function(res) {
-          console.log("支付成功返回的结果");
-          console.log(res);
+          console.log("支付成功返回的结果",res);
           // if (is_pintuan == 1) {
           //   wx.reLaunch({
           //     url: `/pages/store/bought?id=${order_id}&orderType=group&ptId=${pintuangroup_id}`
@@ -552,6 +567,8 @@ export default class FirmOrder extends wepy.page {
             });
             that.isclick = false;
             if (is_pintuan == 1) {
+              that.changerOrder(order_id, pay_sn);
+            }else if(that.seckill_id){
               that.changerOrder(order_id, pay_sn);
             } else {
               wx.redirectTo({
@@ -614,9 +631,7 @@ export default class FirmOrder extends wepy.page {
   }
   //结算接口
   async closeAccount() {
-    let sends;
-    if (this.grouponid) {
-      sends = {
+    let sends = {
         cart_id: this.cart_id, //goods_id|num
         city_id: this.address.city_id,
         ifcart: this.ifcart, //购物车填1，直接购买填0
@@ -624,14 +639,12 @@ export default class FirmOrder extends wepy.page {
         voucher_list: this.checkVoucher,
         pintuangroup_id: this.grouponid
       };
-    } else {
-      sends = {
-        cart_id: this.cart_id, //goods_id|num
-        city_id: this.address.city_id,
-        ifcart: this.ifcart, //购物车填1，直接购买填0
-        is_pintuan: this.is_pintuan,
-        voucher_list: this.checkVoucher
-      };
+    
+    if (this.grouponid) {
+        sends.pintuangroup_id = this.grouponid
+    }
+    if(this.seckill_id){
+        sends.seckill_id = this.seckill_id
     }
     const res = await shttp
       .post("/api/v2/member/checkout")
@@ -650,7 +663,7 @@ export default class FirmOrder extends wepy.page {
       );
     } else {
       wx.showToast({
-        title: "商品无效",
+        title: res.error,
         icon: "none",
         duration: 1000
       });

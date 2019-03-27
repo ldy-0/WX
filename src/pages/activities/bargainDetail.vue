@@ -112,7 +112,7 @@ page {
   justify-content: space-between;
   align-items: center;
   height: 88rpx;
-  margin: 20rpx 0;
+  margin: 10rpx 0;
   padding: 0 19rpx;
   background: #fff;
   color: #888888;
@@ -296,6 +296,17 @@ page {
   align-items: center;
   border-top: 1rpx solid #e6e6e6;
 }
+.warp_btn2 {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  border-top: 1rpx solid #e6e6e6;
+}
+.share_btn{
+  width: 350rpx;
+}
 .add_btn,
 .buy_btn {
   width: 200rpx;
@@ -303,7 +314,7 @@ page {
   height: 76rpx;
   line-height: 76rpx;
   border-radius: 10rpx;
-  margin-right: 20rpx;
+  margin:0 10rpx;
 }
 .warp_btn .buttonStyle {
   text-align: center;
@@ -323,6 +334,9 @@ page {
 .buy_btn {
   color: #fff;
   background: #f17f30;
+}
+.share_btn{
+  width: 350rpx;
 }
 .warp_btn .appointment-btn {
   width: 430rpx;
@@ -544,156 +558,8 @@ page {
   width: 48rpx;
   height: 12rpx;
 }
-.groupon-box {
-  width: 580rpx;
-  border-radius: 15rpx;
-  background: #fff;
-}
-.groupon-txt1 {
-  font-size: 34rpx;
-  width: 100%;
-  text-align: center;
-  padding-top: 55rpx;
-  padding-bottom: 20rpx;
-}
-.groupon-txt2 {
-  width: 100%;
-  text-align: center;
-  font-size: 28rpx;
-}
-.groupon-txt2 text {
-  color: #af0000;
-}
-.groupon-txt3 {
-  font-size: 26rpx;
-  color: #888888;
-}
-.groupon-txt3Color {
-  color: #ff7900;
-}
-.groupon-txt4 {
-  font-size: 28rpx;
-  color: #222;
-}
-.groupon-txt5 {
-  display: flex;
-  align-items: center;
-}
-.groupon-txt5 text {
-  padding-right: 10rpx;
-  font-size: 22rpx;
-  color: #888;
-}
-.groupon-tag {
-  border-top: 1rpx solid #f4f4f4;
-  padding: 20rpx;
-  background: #fff;
-}
-.groupon-tag1 {
-  font-size: 28rpx;
-  color: #888;
-  padding-right: 16rpx;
-  padding-top: 4rpx;
-}
-.groupon-tag2 {
-  padding: 10rpx 24rpx;
-  font-size: 28rpx;
-  color: #fff;
-  background: #feaa26;
-  border-radius: 25rpx;
-}
-.groupon-tag3 {
-  width: 290rpx;
-  height: 50rpx;
-  color: #fff;
-  font-size: 28rpx;
-  text-align: center;
-  line-height: 50rpx;
-  border-radius: 25rpx;
-  margin-bottom: 20rpx;
-  background: #feaa26;
-}
 .sales-box {
   display: flex;
-}
-.groupon-btn {
-  margin: 0 auto;
-  width: 500rpx;
-  height: 86rpx;
-  text-align: center;
-  line-height: 86rpx;
-  background-color: #ff7900;
-  border-radius: 10rpx;
-  font-size: 34rpx;
-  margin-bottom: 37rpx;
-  color: #fff;
-}
-.groupon-imgList {
-  margin: 40rpx 30rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.grouponer-image {
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 50%;
-  background: #f1f1f2;
-  border: 1rpx dotted #a0a0a0;
-  margin-right: 20rpx;
-}
-.groupon-list {
-  background: #fff;
-}
-.groupon-mb {
-  margin-bottom: 0;
-}
-.groupon-listBox {
-  margin: 0 20rpx;
-  padding: 20rpx;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  border-bottom: 1rpx solid #e6e6e6;
-}
-.groupon-details {
-  display: flex;
-  width: 490rpx;
-  padding-left: 30rpx;
-  height: 80rpx;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.groupon-detailsOne {
-  font-size: 24rpx;
-  color: #222222;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-.groupon-bottom {
-  font-size: 24rpx;
-}
-.groupon-bottom text {
-  color: #af0000;
-}
-.groupon-goBtn {
-  width: 120rpx;
-  height: 44rpx;
-  color: #ff7900;
-  font-size: 28rpx;
-  text-align: center;
-  line-height: 44rpx;
-  border-radius: 10rpx;
-  border: 1rpx solid #ff7900;
-}
-.groupon-active {
-  width: 60rpx;
-  height: 60rpx;
-  border-radius: 50%;
-  overflow: hidden;
 }
 .headimg-itemTxt {
   overflow: hidden;
@@ -729,10 +595,198 @@ page {
   margin-right: 5rpx;
   margin-left: 5rpx;
 }
+/*The goodsDetail page's bargain-slide module by xp*/
+.bargain {
+  height: 100px;
+  background: #fff;
+  margin-bottom: 10rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.clearfix:after {
+  content: " ";
+  display: block;
+  clear: both;
+  height: 0;
+}
+.clearfix {
+  zoom: 1;
+}
+.slide {
+  width: 640rpx;
+  margin: 0 auto;
+  height: 60rpx;
+  box-sizing: border-box;
+  position: relative;
+  margin-top: 60rpx;
+  background: #fff;
+}
+.slide-down {
+  width: 100%;
+  background: #ff8c49;
+  border-radius: 10rpx;
+  height: 40rpx;
+  position: absolute;
+}
+.slide-up {
+  width: 80%;
+  background: linear-gradient(to left, #f2e021 0%, #f9b635 31%, #ff8c49 100%);
+  height: 40rpx;
+  border-radius: 10rpx;
+  position: absolute;
+}
+.slide-price {
+  width: 640rpx;
+  margin: 0 auto;
+}
+.slide-price text {
+  font-size: 26rpx;
+  color: #888;
+}
+.slide-price text:first-of-type {
+  float: left;
+  text-decoration: line-through;
+}
+.slide-price text:last-of-type {
+  float: right;
+}
+.slide-bargain {
+  width: 127rpx;
+  height: 48rpx;
+  position: absolute;
+  top: -100%;
+  left: 80%;
+}
+.slide-bargain image {
+  width: 100%;
+  height: 100%;
+}
+.slide-bargain text {
+  font-size: 24rpx;
+  color: #fff;
+  position: absolute;
+  left: 5rpx;
+  top: 5rpx;
+  white-space: nowrap;
+}
+.list-btn {
+  width: 640rpx;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-top: 40rpx;
+}
+.list-btn_item {
+  width: 240rpx;
+  height: 70rpx;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.btn-bg {
+  width: 100%;
+  height: 100%;
+}
+.btn-icon {
+  position: absolute;
+  top: 50%;
+  left: 20%;
+  transform: translateY(-50%);
+  width: 30rpx;
+  height: 32rpx;
+}
+.list-btn_item text {
+  position: absolute;
+  top: 50%;
+  left: 35%;
+  transform: translateY(-50%);
+  font-size: 28rpx;
+  color: #f3f3f3;
+  font-family: PingFang-SC-Medium;
+}
+
+.bang-container {
+  width: 100%;
+  height: 890rpx;
+}
+.bang-title {
+  width: 385rpx;
+  height: 96rpx;
+  margin: 0 auto;
+  position: relative;
+}
+.bang-title text {
+  font-size: 34rpx;
+  color: #000;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.bang-goods {
+  background: #f4f4f4;
+  border-top: 10rpx solid #000;
+  border-bottom: 1px solid #000;
+  width: 644rpx;
+  height: 100rpx;
+  box-sizing: border-box;
+  text-align: center;
+  line-height: 100rpx;
+  margin-top: 20rpx;
+  margin: 0 auto;
+  margin-top: 10rpx;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.bang-list {
+  height: 700rpx;
+  width: 100%;
+  margin: 0 auto;
+}
+.table {
+  margin-top: 20rpx;
+}
+.table .thead,
+.table .tbody {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+.table .thead {
+  margin-bottom: 20rpx;
+  font-weight: 800;
+}
+.th {
+  font-size: 32rpx;
+  color: #222;
+  width: 200rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+.td {
+  font-size: 28rpx;
+  width: 200rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+.td image {
+  width: 100rpx;
+  height: 90rpx;
+  border-radius: 50%;
+}
 </style>
 
 <template>
   <view class="container">
+    <!-- 规格 -->
     <view wx:if="{{showStandard}}" class="standard-box">
       <view class="product">
         <view class="base_info">
@@ -780,110 +834,83 @@ page {
           </view>
       </view>
     </view>
+    <!-- 商品信息 -->
     <view>
       <view class="swiper-box">
         <swiper class="goods-swiper" indicator-active-color="{{indicatorActiveColor}}" indicator-color="{{indicatorColor}}" indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" circular="true" bindchange="swiperchange">
-          <repeat wx:if="{{TYPE== 'normal'}}" for="{{goods.goodsimagesList}}" key="index" index="index" item="item">
+          <repeat for="{{goods.goodsimages}}" key="index" index="index" item="item">
             <swiper-item class="goods_swiper_itme">
               <image src="{{item.goodsimage_url}}" mode="aspectFill">
             </swiper-item>
           </repeat>
-          <repeat wx:if="{{TYPE== 'group'||TYPE== 'grouponing'}}" for="{{goods.images}}" key="index" index="index" item="item">
-            <swiper-item class="goods_swiper_itme">
-              <image src="{{item}}" mode="aspectFill">
-            </swiper-item>
-          </repeat>
         </swiper>
-        <view class="instructions" wx:if="{{TYPE== 'normal'}}">{{current}}/{{goods.goodsimagesList.length}}</view>
-        <view class="instructions" wx:if="{{TYPE== 'group' ||TYPE== 'grouponing'}}">{{current}}/{{goods.images.length}}</view>
+        <view class="instructions">{{current}}/{{goods.goodsimages.length}}</view>
       </view>
       <view class="product_info">
         <view class="goods">
           <view class="goods_main_info">
             <view class="column">
               <view class="product_title">{{goods.goods_name}}</view>
-              <view class="product_title" wx:if="{{TYPE== 'group'||TYPE== 'grouponing'}}">{{goods.spec ||'单规格商品'}}</view>
             </view>
-            <view wx:if="{{TYPE== 'normal'}}" class="column_center" @tap="enshrine">
-              <image src="{{goods.enshrine_type==1?'../../images/icon_pingfen_hl@2x.png':'../../images/icon_pingfen@2x.png'}}" class="qr_icon">
-                {{goods.enshrine_type==1?'已收藏':'收藏'}}
-            </view>
-            <view wx:if="{{TYPE== 'normal'}}" class="column_center" @tap="showShare">
+            <view class="column_center" @tap="showShare">
               <image src="../../images/icon_6_fenxiang@2x.png" class="share_icon">分享
             </view>
           </view>
           <view class="product_price">
-            <text class="text11">¥</text>
-            {{goods.goods_price}}
-            <text class="text3" wx:if="{{TYPE== 'group'||TYPE== 'grouponing'}}">¥{{goods.goods_marketprice}}</text>
-            <text class="text22">运费:¥{{goods.goods_freight}}</text>
-            <text class="text22" wx:if="{{TYPE== 'normal'}}">已售：{{goods.goods_salenum}}</text>
+            <text class="text11">¥活动价:</text>
+            {{goods.cutprice.goods_price}}
+            <text class="text3">¥{{goods.goods.goods_marketprice}}</text>
+            <text class="text22">运费:¥{{goods.goods.goods_freight}}</text>
+            <!-- <text class="text22">已售：{{goods.goods.goods_salenum}}</text> -->
           </view>
-          <!-- <view class="goods_other_info">
-              <view class="text">库存：{{goods.goods_storage}}</view>
-              <view class="text">已售：{{goods.goods_salenum}}</view>
-            </view>-->
         </view>
       </view>
-      <view wx:if="{{TYPE== 'normal'}}" class="standard" @tap="goStandard">
-        <view>规格 {{isMultiSku ? multiSku.skuStr : goods.standard}}</view>
-        <image src="../../images/icon_zuojiantou@2x.png">
+      <view class="standard" @tap="goStandard">
+        <!-- <view>规格 {{isMultiSku ? multiSku.skuStr : goods.standard}}</view>
+        <image src="../../images/icon_zuojiantou@2x.png"> -->
+        <view>规格：{{goods.spec||'单规格'}}</view>
       </view>
-      <view wx:if="{{TYPE=='grouponing'}}">
-        <view class="countDown-box" wx:if="{{pintuanDetails.pintuangroup_state == 1}}">
-          <view class="countDown-txt">活动
-            <text class="countDown-txt1">结束</text>倒计时
-            <text class="countDown-txt3">{{wxTimerList['wxTimer1'].d!=0?wxTimerList['wxTimer1'].d+'天':''}}</text>
-            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].h1}}</text>
-            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].h2}}</text>时
-            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].m1}}</text>
-            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].m2}}</text>分
-            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].s1}}</text>
-            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].s2}}</text>秒
+      <view class="bargain" wx:if="{{TYPE=='bargaining'}}">
+        <view class="slide clearfix">
+          <view class="slide-down"></view>
+          <view class="slide-up" style="width:{{bargainPercent}}%"></view>
+          <view class="slide-bargain" style="left:{{bargainPercent>80?'80':bargainPercent}}%">
+            <image src='../../images/bargain_3@2x.png' />
+            <text wx:if="{{bargainPercent>=100}}">砍价完成了</text>
+            <text wx:else>还剩￥{{bargainInfo.rest}}</text>
           </view>
         </view>
-        <view class="countDown-box" wx:if="{{pintuanDetails.pintuangroup_state != 1}}">
-          <view class="countDown-txt">
-            <text class="countDown-txt1">活动结束</text>
-          </view>
+        <view class="slide-price clearfix">
+          <text>原价¥{{bargainInfo.goods_price}}</text>
+          <text>底价¥{{bargainInfo.floor_price}}</text>
         </view>
-        <view class="headline-txt1">参团人员</view>
-        <view class="headimg-list">
-          <repeat for="{{pintuanDetails.members}}" item="item">
-            <view class="headimg-item">
-              <image class="headimg-itemImg" src="{{item.member_avatar}}">
-                <view class="headimg-itemTxt">{{item.member_name}}</view>
+      </view>
+      <view class="bang-container" wx:if="{{TYPE=='bargaining'}}">
+        <view class="bang-title">
+          <text>助砍好友</text>
+        </view>
+        <scroll-view scroll-y class="bang-list" bindscrolltolower='showMore'>
+          <view class="table">
+            <view class="thead">
+              <view class="th">昵称</view>
+              <view class="th">头像</view>
+              <view class="th">已砍价格</view>
             </view>
-          </repeat>
-        </view>
-      </view>
-      <view class="groupon-list" wx:if="{{groupListshow}}">
-        <view class="standard groupon-mb" @tap="goGroupList">
-          <view class="groupon-txt4">{{groupInfo.pinsum}}人在开团，可直接参与</view>
-          <view class="groupon-txt5">
-            <text>查看更多</text>
-            <image src="../../images/icon_zuojiantou@2x.png">
-          </view>
-        </view>
-        <repeat for="{{groupInfo.pinlist}}" item="item" index="index">
-          <view class="groupon-listBox">
-            <image class="groupon-active" src="{{item.pintuangroup_avatar}}">
-              <view class="groupon-details">
-                <view class="groupon-detailsOne">{{item.pintuangroup_headname}}</view>
-                <view class="groupon-bottom" wx:if="{{item.pintuangroup_state == 1}}">剩余
-                  <text>{{wxTimerList[index].d!=0?wxTimerList[index].d+'天':''}} {{wxTimerList[index].wxTimer}}</text>结束，差
-                  <text>{{item.pintuangroup_surplus}}</text>人
-                </view>
-                <view class="groupon-bottom" wx:if="{{item.pintuangroup_state != 1}}">已结束</view>
+            <view class="tbody" wx:if="{{bargainlistData.length==0}}">暂无砍价记录</view>
+            <view class="tbody" wx:for="{{bargainlistData}}" wx:key>
+              <view class="td" style="color:#ff7900;">{{item.member_name}}</view>
+              <view class="td">
+                <image src='{{item.member_avatar}}' />
               </view>
-              <view class="groupon-goBtn" @tap="gogroupon" data-groupondata="{{item}}">去拼团</view>
+              <view class="td">{{item.bargain_money}}元</view>
+            </view>
           </view>
-        </repeat>
+        </scroll-view>
       </view>
       <view class="comment" wx:if="{{comment[0]}}">
         <view class="comment-top">
           <view>宝贝评价({{comment.length}})</view>
-          <view class="more_btn" @tap="goComment" data-goodid="{{goods.SKUList[0].goods_id || goods.goods_id}}">
+          <view class="more_btn" @tap="goComment">
             <text>查看全部</text>
             <image class="more_btnImg" src="../../images/icon_chakanquanbu@2x.png">
           </view>
@@ -913,8 +940,9 @@ page {
         <view class="space"></view>
       </view>
     </view>
+    <!-- bottom bar -->
     <view class="bottom_bar">
-      <view class="icon">
+      <view class="icon" wx:if="{{TYPE == 'bargain'}}">
         <navigator open-type="switchTab" url="/pages/home" hover-class="none">
           <image class="tab-icon2" src="../../images/icon_2_shouye@2x.png">
             <view>主页</view>
@@ -923,18 +951,13 @@ page {
           <image class="tab-icon1" src="../../images/icon_2_kefu@2x.png">
             <view>客服</view>
         </button>
-        <view class="red_dot_wrap" wx:if="{{TYPE== 'normal'}}">
-          <image class="tab-icon3" src="../../images/icon_2_gouwuche@2x.png" @tap="goShoppingCart">
-            <view>购物车</view>
-            <view class="red_dot">{{carSize}}</view>
-        </view>
       </view>
-      <view class="warp_btn">
-        <view wx:if="{{TYPE== 'normal'}}" class="add_btn" @tap="addShoppingCart()">加入购物车</view>
-        <view wx:if="{{TYPE== 'normal'}}" class="buy_btn" @tap="firmOrder()">立即购买</view>
-        <view wx:if="{{TYPE== 'group'}}" class="buy_btn group_btn" @tap="firmGroupOrder()">发起团购</view>
-        <view class="buy_btn group_btn" @tap="joinGroup" wx:if="{{TYPE=='grouponing'&&pintuanDetails.pintuangroup_state == 1&&pintuanDetails.is_join != 1}}">参加团购</view>
-        <view class="buy_btn group_btn group_btnBg" wx:if="{{TYPE=='grouponing'&&pintuanDetails.pintuangroup_state != 1||TYPE=='grouponing'&&pintuanDetails.is_join == 1}}">参加团购</view>
+      <view class="{{TYPE=='bargain'?'warp_btn':'warp_btn2'}}">
+        <view class='add_btn share_btn' wx:if="{{TYPE == 'bargaining'&&!share}}" @tap='getBargainQT'>生成海报</view>
+        <button class='buy_btn share_btn' wx:if="{{TYPE == 'bargaining'&&!share}}" open-type="share" id='1'>邀请好友砍价</button>
+        <view class='buy_btn share_btn' wx:if="{{TYPE == 'bargaining'&&share}}" @tap='goJoin'>我也要参加</view>
+        <view class='buy_btn share_btn' wx:if="{{TYPE == 'bargaining'&&share}}" @tap='goBargain'>帮忙砍价</view>
+        <view class='buy_btn appointment-btn' wx:if="{{TYPE == 'bargain'}}" @tap='startBargain'>发起砍价</view>
       </view>
     </view>
     <!-- QT -->
@@ -960,6 +983,7 @@ page {
 <script>
 import wepy from "wepy";
 import { shttp } from "../../utils/http";
+import calc from "calculatorjs";
 import { getCode } from "../../utils/user-tools";
 import getTimes from "../../utils/formatedate.js";
 import multiSku from "../../components/multiSku";
@@ -972,15 +996,24 @@ import {
 } from "../../utils/tools";
 export default class GoodsDetails extends wepy.page {
   config = {
-    navigationBarTitleText: "商品详情"
+    navigationBarTitleText: "砍价商品详情"
   };
   data = {
+    //砍价
+    canbargain:false,
+    memberId:0,
+    active_id:null,
+    bargainPercent:0,
+    bargainInfo:{},
+    bargainlistData:[],
+    //轮播配置
+    share: false,
     indicatorDots: false,
     autoplay: true,
     interval: 3000,
     duration: 200,
     indicatorActiveColor: "#333333",
-    indicatorColor: "#FFFFFF", //以上为轮播配置
+    indicatorColor: "#FFFFFF",
     //是否添加获取手机号按钮
     isPhone: true,
     //个人信息
@@ -1003,7 +1036,7 @@ export default class GoodsDetails extends wepy.page {
     isShowQT: false,
     current: 1,
     isShare: false,
-    TYPE: "normal", //normal:普通 groupon:团购 grouponing：团购进行中 bargain：砍价：bargain 砍价进行中：bargaining
+    TYPE: "bargain", //normal:普通 groupon:团购 grouponing：团购进行中 bargain：砍价 bargaining 砍价进行中
     groupListshow: false,
     timeDatalist: [],
     wxTimer1: null,
@@ -1018,7 +1051,6 @@ export default class GoodsDetails extends wepy.page {
       amount: "goods_storage"
     }
   };
-
   computed = {
     isShow() {
       return this.showStandard;
@@ -1062,29 +1094,52 @@ export default class GoodsDetails extends wepy.page {
       return goods && goods.spec_name && goods.spec_name.length;
     }
   };
-
   components = {
     multiSku
   };
   methods = {
     onShareAppMessage: function(res) {
-      return {
-        title: this.goods.goods_name,
-        path: `pages/store/goodsDetails?shareType=activity&goods_commonid=${
-          this.goods.goods_commonid
-        }`,
-        success: function(res) {
-          // 转发成功
-          wx.showToast({
-            title: "转发成功",
-            icon: "success",
-            duration: 2000
-          });
-        },
-        fail: function(res) {
-          // 转发失败
+      let shopId = wx.getStorageSync("shopId");
+      let member_id = wx.getStorageSync("memberInfo").member_id;
+      console.log(this.id);
+      console.log(this.active_id);
+      if (res.from === "button") {
+        if (res.target.id == 1) {
+          return {
+            title: this.goods.goods_name,
+            path: `pages/activities/bargainDetail?scene=${this.id};${this.active_id};bargaining;true;${member_id}`,
+            success: function(res) {
+              // 转发成功
+              wx.showToast({
+                title: "转发成功",
+                icon: "success",
+                duration: 2000
+              });
+            },
+            fail: function(res) {
+              // 转发失败
+            }
+          };
+        }else {
+          return {
+            title: this.goods.goods_name,
+            path: `pages/activities/bargaining?goods_commonid=${
+              this.id
+            }`,
+            success: function(res) {
+              // 转发成功
+              wx.showToast({
+                title: "转发成功",
+                icon: "success",
+                duration: 2000
+              });
+            },
+            fail: function(res) {
+              // 转发失败
+            }
+          };
         }
-      };
+      }
     },
     checked: index => {
       this.isChecked = index;
@@ -1118,73 +1173,6 @@ export default class GoodsDetails extends wepy.page {
       this.goods.goods_num = this.size;
       this.$apply();
     },
-    async addShoppingCart() {
-      if (!this.goods.standard) {
-        return this.goStandard();
-      }
-      if (this.goods.goods_storage < 1) {
-        return wx.showToast({
-          title: "库存不足",
-          icon: "none",
-          duration: 1000
-        });
-      }
-      console.log(this.goods);
-
-      const res = await shttp
-        .post("/api/v2/member/cart")
-        .send({
-          goods_id: this.goods.goods_id,
-          quantity: this.goods.goods_num || 1
-        })
-        .end();
-      if (res.data.cart_num) {
-        this.showStandard = false;
-        wx.showToast({
-          title: "成功加入购物车",
-          icon: "success",
-          duration: 1000
-        });
-        this.getShopCartNum();
-      } else {
-        return wx.showToast({
-          title: res.error,
-          icon: "none",
-          duration: 1000
-        });
-      }
-      this.$apply();
-    },
-    goShoppingCart() {
-      wx.switchTab({
-        url: "/pages/shoppingCart"
-      });
-    },
-
-    firmOrder() {
-      //未设置规格
-      if (!this.goods.standard) {
-        return this.goStandard();
-      }
-      if (this.goods.goods_storage < 1) {
-        return showFailToast("库存不足");
-      }
-      wx.navigateTo({
-        url:
-          "/pages/store/firmOrder?type=nocart&goods=" +
-          encodeURIComponent(JSON.stringify(this.goods))
-      });
-    },
-    firmGroupOrder() {
-      if (this.goods.goods_storage < 1) {
-        return showFailToast("库存不足");
-      }
-      wx.navigateTo({
-        url: `/pages/store/firmOrder?type=nocart&goods=${encodeURIComponent(
-          JSON.stringify(this.goods)
-        )}&groupontype=group`
-      });
-    },
     // udpate multi Sku
     updateSku(price, skuStr, img, goods) {
       // console.error('udpatesku', price, skuStr, goods);
@@ -1204,143 +1192,46 @@ export default class GoodsDetails extends wepy.page {
     this.id = option.goods_commonid;
     this.scene = decodeURIComponent(option.scene);
   }
-  onShow() {
-    if (this.timeDatalist.length != 0) {
-      this.timeDatalist.forEach(item => {
-        item.stop();
-      });
-      this.timeDatalist = [];
-      this.wxTimerList = {};
-    }
-    if (this.wxTimer1 != null) {
-      this.wxTimer1.stop();
-      this.wxTimerList = {};
-      this.wxTimer1 = null;
-    }
-    this.wxUserInfo = wx.getStorageSync("memberInfo");
-    wx.showLoading({
-      title: "加载中"
-    });
-    console.log(this.scene);
+  async onShow() {
+    this.memberId = wx.getStorageSync("memberInfo").member_id;
+    console.log(this.memberId);
     if (this.scene != "undefined") {
       let qrarry = this.scene.split(";");
-      //TODO:分享参数数组，0位为类型,1位为相关id
-      if (qrarry[0] == "normal") {
-        this.id = qrarry[1];
-      } else {
-        this.pintuangroup_id = qrarry[1];
-      }
-      this.getType(qrarry[0]);
-    } else {
-      // revert sku info/恢复跳转前的规格设置
-      if (this.multiSku && this.multiSku.goods) {
-        let goods = this.multiSku.goods;
-        this.goods.standard = goods;
-        this.goods.goods_storage = goods.goods_storage;
-        this.goods.goods_price = goods.goods_price;
-        this.goods.goods_id = goods.goods_id;
-        this.goods.goods_freight = goods.goods_freight;
-        return wx.hideLoading();
-      }
-
-      this.getType(this.options.type);
+      this.id = qrarry[0];
+      this.active_id = qrarry[1];
+      this.TYPE = qrarry[2];
+      if (qrarry[3] == "false") this.share = false;
+      if (qrarry[3] == "true") this.share = true;
+      this.memberId = qrarry[4];
     }
-    if (!this.wxUserInfo.wx_name) {
-      wx.navigateTo({
-        url: `/pages/authorization?shareType=activity`
-      });
+    if(this.TYPE == 'bargaining'){
+      this.getBargainGoods() ;
+      this.bargainList();
     }
-    this.getShopCartNum();
+    await this.goodsDetails(this.id);
+    this.getComment(this.goods.goods.goods_id);
   }
-  getType(type) {
-    console.log(type);
-    switch (type) {
-      case "group":
-        this.TYPE = type;
-        this.groupGoodsDetails(this.id);
-        break;
-      case "grouponing":
-        this.TYPE = type;
-        this.getgroupDetails(this.pintuangroup_id);
-        break;
-      default:
-        this.TYPE = "normal";
-        this.goodsDetails(this.id);
-        break;
-    }
-  }
-  //购物车数量
-  async getShopCartNum() {
-    console.log("开始请求购物车数量");
-    const res = await shttp.get(`/api/v2/member/cart`).end();
-    console.log(res);
-    if (!res.data.store_cart_list["1"]) {
-      this.carSize = 0;
-    } else {
-      this.carSize = res.data.store_cart_list["1"].length;
-    }
-
-    this.$apply();
-  }
-  //商品详情
+  //商品详情================================================
   async goodsDetails(id) {
-    const res = await shttp.get(`/api/v2/member/goodscommon/${id}`).end();
+    const res = await shttp.get(`/api/v2/member/cutgoods/${id}`).end();
     if (res.status == 0) {
-      this.goods = res.data;
-      this.goods.goods_salenum = this.goods.goods_faker_salenum
-        ? this.goods.goods_faker_salenum
-        : 0;
-      if (this.goods.SKUList.length > 0) {
-        this.goods.SKUList.forEach(item => {
-          this.goods.goods_salenum += item.goods_salenum;
-        });
-        this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
-      }
-      if (res.data.spec_value) {
-        this.standards = res.data.spec_value;
-      } else {
-        this.standards = ["统一规格"];
-      }
-
-      // set multi sku
-      if (this.goods.spec_value) {
-        this.multiSku.price = this.getPrice(
-          this.goods.SKUList.map(v => v.goods_price)
-        );
-      }
-
-      this.getComment(this.goods.SKUList[0].goods_id);
-    }
-
-    wx.hideLoading();
-    this.$apply();
-  }
-  //团购商品详情
-  async groupGoodsDetails(id) {
-    const res = await shttp.get(`/api/v2/member/goodsgroupbuy/${id}`).end();
-    if (res.status == 0) {
+      let that = this;
       this.goods = res.data;
       //规格显示
-      if(this.goods.goods.goods_spec){
+      if (this.goods.goods.goods_spec) {
         let spec = this.goods.goods.goods_spec;
-        this.goods.spec = '';
-        for(let i in spec){
-          this.goods.spec +=`${i}:${spec[i]}/ `;
+        this.goods.spec = "";
+        for (let i in spec) {
+          this.goods.spec += `${i}:${spec[i]}/ `;
         }
-        this.goods.spec = this.goods.spec.replace(/\/\s$/g,'');
+        this.goods.spec = this.goods.spec.replace(/\/\s$/g, "");
       }
-      this.goods.goods_salenum = this.goods.goods.goods_salenum;
-      this.goods.goods_storage = this.goods.goods.goods_storage;
-      this.goods.goods_name = this.goods.goods.goods_name;
-      this.goods.goods_freight = this.goods.goods.goods_freight;
-      this.goods.goods_marketprice = this.goods.goods.goods_marketprice;
-      this.goods.goods_image = this.goods.goods.goods_image;
-      this.standards = ["统一规格"];
-      this.getComment(this.goods.goods_id);
-      if (this.TYPE == "group") {
-        this.getGroupList(this.goods.goods_id);
-      }
-    } else {
+      //传参到firmOrder的解析
+      this.goods.spec_name = this.goods.goods.goods_spec;
+      this.goods.goods_image = res.data.goods.goods_image;
+      this.goods.goods_name = res.data.goods.goods_name;
+      this.goods.goods_body = res.data.goodscommon.goods_body;
+    }else {
       const msg = res.error;
           wx.showModal({
             title: '提示',
@@ -1354,32 +1245,119 @@ export default class GoodsDetails extends wepy.page {
             }
           });
     }
-
     wx.hideLoading();
     this.$apply();
   }
-
-  goStandard() {
-    this.showStandard = true;
-    if (this.standards[0] == "统一规格") {
-      this.isChecked = 0;
-      this.goods.standard = "统一规格";
-      this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
-      this.goods.goods_price = this.goods.SKUList[0].goods_price;
-      this.goods.goods_id = this.goods.SKUList[0].goods_id;
-      this.goods.goods_freight = this.goods.SKUList[0].goods_freight;
-      this.goods.goods_num = this.size;
-    }
-    if (!this.goods.standard) {
+  //砍价===================================================
+  async startBargain() {
+    let send = { cutprice_id: this.id };
+    const res = await shttp
+      .post(`/api/v2/member/cutprice`)
+      .send(send)
+      .end();
+    if (res.status == 0) {
+      this.TYPE = "bargaining";
+      this.showStandard = false;
+      this.active_id = res.data;
+      this.getBargainGoods();
+    } else {
       wx.showToast({
-        title: "请选择规格!",
+        title: res.error,
         icon: "none",
         duration: 1000
       });
     }
     this.$apply();
   }
-  //商品评论
+  async getBargainGoods() {
+    const res = await shttp
+      .get(`/api/v2/member/cutprice`)
+      .query({
+        cutprice_activity_id:this.active_id,
+        member_id:this.memberId
+      })
+      .end();
+    if (res.status == 0) {
+      this.bargainInfo = res.data[0];
+      this.bargainInfo.rest = calc.sub(Number(this.bargainInfo.current_price), Number(this.bargainInfo.floor_price));
+      if (Number(this.bargainInfo.current_price) <= Number(this.bargainInfo.floor_price)) {
+        this.bargainPercent = 100;
+      } else {
+        this.bargainPercent =
+          calc.div(
+            calc.sub(Number(this.bargainInfo.goods_price), Number(this.bargainInfo.current_price)),
+            calc.sub(Number(this.bargainInfo.current_price), Number(this.bargainInfo.floor_price))
+          ) * 100;
+      }
+    }
+    this.$apply();
+  }
+  async partnerList() {
+    const res = await shttp
+      .get(`/api/v2/member/cutprice/${this.active_id}`)
+      .end();
+    if (res.status == 0) {
+      this.bargainlistData = res.data;
+    }
+    this.$apply();
+  }
+  async bargainList() {
+    const res = await shttp
+      .get(`/api/v2/member/cutprice/${this.active_id}`)
+      .end();
+    if (res.status == 0) {
+      let tempdata = res.data;
+      tempdata.forEach(item => {
+        item.member_name = item.member.member_truename;
+        item.member_avatar = item.member.member_avatar;
+      });
+      this.bargainlistData = tempdata;
+    }
+    this.$apply();
+  }
+  async goBargain() {
+    this.canbargain = true;
+    if (this.memberId == wx.getStorageSync("memberInfo").member_id) {
+      return wx.showModal({
+        title: "提示",
+        content: "不能帮自己砍价！",
+        showCancel: false
+      });
+    }
+    const res = await shttp
+      .put("/api/v2/member/cutprice/"+this.active_id)
+      .end();
+    if (res.status == 0) {
+      this.getBargainGoods();
+      this.bargainList();
+      wx.showSuccessToast({
+        title: "帮砍成功，谢谢您的参与",
+        icon: "none",
+        duration: 2000
+      })
+    } else {
+      wx.showToast({
+        title: res.error,
+        icon: "none",
+        duration: 2000
+      });
+    }
+  }
+  async goJoin() {
+    if (this.canbargain) {
+      wx.redirectTo({
+        url: `/pages/activities/bargainDetail?goods_commonid=${
+          this.id
+        }`
+      });
+    } else {
+      wx.showToast({
+        title: "请先帮好友砍价",
+        duration: 1000
+      });
+    }
+  }
+  //评论====================================================
   async getComment(id) {
     let send;
     send = {
@@ -1404,15 +1382,13 @@ export default class GoodsDetails extends wepy.page {
 
     this.$apply();
   }
-  //评论列表
   goComment(e) {
-    let id = e.currentTarget.dataset.goodid;
     wx.navigateTo({
-      url: `./commentList?goodsId=${id}`
+      url: `../store/commentList?goodsId=${this.goods.goods.goods_id}`
     });
     this.$apply();
   }
-  //获取二维码
+  //获取二维码===============================================
   async getQrCode() {
     this.isShowQT = true;
     this.$apply();
@@ -1435,8 +1411,64 @@ export default class GoodsDetails extends wepy.page {
     const res = await shttp
       .post("/api/v2/member/wxcode")
       .send({
-        page: "pages/store/goodsDetails",
-        scene: "normal;" + this.id,
+        page: "pages/activities/bargainDetail",
+        scene: this.id,
+        width: 350, // 430
+        is_hyaline: true // false,
+      })
+      .end();
+    let qrpicUrl = res.data.url;
+    await this.drawImage(
+      {
+        img: qrpicUrl.replace(/http/, "https"),
+        top: 320,
+        left: 180,
+        width: 80,
+        height: 80
+      },
+      content
+    );
+    content.fillStyle = "#000000";
+    // content.setTextAlign("center");
+    content.setFontSize(14);
+    content.fillText(this.goods.goods_name, 20, 315, 140);
+    content.fillStyle = "#dd3d27";
+    content.setFontSize(14);
+    content.fillText("￥", 20, 380);
+    content.setFontSize(21);
+    content.fillText(this.goods.goods_price, 32, 380);
+    content.fillStyle = "#b9b9b9";
+    content.setTextAlign("center");
+    content.setFontSize(6);
+    content.fillText("扫描或长按小程序码", 220, 410);
+    content.draw(true);
+    wx.hideLoading();
+  }
+  async getBargainQT() {
+    this.isShowQT = true;
+    this.$apply();
+    this.isShare = false;
+    wx.showLoading({ title: "loading..." });
+    let content = wx.createCanvasContext("canvas");
+    content.setFillStyle("#ffffff");
+    content.fillRect(0, 0, 275, 440);
+    let goodsImg = this.goods.goods_image;
+    await this.drawImage(
+      {
+        img: goodsImg,
+        top: 0,
+        left: 0,
+        width: 275,
+        height: 275
+      },
+      content
+    );
+    const member_id = wx.getStorageSync("memberInfo").member_id;
+    const res = await shttp
+      .post("/api/v2/member/wxcode")
+      .send({
+        page: "pages/activities/bargainDetail",
+        scene: this.id+";"+this.active_id+";"+"bargaining;"+"true;"+member_id,
         width: 350, // 430
         is_hyaline: true // false,
       })
@@ -1548,167 +1580,47 @@ export default class GoodsDetails extends wepy.page {
     this.isShowQT = false;
     this.$apply();
   }
-  swiperchange(e) {
-    this.current = e.detail.current + 1;
+  getPrice(priceArr) {
+    let price = {};
+    price.min = Math.min.apply(null, priceArr);
+    price.max = Math.max.apply(null, priceArr);
+    return price.min == price.max ? price.min : `${price.min}-${price.max}`;
   }
-  async enshrine() {
-    const res = await shttp
-      .post("/api/v2/member/enshrine")
-      .send({
-        goods_commonid: this.id
-      })
-      .end();
-    if (res.status === 0) {
+  //规格选项============================================
+  goStandard() {
+    this.showStandard = true;
+    if (this.standards[0] == "统一规格") {
+      this.isChecked = 0;
+      this.goods.standard = "统一规格";
+      this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
+      this.goods.goods_price = this.goods.SKUList[0].goods_price;
+      this.goods.goods_id = this.goods.SKUList[0].goods_id;
+      this.goods.goods_freight = this.goods.SKUList[0].goods_freight;
+      this.goods.goods_num = this.size;
+    }
+    if (!this.goods.standard) {
       wx.showToast({
-        title: "收藏成功!",
-        icon: "success",
-        duration: 2000
-      });
-      this.goods.enshrine_type = 1;
-    } else if (res.status === 1) {
-      wx.showToast({
-        title: res.error,
+        title: "请选择规格!",
         icon: "none",
-        duration: 2000
+        duration: 1000
       });
     }
     this.$apply();
   }
-
+  deleteBtn() {
+    this.showStandard = false;
+  }
+  //share===================================================
   showShare() {
     this.isShare = true;
   }
   closeShare() {
     this.isShare = false;
   }
-  deleteBtn() {
-    this.showStandard = false;
+  swiperchange(e) {
+    this.current = e.detail.current + 1;
   }
-  //获取商品拼团列表
-  async getGroupList(id) {
-    const res = await shttp
-      .get(`/api/v2/member/groupbuy/${id}`)
-      .send({
-        pintuangroup_goods_id: id,
-        page: 1,
-        limit: 3,
-        pintuangroup_state: 1
-      })
-      .end();
-    if (res.status == 0 && res.data.length != 0) {
-      this.groupListshow = true;
-      let startTime = new Date().getTime();
-      this.groupInfo = res.data;
-      this.groupInfo.pinlist.forEach((item, index) => {
-        let endTime = item.pintuangroup_endtime * 1000;
-        if (startTime < endTime) {
-          let hour = dayjs(endTime).diff(dayjs(startTime), "hour");
-          let diffhour = hour * 60;
-          let minute = dayjs(endTime).diff(dayjs(startTime), "minute");
-          let diffminute = minute * 60;
-          minute -= diffhour;
-          let second = dayjs(endTime).diff(dayjs(startTime), "second");
-          second -= diffminute;
-          let beginTime = hour + ":" + minute + ":" + second;
-          let wxTimer = index;
-          wxTimer = new timer({
-            beginTime: beginTime,
-            name: wxTimer,
-            complete: function() {
-              item.pintuangroup_state = 0;
-            }
-          });
-          wxTimer.start(this);
-          this.timeDatalist.push(wxTimer);
-        } else {
-          item.pintuangroup_state = 0;
-        }
-      });
-    }
-    this.$apply();
-  }
-  //获取团详情
-  async getgroupDetails(id) {
-    const res = await shttp.get(`/api/v2/member/groupbuy/${id}/edit`).end();
-    if (res.status == 0) {
-      this.pintuanDetails = res.data;
-      //TODO:分享参团获取团详情后再获取团商品详情
-      this.groupGoodsDetails(res.data.rule_id);
-      //开启第一个定时器
-      if (this.pintuanDetails.pintuangroup_state == 1) {
-        let endTime = this.pintuanDetails.pintuangroup_endtime * 1000;
-        let startTime = new Date().getTime();
-        if (startTime < endTime) {
-          let hour = dayjs(endTime).diff(dayjs(startTime), "hour");
-          let diffhour = hour * 60;
-          let minute = dayjs(endTime).diff(dayjs(startTime), "minute");
-          let diffminute = minute * 60;
-          minute -= diffhour;
-          let second = dayjs(endTime).diff(dayjs(startTime), "second");
-          second -= diffminute;
-          let beginTime = hour + ":" + minute + ":" + second;
-          let that = this;
-          var wxTimer1 = new timer({
-            beginTime: beginTime,
-            name: "wxTimer1",
-            complete: function() {
-              that.pintuanDetails.pintuangroup_state = 0;
-            }
-          });
-          wxTimer1.start(this);
-          this.wxTimer1 = wxTimer1;
-        } else {
-          this.pintuanDetails.pintuangroup_state = 0;
-        }
-      }
-    }
-    this.$apply();
-  }
-  goGroupList() {
-    wx.navigateTo({
-      url: `groupon?commonid=${this.goods.goods_id}`
-    });
-  }
-  gogroupon(e) {
-    let groupondata = e.currentTarget.dataset.groupondata;
-    wx.navigateTo({
-      url: `/pages/store/goodsDetails?scene=${"grouponing;" +
-        groupondata.pintuangroup_id}`
-    });
-  }
-  joinGroup() {
-    this.goods.goods_id = this.pintuanDetails.pintuangroup_goods_id;
-    this.goods.goods_num = 1;
-    console.log("grouponing");
-    wx.navigateTo({
-      url: `/pages/store/firmOrder?type=nocart&groupontype=grouponing&grouponid=${
-        this.pintuangroup_id
-      }&goods=${encodeURIComponent(JSON.stringify(this.goods))}`
-    });
-  }
-  onUnload() {
-    if (this.wxTimer1 != null) {
-      this.wxTimer1.stop();
-      this.wxTimerList = {};
-      this.wxTimer1 = null;
-    }
-    if (this.timeDatalist.length != 0) {
-      this.timeDatalist.forEach(item => {
-        item.stop();
-      });
-      this.wxTimerList = {};
-      this.timeDatalist = [];
-    }
-  }
-
-  getPrice(priceArr) {
-    let price = {};
-
-    price.min = Math.min.apply(null, priceArr);
-    price.max = Math.max.apply(null, priceArr);
-
-    return price.min == price.max ? price.min : `${price.min}-${price.max}`;
-  }
+  onUnload() {}
 }
 </script>
 
