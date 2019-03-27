@@ -186,10 +186,12 @@ page {
       </view>
     </view>
     <view class="my_assets">
-      <view class="assets">
-          <text>0.00</text>
-          <view>余额</view>
-      </view>
+      <navigator  url="/pages/my/distribution">
+        <view class="assets">
+            <text>0.00</text>
+            <view>余额</view>
+        </view>
+      </navigator>
       <view class="assets">
           <text>0.00</text>
           <view>德分</view>
@@ -275,17 +277,22 @@ export default class Mine extends wepy.page {
       {
         name: "我的砍价",
         url: "/pages/activities/bargainOrder",
-        img: "../images/icon_tuangou@2x.png"
+        img: "../images/icon_4_wodekanjia@2x.png"
       },
       {
         name: "我的秒杀",
         url: "/pages/activities/seckillOrder",
-        img: "../images/icon_tuangou@2x.png"
+        img: "../images/icon_4_wodemiaosha@2x.png"
       },
       {
         name: "我的收藏",
         url: "/pages/my/collectList",
         img: "../images/icon_4_wodeshoucang@2x.png"
+      },
+      {
+        name: "分销中心",
+        url: "/pages/my/distribution",
+        img: "../images/icon_4_fenxiao@2x.png"
       },
       // {
       //   name: "我的优惠券",
@@ -296,6 +303,16 @@ export default class Mine extends wepy.page {
         name: "地址管理",
         url: "/pages/my/addressList",
         img: "../images/icon_4_dizhiguanli@2x.png"
+      },
+      {
+        name: "平台商城",
+        url: "/pages/my/addressList",
+        img: "../images/icon_4_wodeshangcheng@2x.png"
+      },
+      {
+        name: "管理入口",
+        url: "/pages/my/addressList",
+        img: "../images/icon_4_guanlirukou@2x.png"
       }
     ]
   };

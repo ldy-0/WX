@@ -556,7 +556,7 @@ export default class ShoppingCart extends wepy.page {
     this.isEdit = false;
     this.isCheckedAll = false;
     //获取购物车列表
-    this.getCartList();
+    //this.getCartList();
   }
   //获取购物车商品列表
   async getCartList() {

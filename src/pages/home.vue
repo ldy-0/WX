@@ -1,4 +1,5 @@
 <style scoped>
+
 .tips {
   width: 100%;
   text-align: center;
@@ -60,7 +61,7 @@
   background: #fff;
   width: 100%;
   overflow: hidden;
-  min-height: calc(100% - 150rpx);
+  /* min-height: calc(100% - 150rpx); */
 }
 
 .search {
@@ -122,7 +123,7 @@
 .good_title {
   width: 100%;
   height: 90rpx;
-  margin-bottom: 20rpx;
+  /* margin-bottom: 20rpx; */
   background: #fff;
   justify-content: space-between;
   align-items: center;
@@ -147,6 +148,10 @@
   color: #222222;
   font-size: 36rpx;
   font-weight: 500;
+  border-left: 8rpx solid #4fb84a;
+  box-sizing: border-box;
+  padding-left: 20rpx;
+
 }
 .good_title .more {
   font-size: 28rpx;
@@ -443,15 +448,8 @@
       </repeat>
     </swiper>
     <view class="tap_item">
-      <navigator open-type="switchTab" url="/pages/classify" class="item_view">
-        <image class="item_page" src="../images/icon_1_kanjia@2x.png">
-        <view>砍价</view>
-      </navigator>
-     <navigator>
-          <view>美食</view>
-      </navigator>
       <navigator class="item_view" url="./store/goodsList?type=bargain">
-        <image class="item_page" src="../images/icon_1_tuangou@2x.png">
+        <image class="item_page" src="../images/icon_1_kanjia@2x.png">
           <view>砍价</view>
       </navigator>
       <navigator class="item_view" url="./store/goodsList?type=group">
@@ -461,10 +459,6 @@
       <navigator class="item_view" url="./store/goodsList?type=seckill">
         <image class="item_page" src="../images/icon_1_miaosha@2x.png">
           <view>秒杀</view>
-      </navigator>
-      <navigator class="item_view" url="./store/goodsList?type=group">
-        <image class="item_page" src="../images/icon_1_miaosha@2x.png">
-        <view>秒杀</view>
       </navigator>
       <navigator class="item_view" url="./article/videos">
         <image class="item_page" src="../images/icon_1_zhaoshang@2x.png">
@@ -483,14 +477,6 @@
       <image class="vImg" src = "../images/img_1@2x.png"/>
     </view>
     </navigator>
-    <navigator>
-        <image class="item_page" src="../images/icon_1_shipin@2x.png">
-          <view>视频</view>
-      </navigator>
-      <navigator class="item_view" url="./article/advisory">
-        <image class="item_page" src="../images/icon_1_zixun@2x.png">
-          <view>资讯</view>
-      </navigator>
     </view>
     <!-- 优惠券 -->
     <view wx:if="{{couponList.length!=0}}">
@@ -938,8 +924,10 @@ export default class Home extends wepy.page {
       })
       .end();
     if (res.status === 0) {
-      this.seckillList = res.data||[];
-
+      // return console.log(res);
+      // this.seckillList = res.data||[];
+      res.data = res.data === null ? [] : res.data;
+      this.seckillList = res.data;
       res.data.forEach((item, index) => {
         item.start_time = item.start_time.replace(/\-/g, '/');
         item.end_time = item.end_time.replace(/\-/g, '/');

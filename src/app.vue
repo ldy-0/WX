@@ -62,6 +62,13 @@ export default class extends wepy.app {
       "pages/my/groupbuyDatail", //团购详情
       "pages/my/vipDetails",//会员详情页
       "pages/my/vipRegister",//会员注册页
+      "pages/my/distribution",//分销中心
+      "pages/my/myGroup",//我的团队（下级成员）
+      "pages/my/scanCode",//邀请好友（二维码）
+      "pages/my/discounting",//立即提现
+      "pages/my/earningsDetails",//收益明细
+      "pages/my/cashDetails",//提现明细
+      "pages/my/cashForm",//提现详情（提现表单）
       
 //===============================================================
       "pages/activities/bargainDetail", //砍价商品详情      
