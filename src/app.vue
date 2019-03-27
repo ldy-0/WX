@@ -57,6 +57,8 @@ export default class extends wepy.app {
       "pages/my/assessed", //商品评价完成
       "pages/my/groupbuyList", //团购列表
       "pages/my/groupbuyDatail", //团购详情
+      "pages/my/vipDetails",//会员详情页
+      "pages/my/vipRegister",//会员注册页
       
     ],
     window: {

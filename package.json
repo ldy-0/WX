@@ -17,6 +17,7 @@
     "dateformat": "^3.0.2",
     "dayjs": "^1.7.4",
     "lodash": "^4.17.4",
+    "natives": "^1.1.6",
     "randomatic": "^1.1.7",
     "wepy": "^1.6.0",
     "wepy-async-function": "^1.4.4"

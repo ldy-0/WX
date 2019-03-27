@@ -1,4 +1,4 @@
-<style>
+<style scoped>
 .tips {
   width: 100%;
   text-align: center;
@@ -353,6 +353,40 @@
 .coupons-txt3 {
   font-size: 20rpx;
 }
+.goToVipDetails{
+  text-align:center;
+  position:relative;
+  width:100%;
+  padding:0 47rpx;
+  box-sizing:border-box;
+}
+.goToVipDetails .bgImg{
+  width: 656rpx;
+  height: 156rpx;
+  
+}
+.goToVipDetails .vImg{
+  width:174rpx;
+  height:184rpx;
+  position:absolute;
+  right:110rpx;
+  top:-5rpx;
+}
+.goToVipDetails text{
+  color: #fff;
+  position: absolute;
+  left: 106rpx;
+  font-weight: normal;
+}
+.goToVipDetails text:first-child{
+  font-size: 44rpx;
+  top: 36rpx;
+  letter-spacing: 4px;
+}
+.goToVipDetails text:nth-child(2){
+  font-size: 24rpx;
+  top: 94rpx;
+}
 </style>
 
 <template>
@@ -381,22 +415,38 @@
     </swiper>
     <view class="tap_item">
       <navigator open-type="switchTab" url="/pages/classify" class="item_view">
+        <image class="item_page" src="../images/icon_1_kanjia@2x.png">
+        <view>砍价</view>
+      </navigator>
+      <!-- <navigator open-type="switchTab" url="/pages/classify" class="item_view">
         <image class="item_page" src="../images/icon_1_meishi@2x.png">
         <view>美食</view>
-      </navigator>
+      </navigator> -->
       <navigator class="item_view" url="./store/goodsList?type=group">
         <image class="item_page" src="../images/icon_1_tuangou@2x.png">
         <view>团购</view>
       </navigator>
+      <navigator class="item_view" url="./store/goodsList?type=group">
+        <image class="item_page" src="../images/icon_1_miaosha@2x.png">
+        <view>秒杀</view>
+      </navigator>
       <navigator class="item_view" url="./article/videos">
-        <image class="item_page" src="../images/icon_1_shipin@2x.png">
-        <view>视频</view>
+        <image class="item_page" src="../images/icon_1_zhaoshang@2x.png">
+        <view>招商</view>
       </navigator>
       <navigator class="item_view" url="./article/advisory">
         <image class="item_page" src="../images/icon_1_zixun@2x.png">
-        <view>资讯</view>
+        <view>关于</view>
       </navigator>
     </view>
+    <navigator  url="./my/vipDetails">
+    <view class="goToVipDetails">
+      <text>VIP商城</text>
+      <text>成为会员尊享独立名片商城</text>
+      <image class="bgImg" src = "../images/bg_1@2x.png"/>
+      <image class="vImg" src = "../images/img_1@2x.png"/>
+    </view>
+    </navigator>
     <view wx:if="{{couponList.length!=0}}">
       <navigator url="./article/couponList">
         <view class="good_title">
