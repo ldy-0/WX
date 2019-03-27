@@ -837,7 +837,7 @@ export default class Home extends wepy.page {
         store_id: 1,
         goods_commend: 1,
         type: "sort",
-        limit: 3,
+        limit: 4,
         page: 1
       })
       .end();
@@ -880,7 +880,7 @@ export default class Home extends wepy.page {
       })
       .end();
     if (res.status === 0) {
-      this.seckillList = res.data;
+      this.seckillList = res.data||[];
 
       res.data.forEach((item, index) => {
         item.start_time = item.start_time.replace(/\-/g, '/');

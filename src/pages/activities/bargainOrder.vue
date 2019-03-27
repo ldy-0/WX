@@ -124,7 +124,7 @@
                        还剩 <text class="bargain-text4First">{{wxTimerList[index].d!=0?wxTimerList[index].d+'天':''}} </text> <text class="bargain-text44">{{wxTimerList[index].h1}}</text><text class="bargain-text44">{{wxTimerList[index].h2}}</text>时<text class="bargain-text44">{{wxTimerList[index].m1}}</text><text class="bargain-text44">{{wxTimerList[index].m2}}</text>分<text class="bargain-text44">{{wxTimerList[index].s1}}</text><text class="bargain-text44">{{wxTimerList[index].s2}}</text>秒
                     </view>
                     <view class='bargain-text4' wx:if="{{status == 2}}">
-                      砍价完成，快去购买吧
+                      砍价完成
                     </view>
                     <view class='bargain-text4' wx:if="{{status == 3}}">
                       砍价失效
@@ -134,7 +134,7 @@
               </view>
             </view>
             <view class="buy-btn">
-              <text class="text1" @tap.stop='gobuy' data-item="{{item}}" wx:if="{{status != 3}}">立即购买</text>
+              <text class="text1" @tap.stop='gobuy' data-item="{{item}}" wx:if="{{status == 1}}">立即购买</text>
               <text class="text1" @tap.stop='goGoods' data-item="{{item}}" wx:if="{{status == 3}}">重新砍价</text>
               <text class="text2" data-item="{{item}}"  @tap.stop='goBargain' wx:if="{{status == 1}}">继续砍价</text>
             </view>

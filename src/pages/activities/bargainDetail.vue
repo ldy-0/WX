@@ -1231,6 +1231,19 @@ export default class GoodsDetails extends wepy.page {
       this.goods.goods_image = res.data.goods.goods_image;
       this.goods.goods_name = res.data.goods.goods_name;
       this.goods.goods_body = res.data.goodscommon.goods_body;
+    }else {
+      const msg = res.error;
+          wx.showModal({
+            title: '提示',
+            content:msg,
+            success: function(res) {
+              if (res.confirm) {
+                wx.navigateBack({
+                  delta: 1, // 回退前页面
+                })
+              }
+            }
+          });
     }
     wx.hideLoading();
     this.$apply();
@@ -1316,6 +1329,12 @@ export default class GoodsDetails extends wepy.page {
       .end();
     if (res.status == 0) {
       this.getBargainGoods();
+      this.bargainList();
+      wx.showSuccessToast({
+        title: "帮砍成功，谢谢您的参与",
+        icon: "none",
+        duration: 2000
+      })
     } else {
       wx.showToast({
         title: res.error,

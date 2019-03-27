@@ -1342,16 +1342,17 @@ export default class GoodsDetails extends wepy.page {
       }
     } else {
       const msg = res.error;
-      wx.navigateBack({
-        delta: 1, // 回退前 delta(默认为1) 页面
-        success: function(res) {
-          wx.showToast({
-            title: msg,
-            icon: "none",
-            duration: 1000
+          wx.showModal({
+            title: '提示',
+            content:msg,
+            success: function(res) {
+              if (res.confirm) {
+                wx.navigateBack({
+                  delta: 1, // 回退前页面
+                })
+              }
+            }
           });
-        }
-      });
     }
 
     wx.hideLoading();

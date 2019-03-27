@@ -970,6 +970,19 @@ export default class secKill extends wepy.page {
         this.timeStatus = false;
       }
       // this.getComment(this.goods.goods_id);
+    }else {
+      const msg = res.error;
+          wx.showModal({
+            title: '提示',
+            content:msg,
+            success: function(res) {
+              if (res.confirm) {
+                wx.navigateBack({
+                  delta: 1, // 回退前页面
+                })
+              }
+            }
+          });
     }
     wx.hideLoading();
     this.$apply();
