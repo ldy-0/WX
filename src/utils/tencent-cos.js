@@ -15,7 +15,7 @@ let config = {
 };
 
 let getUrl = (filePath) => {
-	return 'https://' + config.region + '.file.myqcloud.com/files/v2/' + config.appid +
+	return 'https://' + config.bucket +"_"+config.appid+ '.file.myqcloud.com/files/v2/' + config.appid +
 		'/' + config.bucket + '/' + filePath + '?sign=' + getAppSign(filePath);
 };
 

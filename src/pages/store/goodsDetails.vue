@@ -832,7 +832,7 @@ page {
               <view class="column">
                 <view class="product_title">{{goods.goods_name}}</view>
               </view>
-              <view wx:if="{{TYPE== 'normal'}}" class="column_center" @tap="enshrine">
+              <view wx:if="{{TYPE== 'normal'}}" class="column_center" @tap="collect">
                 <image
                   src="{{goods.enshrine_type==1?'../../images/icon_pingfen_hl@2x.png':'../../images/icon_pingfen@2x.png'}}"
                   class="qr_icon"
@@ -1099,6 +1099,14 @@ export default class GoodsDetails extends wepy.page {
     multiSku,
   };
   methods = {
+    // 收藏/取消收藏
+        collect(){
+      if(this.goods.enshrine_type==1){
+          this.cancel();
+      }else{
+        this.enshrine()
+      }
+    },
     onShareAppMessage: function(res) {
       return {
         title: this.goods.goods_name,
@@ -1558,6 +1566,7 @@ export default class GoodsDetails extends wepy.page {
   swiperchange(e) {
     this.current = e.detail.current + 1;
   }
+  // 收藏
   async enshrine() {
     const res = await shttp
       .post("/api/v2/member/enshrine")
@@ -1572,6 +1581,7 @@ export default class GoodsDetails extends wepy.page {
         duration: 2000
       });
       this.goods.enshrine_type = 1;
+       this.goods.enshrine[0].enshrine_id=res.data;
     } else if (res.status === 1) {
       wx.showToast({
         title: res.error,
@@ -1581,7 +1591,27 @@ export default class GoodsDetails extends wepy.page {
     }
     this.$apply();
   }
-
+ // 取消收藏
+  async cancel(){
+    let id=this.goods.enshrine[0].enshrine_id
+    const res = await shttp.delete(`/api/v2/member/enshrine/${id}`).end();
+     if (res.status == 0) {
+        wx.showToast({
+          title: "取消收藏",
+          icon: "success",
+          duration: 2000
+        });
+     this.goods.enshrine_type = 0;
+      } else if (res.status == 1) {
+        wx.showToast({
+          title: res.error,
+          icon: "none",
+          duration: 2000
+        });
+      }
+      this.$apply();
+  }
+  
   showShare() {
     this.isShare = true;
   }
