@@ -69,6 +69,10 @@ export default class extends wepy.app {
       "pages/my/earningsDetails",//收益明细
       "pages/my/cashDetails",//提现明细
       "pages/my/cashForm",//提现详情（提现表单）
+      "pages/my/pointCenter",//德分中心
+      "pages/my/transferAccounts",//转出
+      "pages/my/income",//收入明细
+      "pages/my/expenditure",//支出明细
       
 //===============================================================
       "pages/activities/bargainDetail", //砍价商品详情      
@@ -133,21 +137,21 @@ export default class extends wepy.app {
   async onLaunch() {
     console.log("onLaunch");
     //微信用户登录换取token，并将token存入本地缓存中
-    const userInfo = await signIn(false);
-    if (userInfo.status === 0) {
-      let auth = userInfo.data.token;
-      wx.setStorageSync("token", auth);
-      const memberRes = await shttp.get("/api/v2/member/memberinfo").end();
-      let storageInfo = wx.getStorageSync("memberInfo");
-      let memberInfo = {
-        member_id: memberRes.data.member_id,
-        member_points: memberRes.data.member_points,
-        wx_avatar: storageInfo.wx_avatar ? storageInfo.wx_avatar : null,
-        wx_name: storageInfo.wx_name ? storageInfo.wx_name : null,
-        member_mobile: memberRes.data.member_mobile
-      };
-      wx.setStorageSync("memberInfo", memberInfo);
-    }
+    // const userInfo = await signIn(false);
+    // if (userInfo.status === 0) {
+    //   let auth = userInfo.data.token;
+    //   wx.setStorageSync("token", auth);
+    //   const memberRes = await shttp.get("/api/v2/member/memberinfo").end();
+    //   let storageInfo = wx.getStorageSync("memberInfo");
+    //   let memberInfo = {
+    //     member_id: memberRes.data.member_id,
+    //     member_points: memberRes.data.member_points,
+    //     wx_avatar: storageInfo.wx_avatar ? storageInfo.wx_avatar : null,
+    //     wx_name: storageInfo.wx_name ? storageInfo.wx_name : null,
+    //     member_mobile: memberRes.data.member_mobile
+    //   };
+    //   wx.setStorageSync("memberInfo", memberInfo);
+    // }
     const updateManager = wx.getUpdateManager();
 
     updateManager.onCheckForUpdate(function(res) {
@@ -177,7 +181,7 @@ export default class extends wepy.app {
    * 设置全局变量
    */
   globalData = {
-    authorizationStyle: "1" //1: 强制需要用户微信信息和强制手机授权 //手机号验证白名单10987654321，验证码随意，如1111
+    authorizationStyle: "2" //1: 强制需要用户微信信息和强制手机授权 //手机号验证白名单10987654321，验证码随意，如1111
     //2：强制需要用户微信信息和不强制手机授权
     //3：强制需要用户微信信息和不需要手机授权
     //4：不强制需要用户微信信息和强制手机授权

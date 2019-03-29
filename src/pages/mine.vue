@@ -192,10 +192,12 @@ page {
             <view>余额</view>
         </view>
       </navigator>
-      <view class="assets">
-          <text>0.00</text>
-          <view>德分</view>
-      </view>
+      <navigator  url="/pages/my/pointCenter">
+        <view class="assets">
+            <text>0.00</text>
+            <view>德分</view>
+        </view>
+      </navigator>
       <view class="assets">
           <text>0.00</text>
           <view>积分</view>

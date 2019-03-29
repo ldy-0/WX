@@ -2,62 +2,53 @@
     <section>
         <view>
             <view>50.00</view>
-            <text>当前余额(元)</text>
+            <text>当前德分</text>
         </view>
         <form bindsubmit = "submitForm">
             <view wx:for = "{{formList}}" wx:key class="info" data-index = "{{index}}">
                 <label>{{item.name}}:</label>
-                <input name="{{item.label}}"/>
+                <input name="{{item.label}}" placeholder="{{item.placeholder}}"/>
             </view>
-            <button formType = "submit">提交</button>
+            <button formType = "submit">确定</button>
         </form>
     </section>
 </template>
 <script>
 import wepy from "wepy";
-export default class CashForm extends wepy.page {
+export default class TransferAccounts extends wepy.page {
     config = {
-        navigationBarTitleText: "提现详情"
+        navigationBarTitleText: "转出"
     };
     data = {
        formList : [
            {
-               label:"cashNumber",
-               name:"提现账号"
+               label:"transfer_accounts",
+               name:"转出金额",
+               placeholder:""
+               
            },
            {
-               label:"userBank",
-               name:"开户支行"
+               label:"transfer_obj",
+               name:"对方账户",
+               placeholder:"请输入对方手机号"
            },
-           {
-               label:"userName",
-               name:"账户姓名"
-           },
-           {
-               label:"howMuch",
-               name:"提现金额"
-           }
        ],
     };
     methods = {
         submitForm(e){
             let formdata = e.detail.value;
-            let regBank = /^\d{16}|\d{19}$/;/* 银行卡验证 */
             let howMuch = /^[0-9]*$/;/* 金额验证 */
+            let tell = /^1[3456789]\d{9}$/;/* 手机号验证 */
             let tips = '';
-            if(formdata.cashNumber === undefined || formdata.cashNumber === ""){
-                tips = "提现账号不能为空";
-            }else if(!regBank.test(formdata.userBank)){
-                tips = "请输入正确的银行卡号";
-            }else if(formdata.userName === undefined || formdata.userName === ""){
-                tips = "账户姓名不能为空";
-            }else if(!howMuch.test(formdata.howMuch) || formdata.howMuch === ""){
-                tips = "请输入正确的提现金额";
+            if(!howMuch.test(formdata.transfer_accounts) || formdata.transfer_accounts === ""){
+                tips = "请输入正确的转出金额";
+            }else if(!tell.test(formdata.transfer_obj) || formdata.transfer_obj === ""){
+                tips = "请输入正确的对方账户";
             }else{
                 //do something
                 console.log(formdata);
                 wx.navigateTo({
-                    url:"./discounting"
+                    url:"./pointCenter"
                 })
             }
             if(tips != ''){

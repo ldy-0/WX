@@ -8,7 +8,7 @@
             </view>
         </view>
         <view class="tabList">
-            <view wx:for = "{{detailsList}}" wx:key class="msg">
+            <view wx:for = "{{current_tag === 0 ? detailsList1 : detailsList2}}" wx:key class="msg">
                 <view class="msg_left">
                     <view>{{item.classify}}(¥)</view>
                     <view>{{item.date}}</view>
@@ -29,7 +29,7 @@ export default class CashDeatils extends wepy.page {
     data = {
        choose:["提现中","已完成"],
        current_tag:0,/* 默认选中第一个 */
-       detailsList : [
+       detailsList1: [
            {
                classify:"佣金提现",
                date:"2019-4-20",
@@ -37,6 +37,18 @@ export default class CashDeatils extends wepy.page {
            },
            {
                classify:"佣金提现",
+               date:"2019-4-20",
+               howMuch:"200",
+           },
+       ],
+       detailsList2: [
+           {
+               classify:"已完成",
+               date:"2019-4-20",
+               howMuch:"200",
+           },
+           {
+               classify:"已完成",
                date:"2019-4-20",
                howMuch:"200",
            },

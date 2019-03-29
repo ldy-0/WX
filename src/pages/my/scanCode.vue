@@ -9,7 +9,8 @@
                     <open-data type = "userNickName" class="userNickName"></open-data>
                 </view>
                 <view class="code">
-                    <image src = "../../images/img_4@2x.png">
+                    <image src = "../../images/bg@2x.png"/>
+                    <image src = "../../images/tab_wode_hl@2x.png"/>
                 </view>
             </view>
         </view>
@@ -30,6 +31,10 @@ export default class ScanCode extends wepy.page {
 }
 </script>
 <style scoped>
+    section{
+        display: block;
+        position: relative;
+    }
     .bgImg{
         width: 100%;
         height: 862rpx;
@@ -40,21 +45,24 @@ export default class ScanCode extends wepy.page {
         position: absolute;
         top: 100rpx;
         z-index: 333;
-        box-sizing:border-box;
-        padding:0 30rpx;
-
+        left: 30rpx;
     }
     .relativeBox{
         position: relative;
+        width: 100%;
+        height: 100%;
         margin: 0 auto;
     }
     .codeBg{
-        width: 690rpx;
-        height: 820rpx;
+        width:754rpx;
+        height:894rpx;
+        position:absolute;
+        top:-24rpx;
+        left:-33rpx;
     }
     .useInfo{
         position: absolute;
-        top: -13rpx;
+        top: -29rpx;
         left: 278rpx;
         overflow: hidden;
         text-align: center;
@@ -73,14 +81,20 @@ export default class ScanCode extends wepy.page {
         margin-top: 24rpx;
     }
     .code{
-        width: 458rpx;
-        height: 458rpx;
-        border: 1rpx solid forestgreen;
+        width: 494rpx;
+        height: 494rpx;
         position: absolute;
         top: 210rpx;
         left: 116rpx;
     }
-    .code image{
+    .code image:first-child{
+        width: 100%;
+        height: 100%;
+    }
+    .code image:nth-child(2){
+        position: absolute;
+        top: 0rpx;
+        left: 0rpx;
         width: 100%;
         height: 100%;
     }

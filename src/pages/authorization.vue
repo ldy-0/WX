@@ -1,6 +1,6 @@
 <style scoped>
 .container {
-  background: #f17f30;
+  background: #fff;
   height: 100vh;
 }
 
@@ -74,10 +74,11 @@
 import wepy from "wepy";
 import { shttp } from "../utils/http";
 import GetPhone from "../components/getPhone";
+import { getCode } from "../utils/user-tools";
 export default class Authorization extends wepy.page {
   config = {
     navigationBarTitleText: "",
-    navigationBarBackgroundColor: "#f17f30",
+    navigationBarBackgroundColor: "#fff",
     navigationBarTextStyle: "white"
   };
 
@@ -164,7 +165,7 @@ export default class Authorization extends wepy.page {
   //本地是否缓存了用户信息
   isStorageUserInfo1() {
     this.wxUserInfo = wx.getStorageSync("memberInfo");
-    console.log(this.wxUserInfo);
+    // console.log(this.wxUserInfo);
     if (this.wxUserInfo.wx_name) {
       if (this.wxUserInfo.member_mobile) {
         this.goNav();
@@ -197,15 +198,28 @@ export default class Authorization extends wepy.page {
   }
   //获取用户信息,onGotUserInfo中所用到的api接口
   async onGotUserInfo(e) {
-    let wxUserInfo = e.detail.userInfo;
+    console.log(e,"------e");
+    let wxUserInfo = e.detail;
+    let code = await getCode();
+    let userInfo = {
+      code:code.code,
+      iv:wxUserInfo.iv,
+      encryptedData:wxUserInfo.encryptedData,
+      source:1
+    }
+    const loginInfo = await shttp.post('/api/v2/member/login')
+    .send(userInfo)
+    .end();
+
+    wx.setStorageSync("token",loginInfo.data.token);
     if (wxUserInfo != null) {
-      const res = await shttp
-        .post(`/api/v2/member/memberinfo`)
-        .send({
-          wx_name: wxUserInfo.nickName,
-          wx_avatar: wxUserInfo.avatarUrl
-        })
-        .end();
+      // const res = await shttp
+      //   .post(`/api/v2/member/memberinfo`)
+      //   .send({
+      //     wx_name: wxUserInfo.nickName,
+      //     wx_avatar: wxUserInfo.avatarUrl
+      //   })
+      //   .end();
       //获取用户资料存入本地缓存
       const memberRes = await shttp.get("/api/v2/member/memberinfo").end();
       let memberInfo = memberRes.data;
