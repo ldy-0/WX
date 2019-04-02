@@ -209,7 +209,7 @@ export default class OrderList extends wepy.page {
   };
   data = {
     tab: {
-      tabList: ["活动中", "已完成", "已失效"]
+      tabList: ["拼团中", "未成团", "已成团"]
     },
     nowindex: 0,
     is_empty: false,

@@ -202,10 +202,12 @@ page {
           <text>0.00</text>
           <view>积分</view>
       </view>
-      <view class="assets">
-          <text>0.00</text>
-          <view>优惠券</view>
-      </view>
+      <navigator  url="/pages/article/couponList">
+        <view class="assets">
+            <text>0.00</text>
+            <view>优惠券</view>
+        </view>
+      </navigator>
     </view>
     <view class="my_manage">
       <navigator class="my_manage_title" url="/pages/my/orderList?choiceTab=0">
@@ -248,6 +250,7 @@ page {
           <image class="arrow" src="../images/icon_you@2x.png">
         </navigator>
       </repeat>
+      
       <button class="row_between" open-type="contact" session-from="weapp" plain="true">
         <view class="flex">
           <image class="icon" src="../images/icon_4_lianxikefu@2x.png">
@@ -255,6 +258,15 @@ page {
         </view>
         <image class="arrow" src="../images/icon_you@2x.png">
       </button>
+
+        <navigator @tap="toMyStore" class="row_between" app-id="wx377f4525af400383" target="miniProgram" path = "" version = "develop"> 
+            <view class="flex">
+            <image class="icon" src="../images/icon_4_wodeshangcheng@2x.png">
+            <view>我的商城</view>
+          </view>
+          <image class="arrow" src="../images/icon_you@2x.png">
+        </navigator>
+  
     </view>
   </view>
 </template>
@@ -305,16 +317,6 @@ export default class Mine extends wepy.page {
         name: "地址管理",
         url: "/pages/my/addressList",
         img: "../images/icon_4_dizhiguanli@2x.png"
-      },
-      {
-        name: "平台商城",
-        url: "/pages/my/addressList",
-        img: "../images/icon_4_wodeshangcheng@2x.png"
-      },
-      {
-        name: "管理入口",
-        url: "/pages/my/addressList",
-        img: "../images/icon_4_guanlirukou@2x.png"
       }
     ]
   };
@@ -338,6 +340,20 @@ export default class Mine extends wepy.page {
     }
     //资讯隐藏分割
   }
-  methods = {};
+  methods = {
+    toMyStore(){
+      wx.navigateToMiniProgram({
+        appId: 'wx377f4525af400383',
+        path: '',
+        extraData: {
+          foo: 'bar'
+        },
+        envVersion: 'develop',
+        success(res) {
+          // 打开成功
+        }
+      })
+    }
+  };
 }
 </script>

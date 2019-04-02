@@ -156,14 +156,13 @@
 .bottomBar .buttonStyle {
   text-align: center;
   line-height: 100rpx;
-  width: 190rpx;
-  background: #f17f30;
+  width: 160rpx;
+  background: #4fb84a;
   text-align: center;
   padding: 0rpx;
-  border: 0 !important;
-  border-radius: 0 !important;
+  /* border: 0 !important;
+  border-radius: 0 !important; */
   color: #fff;
-  background: #f17f30;
 }
 .bottomBar .share,
 .bottomBar .del {
@@ -296,7 +295,9 @@
         <view class="sum">合计：
           <text>¥{{allMoney}}</text>
         </view>
-        <view class="btn" @tap="goFirmOrder()">结算({{countItem}})</view>
+        <!-- <view class="btn" @tap="goFirmOrder()">结算({{countItem}})</view> -->
+        <view class="btn" @tap="goFirmOrder()">提交订单</view>
+
       </view>
     </view>
     <!--暂无数据显示-->

@@ -88,7 +88,8 @@ export default class extends wepy.app {
       navigationBarTitleText: "",
       navigationBarTextStyle: "black",
       enablePullDownRefresh: false,
-      backgroundColor: "#EFEFEF"
+      backgroundColor: "#EFEFEF",
+      navigateToMiniProgramAppIdList:["wx377f4525af400383"],
     },
     tabBar: {
       color: "#8e8e8e",

@@ -7,14 +7,24 @@
 }
 
 .row_between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  width: 100%;
+  background-color: #f4f4f4;
+  height: 152rpx;
+  text-align: center;
+  position: fixed;
+  bottom: 0rpx;
   box-sizing: border-box;
+  padding-left: 30rpx;
+}
+.row_between view{
+  height: 88rpx;
+  background-color: #4fb84a;
+  border-radius: 10rpx;
+  color: #fff;
+  font-size: 36rpx;
   line-height: 88rpx;
-  padding: 0 20rpx;
-  border-top: 1rpx solid #f4f4f4;
-  background: #fff;
+  width: 690rpx;
+
 }
 .row_between image {
   width: 15rpx;
@@ -27,14 +37,16 @@
 }
 
 .address {
-  min-height: 171rpx;
-  padding: 25rpx 25rpx 0;
+  box-sizing: border-box;
+  height: 170rpx;
+  padding: 23rpx 30rpx 16rpx;
   border-top: 1rpx solid #f4f4f4;
   background: #fff;
 }
 .address .address_info {
-  margin: 25rpx 0;
+  margin: 10rpx 0;
   font-size: 24rpx;
+  color: #979797;
 }
 .address .other_info {
   display: flex;
@@ -58,19 +70,37 @@
 }
 .address .default {
   font-size: 22rpx;
+  color: #4fb84a;
 }
 
 .inline {
   display: inline-block;
   margin-left: 50rpx;
 }
+
+
+.myAddress{
+  width: 100%;
+  height: 88rpx;
+  background-color: #f6f6f6;
+  color: #979797;
+  letter-spacing: 1rpx;
+  font-size: 32rpx;
+  box-sizing: border-box;
+  padding: 25rpx 0 0 30rpx;
+}
+.user_info{
+  color: #222;
+  font-size: 32rpx;
+}
 </style>
 
 <template>
   <view class="container">
+    <view class="myAddress">我的地址</view>
     <view class="row_between" @tap="add">
-      <view>添加新地址</view>
-      <image src="../../images/icon_zuojiantou@2x.png">
+      <view>新增地址</view>
+      <!-- <image src="../../images/icon_zuojiantou@2x.png"> -->
     </view>
     <repeat for="{{addressList}}" index="index" item="item">
       <view class="address" @tap="choose" data-address="{{item}}">
@@ -108,7 +138,7 @@ import {
 } from "../../utils/tools";
 export default class Address extends wepy.page {
   config = {
-    navigationBarTitleText: "收货地址管理"
+    navigationBarTitleText: "地址管理"
   };
   data = {
     //

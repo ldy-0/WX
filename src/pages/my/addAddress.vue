@@ -20,6 +20,7 @@
 .flex {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .row {
@@ -35,7 +36,7 @@
 .cityup {
   width: 26rpx;
   height: 16rpx;
-  margin: 42rpx;
+  margin: 42rpx 30rpx 42rpx 10rpx;
 }
 
 .setting {
@@ -43,7 +44,7 @@
   justify-content: space-between;
   align-items: center;
   height: 149rpx;
-  padding: 0 23rpx;
+  padding: 0 30rpx;
   background: #fff;
 }
 
@@ -53,23 +54,30 @@
   color: #999;
 }
 
-.save {
-  position: absolute;
-  bottom: 0;
+.saveBox{
+  height: 152rpx;
   width: 100%;
+  background-color: #fff;
+  box-sizing: border-box;
+  padding: 0 30rpx 0;
+  position: fixed;
+  bottom: 0;
+}
+.save {
+  width: 690rpx;
   line-height: 88rpx;
   font-size: 36rpx;
-  background: #f17f30;
+  background: #4fb84f;
   text-align: center;
   color: #fff;
-  border-radius: 0;
+  border-radius: 10rpx;
 }
 
 .row_flex {
   display: flex;
   align-items: center;
   border-bottom: 1rpx solid #f0f0f0;
-  padding-left: 23rpx;
+  padding-left: 30rpx;
   background: #fff;
 }
 
@@ -82,6 +90,7 @@
 
 .picker-group {
   display: flex;
+  margin-left: 46rpx;
 }
 
 .picker-view {
@@ -90,11 +99,11 @@
 
 .info_text {
   height: 100%;
-  width: 200rpx;
+  width: 163rpx;
 }
 
 .fiexdW {
-  width: 86rpx;
+  width: 112rpx;
   overflow: hidden;
 }
 </style>
@@ -103,7 +112,7 @@
   <view class="container">
     <form bindsubmit="submit">
       <view class="row_flex">
-        <text class="info_text">收件人：</text>
+        <text class="info_text">收货人</text>
         <input
           type="text"
           name="name"
@@ -114,17 +123,18 @@
       </view>
 
       <view class="row_flex">
-        <text class="info_text">联系方式：</text>
+        <text class="info_text">手机号码</text>
         <input
           type="text"
           name="phone"
           class="inline"
           bindinput="setPhone"
           value="{{address.phone}}"
+          placeholder="11位手机号"
         >
       </view>
       <view class="row_flex">
-        <view>所在地区：</view>
+        <view>选择地区</view>
         <view class="picker-group">
           <picker
             class="picker-box"
@@ -173,13 +183,14 @@
         </view>
       </view>
       <view class="row_flex">
-        <text class="info_text">详细地址：</text>
+        <text class="info_text">详细地址</text>
         <input
           type="text"
           name="detail"
           class="inline"
           bindinput="setStreet"
           value="{{address.street}}"
+          placeholder="街道门牌信息"
         >
       </view>
 
@@ -190,8 +201,10 @@
         </view>
         <switch name="isDefault" checked="{{address.isDefault}}"></switch>
       </view>
-
-      <button class="save" formType="submit">保存</button>
+      <view class="saveBox">
+        <button class="save" formType="submit">保存</button>
+      </view>
+      
     </form>
   </view>
 </template>
@@ -206,7 +219,7 @@ import {
 } from "../../utils/tools";
 export default class AddAddress extends wepy.page {
   config = {
-    navigationBarTitleText: "添加新地址"
+    navigationBarTitleText: "新增地址"
   };
   data = {
     //地址选择

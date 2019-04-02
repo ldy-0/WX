@@ -1,6 +1,7 @@
 <style scoped>
 .container {
   background: #fff;
+  height: 100vh;
 }
 .coupons-item {
   width: 650rpx;
@@ -94,7 +95,7 @@ import getTimes from "../../utils/formatedate.js";
 import { shttp } from "../../utils/http";
 export default class CouponList extends wepy.page {
   config = {
-    navigationBarTitleText: "优惠劵列表"
+    navigationBarTitleText: "优惠劵"
   };
   data = {
     //显示提示的

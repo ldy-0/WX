@@ -108,13 +108,13 @@
 }
 
 .active .header-item_title {
-  color: #f17f30 !important;
+  color: #4fb84a;
 }
 
 .active .header-item_line:before {
   content: "";
   width: 30rpx;
-  background-color: #f17f30;
+  background-color: #4fb84a;
   height: 4rpx;
 }
 </style>

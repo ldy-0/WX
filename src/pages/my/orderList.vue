@@ -164,11 +164,11 @@ page {
 .container {
   font: 32rpx PingFang-SC-Medium;
   color: #000;
-  padding-top: 80rpx;
+  /* padding-top: 80rpx; */
 }
 .orderlist-topDiv {
   position: fixed;
-  top: 0;
+  top: 98rpx;
   left: 0;
   width: 100%;
   z-index: 9999;
@@ -181,9 +181,47 @@ page {
   height: 12rpx;
   background: #ffffff;
 }
+.selection{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+    width: 750rpx;
+    height: 98rpx;
+    background-color: #fff;
+    padding: 18rpx 30rpx;
+    box-sizing: border-box;
+    margin-bottom: 2rpx;
+}
+.selection > .tab{
+    border: 2rpx solid #4fb84a;
+    height: 100%;
+    display: flex;
+}
+.selection > .tab > view {
+    width: 345rpx;
+    text-align: center;
+    font-size: 28rpx;
+    line-height:60rpx;
+}
+.active{
+    background-color: #4fb84a;
+    color: #fff;
+}
+.unactive{
+    color: #4fb84a;
+}
 </style>
 <template>
   <view class="container">
+    <view class="selection">
+        <view class="tab">
+            <view class="{{index === current_tag ? 'active' : 'unactive'}}" wx:for = "{{choose}}" wx:key data-index = "{{index}}" @tap = "showMsg">
+                {{item}}
+            </view>
+        </view>
+    </view>
     <view class="orderlist-topDiv">
       <tab :tabOption="tab" :nowindex.sync="nowindex" @tabitem.user="tabitem"></tab>
     </view>
@@ -297,6 +335,8 @@ export default class OrderList extends wepy.page {
     navigationBarTitleText: "订单列表"
   };
   data = {
+    current_tag:0,/* 默认选中第一个 */
+    choose:["常规商品","VIP商品"],
     tab: {
       tabList: ["全部", "待付款", "待发货", "待收货", "待评价"]
     },
@@ -410,6 +450,11 @@ export default class OrderList extends wepy.page {
           "../../pages/store/orderdetail?orderId=" +
           this.orderList[index].order_id
       });
+    },
+    showMsg(e){
+        let index = e.currentTarget.dataset.index;
+        this.current_tag = index;
+        console.log(index)
     }
   };
   async getList() {
