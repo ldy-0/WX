@@ -15,11 +15,7 @@ let config = {
 };
 
 let getUrl = (filePath) => {
-<<<<<<< HEAD
 	return 'https://' + config.bucket+'-'+config.appid+'.file.myqcloud.com/files/v2/' + config.appid +
-=======
-	return 'https://' + config.bucket +"_"+config.appid+ '.file.myqcloud.com/files/v2/' + config.appid +
->>>>>>> e0dd994d3444866d8004d6d62ee3d0cae2ac2f44
 		'/' + config.bucket + '/' + filePath + '?sign=' + getAppSign(filePath);
 };
 
