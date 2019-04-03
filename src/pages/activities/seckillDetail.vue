@@ -1219,6 +1219,9 @@ export default class secKill extends wepy.page {
   onUnload() {
     this.wxTimer1.stop();
   }
+  onHide() {
+    this.wxTimer1.stop();
+  }
 }
 </script>
 

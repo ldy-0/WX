@@ -14,6 +14,7 @@
 .row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .person_info_wrap {
@@ -252,6 +253,15 @@
   font-size: 28rpx;
   border-top: 1rpx solid #f4f4f4;
 }
+.coupon-box2{
+  min-height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #666666;
+  font-size: 28rpx;
+  border-top: 1rpx solid #f4f4f4;
+}
 .coupon-boxR {
   display: flex;
   align-items: center;
@@ -289,8 +299,6 @@
           <view class="product_title">{{item.spec}}</view>
           <view class="row">
             <view class="product_price">¥{{item.goods_price}}</view>
-          </view>
-          <view class="row">
             <view class="product_number">×{{item.goods_num|| '1'}}</view>
           </view>
         </view>
@@ -301,9 +309,9 @@
         <text>运费：</text>
         <text>¥{{freightList[0]|| '0'}}</text>
       </view>
-      <view class="coupon-box">
+      <view class="coupon-box2">
         <text>备注：</text>
-        <textarea class="msgtext" bindinput="textVal" maxlength="140"/>
+        <textarea class="msgtext" auto-height="{{true}}" bindinput="textVal" maxlength="140"/>
       </view>
       <view
         @tap="discountBtn"
