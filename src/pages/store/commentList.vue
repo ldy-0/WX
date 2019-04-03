@@ -101,20 +101,11 @@ export default class CommentList extends wepy.page {
     placeholder: Placeholder
   };
   onLoad(options) {
-    if (options.virtual == 1) {
-      this.send = {
-        goods_id: options.goodsId,
-        page: this.page,
-        goods_type: "virtual"
-      };
-    } else if (options.virtual == 0) {
       this.send = {
         goods_id: options.goodsId,
         page: this.page,
         goods_type: "real"
       };
-    }
-
     this.getcommentList();
   }
   onShow() {}

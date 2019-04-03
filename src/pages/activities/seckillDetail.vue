@@ -1,11 +1,8 @@
-<style>
-page {
-  background: #f5f5f5;
-}
+
+<style scoped>
 .container {
   font: 32rpx PingFang-SC-Medium;
 }
-
 .column {
   display: flex;
   flex-direction: column;
@@ -75,6 +72,20 @@ page {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.seckill_info {
+  margin: 10rpx 0;
+  height: 100rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  font-size: 30rpx;
+  color: #222;
+  padding: 0 40rpx;
+}
+.seckill_info text {
+  color: #4fb84a;
 }
 .product_info .goods .product_title {
   width: 560rpx;
@@ -473,236 +484,7 @@ page {
 .group_btn {
   width: 420rpx;
 }
-.countDown-txt {
-  color: #9c9a9b;
-  font-size: 24rpx;
-}
-.countDown-txt .countDown-txt2 {
-  display: inline-block;
-  width: 22rpx;
-  height: 26rpx;
-  background: #af0000;
-  color: #fff;
-  text-align: center;
-  line-height: 26rpx;
-  margin-right: 6rpx;
-  font-size: 20rpx;
-}
-.countDown-box {
-  height: 88rpx;
-  line-height: 88rpx;
-  background: #fff;
-  text-align: center;
-}
-.countDown-txt1 {
-  color: #af0000;
-}
-.countDown-txt3 {
-  color: #af0000;
-}
-.headline-txt1 {
-  height: 68rpx;
-  line-height: 68rpx;
-  padding-left: 20rpx;
-  font-size: 28rpx;
-  color: #ff7900;
-  background: #fff;
-  border-top: 1rpx solid #e5e5e5;
-  border-bottom: 1rpx solid #e5e5e5;
-}
-.headimg-list {
-  display: flex;
-  background: #fff;
-  flex-wrap: wrap;
-  padding-top: 25rpx;
-  padding-bottom: 25rpx;
-}
-.headimg-item {
-  width: 125rpx;
-  overflow: hidden;
-  text-align: center;
-  font-size: 24rpx;
-  padding-top: 15rpx;
-}
-.headimg-itemImg {
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 50%;
-}
-.headimg-itemMore {
-  width: 72rpx;
-  height: 72rpx;
-  background: #d8d8d8;
-  border-radius: 50%;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 6rpx;
-}
-.headimg-itemMore image {
-  width: 48rpx;
-  height: 12rpx;
-}
-.groupon-box {
-  width: 580rpx;
-  border-radius: 15rpx;
-  background: #fff;
-}
-.groupon-txt1 {
-  font-size: 34rpx;
-  width: 100%;
-  text-align: center;
-  padding-top: 55rpx;
-  padding-bottom: 20rpx;
-}
-.groupon-txt2 {
-  width: 100%;
-  text-align: center;
-  font-size: 28rpx;
-}
-.groupon-txt2 text {
-  color: #af0000;
-}
-.groupon-txt3 {
-  font-size: 26rpx;
-  color: #888888;
-}
-.groupon-txt3Color {
-  color: #ff7900;
-}
-.groupon-txt4 {
-  font-size: 28rpx;
-  color: #222;
-}
-.groupon-txt5 {
-  display: flex;
-  align-items: center;
-}
-.groupon-txt5 text {
-  padding-right: 10rpx;
-  font-size: 22rpx;
-  color: #888;
-}
-.groupon-tag {
-  border-top: 1rpx solid #f4f4f4;
-  padding: 20rpx;
-  background: #fff;
-}
-.groupon-tag1 {
-  font-size: 28rpx;
-  color: #888;
-  padding-right: 16rpx;
-  padding-top: 4rpx;
-}
-.groupon-tag2 {
-  padding: 10rpx 24rpx;
-  font-size: 28rpx;
-  color: #fff;
-  background: #feaa26;
-  border-radius: 25rpx;
-}
-.groupon-tag3 {
-  width: 290rpx;
-  height: 50rpx;
-  color: #fff;
-  font-size: 28rpx;
-  text-align: center;
-  line-height: 50rpx;
-  border-radius: 25rpx;
-  margin-bottom: 20rpx;
-  background: #feaa26;
-}
-.sales-box {
-  display: flex;
-}
-.groupon-btn {
-  margin: 0 auto;
-  width: 500rpx;
-  height: 86rpx;
-  text-align: center;
-  line-height: 86rpx;
-  background-color: #ff7900;
-  border-radius: 10rpx;
-  font-size: 34rpx;
-  margin-bottom: 37rpx;
-  color: #fff;
-}
-.groupon-imgList {
-  margin: 40rpx 30rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.grouponer-image {
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 50%;
-  background: #f1f1f2;
-  border: 1rpx dotted #a0a0a0;
-  margin-right: 20rpx;
-}
-.groupon-list {
-  background: #fff;
-}
-.groupon-mb {
-  margin-bottom: 0;
-}
-.groupon-listBox {
-  margin: 0 20rpx;
-  padding: 20rpx;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  border-bottom: 1rpx solid #e6e6e6;
-}
-.groupon-details {
-  display: flex;
-  width: 490rpx;
-  padding-left: 30rpx;
-  height: 80rpx;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.groupon-detailsOne {
-  font-size: 24rpx;
-  color: #222222;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-.groupon-bottom {
-  font-size: 24rpx;
-}
-.groupon-bottom text {
-  color: #af0000;
-}
-.groupon-goBtn {
-  width: 120rpx;
-  height: 44rpx;
-  color: #ff7900;
-  font-size: 28rpx;
-  text-align: center;
-  line-height: 44rpx;
-  border-radius: 10rpx;
-  border: 1rpx solid #ff7900;
-}
-.groupon-active {
-  width: 60rpx;
-  height: 60rpx;
-  border-radius: 50%;
-  overflow: hidden;
-}
-.headimg-itemTxt {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.group_btnBg {
-  background: #a0a0a0;
-}
+
 .comment-imgs {
   margin-top: 8rpx;
   display: flex;
@@ -729,10 +511,45 @@ page {
   margin-right: 5rpx;
   margin-left: 5rpx;
 }
+.statistics-box {
+  position: absolute;
+  height: 100rpx;
+  width: 100%;
+  top: 650rpx;
+  left: 0;
+  z-index: 9;
+  background: rgba(254, 170, 38, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.countDown-txt {
+  color: #fff;
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: center;
+}
+.countDown-txt .countDown-txt1 {
+  color: #fff;
+  font-size: 30rpx;
+}
+.countDown-txt .countDown-txt2 {
+  display: inline-block;
+  width: 30rpx;
+  height: 36rpx;
+  background: #fff;
+  color: #f17f30;
+  text-align: center;
+  line-height: 36rpx;
+  margin: 0 6rpx;
+  font-size: 30rpx;
+}
 </style>
 
 <template>
   <view class="container">
+    <!-- 规格栏 -->
     <view wx:if="{{showStandard}}" class="standard-box">
       <view class="product">
         <view class="base_info">
@@ -750,11 +567,6 @@ page {
 
           <view class="standard_wrap" wx:if='{{isMultiSku}}'>
             <view class="standard_title">规格</view>
-            <!-- <view class="standard_info">
-            <repeat for="{{standards}}" index="index" item="item">
-              <view class="{{isChecked==index?'checked':''}}" @tap="checked({{index}})">{{item}}</view>
-            </repeat>
-          </view> -->
             <scroll-view scroll-y='true' style='height: 200rpx;'>
               <multiSku :classList.sync='skuClassList' :skus.sync='skus' :field='field' @update.user='updateSku'></multiSku>
             </scroll-view>
@@ -774,116 +586,73 @@ page {
               </view>
             </view>
           </view>
-          <view class="row-btnCtn">
-            <view class="add_btn row-btn" @tap="addShoppingCart()">加入购物车</view>
-            <view class="buy_btn row-btn" @tap="firmOrder()">立即购买</view>
-          </view>
       </view>
     </view>
+    <!-- goods infomation -->
     <view>
       <view class="swiper-box">
         <swiper class="goods-swiper" indicator-active-color="{{indicatorActiveColor}}" indicator-color="{{indicatorColor}}" indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" circular="true" bindchange="swiperchange">
-          <repeat wx:if="{{TYPE== 'normal'}}" for="{{goods.goodsimagesList}}" key="index" index="index" item="item">
-            <swiper-item class="goods_swiper_itme">
-              <image src="{{item.goodsimage_url}}" mode="aspectFill">
-            </swiper-item>
-          </repeat>
-          <repeat wx:if="{{TYPE== 'group'||TYPE== 'grouponing'}}" for="{{goods.images}}" key="index" index="index" item="item">
+          <repeat for="{{goods.images}}" key="index" index="index" item="item">
             <swiper-item class="goods_swiper_itme">
               <image src="{{item}}" mode="aspectFill">
             </swiper-item>
           </repeat>
         </swiper>
-        <view class="instructions" wx:if="{{TYPE== 'normal'}}">{{current}}/{{goods.goodsimagesList.length}}</view>
-        <view class="instructions" wx:if="{{TYPE== 'group' ||TYPE== 'grouponing'}}">{{current}}/{{goods.images.length}}</view>
+        <!-- <view class="instructions">{{current}}/{{goods.images.length}}</view> -->
+      </view>
+      <view class="statistics-box">
+        <view wx:if="{{countStatus}}" class="countDown-box">
+          <view class="countDown-txt">
+            <text class="countDown-txt1">还剩</text>
+            <text class="countDown-txt3">{{wxTimerList['wxTimer1'].d!=0?wxTimerList['wxTimer1'].d+'天':''}}</text>
+            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].h1}}</text>
+            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].h2}}</text>:
+            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].m1}}</text>
+            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].m2}}</text>:
+            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].s1}}</text>
+            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].s2}}</text>
+            {{timeStatus?'结束':'开始'}}
+          </view>
+        </view>
+        <view wx:else class="countDown-box">
+          <view class="countDown-txt">
+            <text class="countDown-txt1">活动结束</text>
+          </view>
+        </view>
       </view>
       <view class="product_info">
         <view class="goods">
           <view class="goods_main_info">
             <view class="column">
-              <view class="product_title">{{goods.goods_name}}</view>
-              <view class="product_title" wx:if="{{TYPE== 'group'||TYPE== 'grouponing'}}">{{goods.spec ||'单规格商品'}}</view>
+              <view class="product_title">{{goods.goods.goods_name}}</view>
             </view>
-            <view wx:if="{{TYPE== 'normal'}}" class="column_center" @tap="enshrine">
-              <image src="{{goods.enshrine_type==1?'../../images/icon_pingfen_hl@2x.png':'../../images/icon_pingfen@2x.png'}}" class="qr_icon">
-                {{goods.enshrine_type==1?'已收藏':'收藏'}}
-            </view>
-            <view wx:if="{{TYPE== 'normal'}}" class="column_center" @tap="showShare">
+            <view class="column_center" @tap="showShare">
               <image src="../../images/icon_6_fenxiang@2x.png" class="share_icon">分享
             </view>
           </view>
           <view class="product_price">
             <text class="text11">¥</text>
-            {{goods.goods_price}}
-            <text class="text3" wx:if="{{TYPE== 'group'||TYPE== 'grouponing'}}">¥{{goods.goods_marketprice}}</text>
-            <text class="text22">运费:¥{{goods.goods_freight}}</text>
-            <text class="text22" wx:if="{{TYPE== 'normal'}}">已售：{{goods.goods_salenum}}</text>
+            <text>{{goods.goods_price}}</text>
+            <text class="text3">¥{{goods.goods.goods_marketprice}}</text>
+            <text class="text22">运费:¥{{goods.goods.goods_freight}}</text>
           </view>
-          <!-- <view class="goods_other_info">
-              <view class="text">库存：{{goods.goods_storage}}</view>
-              <view class="text">已售：{{goods.goods_salenum}}</view>
-            </view>-->
         </view>
       </view>
-      <view wx:if="{{TYPE== 'normal'}}" class="standard" @tap="goStandard">
-        <view>规格 {{isMultiSku ? multiSku.skuStr : goods.standard}}</view>
-        <image src="../../images/icon_zuojiantou@2x.png">
+      <view class="seckill_info">
+        <view>规格：{{goods.spec||'单规格'}}</view>
       </view>
-      <view wx:if="{{TYPE=='grouponing'}}">
-        <view class="countDown-box" wx:if="{{pintuanDetails.pintuangroup_state == 1}}">
-          <view class="countDown-txt">活动
-            <text class="countDown-txt1">结束</text>倒计时
-            <text class="countDown-txt3">{{wxTimerList['wxTimer1'].d!=0?wxTimerList['wxTimer1'].d+'天':''}}</text>
-            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].h1}}</text>
-            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].h2}}</text>时
-            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].m1}}</text>
-            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].m2}}</text>分
-            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].s1}}</text>
-            <text class="countDown-txt2">{{wxTimerList['wxTimer1'].s2}}</text>秒
-          </view>
+      <view class="seckill_info">
+        <view class="text">总数：
+          <text>{{goods.limit_num}}</text>
         </view>
-        <view class="countDown-box" wx:if="{{pintuanDetails.pintuangroup_state != 1}}">
-          <view class="countDown-txt">
-            <text class="countDown-txt1">活动结束</text>
-          </view>
+        <view class="text">剩余：
+          <text>{{goods.goods.goods_storage}}</text>
         </view>
-        <view class="headline-txt1">参团人员</view>
-        <view class="headimg-list">
-          <repeat for="{{pintuanDetails.members}}" item="item">
-            <view class="headimg-item">
-              <image class="headimg-itemImg" src="{{item.member_avatar}}">
-                <view class="headimg-itemTxt">{{item.member_name}}</view>
-            </view>
-          </repeat>
-        </view>
-      </view>
-      <view class="groupon-list" wx:if="{{groupListshow}}">
-        <view class="standard groupon-mb" @tap="goGroupList">
-          <view class="groupon-txt4">{{groupInfo.pinsum}}人在开团，可直接参与</view>
-          <view class="groupon-txt5">
-            <text>查看更多</text>
-            <image src="../../images/icon_zuojiantou@2x.png">
-          </view>
-        </view>
-        <repeat for="{{groupInfo.pinlist}}" item="item" index="index">
-          <view class="groupon-listBox">
-            <image class="groupon-active" src="{{item.pintuangroup_avatar}}">
-              <view class="groupon-details">
-                <view class="groupon-detailsOne">{{item.pintuangroup_headname}}</view>
-                <view class="groupon-bottom" wx:if="{{item.pintuangroup_state == 1}}">剩余
-                  <text>{{wxTimerList[index].d!=0?wxTimerList[index].d+'天':''}} {{wxTimerList[index].wxTimer}}</text>结束，差
-                  <text>{{item.pintuangroup_surplus}}</text>人
-                </view>
-                <view class="groupon-bottom" wx:if="{{item.pintuangroup_state != 1}}">已结束</view>
-              </view>
-              <view class="groupon-goBtn" @tap="gogroupon" data-groupondata="{{item}}">去拼团</view>
-          </view>
-        </repeat>
       </view>
       <view class="comment" wx:if="{{comment[0]}}">
         <view class="comment-top">
           <view>宝贝评价({{comment.length}})</view>
-          <view class="more_btn" @tap="goComment" data-goodid="{{goods.SKUList[0].goods_id || goods.goods_id}}">
+          <view class="more_btn" @tap="goComment">
             <text>查看全部</text>
             <image class="more_btnImg" src="../../images/icon_chakanquanbu@2x.png">
           </view>
@@ -913,6 +682,7 @@ page {
         <view class="space"></view>
       </view>
     </view>
+    <!-- bottom bar -->
     <view class="bottom_bar">
       <view class="icon">
         <navigator open-type="switchTab" url="/pages/home" hover-class="none">
@@ -923,18 +693,10 @@ page {
           <image class="tab-icon1" src="../../images/icon_2_kefu@2x.png">
             <view>客服</view>
         </button>
-        <view class="red_dot_wrap" wx:if="{{TYPE== 'normal'}}">
-          <image class="tab-icon3" src="../../images/icon_2_gouwuche@2x.png" @tap="goShoppingCart">
-            <view>购物车</view>
-            <view class="red_dot">{{carSize}}</view>
-        </view>
       </view>
       <view class="warp_btn">
-        <view wx:if="{{TYPE== 'normal'}}" class="add_btn" @tap="addShoppingCart()">加入购物车</view>
-        <view wx:if="{{TYPE== 'normal'}}" class="buy_btn" @tap="firmOrder()">立即购买</view>
-        <view wx:if="{{TYPE== 'group'}}" class="buy_btn group_btn" @tap="firmGroupOrder()">发起团购</view>
-        <view class="buy_btn group_btn" @tap="joinGroup" wx:if="{{TYPE=='grouponing'&&pintuanDetails.pintuangroup_state == 1&&pintuanDetails.is_join != 1}}">参加团购</view>
-        <view class="buy_btn group_btn group_btnBg" wx:if="{{TYPE=='grouponing'&&pintuanDetails.pintuangroup_state != 1||TYPE=='grouponing'&&pintuanDetails.is_join == 1}}">参加团购</view>
+        <view class="buy_btn group_btn" wx:if="{{timeStatus}}" @tap="firmSeckillOrder()">立即秒杀</view>
+        <view class="buy_btn group_btn" wx:else>{{countStatus?"即将开始":'活动结束'}}</view>
       </view>
     </view>
     <!-- QT -->
@@ -970,17 +732,18 @@ import {
   showFailToast,
   exploitToast
 } from "../../utils/tools";
-export default class GoodsDetails extends wepy.page {
+export default class secKill extends wepy.page {
   config = {
-    navigationBarTitleText: "商品详情"
+    navigationBarTitleText: "秒杀商品详情"
   };
   data = {
+    //轮播配置
     indicatorDots: false,
     autoplay: true,
     interval: 3000,
     duration: 200,
     indicatorActiveColor: "#333333",
-    indicatorColor: "#FFFFFF", //以上为轮播配置
+    indicatorColor: "#FFFFFF",
     //是否添加获取手机号按钮
     isPhone: true,
     //个人信息
@@ -1004,13 +767,11 @@ export default class GoodsDetails extends wepy.page {
     current: 1,
     isShare: false,
     TYPE: "normal", //normal:普通 groupon:团购 grouponing：团购进行中 bargain：砍价：bargain 砍价进行中：bargaining
-    groupListshow: false,
     timeDatalist: [],
     wxTimer1: null,
-    groupInfo: [],
     wxTimerList: {},
-    pintuangroup_id: null,
-    pintuanDetails: null,
+    countStatus: true,  //计时器显示状态
+    timeStatus: false,  //时间改变样式
     multiSku: {},
     // sku goods field
     field: {
@@ -1067,19 +828,11 @@ export default class GoodsDetails extends wepy.page {
     multiSku
   };
   methods = {
-    // 收藏/取消收藏
-        collect(){
-      if(this.goods.enshrine_type==1){
-          this.cancel();
-      }else{
-        this.enshrine()
-      }
-    },
     onShareAppMessage: function(res) {
       return {
-        title: this.goods.goods_name,
-        path: `pages/store/goodsDetails?shareType=activity&goods_commonid=${
-          this.goods.goods_commonid
+        title: this.goods.rule_name,
+        path: `pages/activities/seckillDetail?goods_commonid=${
+          this.goods.rule_id
         }`,
         success: function(res) {
           // 转发成功
@@ -1093,6 +846,17 @@ export default class GoodsDetails extends wepy.page {
           // 转发失败
         }
       };
+    },
+    //立即秒杀
+    firmSeckillOrder() {
+      if (this.goods.goods.goods_storage < 1) {
+        return showFailToast("库存不足");
+      }
+      wx.navigateTo({
+        url: `/pages/store/firmOrder?type=nocart&goods=${encodeURIComponent(
+          JSON.stringify(this.goods)
+        )}&groupontype=seckill`
+      });
     },
     checked: index => {
       this.isChecked = index;
@@ -1126,73 +890,6 @@ export default class GoodsDetails extends wepy.page {
       this.goods.goods_num = this.size;
       this.$apply();
     },
-    async addShoppingCart() {
-      if (!this.goods.standard) {
-        return this.goStandard();
-      }
-      if (this.goods.goods_storage < 1) {
-        return wx.showToast({
-          title: "库存不足",
-          icon: "none",
-          duration: 1000
-        });
-      }
-      console.log(this.goods);
-
-      const res = await shttp
-        .post("/api/v2/member/cart")
-        .send({
-          goods_id: this.goods.goods_id,
-          quantity: this.goods.goods_num || 1
-        })
-        .end();
-      if (res.data.cart_num) {
-        this.showStandard = false;
-        wx.showToast({
-          title: "成功加入购物车",
-          icon: "success",
-          duration: 1000
-        });
-        this.getShopCartNum();
-      } else {
-        return wx.showToast({
-          title: res.error,
-          icon: "none",
-          duration: 1000
-        });
-      }
-      this.$apply();
-    },
-    goShoppingCart() {
-      wx.switchTab({
-        url: "/pages/shoppingCart"
-      });
-    },
-
-    firmOrder() {
-      //未设置规格
-      if (!this.goods.standard) {
-        return this.goStandard();
-      }
-      if (this.goods.goods_storage < 1) {
-        return showFailToast("库存不足");
-      }
-      wx.navigateTo({
-        url:
-          "/pages/store/firmOrder?type=nocart&goods=" +
-          encodeURIComponent(JSON.stringify(this.goods))
-      });
-    },
-    firmGroupOrder() {
-      if (this.goods.goods_storage < 1) {
-        return showFailToast("库存不足");
-      }
-      wx.navigateTo({
-        url: `/pages/store/firmOrder?type=nocart&goods=${encodeURIComponent(
-          JSON.stringify(this.goods)
-        )}&groupontype=group`
-      });
-    },
     // udpate multi Sku
     updateSku(price, skuStr, img, goods) {
       // console.error('udpatesku', price, skuStr, goods);
@@ -1207,126 +904,25 @@ export default class GoodsDetails extends wepy.page {
       }
     }
   };
+  //===================================================
   onLoad(option) {
     this.options = option;
     this.id = option.goods_commonid;
     this.scene = decodeURIComponent(option.scene);
   }
-  onShow() {
-    if (this.timeDatalist.length != 0) {
-      this.timeDatalist.forEach(item => {
-        item.stop();
-      });
-      this.timeDatalist = [];
-      this.wxTimerList = {};
-    }
-    if (this.wxTimer1 != null) {
-      this.wxTimer1.stop();
-      this.wxTimerList = {};
-      this.wxTimer1 = null;
-    }
-    this.wxUserInfo = wx.getStorageSync("memberInfo");
-    wx.showLoading({
-      title: "加载中"
-    });
-    console.log(this.scene);
+  async onShow() {
     if (this.scene != "undefined") {
       let qrarry = this.scene.split(";");
-      //TODO:分享参数数组，0位为类型,1位为相关id
-      if (qrarry[0] == "normal") {
-        this.id = qrarry[1];
-      } else {
-        this.pintuangroup_id = qrarry[1];
-      }
-      this.getType(qrarry[0]);
-    } else {
-      // revert sku info/恢复跳转前的规格设置
-      if (this.multiSku && this.multiSku.goods) {
-        let goods = this.multiSku.goods;
-        this.goods.standard = goods;
-        this.goods.goods_storage = goods.goods_storage;
-        this.goods.goods_price = goods.goods_price;
-        this.goods.goods_id = goods.goods_id;
-        this.goods.goods_freight = goods.goods_freight;
-        return wx.hideLoading();
-      }
-
-      this.getType(this.options.type);
+      this.id = qrarry[0];
     }
-    if (!this.wxUserInfo.wx_name) {
-      wx.navigateTo({
-        url: `/pages/authorization?shareType=activity`
-      });
-    }
-    this.getShopCartNum();
+    await this.goodsDetails(this.id);
+    this.getComment(this.goods.goods_id);
   }
-  getType(type) {
-    console.log(type);
-    switch (type) {
-      case "group":
-        this.TYPE = type;
-        this.groupGoodsDetails(this.id);
-        break;
-      case "grouponing":
-        this.TYPE = type;
-        this.getgroupDetails(this.pintuangroup_id);
-        break;
-      default:
-        this.TYPE = "normal";
-        this.goodsDetails(this.id);
-        break;
-    }
-  }
-  //购物车数量
-  async getShopCartNum() {
-    console.log("开始请求购物车数量");
-    const res = await shttp.get(`/api/v2/member/cart`).end();
-    console.log(res);
-    if (!res.data.store_cart_list["1"]) {
-      this.carSize = 0;
-    } else {
-      this.carSize = res.data.store_cart_list["1"].length;
-    }
-
-    this.$apply();
-  }
-  //商品详情
+  //商品详情============================================
   async goodsDetails(id) {
-    const res = await shttp.get(`/api/v2/member/goodscommon/${id}`).end();
+    const res = await shttp.get(`/api/v2/member/seckill/${id}`).end();
     if (res.status == 0) {
-      this.goods = res.data;
-      this.goods.goods_salenum = this.goods.goods_faker_salenum
-        ? this.goods.goods_faker_salenum
-        : 0;
-      if (this.goods.SKUList.length > 0) {
-        this.goods.SKUList.forEach(item => {
-          this.goods.goods_salenum += item.goods_salenum;
-        });
-        this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
-      }
-      if (res.data.spec_value) {
-        this.standards = res.data.spec_value;
-      } else {
-        this.standards = ["统一规格"];
-      }
-
-      // set multi sku
-      if (this.goods.spec_value) {
-        this.multiSku.price = this.getPrice(
-          this.goods.SKUList.map(v => v.goods_price)
-        );
-      }
-
-      this.getComment(this.goods.SKUList[0].goods_id);
-    }
-
-    wx.hideLoading();
-    this.$apply();
-  }
-  //团购商品详情
-  async groupGoodsDetails(id) {
-    const res = await shttp.get(`/api/v2/member/goodsgroupbuy/${id}`).end();
-    if (res.status == 0) {
+      let that = this;
       this.goods = res.data;
       //规格显示
       if(this.goods.goods.goods_spec){
@@ -1337,18 +933,44 @@ export default class GoodsDetails extends wepy.page {
         }
         this.goods.spec = this.goods.spec.replace(/\/\s$/g,'');
       }
-      this.goods.goods_salenum = this.goods.goods.goods_salenum;
-      this.goods.goods_storage = this.goods.goods.goods_storage;
-      this.goods.goods_name = this.goods.goods.goods_name;
-      this.goods.goods_freight = this.goods.goods.goods_freight;
-      this.goods.goods_marketprice = this.goods.goods.goods_marketprice;
-      this.goods.goods_image = this.goods.goods.goods_image;
-      this.standards = ["统一规格"];
-      this.getComment(this.goods.goods_id);
-      if (this.TYPE == "group") {
-        this.getGroupList(this.goods.goods_id);
+      //传参到firmOrder的解析
+      this.goods.spec_name = this.goods.goods.goods_spec;
+      this.goods.goods_image = res.data.goods.goods_image;
+      this.goods.goods_name = res.data.goods.goods_name;
+      // 重要提示：ios不支持2019-1-1 00:00:00格式，需替换为2019/1/1 00:00:00
+      res.data.start_time = res.data.start_time.replace(/\-/g, '/');
+      res.data.end_time = res.data.end_time.replace(/\-/g, '/');
+      let endTime = new Date(res.data.end_time).getTime();
+      let nowTime = new Date().getTime();
+      let startTime = new Date(res.data.start_time).getTime();
+      //计时器
+      if (this.goods.rule_status == 1&&nowTime < startTime) {
+        this.timeStatus = false;
+        let wxTimer1 =  this.compareTime(nowTime,startTime,function(){
+            that.wxTimer1.stop();
+            that.timeStatus = true;
+            that.$apply();
+            that.goodsDetails(that.id);
+        });
+        wxTimer1.start(this);
+        this.wxTimer1 = wxTimer1;
+      } else if (this.goods.rule_status == 1 && nowTime < endTime) {
+        this.timeStatus = true;
+        let wxTimer1 = this.compareTime(nowTime,endTime,function(){
+            that.wxTimer1.stop();
+            that.countStatus = false;
+            that.timeStatus = false;
+            that.$apply();
+        });
+        wxTimer1.start(this);
+        this.wxTimer1 = wxTimer1;
+      } else if (this.goods.rule_status == 3 || nowTime > endTime) {
+        this.wxTimer1 = new timer({});
+        this.countStatus = false;
+        this.timeStatus = false;
       }
-    } else {
+      // this.getComment(this.goods.goods_id);
+    }else {
       const msg = res.error;
           wx.showModal({
             title: '提示',
@@ -1362,32 +984,31 @@ export default class GoodsDetails extends wepy.page {
             }
           });
     }
-
     wx.hideLoading();
     this.$apply();
   }
-
-  goStandard() {
-    this.showStandard = true;
-    if (this.standards[0] == "统一规格") {
-      this.isChecked = 0;
-      this.goods.standard = "统一规格";
-      this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
-      this.goods.goods_price = this.goods.SKUList[0].goods_price;
-      this.goods.goods_id = this.goods.SKUList[0].goods_id;
-      this.goods.goods_freight = this.goods.SKUList[0].goods_freight;
-      this.goods.goods_num = this.size;
-    }
-    if (!this.goods.standard) {
-      wx.showToast({
-        title: "请选择规格!",
-        icon: "none",
-        duration: 1000
-      });
-    }
-    this.$apply();
+  compareTime(startTime,endTime,callBack){
+        let hour = dayjs(endTime).diff(dayjs(startTime), "hour");
+        console.log(hour);
+        let diffhour = hour * 60;
+        let minute = dayjs(endTime).diff(dayjs(startTime), "minute");
+        console.log(minute);
+        let diffminute = minute * 60;
+        minute -= diffhour;
+        let second = dayjs(endTime).diff(dayjs(startTime), "second");
+        second -= diffminute;
+        if(hour<10) hour = '0'+hour
+        if(minute<10) minute = '0'+minute
+        if(second<10) second = '0'+second
+        let beginTime = hour + ":" + minute + ":" + second;
+        console.log(beginTime);
+        return new timer({
+          beginTime: beginTime,
+          name: "wxTimer1",
+          complete:callBack
+        });
   }
-  //商品评论
+  //商品评论============================================
   async getComment(id) {
     let send;
     send = {
@@ -1412,15 +1033,13 @@ export default class GoodsDetails extends wepy.page {
 
     this.$apply();
   }
-  //评论列表
   goComment(e) {
-    let id = e.currentTarget.dataset.goodid;
     wx.navigateTo({
-      url: `./commentList?goodsId=${id}`
+      url: `../store/commentList?goodsId=${this.goods.goods_id}`
     });
     this.$apply();
   }
-  //获取二维码
+  //获取二维码==========================================
   async getQrCode() {
     this.isShowQT = true;
     this.$apply();
@@ -1429,7 +1048,7 @@ export default class GoodsDetails extends wepy.page {
     let content = wx.createCanvasContext("canvas");
     content.setFillStyle("#ffffff");
     content.fillRect(0, 0, 275, 440);
-    let goodsImg = this.goods.goods_image;
+    let goodsImg = this.goods.images[0];
     await this.drawImage(
       {
         img: goodsImg,
@@ -1443,8 +1062,8 @@ export default class GoodsDetails extends wepy.page {
     const res = await shttp
       .post("/api/v2/member/wxcode")
       .send({
-        page: "pages/store/goodsDetails",
-        scene: "normal;" + this.id,
+        page: "pages/activities/seckillDetail",
+        scene: this.id,
         width: 350, // 430
         is_hyaline: true // false,
       })
@@ -1463,7 +1082,7 @@ export default class GoodsDetails extends wepy.page {
     content.fillStyle = "#000000";
     // content.setTextAlign("center");
     content.setFontSize(14);
-    content.fillText(this.goods.goods_name, 20, 315, 140);
+    content.fillText(this.goods.rule_name, 20, 315, 140);
     content.fillStyle = "#dd3d27";
     content.setFontSize(14);
     content.fillText("￥", 20, 380);
@@ -1556,188 +1175,49 @@ export default class GoodsDetails extends wepy.page {
     this.isShowQT = false;
     this.$apply();
   }
-  swiperchange(e) {
-    this.current = e.detail.current + 1;
-  }
-  // 收藏
-  async enshrine() {
-    const res = await shttp
-      .post("/api/v2/member/enshrine")
-      .send({
-        goods_commonid: this.id
-      })
-      .end();
-    if (res.status === 0) {
-      wx.showToast({
-        title: "收藏成功!",
-        icon: "success",
-        duration: 2000
-      });
-      this.goods.enshrine_type = 1;
-       this.goods.enshrine[0].enshrine_id=res.data;
-    } else if (res.status === 1) {
-      wx.showToast({
-        title: res.error,
-        icon: "none",
-        duration: 2000
-      });
-    }
-    this.$apply();
-  }
- // 取消收藏
-  async cancel(){
-    let id=this.goods.enshrine[0].enshrine_id
-    const res = await shttp.delete(`/api/v2/member/enshrine/${id}`).end();
-     if (res.status == 0) {
-        wx.showToast({
-          title: "取消收藏",
-          icon: "success",
-          duration: 2000
-        });
-     this.goods.enshrine_type = 0;
-      } else if (res.status == 1) {
-        wx.showToast({
-          title: res.error,
-          icon: "none",
-          duration: 2000
-        });
-      }
-      this.$apply();
-  }
-  
+  //分享===============================================
   showShare() {
     this.isShare = true;
   }
   closeShare() {
     this.isShare = false;
   }
+  //规格选项============================================
+  goStandard() {
+    this.showStandard = true;
+    if (this.standards[0] == "统一规格") {
+      this.isChecked = 0;
+      this.goods.standard = "统一规格";
+      this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
+      this.goods.goods_price = this.goods.SKUList[0].goods_price;
+      this.goods.goods_id = this.goods.SKUList[0].goods_id;
+      this.goods.goods_freight = this.goods.SKUList[0].goods_freight;
+      this.goods.goods_num = this.size;
+    }
+    if (!this.goods.standard) {
+      wx.showToast({
+        title: "请选择规格!",
+        icon: "none",
+        duration: 1000
+      });
+    }
+    this.$apply();
+  }
   deleteBtn() {
     this.showStandard = false;
   }
-  //获取商品拼团列表
-  async getGroupList(id) {
-    const res = await shttp
-      .get(`/api/v2/member/groupbuy/${id}`)
-      .send({
-        pintuangroup_goods_id: id,
-        page: 1,
-        limit: 3,
-        pintuangroup_state: 1
-      })
-      .end();
-    if (res.status == 0 && res.data.length != 0) {
-      this.groupListshow = true;
-      let startTime = new Date().getTime();
-      this.groupInfo = res.data;
-      this.groupInfo.pinlist.forEach((item, index) => {
-        let endTime = item.pintuangroup_endtime * 1000;
-        if (startTime < endTime) {
-          let hour = dayjs(endTime).diff(dayjs(startTime), "hour");
-          let diffhour = hour * 60;
-          let minute = dayjs(endTime).diff(dayjs(startTime), "minute");
-          let diffminute = minute * 60;
-          minute -= diffhour;
-          let second = dayjs(endTime).diff(dayjs(startTime), "second");
-          second -= diffminute;
-          let beginTime = hour + ":" + minute + ":" + second;
-          let wxTimer = index;
-          wxTimer = new timer({
-            beginTime: beginTime,
-            name: wxTimer,
-            complete: function() {
-              item.pintuangroup_state = 0;
-            }
-          });
-          wxTimer.start(this);
-          this.timeDatalist.push(wxTimer);
-        } else {
-          item.pintuangroup_state = 0;
-        }
-      });
-    }
-    this.$apply();
-  }
-  //获取团详情
-  async getgroupDetails(id) {
-    const res = await shttp.get(`/api/v2/member/groupbuy/${id}/edit`).end();
-    if (res.status == 0) {
-      this.pintuanDetails = res.data;
-      //TODO:分享参团获取团详情后再获取团商品详情
-      this.groupGoodsDetails(res.data.rule_id);
-      //开启第一个定时器
-      if (this.pintuanDetails.pintuangroup_state == 1) {
-        let endTime = this.pintuanDetails.pintuangroup_endtime * 1000;
-        let startTime = new Date().getTime();
-        if (startTime < endTime) {
-          let hour = dayjs(endTime).diff(dayjs(startTime), "hour");
-          let diffhour = hour * 60;
-          let minute = dayjs(endTime).diff(dayjs(startTime), "minute");
-          let diffminute = minute * 60;
-          minute -= diffhour;
-          let second = dayjs(endTime).diff(dayjs(startTime), "second");
-          second -= diffminute;
-          let beginTime = hour + ":" + minute + ":" + second;
-          let that = this;
-          var wxTimer1 = new timer({
-            beginTime: beginTime,
-            name: "wxTimer1",
-            complete: function() {
-              that.pintuanDetails.pintuangroup_state = 0;
-            }
-          });
-          wxTimer1.start(this);
-          this.wxTimer1 = wxTimer1;
-        } else {
-          this.pintuanDetails.pintuangroup_state = 0;
-        }
-      }
-    }
-    this.$apply();
-  }
-  goGroupList() {
-    wx.navigateTo({
-      url: `groupon?commonid=${this.goods.goods_id}`
-    });
-  }
-  gogroupon(e) {
-    let groupondata = e.currentTarget.dataset.groupondata;
-    wx.navigateTo({
-      url: `/pages/store/goodsDetails?scene=${"grouponing;" +
-        groupondata.pintuangroup_id}`
-    });
-  }
-  joinGroup() {
-    this.goods.goods_id = this.pintuanDetails.pintuangroup_goods_id;
-    this.goods.goods_num = 1;
-    console.log("grouponing");
-    wx.navigateTo({
-      url: `/pages/store/firmOrder?type=nocart&groupontype=grouponing&grouponid=${
-        this.pintuangroup_id
-      }&goods=${encodeURIComponent(JSON.stringify(this.goods))}`
-    });
-  }
-  onUnload() {
-    if (this.wxTimer1 != null) {
-      this.wxTimer1.stop();
-      this.wxTimerList = {};
-      this.wxTimer1 = null;
-    }
-    if (this.timeDatalist.length != 0) {
-      this.timeDatalist.forEach(item => {
-        item.stop();
-      });
-      this.wxTimerList = {};
-      this.timeDatalist = [];
-    }
-  }
-
+  //价格计算
   getPrice(priceArr) {
     let price = {};
-
     price.min = Math.min.apply(null, priceArr);
     price.max = Math.max.apply(null, priceArr);
-
     return price.min == price.max ? price.min : `${price.min}-${price.max}`;
+  }
+  swiperchange(e) {
+    this.current = e.detail.current + 1;
+  }
+  onUnload() {
+    this.wxTimer1.stop();
   }
 }
 </script>
