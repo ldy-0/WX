@@ -193,6 +193,7 @@ export default class Waiterhome extends wepy.page {
     activity2: { date: '8-9月主题', name: '激发高昂表现', desc: '码上行动' },
     isShow: false,
     ruleType: '',
+    analyTitle: 'sa_click',
   };
 
   components = {
@@ -210,7 +211,13 @@ export default class Waiterhome extends wepy.page {
   onShow() {}
 
   methods = {
-    showRule(type){ this.ruleType = type; this.isShow = !this.isShow; },
+    showRule(type){ 
+      this.ruleType = type; 
+      this.isShow = !this.isShow; 
+
+      // analy
+      wx.reportAnalytics(this.analyTitle, { page: `activity`, el: `${type === 'btn' ? 'fullYearBtn' : 'aprilBtn'}` }); 
+    },
     closeRule(){ this.isShow = !this.isShow },
     goUpdate(){
       let url = `/pages/register?user=${encodeURIComponent(JSON.stringify(this.user))}`;

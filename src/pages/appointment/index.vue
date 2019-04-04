@@ -242,6 +242,7 @@ export default class Waiterhome extends wepy.page {
     showSuccess: false,
     isFocus: false,
     canScroll: false,
+    analyTitle: 'sa_click',
   };
 
   components = {
@@ -269,6 +270,8 @@ export default class Waiterhome extends wepy.page {
       let url = `/pages/appointment/poster?value=${this.infoBackup}`;
       // wx.navigateTo({ url, });
       this.navigateTo(url);
+
+      wx.reportAnalytics(this.analyTitle, { page: 'appointment', el: `posterBtn` }); 
     },
     focusTextarea(e){
       console.error('--focus--');
@@ -289,6 +292,8 @@ export default class Waiterhome extends wepy.page {
         data, 
         success: e => { wx.hideToast(); this.info = ''; this.showSuccess = true; this.$apply(); },
       });
+
+      wx.reportAnalytics(this.analyTitle, { page: 'appointment', el: `copyBtn` }); 
     },
     closeToast(){
       this.showSuccess = false;

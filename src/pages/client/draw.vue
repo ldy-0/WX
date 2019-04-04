@@ -310,6 +310,7 @@ export default class Waiterhome extends wepy.page {
     canSubmit: true,
     drawEnd: false,
     isSmallScreen: false,
+    analyTitle: 'user_click',
   };
 
   components = {
@@ -341,6 +342,8 @@ export default class Waiterhome extends wepy.page {
       let url;
       
       this.draw();
+
+      wx.reportAnalytics(this.analyTitle, { page: 'clientDraw', el: `drawBtn` }); 
     },
     goWriteInfo(){
       let url = `/pages/client/writeInfo?orderId=${this.orderId}&goods=${encodeURIComponent(JSON.stringify(this.goods))}`;

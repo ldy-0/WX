@@ -348,6 +348,7 @@ export default class register extends wepy.page {
       { id: 6, name: '总经理' },
     ],
     canSubmit: true,
+    analyTitle: 'sa_click',
   };
   components = {};
   computed = {};
@@ -380,6 +381,8 @@ export default class register extends wepy.page {
 
       if(!this.canSubmit) return console.error('cancel');
       this.canSubmit = false;
+
+      wx.reportAnalytics(this.analyTitle, { page: 'register', el: `${this.isUpdate ? 'updateAdviserBtn' : 'registerAdviserBtn'}` }); 
 
       this.save(v);
     },

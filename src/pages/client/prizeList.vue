@@ -223,6 +223,7 @@ export default class Waiterhome extends wepy.page {
     name: '',
     mobile: '',
     address: '',
+    analyTitle: 'user_click',
   };
 
   components = {
@@ -247,6 +248,8 @@ export default class Waiterhome extends wepy.page {
       let url = `/pages/client/reupload?type=error&error=${JSON.stringify(o)}`;
       // wx.redirectTo({ url, });
       this.navigateTo(url);
+
+      wx.reportAnalytics(this.analyTitle, { page: 'clientPrizeList', el: `errorBtn` }); 
     },
     goResult(){
       let url = `/pages/limit/index?type=result`;

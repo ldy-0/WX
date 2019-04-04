@@ -208,6 +208,7 @@ export default class Waiterhome extends wepy.page {
     resultTitle: '上传成功！推荐车主扫码抽奖通过验证后即可获得相应积分',
     error: null,
     canSubmit: true,
+    analyTitle: 'user_click',
   };
 
   components = {
@@ -259,6 +260,7 @@ export default class Waiterhome extends wepy.page {
       }else if(this.type === 'reupload'){
         this.uploadImg();
       }
+
     },
   };
 
@@ -268,11 +270,14 @@ export default class Waiterhome extends wepy.page {
     };
     // console.error('upload img param', param);
 
+    wx.showLoading({ title: 'Loading...' });
     let res = await mp.uploadImg(`https://castrolmini.mgcc.com.cn/oss/api/v1/upload`, this.img, {
       'content-type': 'multipart/form-data',
       'Authorization': wx.getStorageSync('token'),
     });
     // console.error(res);
+
+    wx.reportAnalytics(this.analyTitle, { page: 'clientReupload', el: `reuploadBtn` }); 
 
     if(res && res.data){
       let o, opt;
@@ -287,6 +292,7 @@ export default class Waiterhome extends wepy.page {
       opt = { image: o.data, nextPage: 'pages/client/index', }
 
       if(this.type === 'reupload'){
+        opt.uploadSource = 1;
         opt.id = this.error.orderId;
         opt.orderStatus = 'AUDITING';
       }
@@ -319,7 +325,6 @@ export default class Waiterhome extends wepy.page {
   }
 
   async getResult(param){
-    wx.showLoading({ title: 'Loading...' });
 
     let res = await req.post(`/castrol/api/v1/order/status`, param, { 'Authorization': wx.getStorageSync('token'), }); 
 
@@ -331,7 +336,7 @@ export default class Waiterhome extends wepy.page {
 
       gb.tabIndex = 1;
       // return wx.redirectTo({ url: `/pages/client/prizeList`, });
-      return this.navigateTo({ url: `/pages/client/prizeList`, });
+      return this.navigateTo(`/pages/client/prizeList`);
       this.canSubmit = false;
     }
 

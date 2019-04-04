@@ -242,6 +242,7 @@ export default class Waiterhome extends wepy.page {
     checkedIndex: 0,
     position: '300rpx',
     checkId: '',
+    analyTitle: 'sa_click',
   };
 
   components = {
@@ -280,6 +281,7 @@ export default class Waiterhome extends wepy.page {
       this.showVideo = true;
       // let url = `/pages/challenge/video?video=${encodeURIComponent(JSON.stringify(this.list[index]))}`;
       // wx.redirectTo({ url });
+      wx.reportAnalytics(this.analyTitle, { page: 'challenge', el: `videoPoster${index + 1}` }); 
     },
     goUpdate(){
       let url = `/pages/register?user=${encodeURIComponent(JSON.stringify(this.user))}`;

@@ -247,6 +247,7 @@ export default class Waiterhome extends wepy.page {
     error: null,
     canSubmit: true,
     status: false,
+    analyTitle: 'sa_click',
   };
 
   components = {
@@ -271,7 +272,9 @@ export default class Waiterhome extends wepy.page {
     }
   }
 
-  onShow() {}
+  onShow() {
+    this.getStatus();
+  }
 
   methods = {
     goRecord(){
@@ -292,8 +295,6 @@ export default class Waiterhome extends wepy.page {
     },
     async go(){
       let url;
-          // currentTime = new Date().getTime(),
-          // endTime = new Date(2019, 3, 1).getTime();
 
       // if(currentTime < endTime) return wx.showModal({ content: '活动4月1日正式开始，敬请期待！', showCancel: false });
       if(!this.status) return wx.showModal({ content: '活动4月1日正式开始，敬请期待！', showCancel: false });
@@ -313,6 +314,8 @@ export default class Waiterhome extends wepy.page {
       }else if(this.type === 'reupload'){
         this.uploadImg();
       }
+
+      wx.reportAnalytics(this.analyTitle, { page: 'limit', el: `${this.type}` }); 
     },
     async saveQrcode(){
       if(!this.qrcode) return ;
@@ -334,7 +337,6 @@ export default class Waiterhome extends wepy.page {
     let param = {
       file: this.img,
     };
-    // console.error('upload img param', param);
 
     let res = await mp.uploadImg(`https://castrolmini.mgcc.com.cn/oss/api/v1/upload`, this.img, {
       'content-type': 'multipart/form-data',
@@ -387,7 +389,7 @@ export default class Waiterhome extends wepy.page {
   async getStatus(){
     let res = await req.get(`/castrol/api/v1/seller/status`, {}, { 'Authorization': wx.getStorageSync('token'), })
 
-    // console.error(res);
+    console.error('getstatus: ', res);
     if(res && res.code === 1){
       this.status = res.data;
     }else{

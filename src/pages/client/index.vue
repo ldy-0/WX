@@ -274,6 +274,7 @@ export default class Waiterhome extends wepy.page {
     isX: false,
     showExit: false,
     canShow: false,
+    analyTitle: 'user_click',
   };
 
   components = {
@@ -292,23 +293,29 @@ export default class Waiterhome extends wepy.page {
     console.error('options', options);
 
     // 海报二维码进入
-    if(options.scene === '0'){ wx.setStorageSync('clientReferer', 'poster'); return ; }
-
-    if(code == '108'){
-      this.type = 'goDraw';
-      this.btnTitle = '立即抽奖';
-      this.orderId = Number(options.scene.substr(1));
-      return ;
+    if(options.scene === '0'){ 
+      wx.setStorageSync('clientReferer', 'poster'); 
+      return this.analy(2); 
     }
+
+    // if(code == '108'){
+    //   this.type = 'goDraw';
+    //   this.btnTitle = '立即抽奖';
+    //   this.orderId = Number(options.scene.substr(1));
+    //   return ;
+    // }
 
     // 抽奖码进入
     if(options.scene && options.scene.indexOf('*') !== -1){
       this.type = 'goDraw';
       this.btnTitle = '立即抽奖';
       this.orderId = Number(options.scene.substr(1));
-      wx.setStorageSync('clientReferer', 'draw');
-      this.status = options.status;
+      if(code != '108'){
+        wx.setStorageSync('clientReferer', 'draw');
+        this.status = options.status;
+      }
       console.error(options, this.type, this.status);
+      this.analy(1);
     }
 
   } 
@@ -341,7 +348,10 @@ export default class Waiterhome extends wepy.page {
   methods = {
     changeAgree(){ this.agree = !this.agree },
     changeAgreement(){ this.showAgreement = !this.showAgreement },
-    changeExit(){ this.showToast = this.showExit = true; },
+    changeExit(){ 
+      this.showToast = this.showExit = true; 
+      wx.reportAnalytics(this.analyTitle, { page: 'clientHome', el: `getedBtn` }); 
+    },
     closeToast(){ if(this.showExit) this.showToast = this.showExit = false; },
     go(){
       let url;
@@ -356,6 +366,8 @@ export default class Waiterhome extends wepy.page {
 
       // wx.redirectTo({ url, });
       this.navigateTo(url);
+
+      wx.reportAnalytics(this.analyTitle, { page: 'clientHome', el: `goDrawBtn` }); 
     },
     // 查询用户是否有
     async onGotUserInfo(e){
@@ -405,6 +417,14 @@ export default class Waiterhome extends wepy.page {
       wx.hideLoading();
     }
   };
+
+  async analy(operationScene){
+    let param = { operationScene };
+
+    if(operationScene === 1) param.objId = this.orderId;
+
+    let res = await req.post(`/castrol/api/v1/operationRecord`, param, { 'Authorization': wx.getStorageSync('token'), });
+  }
   
   async getList(){
     let res = await req.get(`/castrol/api/v1/marketVideo`, { size: 9999 }, { 'Authorization': wx.getStorageSync('token') });

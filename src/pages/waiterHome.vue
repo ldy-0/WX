@@ -313,6 +313,7 @@ export default class Waiterhome extends wepy.page {
     scene: null,
     height: 650,
     canScroll: false,
+    analyTitle: 'sa_click',
   };
 
   components = {
@@ -330,12 +331,14 @@ export default class Waiterhome extends wepy.page {
 
     let sys = wx.getSystemInfoSync();
     this.canScroll = sys.screenHeight < 568;
+    // console.error('---', sys.screenHeight);
     // this.canScroll = sys.screenHeight < 568 || /Huawei|HUAWEI/g.test(sys.brand);
 
     // 是否通过扫码进入
     if(options.scene){
-      // console.error(options.scene);
+      console.error('scene: ', options.scene);
       this.scene = options.scene;
+      this.analy();
     }else{
       console.error(code == '108', adviser);
       if(code == '108') return wx.reLaunch({ url: `/pages/client/prizeList` });
@@ -360,12 +363,15 @@ export default class Waiterhome extends wepy.page {
       let url = `/pages/register?adviser=${encodeURIComponent(JSON.stringify(this.adviser))}`;
       // wx.navigateTo({ url, });
       this.navigateTo(url);
+
+      wx.reportAnalytics(this.analyTitle, { page: 'waiterHome', el: 'updateAdviserBtn' }); 
     },
     goModule(type){
       let url = `/pages/${type}/index`;
 
       this.navigateTo(url);
       // wx.reLaunch({ url });
+      wx.reportAnalytics(this.analyTitle, { page: 'waiterHome', el: `${type}Btn` }); 
     },
     // 查询用户是否有服务顾问信息
     async onGotUserInfo(e){
@@ -380,7 +386,7 @@ export default class Waiterhome extends wepy.page {
 
         param = { encryptedData: e.detail.encryptedData, iv: e.detail.iv, };
         // if(this.scene === '0') param.scan = true;
-        param.scan = this.scene === '0' ? true : false;
+        param.scan = ['0', '1'].indexOf(this.scene) !== -1 ? true : false;
 
         const res = await req.post(url, param, { Authorization: wx.getStorageSync('token') });
         console.error('login', res.data);
@@ -421,6 +427,15 @@ export default class Waiterhome extends wepy.page {
     let length = getCurrentPages().length;
     length >= 9 ? wx.reLaunch({ url }) : wx.navigateTo({ url });
   }
+
+  async analy(){
+    let header = { 
+      'Authorization': wx.getStorageSync('token'),
+    };
+
+    let res = await req.post(`/castrol/api/v1/operationRecord`, { operationScene: this.scene === '0' ? 3 : 6 }, header);
+  }
+
   // 获取服务顾问信息
   async getAdviserInfo(){
     let adviser = wx.getStorageSync('adviserInfo');

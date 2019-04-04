@@ -38,6 +38,7 @@ export default class Placeholder extends wepy.component {
     checkIndex: null,
     adviserBarURL: '/images/global/adviserBar.png',
     customerBarURL: '/images/global/customerBar.png',
+    analyTitle: 'sa_click',
   }
 
   computed = {
@@ -54,10 +55,13 @@ export default class Placeholder extends wepy.component {
   methods = {
     switchTab(index){
       let url = this.list[index].path,
-          globalData = this.$parent.$parent.globalData;
+          globalData = this.$parent.$parent.globalData,
+          pages = getCurrentPages();
 
-      // console.error(index, globalData.tabIndex);
       if(globalData.tabIndex === index) return ;
+
+      // analy
+      wx.reportAnalytics(this.analyTitle, { page: `${pages[pages.length - 1].route}`, el: `${this.list[index].path.replace(/\/.*\//g, '')}` }); 
 
       globalData.tabIndex = index;
 
@@ -75,12 +79,14 @@ export default class Placeholder extends wepy.component {
         pageList = getCurrentPages(),
         length = pageList.length;
 
-    canClear = pageList.some(v => ['pages/appointment/index', 'pages/limit/index', 'pages/story/index', 'pages/challenge/index'].indexOf(v.route) !== -1);
+    // console.error('length: ', pageList.length, pageList);
+    // canClear = pageList.some(v => ['pages/appointment/index', 'pages/limit/index', 'pages/story/index', 'pages/challenge/index'].indexOf(v.route) !== -1);
+    canClear = [].indexOf(pageList[length - 1].route) !== -1;
     if(canClear){
       return wx.navigateBack({ delta: 1 });
     }
 
-    length === 9 ? wx.reLaunch({ url }) : wx.navigateTo({ url });
+    length >= 7 ? wx.reLaunch({ url }) : wx.navigateTo({ url });
   }
 }
 </script>

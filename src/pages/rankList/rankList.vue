@@ -193,6 +193,7 @@ export default class Waiterhome extends wepy.page {
     rankList: [],
     levelList: ['第一名', '第二名', '第三名', '第四名', '第五名', '第六名', '第七名', '第八名', '第九名', '第十名'],
     isSmallScreen: false,
+    analyTitle: 'sa_click',
   };
 
   components = {
@@ -221,6 +222,9 @@ export default class Waiterhome extends wepy.page {
       let url = `/pages/waiterHome`;
       // wx.redirectTo({ url, });
       this.navigateTo(url);
+
+      // analy
+      wx.reportAnalytics(this.analyTitle, { page: `rankList`, el: `${'continueBtn'}` }); 
     },
     goModule(){
 

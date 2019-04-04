@@ -178,6 +178,7 @@ export default class Waiterhome extends wepy.page {
     tabBarList: [],
     playURL: '../../images/global/play.png',
     list: [],
+    analyTitle: 'sa_click',
   };
 
   components = {
@@ -213,6 +214,8 @@ export default class Waiterhome extends wepy.page {
     goHome(){
       let url = `/pages/waiterHome`;
       wx.navigateBack({ delta: 1, });
+
+      wx.reportAnalytics(this.analyTitle, { page: 'story', el: 'getedBtn' }); 
     },
   };
 

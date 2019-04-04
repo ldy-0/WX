@@ -26,6 +26,9 @@ page {
 .main_wrap{
   margin: 70rpx 0 0;
 }
+.s_main_wrap{
+  margin: 30rpx 0 0;
+}
 
 .btn_wrap{
   position: relative;
@@ -35,6 +38,9 @@ page {
   border-radius: 12rpx;
   line-height: 1.2;
   overflow: hidden;
+}
+.s_btn_wrap{
+  margin: 10rpx auto 0;
 }
 .i_btn{
   width: 100%;
@@ -78,9 +84,10 @@ page {
 }
 
 .poster_img{
-  width: 688rpx;
+  display: block;
+  /* width: 640rpx; */
   /* width: 100%; */
-  height: 1068rpx;
+  /* height: 1008rpx; */
   /* height: 1068rpx; */
   margin: 0 auto;
 }
@@ -106,6 +113,10 @@ page {
 .iphoneX{
   margin: 10vh 0 0;
 }
+.s_canvas{
+  width: 315px;
+  height: 480px;
+}
 
 .s_fc_1{ color: #fff; }
 .s_fc_2{ color: #c49e71; }
@@ -124,22 +135,22 @@ page {
     <!-- <image class="banner_img" src="../../images/bg_1@2x.png" alt> -->
 
     <view class="scroll_wrap {{isX ? 'iphoneX_scroll_wrap' : ''}}">
-    <scroll-view scroll-y="{{canScroll ? true : false}}" style='height: 100%;'>
+    <scroll-view scroll-y="{{canScroll}}" style='height: 100%;'>
 
-      <view class="main_wrap s_fc_2 {{isX ? 'iphoneX' : ''}}">
+      <view class="main_wrap s_fc_2 {{isX ? 'iphoneX' : ''}} {{isSmall ? 's_main_wrap' : ''}}">
 
         <!-- <image class='poster_img' src='{{poster}}' /> -->
-        <canvas canvas-id="canvas" class="canvas {{isX ? 'x_canvas' : ''}}"></canvas>
+        <canvas canvas-id="canvas" class="canvas {{isX ? 'x_canvas' : ''}} {{isSmall ? 's_canvas' : ''}}"></canvas>
 
       </view>
 
       <view class='between'>
-        <view class='btn_wrap' @tap='saveImg'>
+        <view class="btn_wrap {{isSmall ? 's_btn_wrap' : ''}}" @tap='saveImg'>
             <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
             <view class='btn_ctn s_fc_4'>保存至相册</view>
         </view>
 
-        <button open-type='share' class='clear btn_wrap' plain='true' wx:if="{{!user}}">
+        <button open-type='share' class="clear btn_wrap  {{isSmall ? 's_btn_wrap' : ''}}" plain='true' wx:if="{{!user}}">
             <image class='i_btn' src='../../images/btn1.png' mode='aspectFill' />
             <view class='btn_ctn s_fc_4'>一键转发</view>
         </button>
@@ -161,6 +172,7 @@ import wepy from "wepy";
 import tabBar from "../../components/tabBar";
 import toast from "../../components/toast";
 import { shttp } from "../../utils/http";
+import req from "../../utils/request";
 import mp from "../../utils/wx";
 
 export default class Waiterhome extends wepy.page {
@@ -176,7 +188,9 @@ export default class Waiterhome extends wepy.page {
     valueList: null,
     poster: '',
     isX: null,
+    isSmall: null,
     canScroll: false,
+    analyTitle: 'sa_click',
   };
 
   components = {
@@ -185,6 +199,7 @@ export default class Waiterhome extends wepy.page {
   };
 
   onLoad(options) {
+    console.error('onload opts: ', options);
     let gd = this.$parent.globalData,
         adviser = wx.getStorageSync('adviserInfo'),
         value = options.value;
@@ -193,6 +208,7 @@ export default class Waiterhome extends wepy.page {
 
     let sys = wx.getSystemInfoSync();
     this.isX = sys.screenHeight > 800;
+    this.isSmall = sys.screenHeight <= 568;
     this.canScroll = sys.screenHeight <= 568 || /Huawei|HUAWEI/g.test(sys.brand);
     // console.error(options, sys);
 
@@ -203,7 +219,8 @@ export default class Waiterhome extends wepy.page {
 
       if(!adviser) this.tabBarList = gd.clientTabBarList;
 
-      return this.drawQrcode(this.user, this.valueList);
+      this.drawQrcode(this.user, this.valueList);
+      return this.analy(options.userId);
     }
 
     value = value.replace(/\n|\u21B5/g, '，'); // value.split('\u21B5');
@@ -249,6 +266,8 @@ export default class Waiterhome extends wepy.page {
           });
         }
       });
+      
+      wx.reportAnalytics(this.analyTitle, { page: 'poster', el: `saveBtn` }); 
     }
   };
 
@@ -258,19 +277,40 @@ export default class Waiterhome extends wepy.page {
         adviser = wx.getStorageSync('adviserInfo');
 
     user = { name: adviser.name, phone: adviser.phone };
-    path = `/pages/appointment/poster?user=${JSON.stringify(this.user || user)}&value=${JSON.stringify(this.valueList || this.value)}`;
-    console.error('share', path, adviser);
+    path = `/pages/appointment/poster?user=${JSON.stringify(this.user || user)}&value=${JSON.stringify(this.valueList || this.value)}&userId=${adviser.userId}`;
+    
+    this.record();
 
-    return {
+    wx.reportAnalytics(this.analyTitle, { page: 'poster', el: `shareBtn` }); 
+
+    let t = {
       path,
     };
+
+    console.error('share \n', path, t );
+    return t;
   }
+
+  record() {
+    req.post(`/castrol/api/v1/operationRecord`, { operationScene: 5 }, { 'Authorization': wx.getStorageSync('token') });
+  }
+
+  async analy(id){
+    let param = { operationScene: 4 };
+    
+    if(id) param.objId = id;
+
+    let res = await req.post(`/castrol/api/v1/operationRecord`, param, { 'Authorization': wx.getStorageSync('token') });
+
+  }
+
 
   async drawQrcode(user, value){
     wx.showLoading({ content: 'Loading...' });
     let ctx = wx.createCanvasContext('canvas'),
         adviser = wx.getStorageSync('adviserInfo');
 
+    // 适配iphoneX等大屏
     if(this.isX){
       ctx.drawImage('../../images/appointment/x_poster.jpg', 0, 0, 345, 610);
 
@@ -289,6 +329,30 @@ export default class Waiterhome extends wepy.page {
       res.errMsg 
       ? wx.showModal({ content: res.errMsg, showCancel: false })
       : ctx.drawImage(res, 14, 550, 50, 50);
+
+      ctx.draw();
+      return wx.hideLoading();
+    }
+
+    // 适配屏幕高度小于568
+    if(this.isSmall){
+      ctx.drawImage('../../images/appointment/poster.jpg', 0, 0, 315, 480);
+
+      ctx.setFontSize(11);
+      ctx.setFillStyle('#188948');
+      ctx.fillText(`${user.name}  ${user.phone}`, 65, 358);
+
+      ctx.setFontSize(11);
+      ctx.setFillStyle('#c69d75');
+      ctx.fillText(`${value[0]}`, 14, 398);
+      ctx.fillText(`${value[1]}`, 14, 412);
+      ctx.fillText(`${value[2]}`, 14, 426);
+
+      let res = await mp.getImg('https://castrolmini.mgcc.com.cn/qn/Fv2ZBu1lEG5m224vKqbcxM_CngjB');
+      // console.error('getImg res:', res.errMsg);
+      res.errMsg 
+      ? wx.showModal({ content: res.errMsg, showCancel: false })
+      : ctx.drawImage(res, 14, 430, 50, 50);
 
       ctx.draw();
       return wx.hideLoading();
@@ -314,7 +378,7 @@ export default class Waiterhome extends wepy.page {
 
     ctx.draw();
     // ctx.draw(false, setTimeout(() => {
-    //   wx.canvasToTempFilePath({ x: 0, y: 0, width: 325, height: 510, destWidth: 325, destHeight: 510, canvasId: 'canvas', 
+    //   wx.canvasToTempFilePath({ x: 0, y: 0, width: this.isX ? 345 : 325, height: this.isX ? 610 : 510, destWidth: this.isX ? 345 : 325, destHeight: this.isX ? 610 : 510, canvasId: 'canvas', 
     //     success: e => { this.poster = e.tempFilePath; console.error(this.poster); this.$apply(); },
     //     fail: e => console.error(e),
     //   });
