@@ -21,7 +21,7 @@
             <view class="item">
                 <view class="flex" ><text wx:for = "{{fontArray[2]}}" wx:key = "index">{{item}}</text></view>
                 <view class="inpBox">
-                    <input name="recommendCode" placeholder="上级成员的手机号即为推荐码"/>
+                    <input name="recommendCode" placeholder="上级成员的手机号即为推荐码" placeholder-style = 'color:#aeaeae;font-size: 28rpx;'/>
                     <text>*</text>
                 </view>
             </view>
@@ -160,12 +160,14 @@
         padding: 10rpx 30rpx;
         position: relative;
         height: 100vh;
+        background-color: #fff;
     }
     .item{
         width: 100%;
         position: relative;
         margin-bottom:40rpx;
         font-size:28rpx;
+        margin-top: 50rpx;
     }
     .flex{
         float: left;

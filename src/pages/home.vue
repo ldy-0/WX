@@ -464,7 +464,7 @@
         <image class="item_page" src="../images/icon_1_zhaoshang@2x.png">
         <view>招商</view>
       </navigator>
-      <navigator class="item_view" url="./article/advisory">
+      <navigator class="item_view" url="./article/aboutUs">
         <image class="item_page" src="../images/icon_1_zixun@2x.png">
         <view>关于</view>
       </navigator>

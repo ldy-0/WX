@@ -145,11 +145,11 @@
 }
 .bottomBar .btn {
   margin-right: 20rpx;
-  width: 190rpx;
-  line-height: 80rpx;
+  width: 160rpx;
+  line-height: 70rpx;
   overflow: hidden;
   border-radius: 10rpx;
-  background: #f17f30;
+  background: #4fb84a;
   text-align: center;
   color: #fff;
 }

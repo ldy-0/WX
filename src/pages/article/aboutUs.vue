@@ -1,9 +1,10 @@
 <style scoped>
 .container {
   font: 32rpx PingFang-SC-Medium;
-  background: #f4f4f4;
+  background: #fff;
   width: 100%;
   overflow: hidden;
+  height: 100vh;
 }
 
 .swiper {
@@ -53,11 +54,48 @@
   white-space: pre-wrap;
   box-sizing: border-box;
 }
+.bannerImag{
+  width: 100%;
+  height: 425rpx;
+}
+
+.bannerImag image{
+  width: 100%;
+  height: 100%;
+}
+.msg{
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20rpx 30rpx 0;
+}
+.msg .msgDetail{
+  display: flex;
+}
+.msg .msgDetail image{
+  width: 26rpx;
+  height: 32rpx;
+}
+.msg .msgDetail:nth-child(2) image{
+  width: 30rpx;
+  height: 26rpx;
+}
+.msg .msgDetail:nth-child(3) image{
+  width: 29rpx;
+  height: 23rpx;
+}
+.msg .msgDetail view{
+  color: #666;
+  font-size: 28rpx;
+  margin-left: 16rpx;
+  margin-bottom: 25rpx;
+}
+
+
 </style>
 
 <template>
   <view class="container">
-    <swiper
+    <!-- <swiper
       class="swiper"
       indicator-active-color="{{indicatorActiveColor}}"
       indicator-color="{{indicatorColor}}"
@@ -72,7 +110,20 @@
           <image src="{{item.url}}" mode="aspectFill">
         </swiper-item>
       </repeat>
-    </swiper>
+    </swiper> -->
+    <view class="bannerImag">
+      <image src = "{{companyInfomation.company_image[0]}}"/>
+    </view>
+
+    <view class="msg">
+      <view wx:for = "{{info}}" wx:key class="msgDetail">
+        <view class="info_image"><image src = '{{item.url}}'/></view>
+        <view class="info_msg">{{item.msg}}</view>
+      </view>
+    </view>
+
+
+
     <view class="warp">
       <view class="title">{{detailArticle.dynamic_title}}</view>
       <!-- <view class="addtime">{{detailArticle.dynamic_created_at}}</view>   -->
@@ -98,7 +149,7 @@ import { shttp } from "../../utils/http";
 import getTimes from "../../utils/formatedate.js";
 export default class AboutUs extends wepy.page {
   config = {
-    navigationBarTitleText: "关于云仓"
+    navigationBarTitleText: "关于"
   };
   data = {
     indicatorDots: true,
@@ -108,13 +159,39 @@ export default class AboutUs extends wepy.page {
     indicatorActiveColor: "#333333",
     indicatorColor: "#FFFFFF", //以上为轮播配置
     bannerList: [], //轮播图
-    detailArticle: {} //案例详情
+    detailArticle: {} ,//案例详情
+    companyInfomation:{
+        "company_site": "湖北省武汉市", //地址
+        "company_phone": "17621696631", //电话
+        "company_email": "596230641@qq.com",//邮箱
+        "company_name": "佰益源",   //公司名
+        "company_content": "美丽的白雪公主受继母的嫉妒而被多次置于死地，最后在七个小矮人和王子的帮助下获得新生。爱慕虚荣、贪恋美貌的王后总是爱问镜子：“魔镜魔镜，谁是这个世界上最美的女人？”当镜子说是白雪公主时，王后就伪装成巫婆，骗白雪公主吃下毒苹果。吃下毒苹果的白雪公主被随后出现的王子救了，最终王子和公主幸福地生活在一起，王后得到了应有的惩罚。",  //简介内容
+        "company_image": [
+          "../../images/img_1_1@2x.png",
+          "../../images/img_1_2@2x.png"
+        ],//图片
+    },
+    info:[
+      {
+        url:"../../images/icon_9_dianhua@2x.png",
+        msg:"18899995555"
+      },
+      {
+        url:"../../images/icon_9_dizhi@2x.png",
+        msg:"区国际硚口区国际硚口峰汇A3区国际硚口峰汇A3区国际硚口峰汇A3区国际硚口峰汇A3区国际硚口峰汇A3区国际硚口峰汇A3区国际硚口峰汇A3区国际硚口峰汇A3区国际硚口峰汇A3峰汇A3-402"
+      },
+      {
+        url:"../../images/icon_6_youxiang@2x.png",
+        msg:"byy@163.com"
+      }
+    ]
   };
 
   components = {};
 
   onLoad(options) {
     this.getCompanyList();
+    this.getCompanyInfomation();
   }
 
   onShow() {}
@@ -127,6 +204,14 @@ export default class AboutUs extends wepy.page {
       });
     }
   };
+  //获取公司信息
+  async getCompanyInfomation(){
+    const res = await shttp
+      .get("/api/v2/member/company")
+      .end()
+      console.log("-----",res.data);
+      
+  }
   //获取公司列表
   async getCompanyList() {
     const res = await shttp
