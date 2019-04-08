@@ -540,7 +540,7 @@
               <view class="countDown-box" >
                 <view class="countDown-txt" wx:if="{{item.show==3}}">
                   还剩
-                  <!-- <text class="countDown-txt2">{{wxTimerList[index].d!=0?wxTimerList[index].d+'天':''}} </text> -->
+                  <text>{{wxTimerList[index].d!=0?wxTimerList[index].d+'天':''}} </text>
                   <text class="countDown-txt2">{{wxTimerList[index].h1}}</text>
                   <text class="countDown-txt2">{{wxTimerList[index].h2}}</text>:
                   <text class="countDown-txt2">{{wxTimerList[index].m1}}</text>
@@ -916,7 +916,6 @@ export default class Home extends wepy.page {
         this.timeDatalist.push(wxTimer);
       });
     }
-    console.log(this.timeDatalist);
     wx.hideLoading();
     wx.stopPullDownRefresh();
     this.$apply();
