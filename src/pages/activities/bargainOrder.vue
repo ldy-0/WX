@@ -307,12 +307,6 @@ export default class BargainList extends wepy.page {
       }`
     });
   }
-  //上拉加载
-  // onReachBottom() {
-  //   this.page = this.page + 1;
-  //   this.getList();
-  //   this.$apply();
-  // }
   onUnload() {
     if (this.timeDatalist.length != 0) {
       this.timeDatalist.forEach(item => {

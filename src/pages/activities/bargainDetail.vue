@@ -996,7 +996,8 @@ import {
 } from "../../utils/tools";
 export default class GoodsDetails extends wepy.page {
   config = {
-    navigationBarTitleText: "砍价商品详情"
+    navigationBarTitleText: "砍价商品详情",
+    enablePullDownRefresh:true
   };
   data = {
     //砍价
@@ -1620,6 +1621,11 @@ export default class GoodsDetails extends wepy.page {
     this.current = e.detail.current + 1;
   }
   onUnload() {}
+  async onPullDownRefresh(){
+    await this.getBargainGoods();
+    await this.bargainList();
+    wx.stopPullDownRefresh();
+  }
 }
 </script>
 
