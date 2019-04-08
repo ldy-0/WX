@@ -220,6 +220,10 @@ export default class multiSKu extends wepy.component {
     return isEqual;
   }
 
+  clear(){
+    this.selArr = [];
+  }
+
 }
 
 </script>

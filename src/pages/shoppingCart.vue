@@ -69,16 +69,16 @@
   position: relative;
   width: 446rpx;
   height: 180rpx;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: space-between;
+  /* display: flex; */
+  /* flex-flow: column nowrap; */
+  /* justify-content: space-between; */
 }
 .item .info .sub_desc {
   margin: 20rpx 0;
   font-size: 20rpx;
 }
 .item .info .price {
-  width: 180rpx;
+  /* width: 180rpx; */
   line-height: 44rpx;
   border-radius: 22rpx;
   font-size: 32rpx;
@@ -243,6 +243,7 @@
   color: #333;
 }
 .desc2 {
+  height: 90rpx;
   font-size: 24rpx;
   color: #999;
 }
@@ -589,7 +590,6 @@ export default class ShoppingCart extends wepy.page {
         let skuStr = '';
         for(let key in item.goods_spec) skuStr += `${item.goods_spec[key]}; `;
         item.goods_spec = skuStr.replace(/;\s$/g, '');
-        // console.error(skuStr);
       }
     }
     this.tableData = this.tableData.filter(function(x) {

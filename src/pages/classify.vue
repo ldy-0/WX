@@ -135,7 +135,7 @@ page {
 .product {
   position: absolute;
   background: #fff;
-  height: 540rpx;
+  /* height: 540rpx; */
   bottom: 0;
   left: 0;
   width: 100%;
@@ -146,7 +146,7 @@ page {
   padding: 0 30rpx;
   top: -38rpx;
   width: 100%;
-  height: 180rpx;
+  /* height: 180rpx; */
 }
 .product .base_info image {
   width: 180rpx;
@@ -171,6 +171,7 @@ page {
 .product .standard_wrap {
   background: #fff;
   margin-top: 188rpx;
+  padding: 0 30rpx;
 }
 .product .standard_wrap .standard_title {
   margin: 0 30rpx 30rpx;
@@ -248,7 +249,7 @@ page {
   height: 104rpx;
 }
 .add_btn {
-  position: absolute;
+  /* position: absolute; */
   width: 100%;
   text-align: center;
   height: 76rpx;
@@ -256,7 +257,7 @@ page {
   margin-right: 20rpx;
   background: #f17f30;
   color: #fff;
-  bottom: 0;
+  /* bottom: 0; */
 }
 .product_name {
   font-size: 32rpx;
@@ -323,20 +324,27 @@ page {
             <view class="product_name">{{goods.goods_name}}</view>
             <view class="product_price">
               <text style="font-size:28rpx">¥</text>
-              {{goods.goods_price}}
+              {{isMultiSku ? multiSku.price : goods.goods_price}}
             </view>
             <!-- <view class>库存：{{goods.goods_storage}}</view> -->
           </view>
         </view>
         <image class="delete-btn" src="../images/icon_cha@2x.png" @tap="deleteBtn">
-        <view class="standard_wrap">
+
+        <view class="standard_wrap" wx:if="{{isMultiSku}}">
           <view class="standard_title">规格</view>
-          <view class="standard_info">
+          <scroll-view scroll-y='true' style='height: 200rpx;'>
+            <multiSku :classList.sync='skuClassList' :skus.sync='skus' :field='field' @update.user='updateSku'></multiSku>
+          </scroll-view>
+          <!-- <view class="standard_info">
             <repeat for="{{standards}}" index="index" item="item">
               <view class="{{isChecked==index?'checked':''}}" @tap="checked({{index}})">{{item}}</view>
             </repeat>
-          </view>
+          </view> -->
         </view>
+        <view class='standard_wrap' wx:else>
+        </view>
+
         <view class="row">
           <view class="number_title">购买数量</view>
           <view class="number_wrap">
@@ -359,6 +367,7 @@ page {
 import wepy from "wepy";
 import { shttp } from "../utils/http";
 import Placeholder from "../components/placeholder";
+import multiSku from "../components/multiSku";
 export default class Classify extends wepy.page {
   config = {
     navigationBarTitleText: "分类"
@@ -385,16 +394,50 @@ export default class Classify extends wepy.page {
     // 数量
     size: 1,
     //商品详情
-    goods: {}
+    goods: {},
+    multiSku: {}, 
+    // sku goods field
+    field: {
+      price: "goods_price",
+      amount: "goods_storage"
+    }
   };
   components = {
-    placeholder: Placeholder
+    placeholder: Placeholder,
+    multiSku,
   };
   computed = {
     getSize: () => this.size,
     //更新视图
     updateTitle() {
       return this.title;
+    },
+    skuClassList() {
+      if (this.goods && this.goods.spec_value) {
+        let classList,
+          spec_value = this.goods.spec_value,
+          spec_name = this.goods.spec_name;
+
+        classList = spec_name.map((v, i) => {
+          return {
+            name: v,
+            items: spec_value[i].map(sku => {
+              return { name: sku };
+            })
+          };
+        });
+        // console.error(classList);
+        return classList;
+      }
+
+      return [];
+    },
+    skus() {
+      return this.goods && this.goods.SKUList;
+    },
+    isMultiSku() {
+      let goods = this.goods;
+      return goods && goods.spec_name && goods.spec_name.length;
     }
   };
   methods = {
@@ -428,6 +471,7 @@ export default class Classify extends wepy.page {
     },
     deleteBtn() {
       this.showStandard = false;
+      this.$invoke('multiSku', 'clear');
     },
     checked: index => {
       this.isChecked = index;
@@ -460,6 +504,21 @@ export default class Classify extends wepy.page {
 
       this.goods.goods_num = this.size;
       this.$apply();
+    },
+    // udpate multi Sku
+    updateSku(price, skuStr, img, goods) {
+      // console.error('udpatesku', price, skuStr, goods);
+      this.multiSku = { price, skuStr, img, goods };
+      if (goods) {
+        this.goods.standard = goods;
+        this.goods.goods_storage = goods.goods_storage;
+        this.goods.goods_price = goods.goods_price;
+        this.goods.goods_id = goods.goods_id;
+        this.goods.goods_num = this.size;
+        this.goods.goods_freight = goods.goods_freight;
+      }else{
+        this.goods.standard = null;
+      }
     }
   };
   //商品详情
@@ -472,7 +531,22 @@ export default class Classify extends wepy.page {
       this.standards = res.data.spec_value;
     } else {
       this.standards = ["统一规格"];
+      this.isChecked = 0;
+      this.goods.standard = "统一规格";
+      this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
+      this.goods.goods_price = this.goods.SKUList[0].goods_price;
+      this.goods.goods_id = this.goods.SKUList[0].goods_id;
+      this.goods.goods_freight = this.goods.SKUList[0].goods_freight;
+      this.goods.goods_num = this.size;
     }
+
+    // set multi sku
+    if (this.goods.spec_value) {
+      this.multiSku.price = this.getPrice(
+        this.goods.SKUList.map(v => v.goods_price)
+      );
+    }
+
     this.showStandard = true;
     wx.hideLoading();
     this.$apply();
@@ -499,7 +573,8 @@ export default class Classify extends wepy.page {
     this.$apply();
   }
 
-  onLoad() {}
+  onLoad() {
+  }
   onShow() {
     this.page = 1;
     wx.showLoading({
@@ -538,6 +613,7 @@ export default class Classify extends wepy.page {
     this.getGoods();
   }
   async addShoppingCart() {
+    console.error('shoppingcart', this.mulitiSku);
     if (!this.goods.standard) {
       return this.goStandard();
     }
@@ -571,6 +647,7 @@ export default class Classify extends wepy.page {
         duration: 1000
       });
     }
+    this.$invoke('multiSku', 'clear');
     this.$apply();
   }
   goStandard() {
@@ -592,6 +669,15 @@ export default class Classify extends wepy.page {
       });
     }
     this.$apply();
+  }
+
+  getPrice(priceArr) {
+    let price = {};
+
+    price.min = Math.min.apply(null, priceArr);
+    price.max = Math.max.apply(null, priceArr);
+
+    return price.min == price.max ? price.min : `${price.min}-${price.max}`;
   }
 }
 </script>
