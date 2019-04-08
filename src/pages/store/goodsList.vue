@@ -129,7 +129,7 @@
         <view class="redlist" @tap="toDetail({{item.rule_id}})">
           <image class="title_page" mode="aspectFill" src="{{item.goods.goods_image}}" />
           <!-- 秒杀计时器 -->
-          <view class="countDown-box" >
+          <view class="countDown-box" wx:if="{{type=='seckill'}}">
               <view class="countDown-txt" wx:if="{{item.show==3}}">
                 还剩
                 <text>{{wxTimerList[index].d!=0?wxTimerList[index].d+'天':''}} </text>
