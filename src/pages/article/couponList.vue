@@ -1,7 +1,7 @@
 <style scoped>
 .container {
   background: #fff;
-  height: 100vh;
+  min-height:100vh;
 }
 .coupons-item {
   width: 650rpx;

@@ -996,7 +996,8 @@ import {
 } from "../../utils/tools";
 export default class GoodsDetails extends wepy.page {
   config = {
-    navigationBarTitleText: "砍价商品详情"
+    navigationBarTitleText: "砍价商品详情",
+    enablePullDownRefresh:true
   };
   data = {
     //砍价
@@ -1194,7 +1195,6 @@ export default class GoodsDetails extends wepy.page {
   }
   async onShow() {
     this.memberId = wx.getStorageSync("memberInfo").member_id;
-    console.log(this.memberId);
     if (this.scene != "undefined") {
       let qrarry = this.scene.split(";");
       this.id = qrarry[0];
@@ -1397,7 +1397,7 @@ export default class GoodsDetails extends wepy.page {
     let content = wx.createCanvasContext("canvas");
     content.setFillStyle("#ffffff");
     content.fillRect(0, 0, 275, 440);
-    let goodsImg = this.goods.goods_image;
+    let goodsImg = this.goods.goods.goods_image;
     await this.drawImage(
       {
         img: goodsImg,
@@ -1436,7 +1436,7 @@ export default class GoodsDetails extends wepy.page {
     content.setFontSize(14);
     content.fillText("￥", 20, 380);
     content.setFontSize(21);
-    content.fillText(this.goods.goods_price, 32, 380);
+    content.fillText(this.goods.cutprice.goods_price, 32, 380);
     content.fillStyle = "#b9b9b9";
     content.setTextAlign("center");
     content.setFontSize(6);
@@ -1452,7 +1452,7 @@ export default class GoodsDetails extends wepy.page {
     let content = wx.createCanvasContext("canvas");
     content.setFillStyle("#ffffff");
     content.fillRect(0, 0, 275, 440);
-    let goodsImg = this.goods.goods_image;
+    let goodsImg = this.goods.goods.goods_image;
     await this.drawImage(
       {
         img: goodsImg,
@@ -1492,7 +1492,7 @@ export default class GoodsDetails extends wepy.page {
     content.setFontSize(14);
     content.fillText("￥", 20, 380);
     content.setFontSize(21);
-    content.fillText(this.goods.goods_price, 32, 380);
+    content.fillText(this.goods.cutprice.goods_price, 32, 380);
     content.fillStyle = "#b9b9b9";
     content.setTextAlign("center");
     content.setFontSize(6);
@@ -1621,6 +1621,11 @@ export default class GoodsDetails extends wepy.page {
     this.current = e.detail.current + 1;
   }
   onUnload() {}
+  async onPullDownRefresh(){
+    await this.getBargainGoods();
+    await this.bargainList();
+    wx.stopPullDownRefresh();
+  }
 }
 </script>
 

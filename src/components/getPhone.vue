@@ -127,10 +127,10 @@
             <image class="img_modal" src="../images/icon_1_weixin@2x.png" />
             微信手机号一键绑定
         </button>
-        <view class="getphone_btn2" @tap='switchMode'>
+        <!-- <view class="getphone_btn2" @tap='switchMode'>
             <image class="img_modal2" src="../images/icon_1_shouji@2x.png" />
             使用手机号绑定
-        </view>  
+        </view>   -->
     </view>
     <view class="getphone_modal2" wx:if='{{!showmodal}}'>
         <view class="getphone_modalTitle">绑定手机号</view>

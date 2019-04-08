@@ -298,7 +298,7 @@ export default class OrderList extends wepy.page {
   };
   data = {
     tab: {
-      tabList: ["全部", "待付款", "待发货", "待收货", "待评价"]
+      tabList: ["全部", "待发货", "待收货", "待评价"]
     },
     nowindex: Number,
     is_empty: true,
@@ -384,15 +384,15 @@ export default class OrderList extends wepy.page {
           this.getList();
           break;
         case 1:
-          this.query.order_state = 10;
-          this.getList();
-          break;
-        case 2:
           this.query.order_state = 20;
           this.getList();
           break;
-        case 3:
+        case 2:
           this.query.order_state = 30;
+          this.getList();
+          break;
+        case 3:
+          this.query.order_state = 50;
           this.getList();
           break;
         case 4:
