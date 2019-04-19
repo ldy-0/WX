@@ -1,14 +1,15 @@
 <template>
-    <view class='number_wrap'>
+    <view class='model_wrap'>
 
-        <view class='model' wx:if='{{isShow}}' catchtouchmove='preventMove'>
+        <view class='model' wx:if='{{show || config.show}}' catchtouchmove='preventMove'>
           <view class='mask' @tap='hide'></view>
+
           <view class="content" 
                 style="top: calc(50% - {{config.height/2 || 150}}rpx); left: calc(50% - {{config.width/2 || 150}}rpx); width: {{config.width || 300}}rpx; height: {{config.height || 300}}rpx; "
                 wx:if='{{config.center}}'>
-           <slot name='center'></slot> 
+            <slot name='center'></slot> 
           </view>
-          <view class='content' wx:else>
+          <view class='content s_bg_f' wx:else>
             <slot name='bottom'></slot>
           </view>
         </view>
@@ -20,44 +21,49 @@ import wepy from 'wepy';
 
 export default class Model extends wepy.component {
   props = {
-    config: Object,
-    isShow: {
+    config: {
+      type: Object,
+      twoWay: true,
+    },
+    show: {
       type: Boolean,
       twoWay: true,
     },
     center: Boolean,
-    canCancel: Boolean,
+    preventHide: Boolean,
   }
 
-  components = {
-  }
+  components = {}
 
-  data = {
+  data = {}
 
-  }
+  // watch = {
+  //   config(v){
+  //     console.error(v);
+  //   }
+  // }
 
   onLoad() {
   
   }
 
   methods = {
-    preventMove(){ return false; },
+    preventMove(){},
     hide(){
-      if(!this.canCancel){
-        return ;
+      if(this.preventHide || this.config.preventHide){ 
+        return this.$emit('close'); 
       }
 
-      this.isShow = false;
+      this.show ? this.show = false : this.config.show = false;
+      this.$emit('close');
     },
   }
   
 }
 
 </script>
-<style lang="css">
+<style scoped>
 .model{
-  
-  
 }
 
 .mask{
@@ -76,8 +82,6 @@ export default class Model extends wepy.component {
     left: 0;
     z-index: 2;
     width: 100%;
-    height: 50%;
-    background: #fff;
     overflow: hidden;
 }
 
@@ -89,4 +93,6 @@ export default class Model extends wepy.component {
   height: 300rpx;
   background: #fff;
 }
+
+.s_bg_f{ background: #fff; }
 </style>
