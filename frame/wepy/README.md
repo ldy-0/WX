@@ -9,6 +9,50 @@
 - component
 
 ## 独立组件
+  + ### 下拉框
+    #### 配置项
+
+<table>
+  <thead>
+    <th>property</th>
+    <th>type</th>
+    <th>desc</th>
+  </head>
+  <tbody>
+    <tr>
+      <td class='property'>index</td>
+      <td>Number</td>
+      <td>index in for</td>
+    </tr>
+    <tr>
+      <td class='property'>key</td>
+      <td>String</td>
+      <td>proxy property name</td>
+    </tr>
+    <tr>
+      <td class='property'>obj</td>
+      <td>Object</td>
+      <td>obj必须有titleKey, valueKey, showList属性。当key有值时，obj必须有key属性，obj[key]必须有titleKey, valueKey, showList属性。</td>
+    </tr>
+    <tr>
+      <td class='property'>list</td>
+      <td>Array</td>
+      <td>下拉数组</td>
+    </tr>
+    <tr>
+      <td class='property'>click</td>
+      <td>Function</td>
+      <td>点击下拉框标题时触发, 第一个参数为obj, 第二个参数为index</td>
+    </tr>
+    <tr>
+      <td class='property'>change</td>
+      <td>Function</td>
+      <td>点击下拉数组某项时触发,第一个参数为obj, 第二个参数为点击项，第三个参数为index</td>
+    </tr>
+  </tbody>
+</table>
+
+
   + ### 星评
     #### 配置项
   
@@ -65,3 +109,10 @@
  
 ## 获取/Get 
 `git clone https://github.com/person-0/wx.git`
+
+
+<style>
+.property{
+  color: #00ffff;
+}
+</style>
