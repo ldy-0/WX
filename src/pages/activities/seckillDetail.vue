@@ -333,7 +333,7 @@
 }
 .buy_btn {
   color: #fff;
-  background: #f17f30;
+  background: #4fb84a;
 }
 .warp_btn .appointment-btn {
   width: 430rpx;
@@ -518,7 +518,7 @@
   top: 650rpx;
   left: 0;
   z-index: 9;
-  background: rgba(254, 170, 38, 0.7);
+  background: rgba(79, 184, 74, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -539,7 +539,7 @@
   width: 30rpx;
   height: 36rpx;
   background: #fff;
-  color: #f17f30;
+  color: #4fb84a;
   text-align: center;
   line-height: 36rpx;
   margin: 0 6rpx;
@@ -695,7 +695,7 @@
         </button>
       </view>
       <view class="warp_btn">
-        <view class="buy_btn group_btn" wx:if="{{timeStatus}}" @tap="firmSeckillOrder()">立即秒杀</view>
+        <view class="buy_btn group_btn" wx:if="{{timeStatus}}" @tap="firmSeckillOrder()">立即购买</view>
         <view class="buy_btn group_btn" wx:else>{{countStatus?"即将开始":'活动结束'}}</view>
       </view>
     </view>
@@ -849,14 +849,16 @@ export default class secKill extends wepy.page {
     },
     //立即秒杀
     firmSeckillOrder() {
+      this.goods.standard = this.goods.goods;
+
       if (this.goods.goods.goods_storage < 1) {
         return showFailToast("库存不足");
       }
-      wx.navigateTo({
-        url: `/pages/store/firmOrder?type=nocart&goods=${encodeURIComponent(
-          JSON.stringify(this.goods)
-        )}&groupontype=seckill`
-      });
+
+      let url = `/pages/store/firmOrder?type=nocart&goods=${encodeURIComponent(JSON.stringify(this.goods))}&groupontype=seckill`;
+      console.error(this.goods, url);
+
+      wx.navigateTo({ url, });
     },
     checked: index => {
       this.isChecked = index;
@@ -1068,10 +1070,11 @@ export default class secKill extends wepy.page {
         is_hyaline: true // false,
       })
       .end();
-    let qrpicUrl = res.data.url;
+
+    let qrpicUrl = `https://cdn.health.healthplatform.xyz/${res.data.url.key}`;
     await this.drawImage(
       {
-        img: qrpicUrl.replace(/http/, "https"),
+        img: qrpicUrl,
         top: 320,
         left: 180,
         width: 80,

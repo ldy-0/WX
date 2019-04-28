@@ -69,7 +69,7 @@
         </swiper-item>
       </repeat>
     </swiper> -->
-    <image style="height:400rpx;width: 100%;" src="{{bannerList[0]}}" mode="aspectFill">
+    <image style="height:400rpx;width: 100%;" src="{{detailArticle.information_image}}" mode="aspectFill">
     <view class="warp">
       <view class="title">{{detailArticle.information_title}}</view>
       <view class="addtime">{{detailArticle.addtime}}</view>
@@ -84,9 +84,15 @@ import { shttp } from "../../utils/http";
 import getTimes from "../../utils/formatedate.js";
 export default class AdvisoryDetail extends wepy.page {
   config = {
-    navigationBarTitleText: "新闻详情"
+    navigationBarTitleText: ""
   };
   data = {
+    titleMap: {
+      1: '公司新闻',
+      2: '行业动态',
+      3: '产品案例',
+      4: '合作案例',
+    },
     indicatorDots: true,
     autoplay: true,
     interval: 3000,
@@ -100,6 +106,10 @@ export default class AdvisoryDetail extends wepy.page {
   computed = {};
 
   onLoad(options) {
+    this.classify_id = options.classify_id;
+
+    wx.setNavigationBarTitle({ title: this.titleMap[this.classify_id] });
+
     this.getNewsDetail(options.id);
   }
 
@@ -109,7 +119,6 @@ export default class AdvisoryDetail extends wepy.page {
   async getNewsDetail(id) {
     const res = await shttp.get("/api/v2/member/information/" + id).end();
     if (res.status === 0) {
-      this.bannerList = JSON.parse(res.data.information_image);
       this.detailArticle = res.data;
       this.detailArticle.addtime = getTimes.formatTime(
         res.data.addtime * 1000,

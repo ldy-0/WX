@@ -121,8 +121,8 @@ page {
   text-align: center;
 }
 .operate_infoBtnCol {
-  border: 1rpx solid #f17f30;
-  color: #f17f30;
+  border: 1rpx solid #4fb84a;
+  color: #4fb84a;
 }
 
 .no_wrap .no {
@@ -193,7 +193,10 @@ page {
           <view class="title" wx:if="{{order.order_state_id==10}}">待付款</view>
           <view class="title" wx:if="{{order.order_state_id==20}}">待发货</view>
           <view class="title" wx:if="{{order.order_state_id==30}}">待收货</view>
-          <view class="title title-order40" wx:if="{{order.order_state_id==40}}">
+          <view class="title" wx:if="{{order.order_state_id==40}}">已收货</view>
+          <view class="title" wx:if="{{order.order_state_id==50}}">待评价</view>
+          <view class="title" wx:if="{{order.order_state_id==100}}">已关闭</view>
+          <view class="title title-order40" wx:if="{{order.order_state_id==80}}">
             已完成
             <image class="title-img1" src="../../images/img_6@2x.png">
           </view>
@@ -203,11 +206,11 @@ page {
                 <image src="{{items.goods_image}}" mode="aspectFill">
                 <view class="product">
                   <view class="product_title">{{items.goods_name}}</view>
-                  <view class="row">
+                  <!-- <view class="row">
                     <view class="product_price">¥{{items.goods_price}}</view>
-                  </view>
+                  </view> -->
                   <view class="row">
-                    <view class="product_standard">规格：{{items.goods_spec || "统一规格"}}</view>
+                    <!-- <view class="product_standard">规格：{{items.goods_spec || "统一规格"}}</view> -->
                     <view class="product_number">×{{items.goods_num}}</view>
                   </view>
                 </view>
@@ -215,8 +218,8 @@ page {
             </repeat>
             <view class="price_info">
               <view>
-                实付款：¥<text class="price">{{order.order_amount}}</text>
-                <text class="freight" wx:if="{{order.shipping_fee!='0.00'}}">(含运费¥{{order.shipping_fee}})</text>
+                共{{order.order_goods.length}}件商品 实付款：¥<text class="price">{{order.order_amount}}</text>
+                <!-- <text class="freight" wx:if="{{order.shipping_fee!='0.00'}}">(含运费¥{{order.shipping_fee}})</text> -->
               </view>
             </view>
             <view class="price_info" wx:if="{{order.voucher_price!='0.00'}}">
@@ -233,29 +236,29 @@ page {
               session-from="weapp"
               plain="true"
             >联系客服</button>
-            <view
+            <!-- <view
               class="operate_infoBtn"
               wx:if="{{order.order_state_id==10}}"
               @tap.stop="orderCancel"
               data-id="{{order.order_id}}"
               data-paysn="{{order.pay_sn}}"
               data-index="{{index}}"
-            >取消支付</view>
-            <view
+            >取消支付</view> -->
+            <!-- <view
               class="operate_infoBtn operate_infoBtnCol"
               wx:if="{{order.order_state_id==10}}"
               @tap.stop="payMoney"
               data-pay="{{order.pay_sn}}"
               data-index="{{index}}"
-            >去支付</view>
-            <view
+            >去支付</view> -->
+            <!-- <view
               class="operate_infoBtn operate_infoBtnCol"
               wx:if="{{order.order_state_id==20||order.order_state_id==30}}"
               @tap.stop="salesReturn"
               data-order="{{order}}"
               data-id="{{order.order_id}}"
               data-index="{{index}}"
-            >退款</view>
+            >退款</view> -->
             <view
               class="operate_infoBtn operate_infoBtnCol"
               wx:if="{{order.order_state_id==30}}"
@@ -405,11 +408,9 @@ export default class OrderList extends wepy.page {
     },
     goOrderDetail(e) {
       let index = e.currentTarget.dataset.index;
-      wx.navigateTo({
-        url:
-          "../../pages/store/orderdetail?orderId=" +
-          this.orderList[index].order_id
-      });
+      let url = `/pages/store/orderdetail?orderId=${this.orderList[index].order_id}&unVip=${true}&type=secKill`;
+
+      wx.navigateTo({ url });
     }
   };
   async getList() {

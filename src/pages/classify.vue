@@ -13,89 +13,69 @@ page {
 .wrap {
   display: flex;
   margin-top: 96rpx;
-  background: #fff;
+  height: 100%;
 }
-.wrap .class_list {
-  position: fixed;
-  z-index: 9;
-  left: 0;
-  top: 96rpx;
+.first_class_list {
+  flex-shrink: 0;
+  box-sizing: border-box;
   width: 170rpx;
   height: 100%;
   text-align: center;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  flex-shrink: 0;
-  text-align: center;
-  box-sizing: border-box;
-  border-right: 1rpx solid #eeeeee;
-  background: #fff;
 }
-.wrap .class_list .class_item {
-  line-height: 54rpx;
-  height: 54rpx;
-  color: #222222;
+.first_class_item {
+  height: 110rpx;
+  border-left: 4px solid transparent;
+  line-height: 110rpx;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.first_class_sel{
+  border-left: 4px solid #4fb84a;
+}
+
+.content_wrap {
+  flex-grow: 1;
+  margin: 0 50rpx;
+}
+.two_class_item{
+  border-bottom: 2rpx solid #e9e9e9;
+}
+.two_class_title{
+  padding: 30rpx 0;
+  font-weight: bold;
+}
+
+.third_class_item{
+  width: 33.3%;
+  margin: 20rpx 0 30rpx 0;
+  display: flex;
+}
+.center{
+  justify-content: center;
+}
+.end{
+  justify-content: flex-end;
+}
+.class_img{
+  width: 124rpx;
+  height: 124rpx;
+  background: #ccc;
+}
+.class_name{
+  width: 124rpx;
   white-space: nowrap;
-  margin: 25rpx 0;
-}
-.wrap .class_list .sel {
-  border-left: solid 6px #f17f30;
-  background: #fff;
-  color: #f17f30;
-}
-.wrap .content_wrap {
-  margin-left: 170rpx;
-}
-.wrap .content_wrap .row {
-  /* width: 578rpx; */
-  padding: 0rpx 26rpx;
-  height: 200rpx;
-  font-size: 28prx;
-  display: flex;
   overflow: hidden;
-  align-items: center;
+  text-overflow: ellipsis;
+  text-align: center;
 }
-.wrap .content_wrap .row .goodimg {
-  width: 164rpx;
-  height: 164rpx;
-  border-radius: 5rpx;
-  margin-right: 20rpx;
-}
-.wrap .content_wrap .row .goodsInfo {
-  height: 200rpx;
-  width: 350rpx;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  border-bottom: 1rpx solid #eeeeee;
-  padding-top: 20rpx;
-  padding-bottom: 10rpx;
-}
-.wrap .content_wrap .row .goodsInfo .goodsname {
-  color: #222;
-  width: 100%;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  font-size: 28rpx;
-}
-.price_box {
+
+.flex{
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  flex-wrap: wrap;
 }
-.wrap .content_wrap .row .goodsInfo .price_box .price {
-  font-size: 32rpx;
-  color: #ff4444;
-}
-.price_boxIcon {
-  width: 50rpx;
-  height: 50rpx;
-  padding-left: 50rpx;
-}
+
 .search {
   height: 96rpx;
   position: fixed;
@@ -135,7 +115,6 @@ page {
 .product {
   position: absolute;
   background: #fff;
-  /* height: 540rpx; */
   bottom: 0;
   left: 0;
   width: 100%;
@@ -181,10 +160,6 @@ page {
 .product .standard_wrap .standard_info {
   display: flex;
   padding-left: 30rpx;
-}
-.product .standard_wrap .standard_info .checked {
-  color: #fff;
-  background: #f17f30;
 }
 .product .standard_wrap .standard_info view {
   margin: 0 40rpx 30rpx 0;
@@ -274,6 +249,13 @@ page {
 .empty-placeholder {
   margin-left: 120rpx;
 }
+
+.s_fc_1{ color: #fff; }
+.s_fc_2{ color: #222; }
+.s_fc_3{ color: #4fb84a; }
+
+.s_bg_1{ background: #fff; }
+.s_bg_2{ background: #f3f4f5; }
 </style>
 
 <template>
@@ -284,82 +266,44 @@ page {
         <text>搜索商品</text>
       </navigator>
     </view>
+
     <view class="wrap">
-      <view class="class_list">
-        <repeat for="{{classList}}" index="index" item="item">
-          <view
-            class="class_item {{ checkedList[index] ? 'sel' : '' }}"
-            @tap="getTwo({{index}})"
-          >{{item.storegc_name}}</view>
-        </repeat>
+      <view class="first_class_list s_bg_2">
+        <scroll-view scroll-y style='height: 100%;'>
+          <repeat for="{{firstClassList}}" index="index" item="item">
+            <view class="first_class_item s_fc_2 {{ checkId == item.storegc_id ? 'first_class_sel s_fc_3 s_bg_1' : '' }}" @tap="changeFirstClass({{index}})" >{{item.storegc_name}}</view>
+          </repeat>
+        </scroll-view>
       </view>
+
       <view class="content_wrap">
-        <repeat for="{{goodsList}}" index="index" item="item" wx:if="{{!is_empty}}">
-          <view class="row" @tap="intoDetail({{item.goods_commonid}})">
-            <image class="goodimg" mode="aspectFill" src="{{item.goods_image}}">
-            <view class="goodsInfo">
-              <text class="goodsname">{{item.goods_name}}</text>
-              <view class="price_box">
-                <view class="price">
-                  <text style="font-size:26rpx;">￥</text>
-                  {{item.goods_price}}
-                </view>
-                <image
-                  @tap.stop="addCar({{item.goods_commonid}})"
-                  class="price_boxIcon"
-                  src="../images/icon_gouwuche@2x.png"
-                >
+        <scroll-view scroll-y style='height: 100%;'>
+          <repeat for="{{twoClassList}}" index="index" item="item" wx:if="{{!is_empty}}">
+
+            <view class='two_class_item'>
+              <view class='two_class_title'>{{item.storegc_name}}</view>
+
+              <view class='flex'>
+                <repeat for='{{item.classList}}' index='i' item='v'>
+
+                  <view class="third_class_item {{(i + 1) % 3 === 2 ? 'center' : (i + 1) % 3 === 0 ? 'end' : ''}}" @tap='goSearchResult({{v}})'>
+                    <view>
+                      <image class='class_img' src='{{v.storegc_pic}}' mode='aspectFill' />
+                      <view class='class_name'>{{v.storegc_name}}</view>
+                    </view>
+                  </view>
+
+                </repeat>
               </view>
             </view>
-          </view>
-        </repeat>
+
+          </repeat>
+        </scroll-view>
+
         <placeholder :show.sync="is_empty" message="还没有相关的内容"></placeholder>
       </view>
     </view>
-    <view wx:if="{{showStandard}}" class="standard-box">
-      <view class="product">
-        <view class="base_info">
-          <image src="{{goods.goods_image}}" mode="aspectFill">
-          <view>
-            <view class="product_name">{{goods.goods_name}}</view>
-            <view class="product_price">
-              <text style="font-size:28rpx">¥</text>
-              {{isMultiSku ? multiSku.price : goods.goods_price}}
-            </view>
-            <!-- <view class>库存：{{goods.goods_storage}}</view> -->
-          </view>
-        </view>
-        <image class="delete-btn" src="../images/icon_cha@2x.png" @tap="deleteBtn">
 
-        <view class="standard_wrap" wx:if="{{isMultiSku}}">
-          <view class="standard_title">规格</view>
-          <scroll-view scroll-y='true' style='height: 200rpx;'>
-            <multiSku :classList.sync='skuClassList' :skus.sync='skus' :field='field' @update.user='updateSku'></multiSku>
-          </scroll-view>
-          <!-- <view class="standard_info">
-            <repeat for="{{standards}}" index="index" item="item">
-              <view class="{{isChecked==index?'checked':''}}" @tap="checked({{index}})">{{item}}</view>
-            </repeat>
-          </view> -->
-        </view>
-        <view class='standard_wrap' wx:else>
-        </view>
-
-        <view class="row">
-          <view class="number_title">购买数量</view>
-          <view class="number_wrap">
-            <view class="minus {{getSize==1?'minus-bg':''}}" @tap="minus">
-              <image class="icon_minus" src="../images/icon_jian@2x.png">
-            </view>
-            <view class="number">{{getSize}}</view>
-            <view class="add" @tap="add">
-              <image class="icon_add" src="../images/icon_jia@2x.png">
-            </view>
-          </view>
-        </view>
-        <view class="add_btn" @tap="addShoppingCart()">加入购物车</view>
-      </view>
-    </view>
   </view>
 </template>
 
@@ -368,39 +312,26 @@ import wepy from "wepy";
 import { shttp } from "../utils/http";
 import Placeholder from "../components/placeholder";
 import multiSku from "../components/multiSku";
+
 export default class Classify extends wepy.page {
   config = {
-    navigationBarTitleText: "分类"
+    navigationBarTitleText: "分类",
+    disableScroll: true,
   };
   data = {
-    // 一级列表
-    classList: [],
-    //选中效果
-    checkedList: [],
-    //二级的标题
-    title: "",
+    firstClassList: [],
+    twoClassList: [],
+    checkId: 0, // 当前选中的一级分类Id
     //二级的商品列表
     goodsList: [],
     //当前页面
     page: 1,
-    //当前一级类id
-    topId: "",
     is_empty: false,
     showStandard: false,
-    // 规格列表
-    standards: [],
     //
     isChecked: null,
     // 数量
     size: 1,
-    //商品详情
-    goods: {},
-    multiSku: {}, 
-    // sku goods field
-    field: {
-      price: "goods_price",
-      amount: "goods_storage"
-    }
   };
   components = {
     placeholder: Placeholder,
@@ -408,277 +339,60 @@ export default class Classify extends wepy.page {
   };
   computed = {
     getSize: () => this.size,
-    //更新视图
-    updateTitle() {
-      return this.title;
-    },
-    skuClassList() {
-      if (this.goods && this.goods.spec_value) {
-        let classList,
-          spec_value = this.goods.spec_value,
-          spec_name = this.goods.spec_name;
-
-        classList = spec_name.map((v, i) => {
-          return {
-            name: v,
-            items: spec_value[i].map(sku => {
-              return { name: sku };
-            })
-          };
-        });
-        // console.error(classList);
-        return classList;
-      }
-
-      return [];
-    },
-    skus() {
-      return this.goods && this.goods.SKUList;
-    },
-    isMultiSku() {
-      let goods = this.goods;
-      return goods && goods.spec_name && goods.spec_name.length;
-    }
   };
   methods = {
-    //进入商品详情
-    intoDetail(id) {
-      // console.log("商品id=>"+id)
-      wx.navigateTo({
-        url: `./store/goodsDetails?goods_commonid=${id}`
-      });
+    goSearchResult(item) {
+      wx.navigateTo({ url: `/pages/store/searchResult?storegc_id=${item.storegc_id}` });
     },
     //获取二级商品
-    getTwo(idx) {
-      wx.pageScrollTo({
-        scrollTop: 0,
-        duration: 0
-      });
-      this.page = 1;
-      this.goodsList = [];
-      wx.showLoading({
-        title: "加载中"
-      });
-      this.checkedList.forEach((v, i) => (this.checkedList[i] = false));
-      this.checkedList[idx] = true;
-      this.title = this.classList[idx].storegc_name;
-      this.topId = this.classList[idx].storegc_id;
-      this.getGoods();
+    changeFirstClass(index) {
+      this.checkId = this.firstClassList[index].storegc_id;
+      this.getTwoClassList();
     },
-    addCar(id) {
-      this.goodsDetails(id);
-      console.log(id);
-    },
-    deleteBtn() {
-      this.showStandard = false;
-      this.$invoke('multiSku', 'clear');
-    },
-    checked: index => {
-      this.isChecked = index;
-      this.goods.standard = this.standards[index];
-      this.goods.goods_storage = this.goods.SKUList[index].goods_storage;
-      this.goods.goods_price = this.goods.SKUList[index].goods_price;
-      this.goods.goods_id = this.goods.SKUList[index].goods_id;
-      this.goods.goods_num = this.size;
-      this.goods.goods_freight = this.goods.SKUList[index].goods_freight;
-      this.$apply();
-    },
-    minus() {
-      if (this.size === 1) {
-        return;
-      }
-      this.size--;
-      this.goods.goods_num = this.size;
-      this.$apply();
-    },
-    add() {
-      this.size++;
-      if (this.size > this.goods.goods_storage) {
-        this.size--;
-        return wx.showToast({
-          title: "库存不足",
-          icon: "none",
-          duration: 1000
-        });
-      }
-
-      this.goods.goods_num = this.size;
-      this.$apply();
-    },
-    // udpate multi Sku
-    updateSku(price, skuStr, img, goods) {
-      // console.error('udpatesku', price, skuStr, goods);
-      this.multiSku = { price, skuStr, img, goods };
-      if (goods) {
-        this.goods.standard = goods;
-        this.goods.goods_storage = goods.goods_storage;
-        this.goods.goods_price = goods.goods_price;
-        this.goods.goods_id = goods.goods_id;
-        this.goods.goods_num = this.size;
-        this.goods.goods_freight = goods.goods_freight;
-      }else{
-        this.goods.standard = null;
-      }
-    }
+    
   };
-  //商品详情
-  async goodsDetails(id) {
-    const res = await shttp.get(`/api/v2/member/goodscommon/${id}`).end();
-    this.goods = res.data;
-    this.goods.goods_salenum = this.goods.SKUList[0].goods_salenum;
-    this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
-    if (res.data.spec_value) {
-      this.standards = res.data.spec_value;
-    } else {
-      this.standards = ["统一规格"];
-      this.isChecked = 0;
-      this.goods.standard = "统一规格";
-      this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
-      this.goods.goods_price = this.goods.SKUList[0].goods_price;
-      this.goods.goods_id = this.goods.SKUList[0].goods_id;
-      this.goods.goods_freight = this.goods.SKUList[0].goods_freight;
-      this.goods.goods_num = this.size;
-    }
 
-    // set multi sku
-    if (this.goods.spec_value) {
-      this.multiSku.price = this.getPrice(
-        this.goods.SKUList.map(v => v.goods_price)
-      );
-    }
-
-    this.showStandard = true;
-    wx.hideLoading();
-    this.$apply();
-  }
-  async getGoods() {
-    const res = await shttp
-      .get(`/api/v2/member/goodscommon?store_id=1`)
-      .query({
-        gc_id: this.topId,
-        type: "sort",
-        page: this.page,
-        limit: 10
-      })
-      .end();
-    if (res.status === 0 && res.data.length != 0) {
-      this.goodsList = this.goodsList.concat(res.data);
-    }
-    if (this.goodsList.length == 0) {
-      this.is_empty = true;
-    } else {
-      this.is_empty = false;
-    }
-    wx.hideLoading();
-    this.$apply();
-  }
-
-  onLoad() {
-  }
+  onLoad() {}
   onShow() {
     this.page = 1;
-    wx.showLoading({
-      title: "加载中"
-    });
-    //获取一级分类
-    this.getRootCateTopLevel();
+
+    this.getClassList();
   }
-  async getRootCateTopLevel() {
-    wx.showLoading({
-      title: "加载中"
-    });
-    this.classList = [];
-    this.checkedList = [];
-    this.goodsList = [];
-    this.page = 1;
-    let res = await shttp.get(`/api/v2/member/storegc/1`).end();
-    if (res.status === 0 && res.data.length != 0) {
-      res.data.forEach((v, i) => {
-        this.classList.push(v);
-        this.checkedList[i] = false;
-      });
-      this.checkedList[0] = true;
-      this.title = this.classList[0].storegc_name;
-      this.topId = this.classList[0].storegc_id;
-      this.getGoods();
+
+  async getClassList() {
+    wx.showLoading({ title: "加载中" });
+
+    let res = await shttp.get(`/api/v2/member/storegc`).query({}).end();
+
+    if (res.status === 0){
+      this.classObj = res.data;
+      this.firstClassList = this.classObj[0].map(v => v[1]);
+      this.checkId = this.firstClassList[0].storegc_id;
+      this.getTwoClassList();
     }
 
     wx.hideLoading();
     this.$apply();
   }
+
+  getTwoClassList(){
+    let two_class = this.classObj[this.checkId],
+        list = two_class ? two_class.map(v => v[1]) : [];
+
+    list.forEach(v => {
+      let third_class = this.classObj[v.storegc_id];
+      v.classList = third_class ? third_class.map(o => o[1]) : [];
+    });
+
+    this.twoClassList = list;
+  }
+
+
   //上拉加载更多
-  onReachBottom() {
-    this.page = this.page + 1;
-    //获取视频列表
-    this.getGoods();
-  }
-  async addShoppingCart() {
-    console.error('shoppingcart', this.mulitiSku);
-    if (!this.goods.standard) {
-      return this.goStandard();
-    }
-    if (this.goods.goods_storage < 1) {
-      return wx.showToast({
-        title: "库存不足",
-        icon: "none",
-        duration: 1000
-      });
-    }
-    console.log(this.goods);
+  // onReachBottom() {
+  //   this.page = this.page + 1;
+  // }
 
-    const res = await shttp
-      .post("/api/v2/member/cart")
-      .send({
-        goods_id: this.goods.goods_id,
-        quantity: this.goods.goods_num || 1
-      })
-      .end();
-    if (res.data.cart_num) {
-      this.showStandard = false;
-      wx.showToast({
-        title: "成功加入购物车",
-        icon: "success",
-        duration: 1000
-      });
-    } else {
-      return wx.showToast({
-        title: res.error,
-        icon: "none",
-        duration: 1000
-      });
-    }
-    this.$invoke('multiSku', 'clear');
-    this.$apply();
-  }
-  goStandard() {
-    this.showStandard = true;
-    if (this.standards[0] == "统一规格") {
-      this.isChecked = 0;
-      this.goods.standard = "统一规格";
-      this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
-      this.goods.goods_price = this.goods.SKUList[0].goods_price;
-      this.goods.goods_id = this.goods.SKUList[0].goods_id;
-      this.goods.goods_freight = this.goods.SKUList[0].goods_freight;
-      this.goods.goods_num = this.size;
-    }
-    if (!this.goods.standard) {
-      wx.showToast({
-        title: "请选择规格!",
-        icon: "none",
-        duration: 1000
-      });
-    }
-    this.$apply();
-  }
-
-  getPrice(priceArr) {
-    let price = {};
-
-    price.min = Math.min.apply(null, priceArr);
-    price.max = Math.max.apply(null, priceArr);
-
-    return price.min == price.max ? price.min : `${price.min}-${price.max}`;
-  }
 }
 </script>
 

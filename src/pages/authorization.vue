@@ -61,13 +61,13 @@
 <template>
   <view class="container">
     <view class="imgbox">
-      <image class="image1" src="../images/zong_logo@2x.png" alt=""/>
+      <image class="image1" src="{{isMain ? '../images/global/main_logo.png' : '../images/global/card_logo.png' }}" alt=""/>
       <view class="tip_wel">Welcome !</view>
       <!-- <view class="wx_name">授权演示文字</view> -->
     </view>
     <button wx:if='{{getinfoBtn}}' class="btn" open-type="getUserInfo" lang="zh_CN" bindgetuserinfo="onGotUserInfo">微信登入</button>
     <button wx:if='{{!getinfoBtn}}' class="btn" @tap="onGotPhone">微信登入</button>
-    <getPhone wx:if='{{getPhoneShow}}' class="getPhone" @SMSPhoneNum.user="SMSPhoneFn" @WXPhoneNum.user="WXPhoneFn" @hidePhonebox.user="hideboxphone"></getPhone>  
+    <getPhone :code.sync='code' wx:if='{{getPhoneShow}}' class="getPhone" @SMSPhoneNum.user="SMSPhoneFn" @WXPhoneNum.user="WXPhoneFn" @hidePhonebox.user="hideboxphone"></getPhone>  
  </view>
 </template>
 
@@ -89,19 +89,39 @@ export default class Authorization extends wepy.page {
     getPhoneShow: false,
     isMobileNum: true, //是否强制手机授权。默认强制
     isWxInfo: true, //是否强制用户微信信息授权。默认强制
-    getinfoBtn: true
+    getinfoBtn: true,
+    referer: null,
+    sharerId: null,
+    code: null,
   };
 
   components = {
     getPhone: GetPhone
   };
+  
+  computed = {
+    isMain(){ return this.$parent.globalData.type == 1; },
+  }
+
   onLoad(options) {
+    console.error(options);
+    // 分享
+    if(options.referer){
+      this.referer = options.referer;
+    }
+
+    // 名片二维码
+    if(options.scene){
+      let arr = (decodeURIComponent(options.scene)).split(';');
+      this.sharerId = arr[0] === 'sharer' ? arr[1] : null;
+    }
+
     if (options.shareType == "activity") {
       this.shareType = options.shareType;
     } else if (options.path) {
       this.path = options.path;
     } else {
-      this.path = "/pages/home";
+      this.path = this.isMain ? "/pages/home" : '/pages/card';
     }
   }
   onShow() {
@@ -146,12 +166,19 @@ export default class Authorization extends wepy.page {
   }
   //页面跳转
   goNav() {
+    if(this.referer){
+      return wx.reLaunch({ url: decodeURIComponent(this.referer) });
+    }
+
     if (this.path) {
       switch (this.path) {
         case "/pages/home":
           wx.switchTab({
             url: "/pages/home"
           });
+          break;
+        case '/pages/card':
+          wx.reLaunch({ url: this.sharerId ? `${this.path}?id=${this.sharerId}` : this.path });
           break;
         default:
           wx.redirectTo({
@@ -164,13 +191,18 @@ export default class Authorization extends wepy.page {
     }
   }
   //本地是否缓存了用户信息
-  isStorageUserInfo1() {
+  async isStorageUserInfo1() {
     this.wxUserInfo = wx.getStorageSync("memberInfo");
     // console.log(this.wxUserInfo);
     if (this.wxUserInfo.wx_name) {
       if (this.wxUserInfo.member_mobile) {
         this.goNav();
+        // this.code = await getCode();
+        // this.$apply();
+        // this.getPhoneShow = true;
       } else {
+        this.code = await getCode();
+        this.$apply();
         this.getPhoneShow = true;
       }
     } else {
@@ -199,15 +231,17 @@ export default class Authorization extends wepy.page {
   }
   //获取用户信息,onGotUserInfo中所s用到的api接口
   async onGotUserInfo(e) {
-    console.log(e,"------e");
+    console.log('userInfo: ', e);
     let wxUserInfo = e.detail;
     let code = await getCode();
     let userInfo = {
       code:code.code,
       iv:wxUserInfo.iv,
       encryptedData:wxUserInfo.encryptedData,
-      // source:1
     }
+
+    if(!this.isMain) userInfo.source = 1;
+
     const loginInfo = await shttp.post('/api/v2/member/login')
     .send(userInfo)
     .end();
@@ -310,14 +344,14 @@ export default class Authorization extends wepy.page {
   }
   methods = {
     SMSPhoneFn(data, evt) {
-      if (data == 1 && this.isMobileNum) {
+      if (data == 1) {
         this.goNav();
       } else if (data == 2 && !this.isMobileNum) {
         this.goNav();
       }
     },
     WXPhoneFn(data, evt) {
-      if (data == 1 && this.isMobileNum) {
+      if (data == 1) {
         this.goNav();
       } else if (data == 2 && !this.isMobileNum) {
         this.goNav();

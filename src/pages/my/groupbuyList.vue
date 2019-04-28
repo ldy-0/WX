@@ -25,7 +25,7 @@
   align-items: center;
   width: 100%;
   height: 250rpx;
-  background: #fff;
+  background: #fafafa;
 }
 .product_info image {
   width: 180rpx;
@@ -67,21 +67,20 @@
 }
 .price_info {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   height: 88rpx;
   padding: 0 24rpx;
-  border-top: 1rpx solid #e5e5e5;
+  font-size: 26rpx;
   background: #fff;
 }
-.price_info .price {
-  color: #af0000;
+.price {
+  font-size: 32rpx;
 }
 .price_info .freight {
   display: inline-block;
   margin-left: 10rpx;
   font-size: 24rpx;
-  color: #888;
 }
 .operate_info {
   display: flex;
@@ -153,6 +152,21 @@
 .group-xhx {
   text-decoration: underline;
 }
+
+.operate_btn{
+  margin-right: 24rpx;
+  padding: 15rpx 30rpx;
+  border: 2rpx solid #222;
+  line-height: 1.2;
+  font-size: 26rpx;
+  border-radius: 30rpx;
+}
+.custom_btn{
+  border: 2rpx solid #4fb84a;
+}
+
+.s_fc_2{ color: #222; }
+.s_fc_10{ color: #4fb84a; }
 </style>
 
 
@@ -162,34 +176,36 @@
     <view wx:if="{{orderList.length != 0}}">
       <repeat for="{{orderList}}" index="index" item="order">
         <view class="title" @tap="goGroupDetail" data-pintuanid="{{order.pintuan_id}}" data-orderid="{{order.order.order_id}}">
-          <view>{{order.pintuan_state_text}}</view>
-          <view class="group-xhx">团详情</view>
+          <!-- <view>{{order.pintuan_state_text}}</view> -->
+          <view>{{tab.tabList[nowindex]}}</view>
+          <view class="group-xhx s_fc_10">团详情</view>
         </view>
+
         <view data-index="{{index}}">
           <view class="product_info">
             <image src="{{order.goodsinfo.goods_image}}" mode="aspectFill">
             <view class="product">
               <view class="product_title">{{order.pintuan_goods_name}}</view>
-              <view class="row">
+              <!-- <view class="row">
                 <view class="product_price">¥{{order.rule.goods_price}}</view>
-              </view>
-              <view class="row">
+              </view> -->
+              <!-- <view class="row">
                 <view class="product_standard"></view>
                 <view class="product_number">×1</view>
-              </view>
+              </view> -->
             </view>
           </view>
 
-          <view class="price_info">
+          <view class="price_info s_fc_2">
             <view>实付款</view>
             <view>
-              <text class="price">¥{{order.order.order_amount}}</text>
-              <text class="freight">运费{{order.order.shipping_fee}}</text>
+              <text class="price_wrap">¥<text class='price'>{{order.price1}}</text>.<text>{{order.price2}}</text></text>
+              <text class="freight">(含运费{{order.order.shipping_fee}})</text>
             </view>
           </view>
         </view>
         <view class="operate_info">
-          <button class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
+          <button class="operate_btn custom_btn s_fc_10" open-type="contact" session-from="weapp" plain="true">联系客服</button>
           <!-- <view wx:if="{{order.pintuan_state_text=='已成团'}}" @tap.stop="salesReturn" data-order="{{order}}">退货/换货</view> -->
         </view>
       </repeat>
@@ -264,11 +280,11 @@ export default class OrderList extends wepy.page {
           this.getList();
           break;
         case 1:
-          this.query.pintuan_state = 1;
+          this.query.pintuan_state = 2;
           this.getList();
           break;
         case 2:
-          this.query.pintuan_state = 2;
+          this.query.pintuan_state = 1;
           this.getList();
           break;
 
@@ -279,7 +295,7 @@ export default class OrderList extends wepy.page {
     goOrderDetail(e) {
       let index = e.currentTarget.dataset.index;
       wx.navigateTo({
-        url: "/pages/my/orderDetail?orderId=" + this.orderList[index].order_id
+        url: `/pages/my/orderDetail?orderId=${this.orderList[index].order_id}&unVip=${true}`
       });
     },
     goGroupDetail(e) {
@@ -287,10 +303,17 @@ export default class OrderList extends wepy.page {
       let orderId = e.currentTarget.dataset.orderid
       console.log(orderId);
       wx.navigateTo({
-        url: `/pages/my/groupbuyDatail?id=${id}`
+        url: `/pages/my/groupbuyDatail?id=${id}&unVip=${true}`
       });
     }
   };
+
+  format(item){
+    let arr = item.order.order_amount.split('.');
+    item.price1 = arr[0];
+    item.price2 = arr[1];
+  }
+
   async getList() {
     wx.showLoading({
       title: "加载中"
@@ -302,6 +325,8 @@ export default class OrderList extends wepy.page {
     if (res.status === 0) {
       wx.hideLoading();
       if (res.data != null && res.data.length != 0) {
+        res.data.forEach(this.format.bind(this));
+
         this.orderList = this.orderList.concat(res.data);
       } else {
         if (this.orderList.length == 0) {

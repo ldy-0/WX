@@ -141,9 +141,9 @@ export default class Address extends wepy.page {
     navigationBarTitleText: "地址管理"
   };
   data = {
-    //
     addressList: [],
-    type: ""
+    type: "",
+    referer: null,
   };
 
   components = {};
@@ -175,6 +175,7 @@ export default class Address extends wepy.page {
     }
   };
   onLoad(option) {
+    this.referer = option.referer;
     this.type = option.type;
     console.log(option.type);
   }
@@ -216,6 +217,8 @@ export default class Address extends wepy.page {
     this.$apply();
   }
   choose(e) {
+    if(this.referer === 'my') return ;
+
     console.log("选中");
     if (this.type == "order") {
       let address = e.currentTarget.dataset.address;

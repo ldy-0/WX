@@ -79,7 +79,7 @@
 .order_info {
   padding: 0 24rpx;
   background: #fff;
-  margin-bottom: 200rpx;
+  /* margin-bottom: 200rpx; */
 }
 .order_info .flex {
   display: flex;
@@ -99,7 +99,7 @@
 .order_info .discount-num {
   width: 110rpx;
   height: 32rpx;
-  background-image: linear-gradient(-90deg, #fca768 0%, #fe7f82 100%),
+  background-image: linear-gradient(-90deg, #7fd27d 0%, #bacf6a 100%),
     linear-gradient(#343434, #343434);
   background-blend-mode: normal, normal;
   border-radius: 5rpx;
@@ -135,19 +135,19 @@
 .bottom_bar .sum {
   flex-grow: 1;
   line-height: 100%;
-  padding: 0 18rpx;
+  padding: 0 30rpx;
 }
 .bottom_bar .sum .sum_number {
   color: #636363;
 }
-.bottom_bar .sum .sum_price text {
-  font-size: 37rpx;
-  color: #af0000;
+.sum_price_wrap{
+  font-size: 28rpx;
 }
 .bottom_bar .btn {
-  width: 190rpx;
-  line-height: 100rpx;
-  background: #f17f30;
+  width: 160rpx;
+  line-height: 70rpx;
+  margin-right: 20rpx;
+  border-radius: 10rpx;
   text-align: center;
   font-size: 30rpx;
   color: #fff;
@@ -215,21 +215,21 @@
   width: 22rpx;
   height: 22rpx;
   border-radius: 50%;
-  background: #f17f30;
+  background: #4fb84a;
 }
 
 .discount-infoBox {
   width: 504rpx;
   height: 200rpx;
-  background-color: #fff3e7;
+  background-color: #4fb84a;
   border-radius: 6rpx;
-  color: #f17f30;
+  color: #fff;
   font-size: 22rpx;
 }
 
 .discount-infoPrice {
   font-size: 34rpx;
-  align-item: center;
+  align-items: center;
   padding-top: 30rpx;
   padding-left: 200rpx;
 }
@@ -242,7 +242,7 @@
   color: #fff;
   text-align: center;
   padding: 27rpx 0;
-  background: #f17f30;
+  background: #4fb84a;
 }
 .coupon-box {
   height: 80rpx;
@@ -275,6 +275,43 @@
 .coupon-boxH text {
   padding-top: 20rpx;
 }
+
+.goods_name{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.goods_price_wrap{
+  font-size: 26rpx;
+}
+.goods_price{
+  font-size: 32rpx;
+}
+.goods_spec{
+  font-size: 24rpx;
+}
+
+.integral_desc, .integral_price{
+  margin-left: 10rpx;
+  font-size: 28rpx;
+}
+
+.sum_price{
+  font-size: 40rpx;
+}
+
+.between{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.s_fc_2{ color: #979797; }
+.s_fc_3{ color: #dd3d27; }
+.s_fc_4{ color: #888; }
+.s_fc_5{ color: #666; }
+
+.s_bg_2{ background: #4fb84a; }
 </style>
 
 <template>
@@ -286,24 +323,31 @@
           <view>收货人：{{address.address_realname}}</view>
           <view>{{address.address_tel_phone}}</view>
         </view>
-        <view>收货地址：{{address.area_info}}{{address.address_detail}}</view>
+        <view class='s_fc_2'>收货地址：{{address.area_info}}{{address.address_detail}}</view>
       </view>
       <image src="../../images/icon_zuojiantou@2x.png">
     </navigator>
-    <image src="../../images/img_1@2x.png" class="split_bar">
+
+    <image src="../../images/order/line.png" class="split_bar">
+
     <repeat for="{{goodsList}}" index="index" item="item">
       <view class="product_info around">
         <image src="{{item.goods_image}}" mode="aspectFill">
         <view class="product">
-          <view class="product_title">{{item.goods_name}}</view>
-          <view class="product_title">{{item.spec}}</view>
-          <view class="row">
-            <view class="product_price">¥{{item.goods_price}}</view>
-            <view class="product_number">×{{item.goods_num|| '1'}}</view>
+          <view class="goods_name">{{item.goods_name}}</view>
+          <view>
+            <view class="goods_price_wrap s_fc_3" wx:if="{{isVip}}"><text class='goods_price'>{{item.goods_price}}</text>德分</view>
+            <view class="goods_price_wrap s_fc_3" wx:else>¥<text class='goods_price'>{{item.goods_price}}</text></view>
+            <view class="row">
+              <view class="goods_spec s_fc_4">{{item.spec || item.goods_spec || '统一规格'}}</view>
+
+              <view class="product_number">×{{item.goods_num|| '1'}}</view>
+            </view>
           </view>
         </view>
       </view>
     </repeat>
+
     <view class="order_info">
       <view class="coupon-box">
         <text>运费：</text>
@@ -313,33 +357,44 @@
         <text>备注：</text>
         <textarea class="msgtext" auto-height="{{true}}" bindinput="textVal" maxlength="140"/>
       </view>
-      <view
-        @tap="discountBtn"
-        class="coupon-box"
-        data-index="{{index}}"
-        wx:if="{{couponList.length>0&&is_pintuan==0}}"
-      >
+      <view @tap="discountBtn" class="coupon-box" data-index="{{index}}" wx:if="{{!isVip && couponList.length>0 && isPublicGoods}}">
         <view>优惠券：</view>
         <view class="coupon-boxR">
           <view wx:if="{{!Preferential}}" class="discount-num">{{couponList.length}}张优惠券</view>
-          <text wx:if="{{Preferential}}">省：{{Preferential}}元</text>
+          <text wx:if="{{Preferential}}">省：{{couponDeduct}}元</text>
           <image class="right-icon" src="../../images/icon_zuojiantou@2x.png">
         </view>
       </view>
+    
     </view>
+
+    <view wx:if="{{!isVip && isPublicGoods}}">
+      <integral :obj.sync='integral' @change.user='changeIntegral'>
+        <view class='between'>
+          <text class='integral_desc s_fc_4'>积分抵扣（当前积分¥{{integral.value}}）</text>
+          <text class='integral_price s_fc_3'>-¥{{integralDeduct}}</text>
+        </view>
+      </integral>
+      
+      <remain :obj.sync='remain' @change.user="changeRemain">
+        <view class='between'>
+          <text class='integral_desc s_fc_4'>余额抵扣（当前余额¥{{remain.value}}）</text>
+          <text class='integral_price s_fc_3'>-¥{{remainDeduct}}</text>
+        </view>
+      </remain>
+
+      <view style='height: 100rpx;'></view>
+    </view>
+
     <view class="discount-bg" wx:if="{{discountShow}}">
       <view class="discount-box">
         <view class="discount-title">可用优惠券</view>
         <image class="delete-btn" src="../../images/icon_cha@2x.png" @tap="deleteBtn">
         <scroll-view scroll-y style="height:{{scrollHeight}}rpx">
           <repeat for="{{couponList}}" index="index" item="coupon">
+
             <view class="discount-info">
-              <view
-                class="big_circle"
-                @tap="checkShop"
-                data-coupon="{{coupon}}"
-                data-index="{{index}}"
-              >
+              <view class="big_circle" @tap="checkShop" data-coupon="{{coupon}}" data-index="{{index}}" >
                 <view class="{{itemIndex==index ? 'fill_circle' : ''}}"></view>
               </view>
               <view class="discount-infoBox">
@@ -349,30 +404,35 @@
                 <view style="text-align: center;">
                   <text>{{coupon.voucher_startdate}} ~ {{coupon.voucher_enddate}}</text>
                 </view>
-                <view style="text-align: center;">无门槛使用</view>
+                <view style="text-align: center;">满{{coupon.voucher_limit}}可用</view>
               </view>
             </view>
+
           </repeat>
         </scroll-view>
         <view class="discount-btn" @tap="discountSure">确定</view>
       </view>
     </view>
+
     <view class="bottom_bar">
       <view class="sum row">
-        <view class="sum_number">共计
-          <text>{{goodsNum}}</text>件商品
-        </view>
-        <view class="sum_price">合计：
-          <text>¥{{price}}</text>
+        <!-- <view class="sum_number">共计 <text>{{goodsNum}}</text>件商品</view> -->
+        <view class="sum_price_wrap">
+          <text>应付合计: <text class='s_fc_3'>{{isVip ? '' : '¥'}}</text><text class='sum_price s_fc_3'>{{price}}</text><text class='s_fc_3'>{{isVip ? '德分' : ''}}</text></text>
         </view>
       </view>
-      <view class="btn" @tap="bought()">提交订单</view>
+      <view class="btn s_bg_2" @tap="bought">提交订单</view>
     </view>
+
+    <!-- vip Goods pay -->
+    <modal :config.sync='modalConfig' @done.user='getPwd'></modal> 
   </view>
 </template>
 
 <script>
 import wepy from "wepy";
+import checkItem from "../../components/checkItem";
+import modal from '../../components/payModal';
 import { shttp } from "../../utils/http";
 import getTimes from "../../utils/formatedate.js";
 import calc from "calculatorjs";
@@ -381,6 +441,7 @@ import {
   showFailToast,
   exploitToast
 } from "../../utils/tools";
+
 export default class FirmOrder extends wepy.page {
   config = {
     navigationBarTitleText: "确认订单"
@@ -419,17 +480,41 @@ export default class FirmOrder extends wepy.page {
     Preferential: null,
     seckill_id:null ,  //秒杀商品参数
     ifcut:0,    //砍价商品参数
+    integral: { name: 'i', value: '', checked: false },
+    remain: { name: 're', value: '', checked: false },
+    memberInfo: null,
+    modalConfig: {
+      show: false,
+    },
+    pwd: null,
+    couponDeduct: 0,
+    integralDeduct: 0,
+    remainDeduct: 0,
+    deductList: [0, 0, 0], // 0: 优惠券, 1: 积分 2: 余额 
+    totalPrice: 0,
+    goodsPrice: 0,
   };
 
-  components = {};
+  components = {
+    integral: checkItem,
+    remain: checkItem,
+    modal,
+  };
+
+  computed = {
+    isVip(){ let goods = this.goodsList[0]; return  goods && goods.is_vip;  },
+    isPublicGoods(){ return !(this.is_pintuan || this.ifcut || this.seckill_id) },
+  }
 
   onLoad(option) {
+
     this.isclick = false; //这里控制订单提交点击次数
     //下面判断商品来源 nocart:直接购买 cart:购物车过来的
     this.type = option.type;
     if (option.type == "nocart") {
       let goods = JSON.parse(decodeURIComponent(option.goods));
-      console.log(goods);
+      // console.error(goods);
+      goods.spec = this.getSpec(goods.standard.goods_spec);
       this.goodsList.push(goods);
       this.ifcart = 0;
       this.goodsNum = 1;
@@ -473,26 +558,69 @@ export default class FirmOrder extends wepy.page {
     }
     this.$apply();
   }
+
   methods = {
+    changeIntegral(){
+      let integral = this.integral;
+
+      if(!integral.checked) this.integralDeduct = 0;
+
+      this.closeAccount();
+    },
+    changeRemain(){
+      let remain = this.remain;
+
+      if(!remain.checked) this.remainDeduct = 0;
+
+      this.closeAccount();
+    },
+    getPwd(pwd){
+      this.pwd = pwd;
+      
+      if(this.isclick) return ;
+      this.isclick = true;
+      this.placeOrder();
+    },
     textVal(e) {
       this.textMsg = e.detail.value;
     },
     //提交订单
-    bought() {
-      if (this.isclick) return;
+    async bought() {
+      // no set password / 未设置密码
+      if(this.isVip && this.memberInfo.set_paypwd != '1'){
+        return this.submitVipOrder();
+      }
+
+      if(this.isVip && !this.pwd) return this.modalConfig.show = true;
+
+      if(this.isclick) return;
       this.isclick = true;
       this.placeOrder();
     }
   };
+
+  submitVipOrder(){
+    let opt = { 
+          title: '温馨提示', 
+          content: '您还未设置德分支付密码', 
+          confirmText: '去设置',
+          cancelText: '再看看',
+          confirmColor: '#4fb84a',
+          success(v){ v.confirm && wx.navigateTo({ url: "/pages/my/dScore/setting" }) } 
+        };
+
+    return wx.showModal(opt);
+  }
+
   //下订单
   async placeOrder() {
-    console.log(this.address);
-    if (JSON.stringify(this.address) == "{}") {
-      showFailToast("缺少收货地址");
-      return;
-    }
-    console.log(this.is_pintuan);
     let params = {};
+
+    console.log(this.address, this.is_pintuan);
+    if (JSON.stringify(this.address) == "{}") {
+      return showFailToast("缺少收货地址");
+    }
+
     params = {
       cart_id: this.cart_id, //goods_id|num
       address_id: this.address.address_id,
@@ -503,29 +631,32 @@ export default class FirmOrder extends wepy.page {
       voucher: this.voucher,
       is_pintuan: this.is_pintuan
     };
-    if (this.grouponid) {
-      params.group_id = this.grouponid;
+
+    if (this.grouponid) { params.group_id = this.grouponid; }
+    if (this.seckill_id) { params.seckill_id = this.seckill_id; }
+    if (this.ifcut) { params.ifcut = this.ifcut; }
+    if(this.isVip){
+      params.rcb_pay = 1;
+      params.password = this.pwd;
     }
-    if (this.seckill_id) {
-      params.seckill_id = this.seckill_id;
+
+    if(this.integral.checked) params.point_pay = 1;
+    if(this.remain.checked) params.pd_pay = 1;
+
+    const res = await shttp.post("/api/v2/member/order").send(params).end();
+
+    // vip goods
+    if(this.isVip && res.status === 0){
+      return wx.redirectTo({ url: `/pages/store/bought?id=${res.data.order_id}&orderType=normal&isVip=1` });
     }
-    if (this.ifcut) {
-      params.ifcut = this.ifcut;
-    }
-    const res = await shttp
-      .post("/api/v2/member/order")
-      .send(params)
-      .end();
-    //  console.log(res);
+
     if (res.status === 0) {
-      wx.showToast({
-        title: "支付申请中...",
-        icon: "none",
-        duration: 2000
-      });
+      wx.showToast({ title: "支付申请中...", icon: "none", duration: 2000 });
+
       let order_id = res.data.order_id;
       let pintuangroup_id = res.data.pintuan_id;
-      let failUrl = `/pages/store/orderdetail?orderId=${order_id}`;
+      let failUrl = `/pages/store/orderdetail?orderId=${order_id}&unVip=${true}`;
+      // let failUrl = `/pages/store/bought?id=${order_id}&orderType=${this.seckill_id ? 'seckill' : this.ifcut ? 'bargain' : ''}`;
       let pay_sn = res.data.pay_sn;
       let is_pintuan = this.is_pintuan;
       let that = this;
@@ -537,15 +668,6 @@ export default class FirmOrder extends wepy.page {
         paySign: res.data.paySign,
         success: function(res) {
           console.log("支付成功返回的结果",res);
-          // if (is_pintuan == 1) {
-          //   wx.reLaunch({
-          //     url: `/pages/store/bought?id=${order_id}&orderType=group&ptId=${pintuangroup_id}`
-          //   });
-          // } else {
-          //   wx.reLaunch({
-          //     url: `/pages/store/bought?id=${order_id}&orderType=normal`
-          //   });
-          // }
           if (is_pintuan == 1) {
             wx.redirectTo({
               url: `/pages/store/bought?id=${order_id}&orderType=group&ptId=${pintuangroup_id}`
@@ -564,15 +686,12 @@ export default class FirmOrder extends wepy.page {
               });
             } else {
               wx.redirectTo({
-                url: `/pages/store/bought?id=${order_id}&orderType=normal`
+                url: `/pages/store/bought?id=${order_id}&orderType=${that.seckill_id ? 'secKill' : that.ifcut ? 'bargain' : ''}`
               });
             }
           } else {
-            wx.showToast({
-              title: "支付失败",
-              icon: "none",
-              duration: 2000
-            });
+            wx.showToast({ title: "支付失败", icon: "none", duration: 2000 });
+
             that.isclick = false;
             if (is_pintuan == 1) {
               that.changerOrder(order_id, pay_sn);
@@ -587,15 +706,18 @@ export default class FirmOrder extends wepy.page {
         }
       });
     } else {
-      wx.showToast({
-        title: res.error,
-        icon: "none",
-        duration: 2000
-      });
+      wx.showToast({ title: res.error, icon: "none", duration: 2000 });
+      this.isclick = false;
+      this.pwd = null;
+      this.modalConfig.show = false;
     }
+
+    this.$apply();
   }
 
   onShow() {
+    this.getUserInfo();
+
     this.isclick = false; //这里控制订单提交点击次数
     let address = wx.getStorageSync("address");
     if (address) {
@@ -609,10 +731,7 @@ export default class FirmOrder extends wepy.page {
   }
   //获取默认地址
   async getDefaultAddress() {
-    const res = await shttp
-      .get("/api/v2/member/address")
-      .query({})
-      .end();
+    const res = await shttp.get("/api/v2/member/address").query({}).end();
 
     if (res.data.length != 0) {
       res.data.forEach(item => {
@@ -627,16 +746,13 @@ export default class FirmOrder extends wepy.page {
         this.closeAccount();
       }
     } else {
-      wx.showToast({
-        title: "请填写收货地址",
-        icon: "none",
-        duration: 2000
-      });
+      wx.showToast({ title: "请填写收货地址", icon: "none", duration: 2000 });
     }
-    console.log("地址");
-    console.log(this.address);
+
+    console.log("地址", this.address);
     this.$apply();
   }
+
   //结算接口
   async closeAccount() {
     let sends = {
@@ -654,37 +770,50 @@ export default class FirmOrder extends wepy.page {
     if(this.seckill_id){
         sends.seckill_id = this.seckill_id
     }
-    const res = await shttp
-      .post("/api/v2/member/checkout")
-      .send(sends)
-      .end();
-    console.log("结算");
-    console.log(res);
+
+    // vip goods
+    if(this.isVip) sends.rcb_pay = 1;
+
+    if(this.integral.checked) sends.point_pay = 1;
+    if(this.remain.checked) sends.pd_pay = 1;
+
+    if(sends.voucher_list.hasOwnProperty('length')) this.couponDeduct = 0;
+
+    const res = await shttp.post("/api/v2/member/checkout").send(sends).end();
+    console.log("结算", res);
+
     if (res.data.length != 0) {
       this.freightList = Object.values(res.data.freight_list);
       // console.log( this.freightList)
       let storePrice = Object.values(res.data.store_final_order_total);
-      this.price = Math.floor(storePrice[0] * 100) / 100;
-      this.Preferential = calc.sub(
-        calc.add(this.freightList, Object.values(res.data.goods_total)),
-        storePrice
-      );
+      this.price = storePrice[0]; // Math.floor(storePrice[0] * 100) / 100;
+      this.goodsPrice = Object.values(res.data.goods_total)[0];
+
+      if(this.checkVoucher.hasOwnProperty('length') && !sends.point_pay && !sends.pd_pay) this.totalPrice = storePrice[0];
+      // 设置积分和余额抵扣
+
+      this.deductList[0] = !this.checkVoucher.hasOwnProperty('length') ? 'coupon' : 0;
+      this.deductList[1] = this.integral.checked ? 'integral' : 0;
+      this.deductList[2] = this.remain.checked ? 'remain' : 0;
+
+      this.calcDeduct();
+
+      if(!this.checkVoucher.hasOwnProperty('length')){
+        this.Preferential = calc.sub(
+          calc.add(this.freightList, Object.values(res.data.goods_total)),
+          storePrice
+        );
+      }
+      
     } else {
-      wx.showToast({
-        title: res.error,
-        icon: "none",
-        duration: 1000
-      });
+      wx.showToast({ title: res.error, icon: "none", duration: 1000 });
     }
     this.$apply();
   }
+
   async getCouponList() {
-    const res = await shttp
-      .get(`/api/v2/member/coupon`)
-      .query({
-        voucher_state: 1
-      })
-      .end();
+    const res = await shttp.get(`/api/v2/member/coupon`).query({ voucher_state: 1 }).end();
+
     if (res.status === 0) {
       res.data.forEach((element, idx) => {
         element.voucher_enddate = getTimes.formatTime(
@@ -728,6 +857,11 @@ export default class FirmOrder extends wepy.page {
     this.$apply();
   }
   checkShop(e) {
+    let coupon = e.currentTarget.dataset.coupon;
+
+    if(coupon.voucher_limit > this.goodsPrice) return wx.showModal({ content: `商品总金额必须大于${coupon.voucher_limit}`, showCancel: false, });
+
+
     if (this.itemIndex == e.currentTarget.dataset.index) {
       this.itemIndex = null;
       this.coupon = null;
@@ -758,5 +892,63 @@ export default class FirmOrder extends wepy.page {
     }, 500);
     this.discountShow = false;
   }
+
+  getSpec(obj){
+    let str = '';
+
+    for(let key in obj){ str += `${obj[key]}; `; }
+
+    return str.replace(/;\s*$/g, '');
+  }
+
+  calcDeduct(){
+    let arr = this.deductList,
+        propList = ['coupon', 'integral', 'remian'],
+        total = this.totalPrice,
+        freight;
+
+    freight = this.freightList.reduce((pre, val) => calc.add(pre, val), 0);
+
+    arr.forEach((v, i) => {
+      let prop = `${v}Deduct`,
+          price;
+
+      if(i === 0 && v){
+        price = Math.min(this.coupon.voucher_price, calc.sub(total, freight));
+      }
+
+      if(i === 1 && v){
+        price = Math.min(total, this[v].value / 10);
+      }
+
+      if(i > 1 && v){
+        price = Math.min(total, this[v].value);
+      }
+
+      this[prop] = price || 0;
+      total = calc.sub(total, price || 0);
+
+      // console.error(`${v}`, price, total);
+
+    });
+
+  }
+
+  async getUserInfo(){
+    let param = {};
+
+    let res = await shttp.get(`/api/v2/member/memberinfo`).query(param).end();
+
+    if(res && res.data){
+      wx.setStorageSync('memberInfo', res.data);
+    }
+
+    this.memberInfo = wx.getStorageSync("memberInfo");
+    this.integral.value = this.memberInfo.member_points;
+    this.remain.value = this.memberInfo.available_predeposit;
+
+    this.$apply();
+  }
+  
 }
 </script>

@@ -68,16 +68,14 @@ page {
   background: #fff;
 }
 .product_info .goods {
-  padding: 20rpx;
+  position: relative;
 }
-.product_info .goods .goods_main_info,
 .product_info .goods .goods_other_info {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 .product_info .goods .product_title {
-  width: 560rpx;
   color: #222222;
   font-size: 32rpx;
 }
@@ -114,8 +112,7 @@ page {
   height: 88rpx;
   margin: 20rpx 0;
   padding: 0 19rpx;
-  background: #fff;
-  color: #888888;
+  font-size: 28rpx;
 }
 .standard image {
   width: 16rpx;
@@ -158,10 +155,10 @@ page {
   width: 100%;
   /* height: 180rpx; */
 }
-.product .base_info image {
+.goods_thumbnail{
+  flex-shrink: 0;
   width: 180rpx;
   height: 180rpx;
-  margin-right: 23rpx;
   border-radius: 20rpx;
 }
 .product .base_info .product_standard {
@@ -227,6 +224,7 @@ page {
   align-items: center;
   justify-content: center;
   width: 82rpx;
+  font-size: 40rpx;
 }
 .minus-bg {
   background-color: #f8f8f8;
@@ -322,7 +320,7 @@ page {
 }
 .buy_btn {
   color: #fff;
-  background: #f17f30;
+  background: #4fb84a;
 }
 .warp_btn .appointment-btn {
   width: 430rpx;
@@ -343,9 +341,9 @@ page {
 .product_name {
   font-size: 32rpx;
   color: #333333;
-  margin-right: 12rpx;
-  margin-top: 60rpx;
-  margin-bottom: 20rpx;
+  margin: 60rpx 12rpx 20rpx 20rpx;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .product_price {
   font-size: 40rpx;
@@ -401,7 +399,6 @@ page {
 }
 .more_btn text {
   padding-right: 10rpx;
-  color: #f17f30;
   font-size: 26rpx;
 }
 .comment .item .user {
@@ -464,7 +461,7 @@ page {
 .row-btnCtn {
   display: flex;
   justify-content: space-between;
-  padding: 0 30rpx;
+  padding: 0 30rpx 10rpx;
 }
 .row-btn {
   width: 330rpx;
@@ -505,7 +502,7 @@ page {
   line-height: 68rpx;
   padding-left: 20rpx;
   font-size: 28rpx;
-  color: #ff7900;
+  color: #4fb84a;
   background: #fff;
   border-top: 1rpx solid #e5e5e5;
   border-bottom: 1rpx solid #e5e5e5;
@@ -677,17 +674,17 @@ page {
   font-size: 24rpx;
 }
 .groupon-bottom text {
-  color: #af0000;
+  color: #dd3d27;
 }
 .groupon-goBtn {
   width: 120rpx;
   height: 44rpx;
-  color: #ff7900;
+  color: 4fb84a;
   font-size: 28rpx;
   text-align: center;
   line-height: 44rpx;
   border-radius: 10rpx;
-  border: 1rpx solid #ff7900;
+  border: 1rpx solid #4fb84a;
 }
 .groupon-active {
   width: 60rpx;
@@ -729,6 +726,50 @@ page {
   margin-right: 5rpx;
   margin-left: 5rpx;
 }
+
+.product_title, .product_price{
+  padding: 20rpx 20rpx 0 20rpx;
+}
+.product_price{
+  padding-bottom: 30rpx;
+}
+.goods_vice_info{
+  border-top: 2rpx solid #eee;
+  font-size: 24rpx;
+  height: 84rpx;
+  padding: 0 20rpx;
+  line-height: 84rpx;
+}
+.i_operate_wrap{
+  position: absolute;
+  right: 20rpx;
+  bottom: 100rpx;
+  display: flex;
+  align-items: center;
+}
+
+.standard_vice_info{
+  margin-left: 20rpx;
+  font-size: 24rpx;
+}
+
+.goods_info{
+  flex-grow: 1;
+}
+
+.goods_price_pre, .goods_price_post{
+  font-size: 28rpx;
+}
+
+.full_btn{
+  width: 100%;
+}
+
+.s_fc_2{ color: #888; }
+.s_fc_3{ color: #4fb84a; }
+.s_fc_4{ color: #636363; }
+
+.s_bg_1{ background: #fff; }
 </style>
 
 <template>
@@ -736,31 +777,31 @@ page {
     <view wx:if="{{showStandard}}" class="standard-box">
       <view class="product">
         <view class="base_info">
-          <image src="{{goods.goods_image}}" mode="aspectFill">
-            <view>
-              <view class="product_name">{{goods.goods_name}}</view>
-              <view class="product_price">
-                <text style="font-size:28rpx">¥</text>
-                {{isMultiSku ? multiSku.price : goods.goods_price}}
-              </view>
-              <!-- <view class>库存：{{goods.goods_storage}}</view> -->
+          <image class='goods_thumbnail' src="{{goods.goods_image}}" mode="aspectFill">
+
+          <view class='goods_info'>
+            <view class="product_name">{{goods.goods_name}}</view>
+            <view class="product_price">
+              <text class='goods_price_pre' wx:if="{{!goods.is_vip}}">¥</text>
+              <text>{{isMultiSku ? multiSku.price : goods.goods_price}}</text>
+              <text class='goods_price_post' wx:if="{{goods.is_vip}}">德分</text>
+
+              <text class='standard_vice_info s_fc_4' style='text-decoration: line-through;'>{{isMultiSku && multiSku.goods ? multiSku.goods.goods_marketprice : goods.goods_marketprice}} <text wx:if="{{goods.is_vip}}">德分</text> </text>
+
+              <text class='standard_vice_info s_fc_4'>库存：{{isMultiSku && multiSku.goods ? multiSku.goods.goods_storage : goods.goods_storage}}</text>
             </view>
+          </view>
         </view>
+
         <image class="delete-btn" src="../../images/icon_cha@2x.png" @tap="deleteBtn">
 
-          <view class="standard_wrap" wx:if='{{isMultiSku}}'>
-            <view class="standard_title">规格</view>
-            <!-- <view class="standard_info">
-            <repeat for="{{standards}}" index="index" item="item">
-              <view class="{{isChecked==index?'checked':''}}" @tap="checked({{index}})">{{item}}</view>
-            </repeat>
-          </view> -->
-            <scroll-view scroll-y='true' style='height: 200rpx;'>
-              <multiSku :classList.sync='skuClassList' :skus.sync='skus' :field='field' @update.user='updateSku'></multiSku>
-            </scroll-view>
-          </view>
-          <view class='standard_wrap' wx:else>
-          </view>
+        <view class="standard_wrap" wx:if='{{isMultiSku}}'>
+          <view class="standard_title">规格</view>
+          <scroll-view scroll-y='true' style='height: 200rpx;'>
+            <multiSku :classList.sync='skuClassList' :skus.sync='skus' :field='field' @update.user='updateSku'></multiSku>
+          </scroll-view>
+        </view>
+        <view class='standard_wrap' wx:else></view>
 
           <view class="row">
             <view class="number_title">购买数量</view>
@@ -769,17 +810,18 @@ page {
                 <image class="icon_minus" src="../../images/icon_jian@2x.png">
               </view>
               <view class="number">{{getSize}}</view>
-              <view class="add" @tap="add">
-                <image class="icon_add" src="../../images/icon_jia@2x.png">
+              <view class="add" @tap="add">+
+                <!-- <image class="icon_add" src="../../images/icon_jia@2x.png"> -->
               </view>
             </view>
           </view>
           <view class="row-btnCtn">
-            <view class="add_btn row-btn" @tap="addShoppingCart()">加入购物车</view>
-            <view class="buy_btn row-btn" @tap="firmOrder()">立即购买</view>
+            <view class="add_btn row-btn" @tap="addShoppingCart()" wx:if="{{isMain}}">加入购物车</view>
+            <view class="buy_btn row-btn {{isMain ? '' : 'full_btn'}}" @tap="firmOrder()">立即购买</view>
           </view>
       </view>
     </view>
+
     <view>
       <view class="swiper-box">
         <swiper class="goods-swiper" indicator-active-color="{{indicatorActiveColor}}" indicator-color="{{indicatorColor}}" indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" circular="true" bindchange="swiperchange">
@@ -797,38 +839,42 @@ page {
         <view class="instructions" wx:if="{{TYPE== 'normal'}}">{{current}}/{{goods.goodsimagesList.length}}</view>
         <view class="instructions" wx:if="{{TYPE== 'group' ||TYPE== 'grouponing'}}">{{current}}/{{goods.images.length}}</view>
       </view>
+
       <view class="product_info">
         <view class="goods">
-          <view class="goods_main_info">
-            <view class="column">
-              <view class="product_title">{{goods.goods_name}}</view>
-              <view class="product_title" wx:if="{{TYPE== 'group'||TYPE== 'grouponing'}}">{{goods.spec ||'单规格商品'}}</view>
-            </view>
+          <view class="product_title">
+            <view>{{goods.goods_name}}</view>
+            <view wx:if="{{TYPE== 'group'||TYPE== 'grouponing'}}">{{goods.spec ||'单规格商品'}}</view>
+          </view>
+          
+          <view class="product_price">
+            <text class="text11"><text wx:if="{{!goods.is_vip}}">¥</text></text>{{goods.goods_price}}<text class='goods_price_post' wx:if="{{goods.is_vip}}">德分</text>
+            <text class="text3"><text wx:if="{{!goods.is_vip}}">¥</text>{{goods.goods_marketprice}}<text wx:if="{{goods.is_vip}}">德分</text></text>
+          </view>
+
+          <view class='goods_vice_info s_fc_2'>
+            <text>运费:¥{{goods.goods_freight}}</text>
+            <text class="text22" wx:if="{{TYPE== 'normal'}}">库存：{{goods.goods_storage}}</text>
+          </view>
+
+          <view class="i_operate_wrap">
             <view wx:if="{{TYPE== 'normal'}}" class="column_center" @tap="enshrine">
-              <image src="{{goods.enshrine_type==1?'../../images/icon_pingfen_hl@2x.png':'../../images/icon_pingfen@2x.png'}}" class="qr_icon">
+              <image src="{{goods.enshrine_type==1?'../../images/goods/collect.png':'../../images/goods/uncollect.png'}}" class="qr_icon">
                 {{goods.enshrine_type==1?'已收藏':'收藏'}}
             </view>
             <view wx:if="{{TYPE== 'normal'}}" class="column_center" @tap="showShare">
-              <image src="../../images/icon_6_fenxiang@2x.png" class="share_icon">分享
+              <image src="../../images/goods/share.png" class="share_icon">分享
             </view>
           </view>
-          <view class="product_price">
-            <text class="text11">¥</text>
-            {{goods.goods_price}}
-            <text class="text3" wx:if="{{TYPE== 'group'||TYPE== 'grouponing'}}">¥{{goods.goods_marketprice}}</text>
-            <text class="text22">运费:¥{{goods.goods_freight}}</text>
-            <text class="text22" wx:if="{{TYPE== 'normal'}}">已售：{{goods.goods_salenum}}</text>
-          </view>
-          <!-- <view class="goods_other_info">
-              <view class="text">库存：{{goods.goods_storage}}</view>
-              <view class="text">已售：{{goods.goods_salenum}}</view>
-            </view>-->
+
         </view>
       </view>
-      <view wx:if="{{TYPE== 'normal'}}" class="standard" @tap="goStandard">
+
+      <view wx:if="{{TYPE== 'normal'}}" class="standard s_fc_4 s_bg_1" @tap="goStandard">
         <view>规格 {{isMultiSku ? multiSku.skuStr : goods.standard}}</view>
         <image src="../../images/icon_zuojiantou@2x.png">
       </view>
+
       <view wx:if="{{TYPE=='grouponing'}}">
         <view class="countDown-box" wx:if="{{pintuanDetails.pintuangroup_state == 1}}">
           <view class="countDown-txt">活动
@@ -880,12 +926,13 @@ page {
           </view>
         </repeat>
       </view>
+
       <view class="comment" wx:if="{{comment[0]}}">
         <view class="comment-top">
           <view>宝贝评价({{comment.length}})</view>
           <view class="more_btn" @tap="goComment" data-goodid="{{goods.SKUList[0].goods_id || goods.goods_id}}">
-            <text>查看全部</text>
-            <image class="more_btnImg" src="../../images/icon_chakanquanbu@2x.png">
+            <text class='s_fc_3'>查看全部</text>
+            <image class="more_btnImg" src="../../images/goods/green_arrow.png">
           </view>
         </view>
         <view class="item">
@@ -913,6 +960,7 @@ page {
         <view class="space"></view>
       </view>
     </view>
+
     <view class="bottom_bar">
       <view class="icon">
         <navigator open-type="switchTab" url="/pages/home" hover-class="none">
@@ -923,16 +971,16 @@ page {
           <image class="tab-icon1" src="../../images/icon_2_kefu@2x.png">
             <view>客服</view>
         </button>
-        <view class="red_dot_wrap" wx:if="{{TYPE== 'normal'}}">
+        <view class="red_dot_wrap" wx:if="{{TYPE== 'normal' && isMain}}">
           <image class="tab-icon3" src="../../images/icon_2_gouwuche@2x.png" @tap="goShoppingCart">
             <view>购物车</view>
             <view class="red_dot">{{carSize}}</view>
         </view>
       </view>
       <view class="warp_btn">
-        <view wx:if="{{TYPE== 'normal'}}" class="add_btn" @tap="addShoppingCart()">加入购物车</view>
-        <view wx:if="{{TYPE== 'normal'}}" class="buy_btn" @tap="firmOrder()">立即购买</view>
-        <view wx:if="{{TYPE== 'group'}}" class="buy_btn group_btn" @tap="firmGroupOrder()">发起团购</view>
+        <view wx:if="{{TYPE== 'normal' && isMain}}" class="add_btn" @tap="showSelect" >加入购物车</view>
+        <view wx:if="{{TYPE== 'normal'}}" class="buy_btn {{isMain ? '' : 'group_btn'}}" @tap="showSelect">立即购买</view>
+        <view wx:if="{{TYPE== 'group'}}" class="buy_btn group_btn" @tap="firmGroupOrder">发起团购</view>
         <view class="buy_btn group_btn" @tap="joinGroup" wx:if="{{TYPE=='grouponing'&&pintuanDetails.pintuangroup_state == 1&&pintuanDetails.is_join != 1}}">参加团购</view>
         <view class="buy_btn group_btn group_btnBg" wx:if="{{TYPE=='grouponing'&&pintuanDetails.pintuangroup_state != 1||TYPE=='grouponing'&&pintuanDetails.is_join == 1}}">参加团购</view>
       </view>
@@ -1020,6 +1068,7 @@ export default class GoodsDetails extends wepy.page {
   };
 
   computed = {
+    isMain(){ return this.$parent.globalData.type == 1; },
     isShow() {
       return this.showStandard;
     },
@@ -1067,8 +1116,9 @@ export default class GoodsDetails extends wepy.page {
     multiSku
   };
   methods = {
+    showSelect(){ this.showStandard = true; },
     // 收藏/取消收藏
-        collect(){
+    collect(){
       if(this.goods.enshrine_type==1){
           this.cancel();
       }else{
@@ -1127,15 +1177,21 @@ export default class GoodsDetails extends wepy.page {
       this.$apply();
     },
     async addShoppingCart() {
+      if (this.standards[0] == "统一规格") {
+        this.isChecked = 0;
+        this.goods.standard = "统一规格";
+        this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
+        this.goods.goods_price = this.goods.SKUList[0].goods_price;
+        this.goods.goods_id = this.goods.SKUList[0].goods_id;
+        this.goods.goods_freight = this.goods.SKUList[0].goods_freight;
+        this.goods.goods_num = this.size;
+      }
+
       if (!this.goods.standard) {
         return this.goStandard();
       }
       if (this.goods.goods_storage < 1) {
-        return wx.showToast({
-          title: "库存不足",
-          icon: "none",
-          duration: 1000
-        });
+        return wx.showToast({ title: "库存不足", icon: "none", duration: 1000 });
       }
       console.log(this.goods);
 
@@ -1170,28 +1226,35 @@ export default class GoodsDetails extends wepy.page {
     },
 
     firmOrder() {
+      if (this.standards[0] == "统一规格") {
+        this.isChecked = 0;
+        this.goods.standard = "统一规格";
+        this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
+        this.goods.goods_price = this.goods.SKUList[0].goods_price;
+        this.goods.goods_id = this.goods.SKUList[0].goods_id;
+        this.goods.goods_freight = this.goods.SKUList[0].goods_freight;
+        this.goods.goods_num = this.size;
+      }
       //未设置规格
-      if (!this.goods.standard) {
-        return this.goStandard();
-      }
-      if (this.goods.goods_storage < 1) {
-        return showFailToast("库存不足");
-      }
-      wx.navigateTo({
-        url:
-          "/pages/store/firmOrder?type=nocart&goods=" +
-          encodeURIComponent(JSON.stringify(this.goods))
-      });
+      if (!this.goods.standard) { return this.goStandard(); }
+
+      if (this.goods.goods_storage < 1) { return showFailToast("库存不足"); }
+
+      let url = `/pages/store/firmOrder?type=nocart&goods=${encodeURIComponent(JSON.stringify(this.goods))}`;
+      console.error(url);
+      wx.navigateTo({ url, });
     },
+
     firmGroupOrder() {
+      this.goods.standard = this.goods.goods;
+
       if (this.goods.goods_storage < 1) {
         return showFailToast("库存不足");
       }
-      wx.navigateTo({
-        url: `/pages/store/firmOrder?type=nocart&goods=${encodeURIComponent(
-          JSON.stringify(this.goods)
-        )}&groupontype=group`
-      });
+
+      let url = `/pages/store/firmOrder?type=nocart&goods=${encodeURIComponent(JSON.stringify(this.goods))}&groupontype=group`;
+      console.error('group goods:', url, );
+      wx.navigateTo({ url, });
     },
     // udpate multi Sku
     updateSku(price, skuStr, img, goods) {
@@ -1226,9 +1289,8 @@ export default class GoodsDetails extends wepy.page {
       this.wxTimer1 = null;
     }
     this.wxUserInfo = wx.getStorageSync("memberInfo");
-    wx.showLoading({
-      title: "加载中"
-    });
+    wx.showLoading({ title: "加载中" });
+
     console.log(this.scene);
     if (this.scene != "undefined") {
       let qrarry = this.scene.split(";");
@@ -1253,6 +1315,7 @@ export default class GoodsDetails extends wepy.page {
 
       this.getType(this.options.type);
     }
+    
     if (!this.wxUserInfo.wx_name) {
       wx.navigateTo({
         url: `/pages/authorization?shareType=activity`
@@ -1304,6 +1367,7 @@ export default class GoodsDetails extends wepy.page {
         });
         this.goods.goods_storage = this.goods.SKUList[0].goods_storage;
       }
+
       if (res.data.spec_value) {
         this.standards = res.data.spec_value;
       } else {
@@ -1344,6 +1408,7 @@ export default class GoodsDetails extends wepy.page {
       this.goods.goods_marketprice = this.goods.goods.goods_marketprice;
       this.goods.goods_image = this.goods.goods.goods_image;
       this.standards = ["统一规格"];
+
       this.getComment(this.goods.goods_id);
       if (this.TYPE == "group") {
         this.getGroupList(this.goods.goods_id);
@@ -1379,11 +1444,7 @@ export default class GoodsDetails extends wepy.page {
       this.goods.goods_num = this.size;
     }
     if (!this.goods.standard) {
-      wx.showToast({
-        title: "请选择规格!",
-        icon: "none",
-        duration: 1000
-      });
+      wx.showToast({ title: "请选择规格!", icon: "none", duration: 1000 });
     }
     this.$apply();
   }
@@ -1440,19 +1501,24 @@ export default class GoodsDetails extends wepy.page {
       },
       content
     );
-    const res = await shttp
-      .post("/api/v2/member/wxcode")
-      .send({
+    let param = {
         page: "pages/store/goodsDetails",
         scene: "normal;" + this.id,
         width: 350, // 430
         is_hyaline: true // false,
-      })
+      };
+
+    if(!this.isMain) param.source = 1;
+
+    const res = await shttp
+      .post("/api/v2/member/wxcode")
+      .send(param)
       .end();
-    let qrpicUrl = res.data.url;
+
+    let qrpicUrl = `https://cdn.health.healthplatform.xyz/${res.data.url.key}`;
     await this.drawImage(
       {
-        img: qrpicUrl.replace(/http/, "https"),
+        img: qrpicUrl,
         top: 320,
         left: 180,
         width: 80,
@@ -1561,26 +1627,14 @@ export default class GoodsDetails extends wepy.page {
   }
   // 收藏
   async enshrine() {
-    const res = await shttp
-      .post("/api/v2/member/enshrine")
-      .send({
-        goods_commonid: this.id
-      })
-      .end();
+    const res = await shttp.post("/api/v2/member/enshrine").send({ goods_commonid: this.id }) .end();
+
     if (res.status === 0) {
-      wx.showToast({
-        title: "收藏成功!",
-        icon: "success",
-        duration: 2000
-      });
+      wx.showToast({ title: "收藏成功!", icon: "success", duration: 2000 });
       this.goods.enshrine_type = 1;
-       this.goods.enshrine[0].enshrine_id=res.data;
-    } else if (res.status === 1) {
-      wx.showToast({
-        title: res.error,
-        icon: "none",
-        duration: 2000
-      });
+      this.goods.enshrine[0].enshrine_id=res.data;
+    }else if (res.status === 1){
+      wx.showToast({ title: res.error, icon: "none", duration: 2000 });
     }
     this.$apply();
   }
@@ -1707,6 +1761,8 @@ export default class GoodsDetails extends wepy.page {
     });
   }
   joinGroup() {
+    this.goods.standard = this.goods.goods;
+
     this.goods.goods_id = this.pintuanDetails.pintuangroup_goods_id;
     this.goods.goods_num = 1;
     console.log("grouponing");

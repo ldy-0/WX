@@ -24,9 +24,9 @@
 .order_btn {
   width: 690rpx;
   height: 88rpx;
-  background-color: #f17f30;
+  background: #4fb84a;
   border-radius: 10rpx;
-  border: solid 1rpx #dc6c1e;
+  border: solid 1rpx #4fb84a;
   color: #fff;
   font-size: 32rpx;
   text-align: center;
@@ -35,7 +35,7 @@
 }
 .order_btnBg {
   background: #fff;
-  color: #f17f30;
+  color: #4fb84a;
 }
 .time_info {
   height: auto;
@@ -52,24 +52,29 @@
 .time_info .time view {
   margin: 18rpx 0 0;
 }
+
+.s_fc_2{ color:#4fb84a; }
 </style>
 
 <template>
   <view class="container">
     <view class="around">
-      <image src="../../images/img_2@2x.png">
+      <image src="../../images/order/success.png">
       <view class="around-txt">订单支付成功！</view>
     </view>
+
     <view class="time_info">
       <view class="time">
         <view>订单编号：{{order.order_sn}}</view>
-        <view>订单金额：{{orderPrice}}</view>
-        <view>支付方式：微信支付</view>
+        <view>订单金额：¥{{orderPrice}}</view>
+        <view wx:if="{{unPay}}">支付方式：微信支付</view>
         <view>下单时间：{{order.add_time}}</view>
+        <view wx:if="{{!unPay}}">支付时间：{{order.payment_time}}</view>
         <view class="time-br"></view>
-        <view wx:if="{{order.Preferential!='0.00'}}">优 惠 券：-￥{{order.Preferential}}</view>
+        <view wx:if="{{order.voucher_price != 0}}">优 惠 券：-¥{{order.Preferential}}</view>
+        <view wx:if="{{order.order_points != 0}}">积分抵扣：-¥{{order.order_points}}</view>
         <view>实付金额：
-          <text style="color:#f17f30">￥{{order.order_amount}}</text>
+          <text class="s_fc_2">￥{{order.order_amount}}</text>
         </view>
       </view>
     </view>
@@ -92,10 +97,15 @@ export default class Bought extends wepy.page {
     order: null,
     //订单id
     option: null,
-    orderPrice: null
+    orderPrice: null,
+    isVip: false,
   };
 
   components = {};
+
+  computed = {
+    unPay(){ return this.order && /^1970/g.test(this.order.payment_time); }
+  }
 
   methods = {
     goHome() {
@@ -108,12 +118,12 @@ export default class Bought extends wepy.page {
       switch (this.option.orderType) {
         case "group":
           wx.navigateTo({
-            url: "/pages/my/groupbuyDatail?id=" + this.option.ptId
+            url: `/pages/my/groupbuyDatail?id=${this.option.ptId}`
           });
           break;
         default:
           wx.navigateTo({
-            url: "/pages/store/orderdetail?orderId=" + this.option.id
+            url: `/pages/store/orderdetail?orderId=${this.option.id}&unVip=${!this.isVip}&type=${this.option.orderType}`
           });
           break;
       }
@@ -121,6 +131,7 @@ export default class Bought extends wepy.page {
   };
   onLoad(option) {
     this.option = option;
+    this.isVip = option.isVip;
     //获取订单详情
     this.getOrderInfo();
   }

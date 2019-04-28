@@ -85,9 +85,9 @@
   height: 88rpx;
   text-align: center;
   line-height: 88rpx;
-  background-color: #f08132;
+  background-color: #4fb84a;
   border-radius: 10rpx;
-  border: solid 1rpx #f08132;
+  border: solid 1rpx #4fb84a;
   color: #ffffff;
   font-size: 32rpx;
   margin: 30rpx auto;
@@ -111,7 +111,7 @@
   justify-content: center;
   width: 200rpx;
   height: 74rpx;
-  color: #f08132;
+  color: #4fb84a;
   font-size: 30rpx;
   overflow: hidden;
 }
@@ -127,11 +127,12 @@
             <image class="img_modal" src="../images/icon_1_weixin@2x.png" />
             微信手机号一键绑定
         </button>
-        <!-- <view class="getphone_btn2" @tap='switchMode'>
+        <view class="getphone_btn2" @tap='switchMode'>
             <image class="img_modal2" src="../images/icon_1_shouji@2x.png" />
             使用手机号绑定
-        </view>   -->
+        </view>  
     </view>
+
     <view class="getphone_modal2" wx:if='{{!showmodal}}'>
         <view class="getphone_modalTitle">绑定手机号</view>
         <view class="getphone_cha" @tap='hideboxClick'>
@@ -147,9 +148,7 @@
             {{codetimeShow?codetime+'秒后获取':'获取验证码'}}
           </view>
         </view>
-        <view class='getphone_surebtn' plain="true" @tap="savePhone">
-          确定
-        </view>
+        <view class='getphone_surebtn' plain="true" @tap="savePhone">确定</view>
         <view class="getphone_btn2" @tap='switchMode'>
             <image class="img_modal2" src="../images/icon_2_weixin@2x.png" />
             微信手机号一键绑定
@@ -287,11 +286,11 @@ export default class GetPhone extends wepy.component {
     async getPhoneNumber(e) {
       this.getInfoShow = false;
       if (e.detail.iv) {
-        let code = await getCode();
+        // let code = await getCode();
         let data = {
           iv: e.detail.iv,
           encryptedData: e.detail.encryptedData,
-          code: code.code
+          code: this.code.code
         };
         const res = await shttp
           .post("/api/v2/member/telephone")

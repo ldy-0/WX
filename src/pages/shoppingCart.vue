@@ -35,13 +35,14 @@
 }
 
 .big_circle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40rpx;
-  height: 40rpx;
+  flex-shrink: 0;
+  /* display: flex; */
+  /* align-items: center; */
+  /* justify-content: center; */
+  width: 36rpx;
+  height: 36rpx;
   margin-right: 20rpx;
-  border: 1rpx solid #999999;
+  border: 2rpx solid #999999;
   border-radius: 50%;
 }
 .big_circle .fill_circle {
@@ -69,16 +70,12 @@
   position: relative;
   width: 446rpx;
   height: 180rpx;
-  /* display: flex; */
-  /* flex-flow: column nowrap; */
-  /* justify-content: space-between; */
 }
 .item .info .sub_desc {
   margin: 20rpx 0;
   font-size: 20rpx;
 }
 .item .info .price {
-  /* width: 180rpx; */
   line-height: 44rpx;
   border-radius: 22rpx;
   font-size: 32rpx;
@@ -138,10 +135,6 @@
   flex-grow: 1;
   padding: 0 25rpx;
   text-align: right;
-}
-.bottomBar .sum text {
-  font: 32rpx PingFang-SC-Bold;
-  color: #fc5a4f;
 }
 .bottomBar .btn {
   margin-right: 20rpx;
@@ -233,40 +226,58 @@
   border-radius: 8rpx;
   text-align: center;
   line-height: 66rpx;
-  border: solid 1rpx #f17f30;
-  color: #f17f30;
+  border: solid 1rpx #4fb84a;
   font-size: 28rpx;
 }
 .desc {
   font-size: 28rpx;
   color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .desc2 {
   height: 90rpx;
   font-size: 24rpx;
   color: #999;
 }
+
+.i_check{
+  flex-shrink: 0;
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 20rpx;
+}
+
+.sum_price{
+  font-size: 40rpx;
+}
+
+.s_fc_2{ color: #dd3d27; }
+.s_fc_3{ color: #4fb84a; }
 </style>
 
 <template>
   <view class="container">
     <view wx:if="{{!is_empty}}">
+
       <view class="topBar" wx:if="{{!is_empty}}">
         <view class="fullSelect">
-          <view class="big_circle" @tap="checkAll">
-            <view class="{{checkedAll}}"></view>
-          </view>
-          <view>全选</view>
+          <!-- <icon class='i_check' type='success' @tap="checkAll" wx:if='{{isCheckedAll}}'></icon> -->
+          <!-- <view class="big_circle" @tap="checkAll" wx:else></view> -->
+          <view @tap="checkAll">全选</view>
         </view>
         <view @tap="done()" wx:if="{{isEdit}}">完成</view>
         <view @tap="edit()" wx:else>编辑</view>
       </view>
+
       <view class="list" wx:if="{{!is_empty}}">
         <repeat for="{{tableData}}" index="index" item="item">
           <view class="item">
-            <view class="big_circle" @tap="check({{index}})">
-              <view class="{{tableData[index].active ? 'fill_circle' : ''}}"></view>
-            </view>
+
+            <icon class='i_check' type='success' @tap="check({{index}})" wx:if='{{tableData[index].active}}'></icon>
+            <view class="big_circle" @tap="check({{index}})" wx:else></view>
+            
             <image class="goodsImg" src="{{item.goods_image}}" mode="aspectFill">
             <view class="info">
               <view class="desc">{{item.goods_name}}</view>
@@ -281,7 +292,7 @@
                 </view>
                 <view class="number">{{item.goods_num}}</view>
                 <view class="add" @tap="add({{item}})">
-                  <image class="icon_add" src="../images/icon_jia@2x.png">
+                  <image class="icon_add" src="../images/goods/add.png">
                 </view>
               </view>
             </view>
@@ -293,9 +304,7 @@
         <view class="del" @tap="delete">删除</view>
       </view>
       <view class="bottomBar" wx:else>
-        <view class="sum">合计：
-          <text>¥{{allMoney}}</text>
-        </view>
+        <view class="sum">应付合计： <text class='s_fc_2'>¥</text><text class='sum_price s_fc_2'>{{allMoney}}</text></view>
         <!-- <view class="btn" @tap="goFirmOrder()">结算({{countItem}})</view> -->
         <view class="btn" @tap="goFirmOrder()">提交订单</view>
 
@@ -303,9 +312,9 @@
     </view>
     <!--暂无数据显示-->
     <view class="empty-placeholder row-center" wx:if="{{is_empty}}">
-      <image class="icon-xl" src="../images/null_car@2x.png">
+      <image class="icon-xl" src="../images/empty.png">
       <view class="txt">您的购物车有点寂寞</view>
-      <navigator open-type="switchTab" url="/pages/classify" class="item_view">去逛一下</navigator>
+      <navigator open-type="switchTab" url="/pages/classify" class="item_view s_fc_3">去逛一下</navigator>
     </view>
   </view>
 </template>
@@ -334,34 +343,17 @@ export default class ShoppingCart extends wepy.page {
     isCheckedAll: false,
     //是否显示提示
     is_empty: false,
-    //初始日期
-    date: "2016-09-01"
+    errorStr: null, 
+    isVip: false,
   };
+
   computed = {
-    // isEdit() {
-    //   return this.data.editable;
-    // },
-    nowDate: () => getTimes.formatTime(new Date(), "Y-M-D"),
-    checkedAll() {
-      return this.data.isCheckedAll ? "fill_circle" : "";
-    }
+    checkedAll() { return this.data.isCheckedAll ? "fill_circle" : ""; },
   };
+
   components = {};
+
   methods = {
-    //日期修改
-    bindTimeChange_start: function(e) {
-      console.log(e);
-      // console.log("picker发送选择改变，携带值为", e.detail.value);
-      this.editDateItem(e.detail.value, e.target.dataset.idx, "start");
-      //  this.$apply();
-    },
-    //日期修改
-    bindTimeChange_end: function(e) {
-      console.log(e);
-      // console.log("picker发送选择改变，携带值为", e.detail.value);
-      this.editDateItem(e.detail.value, e.target.dataset.idx, "end");
-      //  this.$apply();
-    },
     //删除某个商品
     async delete() {
       if (this.isCheckedAll) {
@@ -397,24 +389,19 @@ export default class ShoppingCart extends wepy.page {
     },
     //单选
     check(index) {
-      console.log(index);
-      console.log(this.tableData[index]);
+      console.log(index, this.tableData[index]);
 
       if (this.tableData[index].active) {
         this.tableData[index].active = false;
         //查看是否全部为false了，如果是全选否在不全选
         this.isCheckedAll = false;
-        this.cartPricing();
-        // }
       } else {
         //查看是否全部为true了，如果是全选否在不全选
         this.tableData[index].active = true;
-        this.isCheckedAll = this.tableData.every(function(e) {
-          return e.active == true;
-        });
-
-        this.cartPricing();
+        this.isCheckedAll = this.tableData.every(function(e) { return e.active == true; });
       }
+      
+      this.cartPricing();
       this.$apply();
     },
     //全选
@@ -495,22 +482,17 @@ export default class ShoppingCart extends wepy.page {
     },
     //提交订单
     goFirmOrder(that) {
+
+      if(this.errorStr) return wx.showModal({ content: this.errorStr, showCancel: false });
+
       if (that) {
-        let arr = that.tableData.filter(function(x) {
-          return x.active == true;
-        });
+        let arr = that.tableData.filter(function(x) { return x.active == true; });
+
         if (arr.length === 0) {
-          return wx.showToast({
-            title: "还没有选中任何商品！",
-            icon: "none",
-            duration: 2000
-          });
+          return wx.showToast({ title: "还没有选中任何商品！", icon: "none", duration: 2000 });
         }
-        wx.navigateTo({
-          url:
-            `/pages/store/firmOrder?type=cart&goods=` +
-            encodeURIComponent(JSON.stringify(arr))
-        });
+
+        wx.navigateTo({ url: `/pages/store/firmOrder?type=cart&goods=` + encodeURIComponent(JSON.stringify(arr)) });
       } else {
         let arr = this.tableData.filter(function(x) {
           return x.active == true;
@@ -530,59 +512,41 @@ export default class ShoppingCart extends wepy.page {
       }
     }
   };
-  //获取手机号
-  async getPhoneNumber(e) {
-    if (e.detail.iv) {
-      let code = await getCode();
-      let data = {
-        iv: e.detail.iv,
-        encryptedData: e.detail.encryptedData,
-        code: code.code
-      };
-      this.postPhone(data);
-    } else {
-      console.log("授权取消");
-    }
-  }
 
   onLoad() {}
   onShow() {
     this.allMoney = 0;
     this.countItem = 0;
-    this.wxUserInfo = wx.getStorageSync("wxUserInfo");
-    // console.log(this.wxUserInfo)
 
-    wx.showLoading({
-      title: "加载中"
-    });
+    wx.showLoading({ title: "加载中" });
     this.isEdit = false;
     this.isCheckedAll = false;
-    //获取购物车列表
-    //this.getCartList();
+
+    this.getCartList();
   }
   //获取购物车商品列表
   async getCartList() {
     const res = await shttp.get(`/api/v2/member/cart`).end();
-    //console.log(res)
-    console.log("第一次返回购物车商品列表");
+    // console.log(res)
+    if(!res.data){ this.is_empty = true;  this.$apply(); wx.hideLoading(); return wx.showModal({ content: res, showCancel: false }); }
+
     if (!res.data.store_cart_list["1"]) {
       this.tableData = [];
     } else {
       this.tableData = res.data.store_cart_list["1"];
     }
-    // console.error(this.tableData);
+
     if (!this.tableData || this.tableData.length == 0) {
       this.is_empty = true;
       wx.hideLoading();
       this.$apply();
       return;
     }
-    //console.log(this.tableData)
+
     for (var i = 0; i < this.tableData.length; i++) {
       let item = this.tableData[i];
 
       for (var k in this.tableData[i]) {
-
         this.tableData[i]["active"] = false;
       }
 
@@ -593,36 +557,52 @@ export default class ShoppingCart extends wepy.page {
         item.goods_spec = skuStr.replace(/;\s$/g, '');
       }
     }
-    this.tableData = this.tableData.filter(function(x) {
-      return x.goods_num != 0;
-    });
-    console.log("购物车商品列表");
-    console.log(this.tableData);
-    console.log("有刷新");
+
+    this.tableData = this.tableData.filter(function(x) { return x.goods_num != 0; });
+
     if (this.tableData.length != 0) {
       this.is_empty = false;
     } else {
       this.is_empty = true;
     }
-    this.$apply();
+
     wx.hideLoading();
     this.$apply();
   }
+
+  getIds(){
+    let checkArr = this.tableData.filter(v => v.active),
+        arr;
+    
+    this.isVip = checkArr.some(v => v.is_vip);
+    arr = checkArr.map(v => `${v.cart_id}|${v.goods_num}`);
+
+    return arr;
+  }
+
   //计算购物车商品总价
   async cartPricing() {
-    let skuMaps = {};
-    this.countItem = 0; //汇总数量清0
-    this.allMoney = 0; //价格清0 因为总价格已tableData中的商品重新计算
-    let arr = this.tableData.filter(function(x) {
-      return x.active == true;
-    });
-    if (arr.length == 0) return;
-    //进行数量和价格的汇总计算
-    arr.forEach(element => {
-      this.countItem += Number(element.goods_num);
-      this.allMoney = this.allMoney + element.goods_price * element.goods_num;
-    });
-    this.allMoney = this.allMoney.toFixed(2);
+    let param = {
+      cart_id: this.getIds(),
+      ifcart: 1,
+    };
+
+    if(this.isVip) param.rcb_pay = 1;
+
+    if(!param.cart_id.length) return ;
+
+    let res = await shttp.post(`/api/v2/member/checkout`).send(param).end();
+
+    this.errorStr = res.error || null; 
+
+    if(this.errorStr) return wx.showModal({ content: this.errorStr, showCancel: false });
+
+    if(res && res.data){
+      let priceList = Object.values(res.data.store_final_order_total);
+
+      this.allMoney = Math.floor(priceList[0] * 100) / 100;
+    }
+
     this.$apply();
   }
   //购物车单个或者多个删除

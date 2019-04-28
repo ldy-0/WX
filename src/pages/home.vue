@@ -186,7 +186,6 @@
 .bodycontent .title_page {
   width: 100%;
   height: 334rpx;
-  background: gray;
 }
 .bodycontent .case_redlist {
   height: 300rpx;
@@ -249,7 +248,7 @@
   height: 40rpx;
 }
 .bodycontent .price {
-  color: #ff4444;
+  color: #dd3d27;
   font-size: 32rpx;
 }
 
@@ -314,13 +313,13 @@
 }
 .viewX-price {
   color: #dd3d27;
-  font-size: 32rpx;
+  font-size: 26rpx;
   display: flex;
   align-items: center;
 }
 .viewX-originalPrice {
   color: #222;
-  font-size: 32rpx;
+  font-size: 26rpx;
 }
 .viewX-itemIcon {
   width: 40rpx;
@@ -328,15 +327,15 @@
   margin-left: 20rpx;
 }
 .coupons-item {
-  width: 380rpx;
-  height: 200rpx;
-  margin-left: 20rpx;
+  width: 230rpx;
+  height: 134rpx;
+  margin-left: 10rpx;
   display: inline-block;
   position: relative;
 }
 .coupons-itemImg {
-  width: 380rpx;
-  height: 200rpx;
+  width: 230rpx;
+  height: 134rpx;
 }
 .coupons-txtbox {
   position: absolute;
@@ -356,7 +355,7 @@
   font-size: 32rpx;
 }
 .coupons-txt2 {
-  font-size: 26rpx;
+  font-size: 24rpx;
 }
 .coupons-txt3 {
   font-size: 20rpx;
@@ -402,7 +401,7 @@
   top: 285rpx;
   left: 0;
   z-index: 9;
-  background: rgba(254, 170, 38, 0.7);
+  background: rgba(79, 184, 74, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -424,22 +423,73 @@
   width: 22rpx;
   height: 26rpx;
   background: #fff;
-  color: #f17f30;
+  color: #4fb84a;
   text-align: center;
   line-height: 26rpx;
   margin: 0 6rpx;
   font-size: 20rpx;
 }
+
+.coupon_wrap{
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+}
+.coupon_main{
+  flex-shrink: 0;
+  width: 192rpx;
+  text-align: center;
+}
+.coupon_price_wrap{
+  margin: 10rpx 0 0;
+  font-size: 32rpx;
+}
+.coupon_price{
+  font-size: 60rpx;
+}
+.coupon_vice{
+  width: 36rpx;
+  margin: 20rpx 0 0;
+  font-size: 24rpx; 
+  white-space: normal;
+}
+
+.recommond_price{
+  font-size: 32rpx;
+}
+
+.company_list_wrap{
+  padding: 20rpx 40rpx 20rpx 20rpx;
+}
+
+.material_title{
+  margin: 20rpx 0 0;
+  height: 32rpx; 
+  font-size: 28rpx;
+  line-height: 1.2;
+}
+
+.countDown_day{
+  line-height: 26rpx;
+}
+
+.s_fc_1{ color: #fff; }
+.s_fc_2{ color: #dd3d27; }
+.s_fc_3{ color: #222; }
+
+.s_bg_1{ background: #fff; }
 </style>
 
 <template>
   <view class="container">
     <view class="search">
       <navigator url="./article/search" class="search_content">
-        <image src="../images/icon_sousuo@2x.png" class="iconfont icon-search" mode="aspectFill">
+        <image src="../images/icon_sousuo@2x.png" class="iconfont icon-search" mode="aspectFill" />
           <text style="color:#666;font-size:28rpx">搜索商品</text>
       </navigator>
     </view>
+
     <swiper class="swiper" indicator-active-color="{{indicatorActiveColor}}" indicator-color="{{indicatorColor}}" indicator-dots="{{indicatorDots}}" autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}" circular="true">
       <repeat for="{{bannerList}}" key="index" index="index" item="item">
         <swiper-item>
@@ -447,6 +497,7 @@
         </swiper-item>
       </repeat>
     </swiper>
+
     <view class="tap_item">
       <navigator class="item_view" url="./store/goodsList?type=bargain">
         <image class="item_page" src="../images/icon_1_kanjia@2x.png">
@@ -460,7 +511,7 @@
         <image class="item_page" src="../images/icon_1_miaosha@2x.png">
           <view>秒杀</view>
       </navigator>
-      <navigator class="item_view" url="./article/videos">
+      <navigator class="item_view" url="./article/bussiness_main">
         <image class="item_page" src="../images/icon_1_zhaoshang@2x.png">
         <view>招商</view>
       </navigator>
@@ -469,15 +520,16 @@
         <view>关于</view>
       </navigator>
     </view>
-    <navigator  url="./my/vipDetails">
-    <view class="goToVipDetails">
-      <text>VIP商城</text>
-      <text>成为会员尊享独立名片商城</text>
-      <image class="bgImg" src = "../images/bg_1@2x.png"/>
-      <image class="vImg" src = "../images/img_1@2x.png"/>
+
+    <view url="" @tap='goVip'>
+      <view class="goToVipDetails">
+        <text>VIP商城</text>
+        <text>成为会员尊享独立名片商城</text>
+        <image class="bgImg" src = "../images/home/vip_bg.png"/>
+        <image class="vImg" src = "../images/home/vip.png"/>
+      </view>
     </view>
-    </navigator>
-    </view>
+
     <!-- 优惠券 -->
     <view wx:if="{{couponList.length!=0}}">
       <navigator url="./article/couponList">
@@ -494,14 +546,15 @@
       <scroll-view scroll-x class="viewX">
         <repeat for="{{couponList}}" key="index" index="index" item="item">
           <view class="coupons-item" @tap="getcoupons" data-coupon="{{item}}" data-index="{{index}}">
-            <image class="coupons-itemImg" src="{{item.fetch_states==2?'../images/img_1_1@2x.png':'../images/img_1_2@2x.png'}}">
-              <view class="coupons-txtbox">
-                <view class="coupons-txt1">
-                  <text>￥</text>{{item.vouchertemplate_price}}
-                </view>
-                <view class="coupons-txt2">无门槛使用</view>
-                <view class="coupons-txt3">{{item.vouchertemplate_startdate}} ~ {{item.vouchertemplate_enddate}}</view>
+            <image class="coupons-itemImg" src="{{item.fetch_states==2?'../images/coupon/thumbnail.png':'../images/coupon/thumbnail.png'}}">
+            <view class='coupon_wrap s_fc_1'>
+              <view class="coupon_main">
+                <view class="coupon_price_wrap">￥<text class='coupon_price'>{{item.vouchertemplate_price}}</text></view>
+                <view class="coupons-txt2">满{{item.vouchertemplate_limit}}可用</view>
+                <!-- <view class="coupons-txt3">{{item.vouchertemplate_startdate}} ~ {{item.vouchertemplate_enddate}}</view> -->
               </view>
+              <view class='coupon_vice'>优惠券</view>
+            </view>
           </view>
         </repeat>
       </scroll-view>
@@ -525,8 +578,10 @@
             <image class="title_page" mode="aspectFill" src="{{item.goods_image}}">
               <view class="redinfo add_redinfo">
                 <text class="goodsname">{{item.goods_name}}</text>
-                <view class="price">
-                  <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
+                <view class="recommond_price s_fc_2">
+                  <text style='font-size: 26rpx;' wx:if="{{!item.is_vip}}">¥</text>
+                  {{item.price1}}<text style="font-size:26rpx;" wx:if="{{item.price2}}">.{{item.price2}}</text>
+                  <text wx:if="{{item.is_vip}}">德分</text>
                 </view>
               </view>
           </view>
@@ -552,11 +607,15 @@
             <image class="viewX-itemImg" mode="aspectFill" src="{{item.goods.goods_image}}">
               <view class="viewX-itemGoodsname">{{item.goods.goods_name}}</view>
               <view class="viewX-originalPrice">
-                <text style="font-size:26rpx;">￥</text>{{item.goods.goods_price}}
+                <text>￥</text>
+                <text style='font-size: 32rpx;'>{{item.originPrice1}}</text>.
+                <text>{{item.originPrice2}}</text>
               </view>
               <view class="viewX-price">
                 <view>
-                  <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
+                  <text>￥</text>
+                  <text style='font-size: 32rpx;'>{{item.price1}}</text>.
+                  <text>{{item.price2}}</text>
                 </view>
                 <image class="viewX-itemIcon" src="../images/icon_tuangou@2x.png">
               </view>
@@ -583,8 +642,7 @@
             <image class="title_page" mode="aspectFill" src="{{item.goods.goods_image}}">
               <view class="countDown-box" >
                 <view class="countDown-txt" wx:if="{{item.show==3}}">
-                  还剩
-                  <text>{{wxTimerList[index].d!=0?wxTimerList[index].d+'天':''}} </text>
+                  <text class='countDown_day'>还剩{{wxTimerList[index].d!=0?wxTimerList[index].d+'000天':''}} </text>
                   <text class="countDown-txt2">{{wxTimerList[index].h1}}</text>
                   <text class="countDown-txt2">{{wxTimerList[index].h2}}</text>:
                   <text class="countDown-txt2">{{wxTimerList[index].m1}}</text>
@@ -605,6 +663,7 @@
         </repeat>
       </view>
     </view>
+
     <!-- 砍价推荐 -->
     <view wx:if="{{bargainList.length!=0}}">
       <navigator url="./store/goodsList?type=bargain">
@@ -625,7 +684,7 @@
               <view class="redinfo add_redinfo">
                 <text class="goodsname">{{item.goods_name}}</text>
                 <view class="price">
-                  <text style="font-size:26rpx;color:#0f0f0f;text-decoration: line-through;">￥{{item.goods.goods_price}}</text>
+                  <!-- <text style="font-size:26rpx;color:#0f0f0f;text-decoration: line-through;">￥{{item.goods.goods_price}}</text> -->
                   <text style="font-size:26rpx;">￥</text>{{item.goods_price}}
                 </view>
               </view>
@@ -633,12 +692,53 @@
         </repeat>
       </view>
     </view>
-    <!-- 案例展示开始 -->
-    <view wx:if="{{materialList.length!=0}}">
-      <navigator url="./store/more">
+
+    <!-- company -->
+    <view class='s_bg_1' wx:if="{{companyList.length}}">
+      <navigator url="./article/advisory?classify_id=1">
         <view class="good_title">
           <view class="name">
-            <text class="new_good">案例展示</text>
+            <text class="new_good">公司新闻</text>
+          </view>
+          <view class="icon_info">
+            <text class="more">更多</text>
+            <image class="icon_R" src="../images/icon_you@2x.png">
+          </view>
+        </view>
+      </navigator>
+      <view class='company_list_wrap'>
+        <repeat for='{{companyList}}'>
+          <companyNews classify='1' :info.sync='item' @click.user='gotoCase'></companyNews>
+        </repeat>
+      </view>
+    </view>
+
+    <!-- profession  -->
+    <view class='s_bg_1' wx:if="{{professionList.length}}">
+      <navigator url="./article/advisory?classify_id=2">
+        <view class="good_title">
+          <view class="name">
+            <text class="new_good">行业动态</text>
+          </view>
+          <view class="icon_info">
+            <text class="more">更多</text>
+            <image class="icon_R" src="../images/icon_you@2x.png">
+          </view>
+        </view>
+      </navigator>
+      <view class='company_list_wrap'>
+        <repeat for='{{professionList}}'>
+          <professionNews classify='2' :info.sync='item' @click.user='gotoCase'></professionNews>
+        </repeat>
+      </view>
+    </view>
+
+    <!-- 产品案例 -->
+    <view wx:if="{{materialList.length}}">
+      <navigator url="./article/advisory?classify_id=3">
+        <view class="good_title">
+          <view class="name">
+            <text class="new_good">产品案例</text>
           </view>
           <view class="icon_info">
             <text class="more">更多</text>
@@ -648,23 +748,22 @@
       </navigator>
       <view class="bodycontent">
         <repeat for="{{materialList}}" key="index" index="index" item="item">
-          <view class="redlist case_redlist" @tap="gotoCase({{item.dynamic_id}})">
-            <image class="case_title_page" src="{{item.dynamic_images[0].url}}" mode="aspectFill">
+          <view class="redlist case_redlist" @tap="gotoCase({{item.information_id}}, 3)">
+            <image class="case_title_page" src="{{item.information_image}}" mode="aspectFill">
               <view class="redinfo">
-                <text class="prdname">{{item.dynamic_title}}</text>
+                <view class="material_title s_fc_3">{{item.information_title}}</view>
               </view>
           </view>
         </repeat>
       </view>
     </view>
 
-    <!-- 案例展示结束 -->
-    <!-- 新闻资讯开始 -->
-    <view wx:if="{{newsList.length!=0}}">
-      <navigator url="./article/advisory">
+    <!-- 合作案例 -->
+    <view wx:if="{{cooperateList.length}}">
+      <navigator url="./article/advisory?classify_id=4">
         <view class="good_title">
           <view class="name">
-            <text class="new_good">新闻资讯</text>
+            <text class="new_good">合作案例</text>
           </view>
           <view class="icon_info">
             <text class="more">更多</text>
@@ -673,20 +772,18 @@
         </view>
       </navigator>
       <view class="bodycontent">
-        <repeat for="{{newsList}}" key="index" index="index" item="item">
-          <view class="redlist news_redlist" @tap="gotoNews({{item.information_id}})">
-            <image class="title_page" src="{{item.information_image[0]}}" mode="aspectFill">
+        <repeat for="{{cooperateList}}" key="index" index="index" item="item">
+          <view class="redlist case_redlist" @tap="gotoCase({{item.information_id}}, 4)">
+            <image class="case_title_page" src="{{item.information_image}}" mode="aspectFill">
               <view class="redinfo">
-                <text class="prdname">{{item.information_title}}</text>
-                <view class="num_info">
-                  <text class="price">{{item.addtime}}</text>
-                </view>
+                <view class="material_title s_fc_3">{{item.information_title}}</view>
               </view>
           </view>
+          
         </repeat>
       </view>
     </view>
-    <!-- 新闻资讯结束 -->
+
   </view>
   <!-- container结束 -->
 </template>
@@ -699,6 +796,8 @@ import getTimes from "../utils/formatedate.js";
 import dayjs from "dayjs";
 import timer from "../utils/wxTimer";
 import { showSuccessToast, showFailToast, exploitToast } from "../utils/tools";
+import news from '../components/news_thumbnail';
+
 export default class Home extends wepy.page {
   config = {
     enablePullDownRefresh: true,
@@ -715,32 +814,49 @@ export default class Home extends wepy.page {
     indicatorColor: "rgba(0, 0, 0, .6)", //以上为轮播配置
     bannerList: [], //轮播图
     goodsList: [], //商品列表
-    materialList: [], //案例列表
-    newsList: [], //新闻列表
     couponList: [], //优惠券
     groupGoodsList: [], //团购商品列表
     bargainList: [],
-    seckillList: []
+    seckillList: [],
+    companyList: [],
+    professionList: [],
+    materialList: [], //案例列表
+    cooperateList: [],
+    memberinfo: null,
   };
 
-  components = {};
+  components = {
+    companyNews: news,
+    professionNews: news,
+  };
 
   onLoad(options) {}
 
   onShow() {
-    wx.showLoading({
-      title: "加载中"
-    });
+    wx.showLoading({ title: "加载中" });
+
     this.getbannerList();
     this.getRecommendList();
-    this.getNewsList();
     this.getCouponList();
     this.getGroupList();
     this.getBargain();
     this.getSeckill();
+    this.getCompanyLst();
+    this.getProfessionList();
+    this.getMaterialList();
+    this.getcooperateList();
+
+    this.getUserInfo();
   }
 
   methods = {
+    goVip(){
+      let url = `/pages/vip/vipDetails`;
+
+      if(this.memberInfo.inviter_id != 0) return wx.showModal({ content: '已绑定上级, 不能重复绑定!', showCancel: false, });
+
+      wx.navigateTo({ url });
+    },
     //进入商品详情
     intoDetail(id) {
       wx.navigateTo({
@@ -766,10 +882,10 @@ export default class Home extends wepy.page {
       });
     },
     //进入案例详情
-    gotoCase(id) {
-      wx.navigateTo({
-        url: `./article/caseDetail?id=${id}`
-      });
+    gotoCase(id, classify_id) {
+      let url = `/pages/article/advisoryDetail?id=${id}&classify_id=${classify_id}`;
+
+      wx.navigateTo({ url });
     },
     //进入新闻详情
     gotoNews(id) {
@@ -860,53 +976,64 @@ export default class Home extends wepy.page {
   }
   //优惠券列表
   async getCouponList() {
-    const res = await shttp
-      .get(`/api/v2/member/coupon/search`)
-      .query({
-        store_id: 1,
-        limit: 4,
-        page: 1
-      })
-      .end();
+    let param = { store_id: 1, limit: 4, page: 1 };
+
+    const res = await shttp.get(`/api/v2/member/coupon/search`).query(param).end(); 
     if (res.status == 0) {
+      res.data.forEach(v => {
+
+      });
       this.couponList = res.data;
     }
     this.$apply();
   }
   //获取热门推荐列表
   async getRecommendList() {
-    const res = await shttp
-      .get(`/api/v2/member/goodscommon`)
-      .query({
-        store_id: 1,
-        goods_commend: 1,
-        type: "sort",
-        limit: 4,
-        page: 1
-      })
-      .end();
+    let param = { 
+          store_id: 1,
+          goods_commend: 1,
+          type: "sort",
+          limit: 4,
+          page: 1
+        };
+
+    const res = await shttp.get(`/api/v2/member/goodscommon`).query(param).end();
+
     if (res.status === 0) {
+      res.data.forEach(v => {
+        let arr = String(v.goods_price).split('.');
+        v.price1 = arr[0];
+        v.price2 = arr[1];
+      });
+
       this.goodsList = res.data;
     }
+
     wx.hideLoading();
     wx.stopPullDownRefresh();
     this.$apply();
   }
+
   //获取团购商品列表
   async getGroupList() {
-    const res = await shttp
-      .get(`/api/v2/member/goodsgroupbuy/1/edit`)
-      .query({
-        store_id: 1,
-        limit: 4,
-        page: 1
-      })
-      .end();
-    if (res.status === 0) {
-      if (res.data != null && res.data.length > 0) {
-        this.groupGoodsList = res.data;
-      }
+    let param = { store_id: 1, limit: 4, page: 1, rule_commend: 1 };
+
+    const res = await shttp.get(`/api/v2/member/goodsgroupbuy/1/edit`).query(param).end();
+    if (res.status === 0 && res.data) {
+      res.data.forEach(v => {
+        let arr = String(v.goods_price).split('.');
+        v.price1 = arr[0];
+        v.price2 = arr[1];
+        
+        arr = String(v.goods.goods_price).split('.');
+        v.originPrice1 = arr[0];
+        v.originPrice2 = arr[1];
+      });
+
+      this.groupGoodsList = res.data;
     }
+    this.groupGoodsList = [];
+
     wx.hideLoading();
     wx.stopPullDownRefresh();
     this.$apply();
@@ -924,9 +1051,8 @@ export default class Home extends wepy.page {
       })
       .end();
     if (res.status === 0) {
-      // return console.log(res);
-      // this.seckillList = res.data||[];
       res.data = res.data === null ? [] : res.data;
+      
       this.seckillList = res.data;
       res.data.forEach((item, index) => {
         item.start_time = item.start_time.replace(/\-/g, '/');
@@ -985,55 +1111,94 @@ export default class Home extends wepy.page {
     wx.stopPullDownRefresh();
     this.$apply();
   }
-  //获取案例列表
-  async getMaterialList() {
-    const res = await shttp
-      .get(`/api/v2/member/dynamic`)
-      .query({
-        dynamic_type: "material",
-        limit: 4,
-        page: 1
-      })
-      .end();
-    let list = res.data;
+  
+  //获取公司资讯
+  async getCompanyLst() {
+    let param = { limit: 4, page: 1, classify_id: 1 };
+
+    const res = await shttp.get(`/api/v2/member/information`).query(param).end();
     if (res.status === 0) {
-      this.materialList = list;
+      res.data.forEach((element, idx) => {
+        element.addtime = getTimes.formatTime(
+          element.addtime * 1000,
+          "Y-M-D h:m:s"
+        );
+      });
+      this.companyList = res.data;
+
       wx.hideLoading();
     } else {
       wx.hideLoading();
     }
 
     wx.stopPullDownRefresh();
-    this.materialList.forEach((element, idx) => {
-      this.materialList[idx].dynamic_images = JSON.parse(
-        this.materialList[idx].dynamic_images
-      );
-    });
     this.$apply();
   }
-  //获取新闻列表
-  async getNewsList() {
-    const res = await shttp
-      .get(`/api/v2/member/information`)
-      .query({
-        limit: 4,
-        page: 1
-      })
-      .end();
+  
+  // 行业资讯
+  async getProfessionList() {
+    let param = { limit: 4, page: 1, classify_id: 2 };
+
+    const res = await shttp.get(`/api/v2/member/information`).query(param).end();
     if (res.status === 0) {
       res.data.forEach((element, idx) => {
-        element.information_image = JSON.parse(element.information_image);
         element.addtime = getTimes.formatTime(
           element.addtime * 1000,
           "Y-M-D h:m:s"
         );
       });
-      this.newsList = res.data;
+      this.professionList = res.data;
 
       wx.hideLoading();
     } else {
       wx.hideLoading();
     }
+
+    wx.stopPullDownRefresh();
+    this.$apply();
+  }
+
+  //获取产品案例
+  async getMaterialList() {
+    let param = { limit: 4, page: 1, classify_id: 3 };
+
+    const res = await shttp.get(`/api/v2/member/information`).query(param).end();
+    if (res.status === 0) {
+      res.data.forEach((element, idx) => {
+        element.addtime = getTimes.formatTime(
+          element.addtime * 1000,
+          "Y-M-D h:m:s"
+        );
+      });
+      this.materialList = res.data;
+
+      wx.hideLoading();
+    } else {
+      wx.hideLoading();
+    }
+
+    wx.stopPullDownRefresh();
+    this.$apply();
+  }
+  //获取合作案例
+  async getcooperateList() {
+    let param = { limit: 4, page: 1, classify_id: 4 };
+
+    const res = await shttp.get(`/api/v2/member/information`).query(param).end();
+    if (res.status === 0) {
+      res.data.forEach((element, idx) => {
+        element.addtime = getTimes.formatTime(
+          element.addtime * 1000,
+          "Y-M-D h:m:s"
+        );
+      });
+      this.cooperateList = res.data;
+
+      wx.hideLoading();
+    } else {
+      wx.hideLoading();
+    }
+
     wx.stopPullDownRefresh();
     this.$apply();
   }
@@ -1056,9 +1221,16 @@ export default class Home extends wepy.page {
   }
   //下拉刷新
   onPullDownRefresh() {
-    this.getRecommendList();
     this.getbannerList();
-    this.getNewsList();
+    this.getRecommendList();
+    this.getCouponList();
+    this.getGroupList();
+    this.getSeckill();
+    this.getBargain();
+    this.getcooperateList();
+    this.getProfessionList();
+    this.getMaterialList();
+    this.getCompanyLst();
   }
   onUnload() {
     if (this.timeDatalist.length != 0) {
@@ -1078,5 +1250,26 @@ export default class Home extends wepy.page {
       this.timeDatalist = [];
     }
   }
+
+  async getUserInfo(){
+    let param = {};
+
+    let res = await shttp.get(`/api/v2/member/memberinfo`).query(param).end();
+
+    if(res && res.data){
+      let name = res.data.wx_name;
+      console.error(name, 'abca'.replace(/a/g, function(v1, v2, v3, v4, v5){
+        console.error('match: ', `${v1}-${v2}-${v3}-${v4}-${v5}`);
+        return v1;
+      }));
+
+      // console.error('abca'.match());
+      wx.setStorageSync('memberInfo', res.data);
+    }
+
+    this.memberInfo = wx.getStorageSync("memberInfo");
+    this.$apply();
+  }
+
 }
 </script>

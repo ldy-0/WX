@@ -1,5 +1,9 @@
 <style scoped>
+page{
+
+}
 .container {
+  min-height: 100%;
   background: #fff;
 }
 .list-item {
@@ -27,7 +31,7 @@
   height: 44rpx;
   text-align: center;
   line-height: 44rpx;
-  background-image: linear-gradient(-90deg, #fca768 0%, #fe7f82 100%),
+  background-image: linear-gradient(-90deg, #fca768 0%, #4fb84a 100%),
     linear-gradient(#343434, #343434);
   background-blend-mode: normal, normal;
   border-radius: 5rpx;
@@ -69,13 +73,7 @@
             <text class="prdname">{{item.goods_name}}</text>
             <view class="num_info">￥{{item.goods_price}}</view>
           </view>
-          <view
-            class="btn"
-            wx:if="{{item.isShow==1}}"
-            @tap.stop="cancel"
-            data-coupon="{{item}}"
-            data-index="{{index}}"
-          >取消收藏</view>
+          <view class="btn" wx:if="{{item.isShow==1}}" @tap.stop="cancel" data-coupon="{{item}}" data-index="{{index}}">取消收藏</view>
           <view class="btnbg" wx:if="{{item.isShow==0}}">已取消</view>
         </view>
       </repeat>

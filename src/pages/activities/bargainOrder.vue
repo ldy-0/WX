@@ -12,7 +12,7 @@
   align-items: center;
   width: 100%;
   height: 250rpx;
-  background: #fff;
+  background: #fafafa;
 }    
   .bargain_info image{
     width: 180rpx;
@@ -37,19 +37,11 @@
   font-size: 32rpx;
   color: #ff7900;
 }
-.bargain-text3{
-  font-size: 28rpx
-}   
-  .bargain-text3 text{
-    color: #ff7900   
-  }
-.row{
+.between{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 20rpx;
 }
-
 
 .container{
   font: 32rpx PingFang-SC-Medium;
@@ -66,12 +58,12 @@
   line-height: 88rpx;
 }      
 .text1{
-  color: #fff;
-  font-size: 28rpx;
-  padding: 9rpx 17rpx;
-  border-radius: 10rpx;
-  background: #ff7900;
   margin-right: 22rpx;
+  padding: 9rpx 17rpx;
+  border: 2rpx solid #4fb84a;
+  border-radius: 30rpx;
+  font-size: 26rpx;
+  color: #4fb84a;
 }  
 .text2{
   font-size: 28rpx;
@@ -84,23 +76,26 @@
 }
 .bargain-text4{
   color: #9c9a9b;
-  font-size: 24rpx;
+  font-size: 30rpx;
 }  
  .bargain-text4 .bargain-text44{
     display: inline-block;
-    width: 22rpx;
-    height: 26rpx;
-    background: #af0000;
+    padding: 2rpx 4rpx;
+    background:#4fb84a;
     color: #fff;
-    text-align: center;
-    line-height: 26rpx;
     margin-right: 6rpx;
-    font-size: 20rpx;
 }
-.bargain-text4First{
-  font-size: 24rpx;
-  color: #af0000;
-}  
+
+.row{
+  height: 80rpx;
+  padding: 0 30rpx;
+  font-size: 26rpx;
+}
+
+.s_fc_f{ color: #fff; }
+.s_fc_10{ color: #4fb84a; }
+
+.s_bg_f{ background: #fff; }
 </style>
 
 <template>
@@ -109,34 +104,35 @@
     <view wx:if="{{list.length != 0}}">
       <repeat for='{{list}}' index='index' item='item'>
         <view data-item="{{item}}"  @tap='goBargain'>
+
             <view class='bargain_info'>
               <image src='{{item.goods.goods_image}}' mode="aspectFill"/>
               <view class='bargain'>
                 <view class='bargain-text1'>{{item.goods.goods_name}}</view>
                 <view>
-                  <view class='row'>  
+                  <!-- <view class='row'>  
                     <view class='bargain_text2'>¥{{item.goods.goods_price}}</view> 
                     <view class='bargain-text3'>当前价格<text>{{item.current_price}}</text>元</view>
-                  </view>                 
-                  <view class='row'>
-                    <view class='bargain-text3'></view>
-                    <view class='bargain-text4' wx:if="{{status == 1}}">
-                       还剩 <text class="bargain-text4First">{{wxTimerList[index].d!=0?wxTimerList[index].d+'天':''}} </text> <text class="bargain-text44">{{wxTimerList[index].h1}}</text><text class="bargain-text44">{{wxTimerList[index].h2}}</text>时<text class="bargain-text44">{{wxTimerList[index].m1}}</text><text class="bargain-text44">{{wxTimerList[index].m2}}</text>分<text class="bargain-text44">{{wxTimerList[index].s1}}</text><text class="bargain-text44">{{wxTimerList[index].s2}}</text>秒
-                    </view>
-                    <view class='bargain-text4' wx:if="{{status == 2}}">
-                      砍价完成
-                    </view>
-                    <view class='bargain-text4' wx:if="{{status == 3}}">
-                      砍价失效
-                    </view> 
-                  </view>
+                  </view>                  -->
                 </view>
               </view>
             </view>
+
+            <view class='row between s_bg_f'>
+              <view>已砍：<text class='s_fc_10'>¥{{item.bargain_money}}</text></view>
+              <view class='bargain-text3'></view>
+              <view class='bargain-text4 s_fc_10' wx:if="{{status == 1}}">
+                  还剩 <text class="bargain-text4First s_fc_f">{{wxTimerList[index].d!=0?wxTimerList[index].d+'天':''}} </text> 
+                  <text class="bargain-text44">{{wxTimerList[index].h1}}</text> <text class="bargain-text44">{{wxTimerList[index].h2}}</text>:<text class="bargain-text44">{{wxTimerList[index].m1}}</text><text class="bargain-text44">{{wxTimerList[index].m2}}</text>:<text class="bargain-text44">{{wxTimerList[index].s1}}</text><text class="bargain-text44">{{wxTimerList[index].s2}}</text>
+              </view>
+              <view class='bargain-text4' wx:if="{{status == 2}}">砍价完成</view>
+              <view class='bargain-text4' wx:if="{{status == 3}}">砍价失效</view> 
+            </view>
+
             <view class="buy-btn">
               <text class="text1" @tap.stop='gobuy' data-item="{{item}}" wx:if="{{status == 1}}">立即购买</text>
               <text class="text1" @tap.stop='goGoods' data-item="{{item}}" wx:if="{{status == 3}}">重新砍价</text>
-              <text class="text2" data-item="{{item}}"  @tap.stop='goBargain' wx:if="{{status == 1}}">继续砍价</text>
+              <!-- <text class="text2" data-item="{{item}}"  @tap.stop='goBargain' wx:if="{{status == 1}}">继续砍价</text> -->
             </view>
         </view>
       </repeat>
@@ -169,10 +165,12 @@ export default class BargainList extends wepy.page {
     wxTimerList: {},
     timeDatalist: []
   };
+
   components = {
     tab: Tab,
     placeholder: Placeholder
   };
+
   onLoad(options) {}
   onShow() {
     if (this.timeDatalist.length != 0) {
@@ -197,6 +195,7 @@ export default class BargainList extends wepy.page {
   };
 
   timeFilter (seconds) {
+    if(seconds <= 0) return ;
           var ss = parseInt(seconds)// 秒
           var mm = 0// 分
           var hh = 0// 小时
@@ -225,7 +224,7 @@ export default class BargainList extends wepy.page {
     const res = await shttp
       .get(`/api/v2/member/cutprice`)
       .query({
-        page: this.page,
+        // page: this.page,
         cutprice_activity_states:status,
         member_id:memberId
       })
@@ -246,6 +245,7 @@ export default class BargainList extends wepy.page {
           .sub(item.goods_price, item.goods_cutprice)
           .toFixed(2);
         item.surplus_time = this.timeFilter(item.cutprice_activity_endtime-nowDate);
+        console.error(item.cutprice_activity_endtime - nowDate);
         if (this.status == 1) {
           let wxTimer = index;
           wxTimer = new timer({
@@ -291,7 +291,8 @@ export default class BargainList extends wepy.page {
       is_pintuan: 0,
       goods_price: item.current_price,
       goods_num: 1,
-      is_virtual: item.goods.is_virtual
+      is_virtual: item.goods.is_virtual,
+      standard: item.goods,
     };
     wx.navigateTo({
       url: `/pages/store/firmOrder?type=nocart&goods=${encodeURIComponent(

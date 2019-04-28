@@ -14,7 +14,11 @@ const getCode = async () => {
     res.code = loginRes.code;
   } catch (err) {
     res.message = err.message;
+    let str = err.errMsg;
+    str.replace('l', '');
+    console.error('login code: ', str);
   }
+
   return res;
 };
 //登录逻辑

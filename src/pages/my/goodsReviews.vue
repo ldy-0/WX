@@ -105,7 +105,7 @@ page {
 
 .btn_comfir {
   height: 88rpx;
-  background: #ff4444;
+  background: #4fb84a;
   bottom: 0rpx;
   width: 600rpx;
   font-size: 36rpx;
@@ -266,6 +266,8 @@ page {
 import wepy from "wepy";
 import { shttp } from "../../utils/http";
 import { uploadSeriesFile, uploadFile } from "../../utils/tencent-cos";
+import mp from "../../utils/wx";
+
 export default class GoodsReviews extends wepy.page {
   config = {
     navigationBarTitleText: "商品评价"
@@ -277,9 +279,14 @@ export default class GoodsReviews extends wepy.page {
     order: {},
     //以下为星星操作
     //未选择星
-    normscr: "../../images/icon_pingfen@2x.png",
+    normscr: "../../images/goods/uncollect.png",
     //选择星
-    checkedSrc: "../../images/icon_pingfen_hl@2x.png"
+    checkedSrc: "../../images/goods/collect.png",
+    imgConfig: {
+      url: 'https://up-z2.qiniup.com',
+      cdnUrl: 'https://cdn.health.healthplatform.xyz',
+      body: {}
+    },
   };
 
   components = {};
@@ -298,22 +305,28 @@ export default class GoodsReviews extends wepy.page {
         count: 6 - Number(that.goodsList[pindex].cosimgList.length), // 默认9
         sizeType: ["original"], // 可以指定是原图还是压缩图，默认二者都有
         sourceType: ["album", "camera"], // 可以指定来源是相册还是相机，默认二者都有
-        success: res => {
+        success: async res => {
           // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-          let tempFilePaths = res.tempFilePaths;
-          console.log(tempFilePaths);
+          let tempFilePaths = res.tempFilePaths,
+              imgRes,
+              url;
+
           for (let i = 0; i < tempFilePaths.length; i++) {
-            uploadFile(tempFilePaths[i]).then(data => {
-              console.log("对象存储图片", data);
-              if (that.goodsList[pindex].cosimgList.length > 6) return;
-              that.goodsList[pindex].cosimgList.push(data);
-              console.log(that.goodsList[pindex].cosimgList);
-              that.$apply();
-            });
+            imgRes = await mp.uploadImg(this.imgConfig.url, tempFilePaths[i], null, this.imgConfig.body);
+            if(imgRes.data){
+              let o = JSON.parse(imgRes.data);
+              url = `${this.imgConfig.cdnUrl}/${o.hash}`;
+            }
+
+            // console.error('----', url);
+            if(!url) return ;
+
+            if(this.goodsList[pindex].cosimgList.length > 6) return ;
+
+            this.goodsList[pindex].cosimgList.push(url);
+            this.$apply();
           }
-          if (that.goodsList[pindex].cosimgList.length > 6) {
-            that.goodsList[pindex].cosimgList = that.cosimgList.slice(0, 6);
-          }
+          
         }
       });
     },
@@ -346,6 +359,8 @@ export default class GoodsReviews extends wepy.page {
       element.textMsg = "";
     });
     console.log(this.goodsList);
+
+    this.getUploadToken();
   }
   sendGoodcommit(pindex) {
     // if (!item.textMsg) {
@@ -370,6 +385,7 @@ export default class GoodsReviews extends wepy.page {
 
     this.$apply();
   }
+
   async sendPost(send) {
     const res = await shttp
       .post(`/api/v2/member/goodsevaluate`)
@@ -390,6 +406,17 @@ export default class GoodsReviews extends wepy.page {
       });
     }
   }
+
+  async getUploadToken(){
+    let url = `/api/v2/common/imgkeyqiniu`;
+    let res = await shttp.get(url).end();
+
+    if(typeof res === 'string' || res.error) return wx.showModal({ content: `getUploadToken: ${res.error || res}`, showCancel: false });
+
+    this.imgConfig.body.token = res.data;
+    this.imgConfig.body.config = "{ useCdnDomain: true }";
+  }
+
   events = {};
 }
 </script>

@@ -10,7 +10,7 @@
         <view class='sku_item_wrap'>
           <repeat for='{{item.items}}' item='sku' index='i'>
 
-            <view class="sku_item {{ sku.isNull ? 's_fc_4 s_bg_4' : (selArr[index] === i ? 'sku_sel s_fc_3 s_bg_3' : 's_fc_2 s_bg_2') }}" @tap='click({{index}}, {{i}})'>{{sku.name}}</view>
+            <view class="sku_item {{ sku.isNull ? 's_fc_4 s_bg_4' : (selArr[index] === i ? 'sku_sel s_fc_1 s_bg_3' : 's_fc_2 s_bg_1') }}" @tap='click({{index}}, {{i}})'>{{sku.name}}</view>
 
           </repeat>
         </view>
@@ -252,14 +252,14 @@ export default class multiSKu extends wepy.component {
   line-height: 56rpx;
   margin: 0 40rpx 10rpx 0;
   padding: 0 10rpx;
-  border: 2rpx solid transparent;
+  border: 2rpx solid #d3d3d3;
   border-radius: 10rpx;
   font-size: 28rpx;
   text-align: center;
 }
 
 .sku_sel{
-  border: 2rpx solid #E93B1E;
+  border: 2rpx solid transparent;
 }
 
 .s_fc_1{ color: #fff; }
@@ -269,6 +269,6 @@ export default class multiSKu extends wepy.component {
 
 .s_bg_1{ background: #fff; }
 .s_bg_2{ background: #F6F6F6; }
-.s_bg_3{ background: #FCEEEE; }
+.s_bg_3{ background: #4fb84a; }
 .s_bg_4{ background: #F6F6F6; }
 </style>

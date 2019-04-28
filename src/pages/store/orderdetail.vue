@@ -10,6 +10,10 @@
   justify-content: space-around;
   align-items: center;
 }
+.around_1 {
+  display: flex;
+  justify-content: space-around;
+}
 
 .row {
   display: flex;
@@ -37,13 +41,12 @@
   padding-left: 30rpx;
   color: #202020;
   background: #fff;
-  border-bottom: 1rpx solid #e5e5e5;
+  border-bottom: 2rpx solid #e5e5e5;
 }
 
 .product_info {
-  height: 250rpx;
-  border-top: 1rpx solid #e5e5e5;
-  border-bottom: 1rpx solid #e5e5e5;
+  padding: 30rpx 0;
+  min-height: 250rpx;
   background: #fff;
 }
 .product_info image {
@@ -52,25 +55,21 @@
 }
 .product_info .product {
   width: 500rpx;
-  height: 180rpx;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 }
 .product_info .product .product_title {
   color: #333;
 }
 .product_info .product .product_price {
   font-size: 36rpx;
-  color: #ff4444;
+  color: #dd3d27;
+  margin: 50rpx 0 0;
 }
-.product_info .product .product_price,
 .product_info .product .product_address {
   margin: 15rpx 0 45rpx;
 }
 .product_info .product .product_address,
 .product_info .product .product_number {
-  font-size: 28rpx;
+  font-size: 24rpx;
   color: #888;
 }
 .product_info .product .product_standard {
@@ -92,15 +91,18 @@
   padding: 0 24rpx;
   background: #fff;
 }
-.order_info .order_price {
-  font-size: 37rpx;
+.order_price_wrap {
   color: #af0000;
+}
+.order_price{
+  font-size: 40rpx;
 }
 
 .time_info {
   height: auto;
-  margin: 22rpx 0 100rpx;
+  /* margin: 22rpx 0 100rpx; */
   padding: 10rpx 30rpx 20rpx;
+  border: 2rpx solid #e5e5e5;
   background: #fff;
   font-size: 20rpx;
   color: #636363;
@@ -169,9 +171,8 @@
 .boder-none {
   border: 0rpx solid #333;
 }
-.height-box {
-  height: 100rpx;
-}
+
+.s_fc_2{ color: #979797; }
 </style>
 
 <template>
@@ -183,40 +184,43 @@
             <view>收货人：{{order.order_reciver_info.name}}</view>
             <view>{{order.order_reciver_info.phone}}</view>
           </view>
-          <view>收货地址：{{order.order_reciver_info.address}}</view>
+          <view class='s_fc_2'>收货地址：{{order.order_reciver_info.address}}</view>
         </view>
       </view>
       <view class="status_info" wx:if="{{order.order_state_id==10}}">待付款</view>
       <view class="status_info" wx:if="{{order.order_state_id==20}}">待发货</view>
       <view class="status_info" wx:if="{{order.order_state_id==30}}">待收货</view>
+      <view class="status_info" wx:if="{{order.order_state_id==40}}">已收货</view>
       <view class="status_info" wx:if="{{order.order_state_id==50}}">待评价</view>
+      <view class="status_info" wx:if="{{order.order_state_id==80}}">已完成</view>
+      <view class="status_info" wx:if="{{order.order_state_id==100}}">已关闭</view>
+
       <view wx:if="{{orderType==0}}">
         <repeat for="{{order.order_goods}}" item="item">
-          <view class="product_info around">
+          <view class="product_info around_1">
             <image src="{{item.goods_image}}" mode="aspectFill">
             <view class="product">
               <view class="product_title">{{item.goods_name}}</view>
               <view class="row">
                 <view class="product_price">¥{{item.goods_price}}</view>
-                <!-- <view class='product_address'>福建福州</view> -->
               </view>
 
               <view class="row">
-                <view class="product_standard">规格：{{item.goods_spec || "统一规格"}}</view>
+                <!-- <view class="product_standard">规格：{{item.goods_spec || "统一规格"}}</view> -->
                 <view class="product_number">×{{item.goods_num}}</view>
               </view>
             </view>
           </view>
         </repeat>
       </view>
+
       <view wx:if="{{orderType==1}}">
-        <view class="product_info around">
+        <view class="product_info around_1">
           <image src="{{order.goods_image}}" mode="aspectFill">
           <view class="product">
             <view class="product_title">{{order.goods_name}}</view>
             <view class="row">
               <view class="product_price">¥{{order.goods_price}}</view>
-              <!-- <view class='product_address'>福建福州</view> -->
             </view>
             <view class="row">
               <view class="product_standard"></view>
@@ -225,9 +229,10 @@
           </view>
         </view>
       </view>
+
       <view class="order_info row">
         <text>实付款:</text>
-        <text class="order_price">¥{{order.order_amount}}</text>
+        <text class="order_price_wrap">¥<text class='order_price'>{{order.order_amount}}</text></text>
       </view>
 
       <view class="time_info row">
@@ -235,33 +240,33 @@
           <view>订单编号：{{order.order_sn}}</view>
           <view>下单时间：{{order.add_time}}</view>
           <view>付款时间：{{order.payment_time=='1970年01月01日 08:00'?"未支付":order.payment_time}}</view>
-          <view>付款方式：微信支付</view>
+          <!-- <view>付款方式：微信支付</view> -->
+          <view>优惠券抵扣：-¥{{order.Preferential}}</view>
+          <view>积分抵扣：-¥{{order.pointPrice}}</view>
+          <view>余额抵扣：-¥{{order.pd_amount}}</view>
+          <view wx:if="{{order.shipping_code && order.shipping_code[0]}}">快递公司：{{order.shipping_code[0]}}</view>
+          <view wx:if="{{order.shipping_code && order.shipping_code[1]}}">快递单号：{{order.shipping_code[1]}}</view>
         </view>
-        <view class="btn" @tap="copyOrder">复制</view>
+        <!-- <view class="btn" @tap="copyOrder">复制</view> -->
       </view>
-      <view
-        class="time_info row"
-        wx:if="{{order.shipping_code.companyName||order.shipping_code.expressNumber||order.shipping_code.linkmanName||order.shipping_code.linkmanPhone}}"
-      >
+
+      <view style='height: 100rpx;'></view>
+
+      <!-- <view class="time_info row" wx:if="{{order.shipping_code && order.shipping_code[0]}}" >
         <view class="time">
-          <view wx:if="{{order.shipping_code.companyName}}">快递公司：{{order.shipping_code.companyName}}</view>
-          <view
-            wx:if="{{order.shipping_code.expressNumber}}"
-          >快递单号：{{order.shipping_code.expressNumber}}</view>
+          <view wx:if="{{order.shipping_code && order.shipping_code[0]}}">快递公司：{{order.shipping_code[0]}}</view>
+          <view wx:if="{{order.shipping_code && order.shipping_code[1]}}">快递单号：{{order.shipping_code[1]}}</view>
           <view wx:if="{{order.shipping_code.linkmanName}}">联系人：{{order.shipping_code.linkmanName}}</view>
-          <view
-            wx:if="{{order.shipping_code.linkmanPhone}}"
-          >联系电话：{{order.shipping_code.linkmanPhone}}</view>
+          <view wx:if="{{order.shipping_code.linkmanPhone}}">联系电话：{{order.shipping_code.linkmanPhone}}</view>
         </view>
         <view class="btn" @tap="copyexpress">复制</view>
-      </view>
-      <view class="height-box"></view>
+      </view> -->
+
       <view class="bottom_bar">
-        <!-- <navigator class='btn' url='./select'>退货/换货</navigator> -->
         <button class="Customer" open-type="contact" session-from="weapp" plain="true">联系客服</button>
-        <view class="btn" wx:if="{{order.order_state_id==30}}" @tap="Confirm()">确认收货</view>
-        <view class="btn" wx:if="{{order.order_state_id==10}}" @tap="payMoney()">支付</view>
-        <!-- <view class='btn'>查看物流</view> -->
+        <view class="btn" wx:if="{{order.order_state_id==30}}" @tap="Confirm">确认收货</view>
+        <view class="btn" wx:if="{{order.order_state_id==10}}" @tap="payMoney">支付</view>
+        <view class="btn" wx:if="{{unVip && canRefund}}" @tap="goAfterSale">申请售后</view>
       </view>
     </view>
   </view>
@@ -271,6 +276,8 @@
 import wepy from "wepy";
 import { shttp } from "../../utils/http";
 import dayjs from "dayjs";
+import calc from "calculatorjs";
+
 export default class OrderDetail extends wepy.page {
   config = {
     navigationBarTitleText: "订单详情"
@@ -283,12 +290,43 @@ export default class OrderDetail extends wepy.page {
     //订单类型
     orderType: 0, //0实物订单 1虚拟订单 2待支付
     //地址
-    address: null
+    address: null,
+    unVip: false,
+    type: null,
   };
 
   components = {};
 
+  computed = {
+    canRefund(){ return this.type !== 'secKill' && this.type !== 'group' && this.order && [20, 30].indexOf(this.order.order_state_id) !== -1 },
+  }
+
   methods = {
+    goAfterSale(){
+      let order = this.order,
+          freight = order.shipping_fee;
+
+      if(order.pointPrice >= freight){
+        order.pointPrice = calc.sub(order.pointPrice, freight);
+      }else{
+        freight = calc.sub(freight, order.pointPrice);
+        order.pointPrice = 0;
+
+        if(order.pd_amount >= freight){
+          order.pd_amount = calc.sub(order.pd_amount, freight);
+        }else{
+          freight = calc.sub(freight, order.pd_amount);
+          order.pd_amount = 0;
+
+          order.refundPrice = calc.sub(order.refundPrice, freight);
+        }
+      }
+      // console.error(freight, order.pointPrice, order.pd_amount, order.refundPrice);
+
+      let url = `/pages/order/afterSale?goods=${encodeURIComponent(JSON.stringify(this.order))}`;
+
+      wx.navigateTo({ url });
+    },
     //确认收货
     Confirm(item) {
       let that = this;
@@ -360,6 +398,7 @@ export default class OrderDetail extends wepy.page {
     }
   }
   async onLoad(opt) {
+    this.type = opt.type;
     console.log(opt);
 
     if (opt.order) {
@@ -378,25 +417,29 @@ export default class OrderDetail extends wepy.page {
     } else if (opt.orderId) {
       console.log(opt.orderId);
       const res = await shttp.get("/api/v2/member/order/" + opt.orderId).end();
-      console.log("实物订单");
-      console.log(res);
-      console.log(opt);
+      console.log("实物订单", res, opt);
 
       res.data.forEach(this.format);
 
+      // add order_id
+      res.data[0].order_id = opt.orderId;
+
       this.order = res.data[0];
-      this.order.add_time = dayjs(this.order.add_time).format(
-        "YYYY年MM月DD日 HH:mm"
-      );
-      this.order.payment_time = dayjs(this.order.payment_time).format(
-        "YYYY年MM月DD日 HH:mm"
-      );
+      this.order.add_time = dayjs(this.order.add_time).format( "YYYY年MM月DD日 HH:mm");
+      this.order.payment_time = dayjs(this.order.payment_time).format( "YYYY年MM月DD日 HH:mm");
+
+      this.unVip = JSON.parse(opt.unVip);
     }
 
     this.$apply();
   }
 
   format(order){
+    order.pointPrice = calc.div(order.order_points, 10);
+    order.Preferential =calc.sub( calc.add(order.goods_total_prices, order.shipping_fee), order.order_amount ).toFixed(2);
+    order.refundPrice = calc.sub( calc.sub( order.order_amount, order.pointPrice), order.pd_amount );
+
+    
     order.order_goods.forEach(v => {
       let spec = v.goods_spec,
           specStr = '';

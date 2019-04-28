@@ -72,6 +72,7 @@
 }
 
 .container {
+  min-height: 100%;
   font: 28rpx PingFangSC-Medium;
   background: #fff;
 }
@@ -167,11 +168,12 @@
     <view class="wrap">
       <view class="search">
         <image class="icon_search" src="../../images/icon_sousuo@2x.png">
-        <input class="search_content" value="{{iptValue}}" bindinput="getInput" auto-focus="true">
-        <image class="icon_cancle" src="../../images/icon_sousuo_cha@2x.png" @tap="clear()">
+        <input class="search_content" value="{{iptValue}}" bindinput="getInput">
+        <image class="icon_cancle" src="../../images/icon_sousuo_cha@2x.png" @tap="clear">
       </view>
-      <view class="cancle" @tap="search()">搜索</view>
+      <view class="cancle" @tap="search">搜索</view>
     </view>
+
     <view class="bodycontent">
       <repeat for="{{goodList}}" key="index" index="index" item="item">
         <view class="redlist" @tap="intoDetail({{item.goods_commonid}})">
@@ -180,7 +182,8 @@
             <text class="prdname">{{item.goods_name}}</text>
           </view>
           <view class="price">
-            <text>￥{{item.goods_price}}</text>
+            <text wx:if="{{item.is_vip}}">{{item.goods_price}}德分</text>
+            <text wx:else>￥{{item.goods_price}}</text>
           </view>
         </view>
       </repeat>
@@ -203,6 +206,7 @@ export default class Result extends wepy.page {
     goodList: [],
     //搜索内容
     iptValue: "",
+    storegc_id: null,
     //历史记录列表
     sercherStorageList: []
   };
@@ -241,24 +245,55 @@ export default class Result extends wepy.page {
     }
   };
   async onLoad(option) {
-    console.log();
     this.iptValue = option.name;
+
+    if(option.storegc_id){
+      this.storegc_id = option.storegc_id;
+      return this.searchByClass();
+    }
+
     this.startSearch(this.iptValue);
   }
-  //以先为自定义方法
+
+  async searchByClass(){
+    wx.showLoading({ title: 'Loading...' });
+
+    let param = {
+      gc_id: this.storegc_id,
+    };
+
+    if(this.$parent.globalData.type == 2){
+      param.is_vip = 0;      
+    };
+
+    let res = await shttp.get(`/api/v2/member/goodscommon`).query(param).end();
+
+    if(res.data){
+      this.goodList = res.data;
+      this.is_empty = !this.goodList.length;
+    }
+
+    this.$apply();
+    wx.hideLoading();
+
+    if(res.error) wx.showModal({ content: res.error, showCancel: false, });
+  }
 
   //开始搜索
   async startSearch(name) {
-    let res = await shttp
-      .get(`/api/v2/member/goodscommon?store_id=1`)
-      .query({
-        name: name,
-        page: 1,
-        limit: 10
-      })
-      .end();
-    console.log("搜索结果");
-    console.log(res);
+    let param = {
+          name: name,
+          page: 1,
+          limit: 10
+        };
+
+    if(this.$parent.globalData.type == 2){
+      param.is_vip = 0;      
+    };
+
+    let res = await shttp.get(`/api/v2/member/goodscommon?store_id=1`).query(param).end();
+    console.log("搜索结果", res);
+
     this.goodList = res.data;
     if (res.data.length == 0) {
       this.is_empty = true;

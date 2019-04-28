@@ -14,19 +14,7 @@
   width: 650rpx;
   height: 240rpx;
 }
-.coupons-txtbox {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 542rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: #fff;
-}
-.coupons-txt1 {
-  font-size: 70rpx;
-}
+
 .coupons-txt1 text {
   font-size: 32rpx;
 }
@@ -42,45 +30,84 @@
   padding-top: 18rpx;
   margin-left: 70rpx;
 }
+
+.coupon_main_wrap{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 430rpx;
+  height: 100%;
+  text-align: center;
+}
+.coupons-txt1{
+  margin: 30rpx 0 0;
+  font-size: 70rpx;
+}
+.coupon_desc{
+  margin: 25rpx 0 0;
+  font-size: 18rpx;
+}
+
+.coupon_vice_wrap{
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 210rpx;
+  height: 100%;
+}
+.coupon_vice_title{
+  margin: 60rpx 0 30rpx 36rpx;
+  font-size: 45rpx;
+}
+.coupon_vice_desc{
+  margin: 10rpx 0 0 36rpx;
+  font-size: 18rpx;
+}
+
+.s_fc_1{ color: #fff; }
+
+.s_bg_1{ background: #fff; }
 </style>  
 
 <template>
   <view class="container">
     <view class="my_manage" wx:if="{{!is_empty}}">
       <repeat for="{{couponList}}" item="item" wx:if="{{type=='all'}}">
-        <view class="coupons-item" @tap="getcoupons" data-coupon="{{item}}" data-index="{{index}}">
-          <image
-            class="coupons-itemImg"
-            src="{{item.fetch_states==2?'../../images/img_1_1@2x.png':'../../images/img_1_2@2x.png'}}"
-          >
-          <view class="coupons-txtbox">
-            <view class="coupons-txtTop">优惠券</view>
-            <view class="coupons-txt1">
-              <text>￥</text>
-              {{item.vouchertemplate_price}}
-            </view>
-            <view class="coupons-txt2">无门槛使用</view>
-            <view class="coupons-txt3">{{item.vouchertemplate_startdate}} ~ {{item.vouchertemplate_enddate}}</view>
+        <view class="coupons-item s_fc_1" @tap="getcoupons" data-coupon="{{item}}" data-index="{{index}}">
+          <image class="coupons-itemImg" src="{{item.fetch_states==2?'../../images/coupon/bg.png':'../../images/coupon/gray_bg.png'}}" >
+
+          <view class="coupon_main_wrap">
+            <view class="coupons-txt1">￥{{item.vouchertemplate_price}}</view>
+            <view class="coupon_desc">满{{item.vouchertemplate_limit}}元可用</view>
+            <view class="coupon_desc">使用规则：全场通用，不可与其他优惠同享</view>
           </view>
+          <view class='coupon_vice_wrap'>
+            <view class="coupon_vice_title">优惠券</view>
+            <view class='coupon_vice_desc'>有效期至</view>
+            <view class='coupon_vice_desc'>{{item.vouchertemplate_enddate}}</view>
+          </view>
+          
         </view>
       </repeat>
+
       <repeat for="{{couponList}}" item="item" wx:if="{{type=='mine'}}">
-        <view class="coupons-item" data-coupon="{{item}}" data-index="{{index}}">
-          <image
-            class="coupons-itemImg"
-            src="{{item.voucher_state==1?'../../images/img_1_1@2x.png':'../../images/img_1_2@2x.png'}}"
-          >
-          <view class="coupons-txtbox">
-            <view class="coupons-txtTop">优惠券</view>
-            <view class="coupons-txt1">
-              <text>￥</text>
-              {{item.voucher_price}}
-            </view>
-            <view class="coupons-txt2">无门槛使用</view>
-            <view class="coupons-txt3">{{item.voucher_startdate}} ~ {{item.voucher_enddate}}</view>
+        <view class="coupons-item s_fc_1" data-coupon="{{item}}" data-index="{{index}}">
+          <image class="coupons-itemImg" src="{{item.voucher_state==1?'../../images/coupon/bg.png':'../../images/coupon/gray_bg.png'}}" >
+
+          <view class="coupon_main_wrap">
+            <view class="coupons-txt1">￥{{item.voucher_price}}</view>
+            <view class="coupon_desc">满{{item.voucher_limit}}元可用</view>
+            <view class="coupon_desc">使用规则：全场通用，不可与其他优惠同享</view>
           </view>
+          <view class='coupon_vice_wrap'>
+            <view class="coupon_vice_title">优惠券</view>
+            <view class='coupon_vice_desc'>有效期至</view>
+            <view class='coupon_vice_desc'>{{item.voucher_enddate}}</view>
+          </view>
+
         </view>
       </repeat>
+
     </view>
     <!--暂无数据显示-->
     <placeholder :show.sync="is_empty" message="还没有优惠券"></placeholder>
@@ -139,39 +166,35 @@ export default class CouponList extends wepy.page {
     } else {
       url = "/api/v2/member/coupon/search";
     }
-    wx.showLoading({
-      title: "加载中..."
-    });
-    const res = await shttp
-      .get(url)
-      .query({
-        limit: 10,
+    wx.showLoading({ title: "加载中..." });
+
+    let param = { limit: 10,
         page: this.page,
         store_id: 1
-      })
-      .end();
-    if (res.status === 0) {
-      if (res.data != null && res.data.length != 0) {
-        if (this.type == "mine") {
-          res.data.forEach(item => {
-            item.voucher_enddate = getTimes.formatTime(
-              item.voucher_enddate * 1000,
-              "Y-M-D"
-            );
-            item.voucher_startdate = getTimes.formatTime(
-              item.voucher_startdate * 1000,
-              "Y-M-D"
-            );
-          });
-        }
-        this.couponList = this.couponList.concat(res.data);
+      };
+
+    const res = await shttp.get(url).query(param).end(); 
+
+    if(res.data) {
+      if (this.type == "mine") {
+        
+        res.data.forEach(item => {
+          item.voucher_enddate = getTimes.formatTime(
+            item.voucher_enddate * 1000,
+            "Y-M-D"
+          );
+          item.voucher_startdate = getTimes.formatTime(
+            item.voucher_startdate * 1000,
+            "Y-M-D"
+          );
+        });
       }
+
+      this.couponList = this.couponList.concat(res.data);
     }
-    if (this.couponList.length == 0) {
-      this.is_empty = true;
-    } else {
-      this.is_empty = false;
-    }
+
+    this.is_empty = this.couponList.length == 0 ? true : false;
+
     wx.hideLoading();
     this.$apply();
   }

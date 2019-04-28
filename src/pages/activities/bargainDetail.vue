@@ -328,12 +328,12 @@ page {
   background: #ff4444;
 }
 .add_btn {
-  color: #fff;
-  background: #3a3a47;
+  color:#4fb84a;
+  border: 2rpx solid #4fb84a;
 }
 .buy_btn {
   color: #fff;
-  background: #f17f30;
+  background: #4fb84a;
 }
 .share_btn{
   width: 350rpx;
@@ -624,14 +624,14 @@ page {
 }
 .slide-down {
   width: 100%;
-  background: #ff8c49;
+  background: #4fb84a;
   border-radius: 10rpx;
   height: 40rpx;
   position: absolute;
 }
 .slide-up {
   width: 80%;
-  background: linear-gradient(to left, #f2e021 0%, #f9b635 31%, #ff8c49 100%);
+  background: linear-gradient(to left, #bacf6a 0%, #9cd174 31%, #7ed27d 100%);
   height: 40rpx;
   border-radius: 10rpx;
   position: absolute;
@@ -652,23 +652,19 @@ page {
   float: right;
 }
 .slide-bargain {
-  width: 127rpx;
+  min-width: 127rpx;
   height: 48rpx;
   position: absolute;
   top: -100%;
   left: 80%;
+  border-radius: 10rpx;
+  font-size: 24rpx;
+  color: #fff;
+  background: #4fb84a;
 }
 .slide-bargain image {
   width: 100%;
   height: 100%;
-}
-.slide-bargain text {
-  font-size: 24rpx;
-  color: #fff;
-  position: absolute;
-  left: 5rpx;
-  top: 5rpx;
-  white-space: nowrap;
 }
 .list-btn {
   width: 640rpx;
@@ -782,6 +778,25 @@ page {
   height: 90rpx;
   border-radius: 50%;
 }
+
+.i_th{
+  position: absolute;
+  bottom: -16rpx;
+  left: 8rpx;
+  border: 10rpx solid #4fb84a;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+}
+
+.flex{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.s_fc_3{ color: #333; }
+.s_fc_10{ color: #4fb84a; }
 </style>
 
 <template>
@@ -865,7 +880,7 @@ page {
           </view>
         </view>
       </view>
-      <view class="standard" @tap="goStandard">
+      <view class="standard">
         <!-- <view>规格 {{isMultiSku ? multiSku.skuStr : goods.standard}}</view>
         <image src="../../images/icon_zuojiantou@2x.png"> -->
         <view>规格：{{goods.spec||'单规格'}}</view>
@@ -874,10 +889,11 @@ page {
         <view class="slide clearfix">
           <view class="slide-down"></view>
           <view class="slide-up" style="width:{{bargainPercent}}%"></view>
-          <view class="slide-bargain" style="left:{{bargainPercent>80?'80':bargainPercent}}%">
-            <image src='../../images/bargain_3@2x.png' />
-            <text wx:if="{{bargainPercent>=100}}">砍价完成了</text>
-            <text wx:else>还剩￥{{bargainInfo.rest}}</text>
+          <view class="slide-bargain flex" style="left:{{bargainPercent>80?'80':bargainPercent}}%">
+            <view class='i_th'></view>
+            <!-- <image src='../../images/bargain_3@2x.png' /> -->
+            <view wx:if="{{bargainPercent>=100}}">砍价完成了</view>
+            <view wx:else>还剩￥{{bargainInfo.rest}}</view>
           </view>
         </view>
         <view class="slide-price clearfix">
@@ -889,7 +905,7 @@ page {
         <view class="bang-title">
           <text>助砍好友</text>
         </view>
-        <scroll-view scroll-y class="bang-list" bindscrolltolower='showMore'>
+        <scroll-view scroll-y class="bang-list">
           <view class="table">
             <view class="thead">
               <view class="th">昵称</view>
@@ -898,11 +914,11 @@ page {
             </view>
             <view class="tbody" wx:if="{{bargainlistData.length==0}}">暂无砍价记录</view>
             <view class="tbody" wx:for="{{bargainlistData}}" wx:key>
-              <view class="td" style="color:#ff7900;">{{item.member_name}}</view>
+              <view class="td s_fc_10">{{item.member_name}}</view>
               <view class="td">
                 <image src='{{item.member_avatar}}' />
               </view>
-              <view class="td">{{item.bargain_money}}元</view>
+              <view class="td s_fc_3">{{item.bargain_money}}元</view>
             </view>
           </view>
         </scroll-view>
@@ -955,7 +971,7 @@ page {
       <view class="{{TYPE=='bargain'?'warp_btn':'warp_btn2'}}">
         <view class='add_btn share_btn' wx:if="{{TYPE == 'bargaining'&&!share}}" @tap='getBargainQT'>生成海报</view>
         <button class='buy_btn share_btn' wx:if="{{TYPE == 'bargaining'&&!share}}" open-type="share" id='1'>邀请好友砍价</button>
-        <view class='buy_btn share_btn' wx:if="{{TYPE == 'bargaining'&&share}}" @tap='goJoin'>我也要参加</view>
+        <view class='add_btn share_btn' wx:if="{{TYPE == 'bargaining'&&share}}" @tap='goJoin'>我也要参加</view>
         <view class='buy_btn share_btn' wx:if="{{TYPE == 'bargaining'&&share}}" @tap='goBargain'>帮忙砍价</view>
         <view class='buy_btn appointment-btn' wx:if="{{TYPE == 'bargain'}}" @tap='startBargain'>发起砍价</view>
       </view>
@@ -1286,7 +1302,7 @@ export default class GoodsDetails extends wepy.page {
         this.bargainPercent =
           calc.div(
             calc.sub(Number(this.bargainInfo.goods_price), Number(this.bargainInfo.current_price)),
-            calc.sub(Number(this.bargainInfo.current_price), Number(this.bargainInfo.floor_price))
+            calc.sub(Number(this.bargainInfo.goods_price), Number(this.bargainInfo.floor_price))
           ) * 100;
       }
     }
@@ -1330,7 +1346,7 @@ export default class GoodsDetails extends wepy.page {
     if (res.status == 0) {
       this.getBargainGoods();
       this.bargainList();
-      wx.showSuccessToast({
+      showSuccessToast({
         title: "帮砍成功，谢谢您的参与",
         icon: "none",
         duration: 2000
@@ -1408,19 +1424,25 @@ export default class GoodsDetails extends wepy.page {
       },
       content
     );
-    const res = await shttp
-      .post("/api/v2/member/wxcode")
-      .send({
+
+    let param = {
         page: "pages/activities/bargainDetail",
         scene: this.id,
         width: 350, // 430
         is_hyaline: true // false,
-      })
+    };
+
+    const res = await shttp
+      .post("/api/v2/member/wxcode")
+      .send(param)
       .end();
-    let qrpicUrl = res.data.url;
+
+    if(typeof res === 'string' && res.error) return wx.showModal({ content: res.error || res, showCancel: false });
+
+    let qrpicUrl = `https://cdn.health.healthplatform.xyz/${res.data.url.key}`;
     await this.drawImage(
       {
-        img: qrpicUrl.replace(/http/, "https"),
+        img: qrpicUrl,
         top: 320,
         left: 180,
         width: 80,
@@ -1463,20 +1485,25 @@ export default class GoodsDetails extends wepy.page {
       },
       content
     );
+
     const member_id = wx.getStorageSync("memberInfo").member_id;
-    const res = await shttp
-      .post("/api/v2/member/wxcode")
-      .send({
+
+    let param = {
         page: "pages/activities/bargainDetail",
         scene: this.id+";"+this.active_id+";"+"bargaining;"+"true;"+member_id,
         width: 350, // 430
         is_hyaline: true // false,
-      })
+      };
+
+    const res = await shttp
+      .post("/api/v2/member/wxcode")
+      .send(param)
       .end();
-    let qrpicUrl = res.data.url;
+
+    let qrpicUrl = `https://cdn.health.healthplatform.xyz/${res.data.url.key}`;
     await this.drawImage(
       {
-        img: qrpicUrl.replace(/http/, "https"),
+        img: qrpicUrl,
         top: 320,
         left: 180,
         width: 80,

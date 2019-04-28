@@ -1,4 +1,12 @@
 <style scoped>
+.container {
+  min-height: 100vh;
+  padding: 0 30rpx;
+  font: 32rpx PingFang-SC-Medium;
+  color: #000;
+  background: #fff;
+}
+
 .nodata {
   margin-top: 50%;
   font-size: 38rpx;
@@ -20,9 +28,7 @@
   background: #fff;
 }
 .product_info {
-  border-top: 1rpx solid #e5e5e5;
   display: flex;
-  justify-content: space-around;
   align-items: center;
   width: 100%;
   padding: 20rpx 0;
@@ -30,12 +36,13 @@
   background: #fff;
 }
 .product_info image {
-  width: 310rpx;
-  height: 310rpx;
+  width: 180rpx;
+  height: 180rpx;
+  margin-right: 20rpx;
 }
 .product_info .product {
-  width: 350rpx;
-  height: 300rpx;
+  flex-grow: 1;
+  /* width: 350rpx; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -48,10 +55,10 @@
   -webkit-line-clamp: 2;
   overflow: hidden;
 }
-.product_info .product .product_price {
-  font-size: 36rpx;
-  color: #ff7900;
-  padding-top: 20rpx;
+.product_price {
+  padding-top: 32rpx;
+  font-size: 26rpx;
+  color: #dd3d27;
 }
 .product_info .product .product_address,
 .product_info .product .product_number {
@@ -72,12 +79,7 @@
   font-size: 22rpx;
   color: #8c8c8c;
 }
-.container {
-  font: 32rpx PingFang-SC-Medium;
-  color: #000;
-  min-height: 100vh;
-  background: #f4f4f4;
-}
+
 .group-xhx {
   text-decoration: underline;
 }
@@ -105,7 +107,7 @@
   font-size: 28rpx;
 }
 .groupon-txt2 text {
-  color: #af0000;
+  color: #dd3d27;
 }
 .groupon-imgList {
   margin: 30rpx 30rpx;
@@ -125,11 +127,11 @@
   margin-bottom: 20rpx;
 }
 .btn-box {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+  /* display: flex; */
+  /* justify-content: space-around; */
+  /* align-items: center; */
   width: 100%;
-  margin-top: 36rpx;
+  margin-top: 80rpx;
 }
 .groupon-btn {
   width: 168rpx;
@@ -195,6 +197,18 @@
   margin-bottom: 20rpx;
   background: #feaa26;
 }
+
+.operate_btn{
+  height: 88rpx;
+  line-height: 88rpx;
+  border-radius: 10rpx;
+  font-size: 36rpx;
+  text-align: center;
+}
+
+.s_fc_f{ color: #fff; }
+
+.s_bg_10{ background: #4fb84a; }
 </style>
 
 
@@ -205,7 +219,7 @@
       <view class="product">
         <view class="product_title">{{details.goodsinfo.goods_name}}</view>
         <view class="row">
-          <view class="row-text">{{details.pintuangroup_limit_number}}人团</view>
+          <!-- <view class="row-text">{{details.pintuangroup_limit_number}}人团</view> -->
           <!-- <view class="row-text">已团{{details.goods_salenum}}件</view> -->
           <view class="product_price">¥{{details.rule.goods_price}}</view>
         </view>
@@ -213,13 +227,13 @@
     </view>
     <view class="groupon-box">
       <view class="groupon-txt1" wx:if="{{details.pintuangroup_state == 2}}">
-        <image src="../../images/icon_chenggong@2x.png">拼团成功
+        <image src="../../images/order/group_sucess.png">拼团成功
       </view>
       <view class="groupon-txt1" wx:if="{{details.pintuangroup_state == 0}}">
-        <image src="../../images/icon_shibai@2x.png">拼团失败
+        <image src="../../images/order/group_error.png">拼团失败
       </view>
       <view class="groupon-txt1" wx:if="{{details.pintuangroup_state == 1}}">
-        <image src="../../images/icon_pintuanzhong@2x.png">拼团中
+        <image src="../../images/order/grouping.png">拼团中
       </view>
       <view class="groupon-imgList">
         <repeat for="{{details.members}}" item="item">
@@ -234,16 +248,14 @@
         wx:if="{{details.pintuangroup_state == 1&&!details.withrank}}"
       >仅剩
         <text>{{details.pintuangroup_surplus}}</text>
-        个名额，{{wxTimerList['wxTimer1'].d!=0?wxTimerList['wxTimer1'].d+'天':''}} {{wxTimerList['wxTimer1'].wxTimer}}后结束
+        个名额，<text class=''>{{wxTimerList['wxTimer1'].d!=0?wxTimerList['wxTimer1'].d+'天':''}} {{wxTimerList['wxTimer1'].wxTimer}}</text>后结束
       </view>
 
       <view class="btn-box">
-        <view class="groupon-btn" @tap="getQT" wx:if="{{details.pintuangroup_state == 1}}">专属海报</view>
-        <view
-          class="groupon-btn"
-          @tap="goOrder"
-        >查看订单</view>
-        <view class="groupon-btn" @tap="gohome">继续逛逛</view>
+        <view class="operate_btn s_fc_f s_bg_10" @tap="getQT" wx:if="{{details.pintuangroup_state == 1}}">生成海报</view>
+        <view class="operate_btn s_fc_f s_bg_10" @tap="goOrder" wx:if="{{details.pintuangroup_state == 2}}">查看订单</view>
+        <view class="operate_btn s_fc_f s_bg_10" @tap="goGoodsDetail" wx:if="{{details.pintuangroup_state == 0}}">再次拼团</view>
+        <!-- <view class="groupon-btn" @tap="gohome">继续逛逛</view> -->
       </view>
     </view>
     <!-- QT -->
@@ -275,6 +287,10 @@ export default class GroupbuyDatail extends wepy.page {
   };
   components = {};
 
+  computed = {
+    isMain(){ return this.$parent.globalData.type == 1 },
+  };
+
   onLoad(options) {
     this.pintuanId = options.id;
   }
@@ -287,7 +303,13 @@ export default class GroupbuyDatail extends wepy.page {
       this.wxTimer1 = null;
     }
   }
-  methods = {};
+  methods = {
+    goGoodsDetail() {
+      let url =`/pages/store/goodsDetails?goods_commonid=${this.details.rule_id}&type=group`;
+
+      wx.navigateTo({ url });
+    }
+  };
   async getgroupDetails(id) {
     const res = await shttp.get(`/api/v2/member/mygroupbuy/${id}`).end();
     if (res.status == 0) {
@@ -324,9 +346,10 @@ export default class GroupbuyDatail extends wepy.page {
   }
   goOrder() {
     wx.navigateTo({
-      url: `/pages/store/orderdetail?orderId=${this.details.order.order_id}`
+      url: `/pages/store/orderdetail?orderId=${this.details.order.order_id}&unVip=${true}&type=group`
     });
   }
+  
   gohome() {
     wx.reLaunch({
       url: "/pages/home"
@@ -350,19 +373,30 @@ export default class GroupbuyDatail extends wepy.page {
       },
       content
     );
-    const res = await shttp
-      .post("/api/v2/member/wxcode")
-      .send({
+
+    let param = {
         page: "pages/store/goodsDetails",
         scene: "grouponing;" + this.details.pintuangroup_id,
         width: 350, // 430
         is_hyaline: true // false,
-      })
+    };
+
+    const res = await shttp
+      .post("/api/v2/member/wxcode")
+      .send(param)
       .end();
-    let qrpicUrl = res.data.url;
+
+    
+    console.error(res);
+    if(typeof res === 'string' || res.error){
+      wx.hideLoading();
+      return wx.showModal({ content: res.error || res, showCancel: false });
+    }
+
+    let qrpicUrl = `https://cdn.health.healthplatform.xyz/${res.data.url.key}`;
     await this.drawImage(
       {
-        img: qrpicUrl.replace(/http/, "https"),
+        img: qrpicUrl,
         top: 320,
         left: 180,
         width: 80,

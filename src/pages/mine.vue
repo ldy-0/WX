@@ -15,7 +15,6 @@ page {
 }
 
 .my {
-  /* position: relative; */
   width: 100%;
   height: 272rpx;
   z-index: 0;
@@ -41,20 +40,22 @@ page {
   text-align: center;
   overflow: hidden;
 }
-.my .head .login {
-  padding: 22rpx;
-  font-size: 32rpx;
+.login{
+  margin: 0 20rpx;
+  font-size: 30rpx;
+}
+.level{
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
 }
 
 .my_manage {
-  /* position: relative; */
   z-index: 99;
   width: 100%;
   height: 230rpx;
   margin: 0 auto;
   margin-bottom: 20rpx;
-  /* margin-top: 0rpx;
-  border-radius: 24rpx 24rpx 0 0; */
   /* box-shadow: 0px 0px 10px 0px rgba(241, 231, 225, 0.6); */
 }
 .my_manage_title {
@@ -131,23 +132,53 @@ page {
 .row_between .flex{
   color: #222222;
 }
+
+.icon_wrap{
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 25rpx;
+}
+.icon_wrap image{
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
 .icon {
   width: 30rpx;
   height: 30rpx;
-  margin-right: 25rpx;
 }
 .btn-list {
   margin-top: 20rpx;
-  /* margin-left: 30rpx; */
 }
-.img2 {
+.img0{
+  width: 21rpx;
+  height: 21rpx;
+}
+.img1{
+  width: 23rpx;
+  height: 28rpx;
+}
+.img2, .img3{
+  width: 28rpx;
+  height: 28rpx;
+}
+.img4{
+  width: 26rpx;
+  height: 27rpx; 
+}
+.img5{
+  width: 24rpx;
+  height: 30rpx;
+}
+.img6{
+  width: 28rpx;
+  height: 30rpx;
+}
+.img7{
   width: 32rpx;
-  height: 22rpx;
+  height: 28rpx;
 }
-.img3 {
-  width: 25rpx;
-  height: 32rpx;
-}
+
 .my_assets{
   background-color: #fff;
   display:flex;
@@ -174,6 +205,14 @@ page {
 	font-size: 28rpx;
 	color: #222222;
 }
+
+.center{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.s_bg_0{ background: rgba(0, 0, 0, 0.2); }
 </style>
 
 <template>
@@ -182,35 +221,38 @@ page {
       <image class="bg-img" src="../images/bg_2@2x.png">
       <view class="head">
         <open-data class="user-img" type="userAvatarUrl"></open-data>
-        <open-data class="content inputStyle login" type="userNickName" lang="zh_CN"></open-data>
+        <view class='flex'>
+          <open-data class="login" type="userNickName" lang="zh_CN"></open-data>
+          <view class='level s_bg_0'>{{level}}</view>
+        </view>
       </view>
     </view>
     <view class="my_assets">
-      <navigator  url="/pages/my/distribution">
+      <navigator  url="/pages/my/distribution/distribution">
         <view class="assets">
-            <text>0.00</text>
+            <text>{{memberInfo.available_predeposit}}</text>
             <view>余额</view>
         </view>
       </navigator>
-      <navigator  url="/pages/my/pointCenter">
+      <navigator  url="/pages/my/dScore/pointCenter">
         <view class="assets">
-            <text>0.00</text>
+            <text>{{memberInfo.available_rc_balance}}</text>
             <view>德分</view>
         </view>
       </navigator>
       <view class="assets">
-          <text>0.00</text>
+          <text>{{memberInfo.member_points}}</text>
           <view>积分</view>
       </view>
-      <navigator  url="/pages/article/couponList">
+      <navigator url="/pages/article/couponList?type=mine">
         <view class="assets">
-            <text>0.00</text>
+            <text>{{couponCount}}</text>
             <view>优惠券</view>
         </view>
       </navigator>
     </view>
     <view class="my_manage">
-      <navigator class="my_manage_title" url="/pages/my/orderList?choiceTab=0">
+      <navigator class="my_manage_title" url="/pages/order/orderList?choiceTab=0">
         <view>我的订单</view>
         <view class="flex">
           <view>查看全部订单</view>
@@ -218,23 +260,23 @@ page {
         </view>
       </navigator>
       <view class="my_manage_status">
-        <navigator class="column_around" url="/pages/my/orderList?choiceTab=1">
+        <navigator class="column_around" url="/pages/order/orderList?choiceTab=1">
           <image src="../images/icon_3_daifukuan@2x.png">
           <view>待付款</view>
         </navigator>
-        <navigator class="column_around" url="/pages/my/orderList?choiceTab=2">
+        <navigator class="column_around" url="/pages/order/orderList?choiceTab=2">
           <image src="../images/icon_3_daifahuo@2x.png">
           <view>待发货</view>
         </navigator>
-        <navigator class="column_around" url="/pages/my/orderList?choiceTab=3">
+        <navigator class="column_around" url="/pages/order/orderList?choiceTab=3">
           <image src="../images/icon_3_daishouhuo@2x.png">
           <view>待收货</view>
         </navigator>
-        <navigator class="column_around" url="/pages/my/orderList?choiceTab=4">
+        <navigator class="column_around" url="/pages/order/orderList?choiceTab=4">
           <image src="../images/icon_3_daipingjia@2x.png">
           <view>待评价</view>
         </navigator>
-        <navigator class="column_around" url="/pages/my/aftersale">
+        <navigator class="column_around" url="/pages/order/aftersaleList">
           <image src="../images/icon_3_shouhou@2x.png">
           <view>售后</view>
         </navigator>
@@ -242,30 +284,58 @@ page {
     </view>
     <view class="btn-list">
       <repeat for="{{list}}" item="item">
-        <navigator class="row_between" url="{{item.url}}">
+
+        <button class="row_between" open-type="contact" session-from="weapp" plain="true" wx:if="{{item.type}}">
           <view class="flex">
-            <image class="icon img{{index}}" src="{{item.img}}">
+            <view class='icon_wrap center'>
+              <image class="icon img{{index}}" src="{{item.img}}" />
+            </view>
+            <view>{{item.name}}</view>
+          </view>
+          <image class="arrow" src="../images/icon_you@2x.png">
+        </button>
+        <navigator class="row_between" url="{{item.url}}" wx:else>
+          <view class="flex">
+            <view class='icon_wrap center'>
+              <image class="icon img{{index}}" src="{{item.img}}" />
+            </view> 
             <view>{{item.name}}</view>
           </view>
           <image class="arrow" src="../images/icon_you@2x.png">
         </navigator>
+
       </repeat>
       
-      <button class="row_between" open-type="contact" session-from="weapp" plain="true">
+      <!-- main mall -->
+      <navigator @tap="toMainMall" class="row_between" app-id="wx34b07887a612c62c" target="miniProgram" path = "" version = "develop" wx:if="{{!isMain}}"> 
         <view class="flex">
-          <image class="icon" src="../images/icon_4_lianxikefu@2x.png">
-          <view>联系客服</view>
+          <view class='icon_wrap center'>
+            <image class="icon img{{index}}" src="../images/my/mall.png" />
+          </view>
+          <view>我的商城</view>
         </view>
         <image class="arrow" src="../images/icon_you@2x.png">
-      </button>
-
-        <navigator @tap="toMyStore" class="row_between" app-id="wx377f4525af400383" target="miniProgram" path = "" version = "develop"> 
-            <view class="flex">
-            <image class="icon" src="../images/icon_4_wodeshangcheng@2x.png">
-            <view>我的商城</view>
+      </navigator>
+      <!-- card main mall -->
+      <navigator @tap="toMyStore" class="row_between" app-id="wx377f4525af400383" target="miniProgram" path = "" version = "develop" wx:else> 
+        <view class="flex">
+          <view class='icon_wrap center'>
+            <image class="icon img{{index}}" src="../images/my/mall.png" />
           </view>
-          <image class="arrow" src="../images/icon_you@2x.png">
-        </navigator>
+          <view>我的商城</view>
+        </view>
+        <image class="arrow" src="../images/icon_you@2x.png">
+      </navigator>
+
+      <navigator class="row_between" url='/pages/my/manage/index' wx:if="{{hasCard}}"> 
+        <view class="flex">
+        <view class='icon_wrap center'>
+            <image class="icon img{{index}}" src="../images/my/manage.png" />
+          </view>
+          <view>管理入口</view>
+        </view>
+        <image class="arrow" src="../images/icon_you@2x.png">
+      </navigator>
   
     </view>
   </view>
@@ -280,33 +350,33 @@ export default class Mine extends wepy.page {
     navigationBarTitleText: "我的"
   };
   data = {
-    isTime: false, //资讯入口封住
-    wxUserInfo: null,
+    memberInfo: null,
+    couponCount: '',
     list: [
       {
         name: "我的团购",
         url: "/pages/my/groupbuyList",
-        img: "../images/icon_4_wodetuangou@2x.png"
+        img: "../images/my/groupBuy.png"
       },
       {
         name: "我的砍价",
         url: "/pages/activities/bargainOrder",
-        img: "../images/icon_4_wodekanjia@2x.png"
+        img: "../images/my/bargain.png"
       },
       {
         name: "我的秒杀",
         url: "/pages/activities/seckillOrder",
-        img: "../images/icon_4_wodemiaosha@2x.png"
+        img: "../images/my/seckill.png"
       },
       {
         name: "我的收藏",
         url: "/pages/my/collectList",
-        img: "../images/icon_4_wodeshoucang@2x.png"
+        img: "../images/my/collection.png"
       },
       {
         name: "分销中心",
-        url: "/pages/my/distribution",
-        img: "../images/icon_4_fenxiao@2x.png"
+        url: "/pages/my/distribution/distribution",
+        img: "../images/my/distribution.png"
       },
       // {
       //   name: "我的优惠券",
@@ -315,45 +385,100 @@ export default class Mine extends wepy.page {
       // },
       {
         name: "地址管理",
-        url: "/pages/my/addressList",
-        img: "../images/icon_4_dizhiguanli@2x.png"
+        url: "/pages/my/addressList?referer=my",
+        img: "../images/my/address.png"
+      },
+      {
+        name: "联系客服",
+        type: 'concat',
+        img: "../images/my/concat.png"
       }
     ]
   };
 
   components = {};
 
-  onLoad(options) {
-    //获取微信个人信息
-    this.wxUserInfo = wx.getStorageSync("wxUserInfo");
+  computed = {
+    isMain(){ return this.$parent.globalData.type == 1 },
+    hasCard(){ return this.memberInfo && this.memberInfo.card_mall; },
+    level(){
+      let level = [
+        { id: 0, name: '体验代理' },
+        { id: 1, name: 'VIP1' },
+        { id: 2, name: 'VIP2' },
+        { id: 3, name: 'VIP3' },
+        { id: 4, name: 'VIP4' },
+      ];
+
+      if(this.memberInfo) return level.filter(v => v.id === this.memberInfo.vip_level)[0].name;
+    }
   }
 
+  onLoad(options){}
+
   onShow() {
-    //资讯隐藏分割=====
-    let timestamp = Date.parse(new Date()) / 1000;
-    console.log("时间戳");
-    //定在8.18 18：6分
-    //console.log(timestamp-Number(1534586760))
-    if (timestamp - Number(1534586760) > 86400) {
-      this.isTime = true;
-      this.$apply();
-    }
-    //资讯隐藏分割
+    this.getUserInfo();
+    this.getCouponCount();
   }
+
   methods = {
-    toMyStore(){
+    toMainMall(){
+      let path = `/pages/authorize`;
+      console.error(path);
+
       wx.navigateToMiniProgram({
-        appId: 'wx377f4525af400383',
-        path: '',
-        extraData: {
-          foo: 'bar'
-        },
+        appId: 'wx34b07887a612c62c',
+        path,
+        extraData: {},
         envVersion: 'develop',
         success(res) {
-          // 打开成功
-        }
+          console.error('success:', res);
+        },
+        fail(e){ console.error(e); }
+      })
+    },
+    toMyStore(){
+      let path = `/pages/authorize?referer=${encodeURIComponent(`/pages/card?referer=self`)}`;
+      console.error(path);
+
+      wx.navigateToMiniProgram({
+        appId: 'wx377f4525af400383',
+        path,
+        extraData: {},
+        envVersion: 'develop',
+        success(res) {
+          console.error('success:', res);
+        },
+        fail(e){ console.error(e); }
       })
     }
   };
+
+  async getUserInfo(){
+    let param = {};
+
+    let res = await shttp.get(`/api/v2/member/memberinfo`).query(param).end();
+
+    if(res && res.data){
+      wx.setStorageSync('memberInfo', res.data);
+    }
+
+    this.memberInfo = wx.getStorageSync("memberInfo");
+    this.$apply();
+  }
+
+  async getCouponCount(){
+    let param = {
+      voucher_state: 0
+    };
+
+    let res = await shttp.get(`/api/v2/member/coupon`).query(param).end();
+
+    if(res && res.data){
+      this.couponCount = res.data.length;
+    }
+
+    this.$apply();
+  }
 }
 </script>
