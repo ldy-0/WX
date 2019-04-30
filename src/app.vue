@@ -103,48 +103,48 @@ export default class extends wepy.app {
       backgroundColor: "#ffffff",
       borderStyle: "black",
       list: [
-        {
-          pagePath: "pages/home",
-          text: "首页",
-          iconPath: "./images/tab/home.png",
-          selectedIconPath: "./images/tab/home_sel.png"
-        },
-        {
-          pagePath: "pages/classify",
-          text: "分类",
-          iconPath: "./images/tab/mall.png",
-          selectedIconPath: "./images/tab/mall_sel.png"
-        },
-        {
-          pagePath: "pages/shoppingCart",
-          text: "购物车",
-          iconPath: "./images/tab/shoppingCart.png",
-          selectedIconPath: "./images/tab/shoppingCart_sel.png"
-        },
         // {
-        //   pagePath: "pages/card",
-        //   text: "名片",
-        //   iconPath: "./images/tab/card.png",
-        //   selectedIconPath: "./images/tab/card_sel.png"
+        //   pagePath: "pages/home",
+        //   text: "首页",
+        //   iconPath: "./images/tab/home.png",
+        //   selectedIconPath: "./images/tab/home_sel.png"
         // },
         // {
         //   pagePath: "pages/classify",
-        //   text: "商城",
+        //   text: "分类",
         //   iconPath: "./images/tab/mall.png",
         //   selectedIconPath: "./images/tab/mall_sel.png"
         // },
         // {
-        //   pagePath: "pages/article/bussiness_card",
-        //   text: "招商",
-        //   iconPath: "./images/tab/bussiness.png",
-        //   selectedIconPath: "./images/tab/bussiness_sel.png"
+        //   pagePath: "pages/shoppingCart",
+        //   text: "购物车",
+        //   iconPath: "./images/tab/shoppingCart.png",
+        //   selectedIconPath: "./images/tab/shoppingCart_sel.png"
         // },
-        // {
-        //   pagePath: "pages/official",
-        //   text: "官网",
-        //   iconPath: "./images/card/official.png",
-        //   selectedIconPath: "./images/card/official_sel.png"
-        // },
+        {
+          pagePath: "pages/card",
+          text: "名片",
+          iconPath: "./images/tab/card.png",
+          selectedIconPath: "./images/tab/card_sel.png"
+        },
+        {
+          pagePath: "pages/classify",
+          text: "商城",
+          iconPath: "./images/tab/mall.png",
+          selectedIconPath: "./images/tab/mall_sel.png"
+        },
+        {
+          pagePath: "pages/article/bussiness_card",
+          text: "招商",
+          iconPath: "./images/tab/bussiness.png",
+          selectedIconPath: "./images/tab/bussiness_sel.png"
+        },
+        {
+          pagePath: "pages/official",
+          text: "官网",
+          iconPath: "./images/card/official.png",
+          selectedIconPath: "./images/card/official_sel.png"
+        },
         {
           pagePath: "pages/mine",
           text: "我的",
@@ -218,7 +218,7 @@ export default class extends wepy.app {
    * 设置全局变量
    */
   globalData = {
-    type: 1, // 1: 主商城 2: 名片商城
+    type: 2, // 1: 主商城 2: 名片商城
     authorizationStyle: "2" 
     //1: 强制需要用户微信信息和强制手机授权 
     //手机号验证白名单10987654321，验证码随意，如1111

@@ -606,7 +606,7 @@ export default class GoodsDetails extends wepy.page {
         video: o.card_video,
         poster: o.card_video_image,
         desc: o.card_introduce,
-        imgList: o.card_images,
+        imgList: o.card_images || [],
         card_banner: o.card_banner,
         card_view: o.card_view,
       };
