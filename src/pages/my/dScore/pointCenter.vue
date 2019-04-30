@@ -3,9 +3,11 @@
         <view class="my">
             <image class="bg-img" src="../../../images/bg_2@2x.png">
             <view class="head">
-              <open-data class="user-img" type="userAvatarUrl"></open-data>
+              <!-- <open-data class="user-img" type="userAvatarUrl"></open-data> -->
+              <image class='user-img' src='{{memberInfo.wx_avatar}}' />
               <view>
-                <open-data class="name" type="userNickName" lang="zh_CN"></open-data>
+                <!-- <open-data class="name" type="userNickName" lang="zh_CN"></open-data> -->
+                <view class='name'>{{memberInfo.wx_name}}</view>
                 <view class='level s_bg_0'>{{level}}</view>
               </view>
             </view>
@@ -61,7 +63,7 @@ export default class PointCenter extends wepy.page {
         path: "可用德分"
       }
     ],
-    memberinfo: null,
+    memberInfo: null,
   };
 
   computed = {

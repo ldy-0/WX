@@ -642,7 +642,7 @@
             <image class="title_page" mode="aspectFill" src="{{item.goods.goods_image}}">
               <view class="countDown-box" >
                 <view class="countDown-txt" wx:if="{{item.show==3}}">
-                  <text class='countDown_day'>还剩{{wxTimerList[index].d!=0?wxTimerList[index].d+'000天':''}} </text>
+                  <text class='countDown_day'>还剩{{wxTimerList[index].d!=0?wxTimerList[index].d+'天':''}} </text>
                   <text class="countDown-txt2">{{wxTimerList[index].h1}}</text>
                   <text class="countDown-txt2">{{wxTimerList[index].h2}}</text>:
                   <text class="countDown-txt2">{{wxTimerList[index].m1}}</text>
@@ -1031,8 +1031,9 @@ export default class Home extends wepy.page {
       });
 
       this.groupGoodsList = res.data;
+    }else{
+      this.groupGoodsList = [];
     }
-    this.groupGoodsList = [];
 
     wx.hideLoading();
     wx.stopPullDownRefresh();
@@ -1257,13 +1258,6 @@ export default class Home extends wepy.page {
     let res = await shttp.get(`/api/v2/member/memberinfo`).query(param).end();
 
     if(res && res.data){
-      let name = res.data.wx_name;
-      console.error(name, 'abca'.replace(/a/g, function(v1, v2, v3, v4, v5){
-        console.error('match: ', `${v1}-${v2}-${v3}-${v4}-${v5}`);
-        return v1;
-      }));
-
-      // console.error('abca'.match());
       wx.setStorageSync('memberInfo', res.data);
     }
 

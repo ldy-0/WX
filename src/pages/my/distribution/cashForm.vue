@@ -9,7 +9,7 @@
                 <label>{{item.name}}:</label>
                 <input name="{{item.label}}"/>
             </view>
-            <button formType = "submit">提交</button>
+            <button class='submit_btn' formType="{{checked ? '' : 'submit'}}">提交</button>
         </form>
     </section>
 </template>
@@ -50,23 +50,24 @@ export default class CashForm extends wepy.page {
                 param;
 
             // formdata.userBank = '0123456789012345'
+            if(this.checked) return ;
+            this.checked = true;
 
             if(!(formdata.howMuch > 0)){ tips = "请输入正确的提现金额"; }
 
-            if(formdata.cashNumber === undefined || formdata.cashNumber === ""){
+            if(!formdata.cashNumber){
                 tips = "提现账号不能为空";
             }else if(!formdata.userBank){
                 tips = "请输入开户支行信息";
-            }else if(formdata.userName === undefined || formdata.userName === ""){
+            }else if(!formdata.userName){
                 tips = "账户姓名不能为空";
             }
 
             if(tips){
+                this.checked = false;
                 return wx.showModal({ content: tips, showCancel:false, confirmColor:'#4fb84a', })
             }
-
-            if(this.checked) return ;
-            this.checked = true;
+            console.error('submit');
 
             param = {
                 pdc_amount: formdata.howMuch,
@@ -100,10 +101,10 @@ export default class CashForm extends wepy.page {
             wx.showModal(opt);
         }
 
+        if(res.error) wx.showModal({ content: res.error.replace('pdc_amount', '提现金额'), showCancel: false, });
+
         this.checked = false;
         this.$apply();
-
-        if(res.error) wx.showModal({ content: res.error, showCancel: false, });
     }
 
 }
@@ -160,16 +161,16 @@ export default class CashForm extends wepy.page {
         box-sizing: border-box;
         padding-left: 16rpx;
     }
-    form button{
-        border-radius: 10rpx;
-        background-color: #4fb84a;
-        height: 70rpx;
-        line-height: 70rpx;
-        color: #fdfbfa;
-        font-size: 36rpx;
-        letter-spacing: 1rpx;
-        width: 690rpx;
-        margin-top: 227rpx;
-    }
-</style>
 
+.submit_btn{
+    border-radius: 10rpx;
+    background-color: #4fb84a;
+    height: 70rpx;
+    line-height: 70rpx;
+    color: #fdfbfa;
+    font-size: 36rpx;
+    letter-spacing: 1rpx;
+    width: 690rpx;
+    margin-top: 227rpx;
+}
+</style>

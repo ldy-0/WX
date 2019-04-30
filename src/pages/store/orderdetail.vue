@@ -285,6 +285,7 @@ export default class OrderDetail extends wepy.page {
   data = {
     //积分订单详情
     pointOrder: {},
+    orderId: null,
     //订单详情
     order: null,
     //订单类型
@@ -416,22 +417,16 @@ export default class OrderDetail extends wepy.page {
       this.address = res.data[0];
     } else if (opt.orderId) {
       console.log(opt.orderId);
-      const res = await shttp.get("/api/v2/member/order/" + opt.orderId).end();
-      console.log("实物订单", res, opt);
-
-      res.data.forEach(this.format);
-
-      // add order_id
-      res.data[0].order_id = opt.orderId;
-
-      this.order = res.data[0];
-      this.order.add_time = dayjs(this.order.add_time).format( "YYYY年MM月DD日 HH:mm");
-      this.order.payment_time = dayjs(this.order.payment_time).format( "YYYY年MM月DD日 HH:mm");
+      this.orderId = opt.orderId;
 
       this.unVip = JSON.parse(opt.unVip);
     }
 
     this.$apply();
+  }
+
+  onShow(){
+    this.getInfo(); 
   }
 
   format(order){
@@ -508,6 +503,22 @@ export default class OrderDetail extends wepy.page {
       }
     }
     return result;
+  }
+
+  async getInfo(){
+    const res = await shttp.get("/api/v2/member/order/" + this.orderId).end();
+    console.log("订单", res);
+
+    res.data.forEach(this.format);
+
+    // add order_id
+    res.data[0].order_id = this.orderId;
+
+    this.order = res.data[0];
+    this.order.add_time = dayjs(this.order.add_time).format( "YYYY年MM月DD日 HH:mm");
+    this.order.payment_time = dayjs(this.order.payment_time).format( "YYYY年MM月DD日 HH:mm");
+
+    this.$apply();
   }
 }
 </script>

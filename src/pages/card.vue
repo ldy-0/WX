@@ -190,7 +190,7 @@ page {
 }
 .desc_img{
   width: 100%;
-  height: 400rpx;
+  min-height: 400rpx;
 }
 
 .error_wrap{
@@ -275,7 +275,7 @@ page {
 
         <view class='desc_img_wrap'>
           <repeat for='{{card.imgList}}'>
-            <image class='desc_img' src='{{item}}' mode='aspectFill' />
+            <image class='desc_img' src='{{item}}' mode='aspectFill' style="height: {{heightList[index]}}rpx;" @load='loadImg({{index}})' />
           </repeat>
         </view>
             
@@ -361,6 +361,8 @@ export default class GoodsDetails extends wepy.page {
     },
     memberInfo: null,
     errStr: null,
+    heightList: [],
+    pixelRatio: 1,
   };
 
   computed = {
@@ -375,6 +377,11 @@ export default class GoodsDetails extends wepy.page {
   };
 
   methods = {
+    loadImg(index, e){
+      let info = e.detail;
+
+      this.heightList[index] = info.height * this.pixelRatio;
+    },
     goTo(index){
       let url,
           item = this.card.card_banner[index];
@@ -490,8 +497,10 @@ export default class GoodsDetails extends wepy.page {
 
     let sys = wx.getSystemInfoSync();
     this.isSmall = sys.screenWidth <= 320;
+    this.pixelRatio = sys.pixelRatio;
     console.error(sys, this.isSmall);
   }
+
   onShow() {
     this.memberInfo = wx.getStorageSync('memberInfo');
     this.getInfo();
@@ -604,6 +613,8 @@ export default class GoodsDetails extends wepy.page {
 
       // console.error(this.card);
     }
+
+    this.heightList = this.card.imgList.map(v => '');
 
     wx.hideLoading();
 

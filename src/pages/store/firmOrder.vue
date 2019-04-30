@@ -674,7 +674,7 @@ export default class FirmOrder extends wepy.page {
             });
           } else {
             wx.redirectTo({
-              url: `/pages/store/bought?id=${order_id}&orderType=normal`
+              url: `/pages/store/bought?id=${order_id}&orderType=${that.seckill_id ? 'secKill' : that.ifcut ? 'bargain' : 'normal'}`
             });
           }
         },
@@ -686,7 +686,7 @@ export default class FirmOrder extends wepy.page {
               });
             } else {
               wx.redirectTo({
-                url: `/pages/store/bought?id=${order_id}&orderType=${that.seckill_id ? 'secKill' : that.ifcut ? 'bargain' : ''}`
+                url: `/pages/store/bought?id=${order_id}&orderType=${that.seckill_id ? 'secKill' : that.ifcut ? 'bargain' : 'normal'}`
               });
             }
           } else {

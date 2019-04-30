@@ -63,10 +63,10 @@
             <image src="{{item.geval_frommemberavatar}}" class="head">
             {{item.geval_frommembername}}
             <block wx:for="{{item.geval_scores}}" wx:key>
-                <image class="star-image" src="../../images/icon_pingfen_hl@2x.png">
+                <image class="star-image" src="../../images/goods/collect.png">
               </block>
               <block wx:for="{{5-item.geval_scores}}" wx:key>
-                <image class="star-image" src="../../images/icon_pingfen@2x.png">
+                <image class="star-image" src="../../images/goods/uncollect.png">
               </block>
           </view>
           <view>{{item.geval_content}}</view>

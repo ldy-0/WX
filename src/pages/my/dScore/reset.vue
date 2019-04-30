@@ -42,6 +42,7 @@
 
 .captcha_btn{
   position: absolute;
+  top: 20rpx;
   right: 20rpx;
   z-index: 2;
   width: 180rpx;

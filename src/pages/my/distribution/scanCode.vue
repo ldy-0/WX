@@ -5,8 +5,10 @@
             <view class="relativeBox">
                 <image src="../../../images/distribution/card_bg.png" class="codeBg"/>
                 <view class="useInfo">
-                    <open-data type = "userAvatarUrl" class="userAva icon" mode = "aspectFit"></open-data>
-                    <open-data type = "userNickName" class="userNickName"></open-data>
+                    <!-- <open-data type = "userAvatarUrl" class="userAva icon" mode = "aspectFit"></open-data> -->
+                    <!-- <open-data type = "userNickName" class="userNickName"></open-data> -->
+                    <image class='userAva icon' src='{{memberInfo.wx_avatar}}' />
+                    <view class='userNickName'>{{memberInfo.wx_name}}</view>
                 </view>
                 <view class="code">
                     <image src = "../../../images/distribution/qrcode_bg.png"/>
@@ -26,6 +28,7 @@ export default class ScanCode extends wepy.page {
     };
     data = {
         qrcode: null,
+        memberInfo: null,
     };
 
     computed = {

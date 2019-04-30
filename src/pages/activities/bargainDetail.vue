@@ -415,7 +415,7 @@ page {
 }
 .more_btn text {
   padding-right: 10rpx;
-  color: #f17f30;
+  color: #4fb84a;
   font-size: 26rpx;
 }
 .comment .item .user {
@@ -928,7 +928,7 @@ page {
           <view>宝贝评价({{comment.length}})</view>
           <view class="more_btn" @tap="goComment">
             <text>查看全部</text>
-            <image class="more_btnImg" src="../../images/icon_chakanquanbu@2x.png">
+            <image class="more_btnImg" src="../../images/goods/green_arrow.png">
           </view>
         </view>
         <view class="item">
@@ -936,10 +936,10 @@ page {
             <image src="{{comment[0].geval_frommemberavatar}}" class="head">
               {{comment[0].geval_frommembername}}
               <block wx:for="{{comment[0].geval_scores}}" wx:key>
-                <image class="star-image" src="../../images/icon_pingfen_hl@2x.png">
+                <image class="star-image" src="../../images/goods/collect.png">
               </block>
               <block wx:for="{{5-comment[0].geval_scores}}" wx:key>
-                <image class="star-image" src="../../images/icon_pingfen@2x.png">
+                <image class="star-image" src="../../images/goods/uncollect.png">
               </block>
           </view>
           <view>{{comment[0].geval_content}}</view>

@@ -252,11 +252,11 @@ export default class OrderList extends wepy.page {
         this.getList();
         break;
       case 1:
-        this.query.pintuan_state = 1;
+        this.query.pintuan_state = 2;
         this.getList();
         break;
       case 2:
-        this.query.pintuan_state = 2;
+        this.query.pintuan_state = 1;
         this.getList();
         break;
 

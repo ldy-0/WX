@@ -220,9 +220,11 @@ page {
     <view class="my">
       <image class="bg-img" src="../images/bg_2@2x.png">
       <view class="head">
-        <open-data class="user-img" type="userAvatarUrl"></open-data>
+        <!-- <open-data class="user-img" type="userAvatarUrl"></open-data> -->
+        <image class='user-img' src='{{memberInfo.wx_avatar}}' />
         <view class='flex'>
-          <open-data class="login" type="userNickName" lang="zh_CN"></open-data>
+          <!-- <open-data class="login" type="userNickName" lang="zh_CN"></open-data> -->
+          <view class='login'>{{memberInfo.wx_name}}</view>
           <view class='level s_bg_0'>{{level}}</view>
         </view>
       </view>
@@ -306,8 +308,8 @@ page {
 
       </repeat>
       
-      <!-- main mall -->
-      <navigator @tap="toMainMall" class="row_between" app-id="wx34b07887a612c62c" target="miniProgram" path = "" version = "develop" wx:if="{{!isMain}}"> 
+      <!-- main mall app-id="wx34b07887a612c62c" target="miniProgram"-->
+      <navigator @tap="toMainMall" class="row_between" wx:if="{{!isMain}}"> 
         <view class="flex">
           <view class='icon_wrap center'>
             <image class="icon img{{index}}" src="../images/my/mall.png" />
@@ -316,8 +318,8 @@ page {
         </view>
         <image class="arrow" src="../images/icon_you@2x.png">
       </navigator>
-      <!-- card main mall -->
-      <navigator @tap="toMyStore" class="row_between" app-id="wx377f4525af400383" target="miniProgram" path = "" version = "develop" wx:else> 
+      <!-- card main mall app-id="wx377f4525af400383" target="miniProgram" -->
+      <navigator @tap="toMyStore" class="row_between" wx:else> 
         <view class="flex">
           <view class='icon_wrap center'>
             <image class="icon img{{index}}" src="../images/my/mall.png" />
@@ -423,14 +425,14 @@ export default class Mine extends wepy.page {
 
   methods = {
     toMainMall(){
-      let path = `/pages/authorize`;
+      let path = `/pages/authorization`;
       console.error(path);
 
       wx.navigateToMiniProgram({
         appId: 'wx34b07887a612c62c',
         path,
         extraData: {},
-        envVersion: 'develop',
+        // envVersion: 'develop',
         success(res) {
           console.error('success:', res);
         },
@@ -438,14 +440,18 @@ export default class Mine extends wepy.page {
       })
     },
     toMyStore(){
-      let path = `/pages/authorize?referer=${encodeURIComponent(`/pages/card?referer=self`)}`;
+      let path = `/pages/authorization?referer=${encodeURIComponent(`/pages/card?referer=self`)}`;
       console.error(path);
+
+      if(this.memberInfo.card_mall == '0'){
+        return wx.showModal({ content: '未开启名片商城', showCancel: false, });
+      }
 
       wx.navigateToMiniProgram({
         appId: 'wx377f4525af400383',
         path,
         extraData: {},
-        envVersion: 'develop',
+        // envVersion: 'develop',
         success(res) {
           console.error('success:', res);
         },

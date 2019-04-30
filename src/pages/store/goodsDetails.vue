@@ -940,10 +940,10 @@ page {
             <image src="{{comment[0].geval_frommemberavatar}}" class="head">
               {{comment[0].geval_frommembername}}
               <block wx:for="{{comment[0].geval_scores}}" wx:key>
-                <image class="star-image" src="../../images/icon_pingfen_hl@2x.png">
+                <image class="star-image" src="../../images/goods/collect.png">
               </block>
               <block wx:for="{{5-comment[0].geval_scores}}" wx:key>
-                <image class="star-image" src="../../images/icon_pingfen@2x.png">
+                <image class="star-image" src="../../images/goods/uncollect.png">
               </block>
           </view>
           <view>{{comment[0].geval_content}}</view>
@@ -1241,7 +1241,7 @@ export default class GoodsDetails extends wepy.page {
       if (this.goods.goods_storage < 1) { return showFailToast("库存不足"); }
 
       let url = `/pages/store/firmOrder?type=nocart&goods=${encodeURIComponent(JSON.stringify(this.goods))}`;
-      console.error(url);
+      // console.error(url);
       wx.navigateTo({ url, });
     },
 

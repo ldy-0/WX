@@ -18,6 +18,7 @@
   text-align: center;
 }
 .pwd_wrap{
+  position: relative;
   width: 600rpx;
   margin: 0 auto;
   border-top: 2rpx solid #f1f1f1;
@@ -29,10 +30,30 @@
   flex-shrink: 0;
   width: 100rpx;
   height: 100rpx;
+  line-height: 100rpx;
   border-left: 2rpx solid #f1f1f1;
 }
 .last_item{
   border-right: 2rpx solid #f1f1f1;
+}
+.cursor{
+  position: relative;
+  top: calc(50% - 20rpx);
+  left: calc(50% - 2rpx);
+  width: 4rpx;
+  height: 40rpx;
+  background: #ccc;
+}
+
+.input{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1100rpx;
+  height: 100rpx;
+  margin-left: -500rpx;
+  color: #fff;
+  text-align: left;
 }
 
 .flex{
@@ -48,14 +69,22 @@
         <view class='modal_wrap s_bg_f' slot='center'>
           <image class='i_close' src='../images/dScore/close.png' @tap='closeModal' />
           <view class='modal_title s_fc_6'>请输入支付密码</view>
+
           <view class='pwd_wrap flex'>
+              <input class='input' type='number' maxlength='6' focus="true" cursor='{{10}}' @input='input' />
+
               <repeat for="{{pwd}}">
 
-                  <input type='number' maxlength='1' password='true'
-                          focus="{{focusIndex === index}}" 
+                <view class="pwd_item {{pwd.length === index + 1 ? 'last_item' : ''}}">
+                  <view class='cursor' wx:if="{{focusIndex === index}}"></view>
+                  <view wx:else>{{item ? '*' : ''}}</view>
+                </view>
+                  <!-- <input type='number' maxlength='1' password='true'
+                          focus="{{focusIndex === index}}"
                           class="pwd_item {{pwd.length === index + 1 ? 'last_item' : ''}}" 
                           @input='input({{index}})'
                           @focus='focusInput({{index}})' />
+                   -->
 
               </repeat>
           </view>
@@ -103,18 +132,20 @@ export default class PayModal extends wepy.component {
   };
 
   methods = {
-    input(index, e){
+    input(e){
       let v = e.detail.value,
           pwd;
 
-      this.pwd[index] = v;
+      this.pwd = this.pwd.map((val, index) => v[index] || '');
+      this.focusIndex = v.length;
+      // this.pwd[index] = v;
 
-      if(v) this.focusIndex = index + 1;
+      // if(v) this.focusIndex = index + 1;
 
       pwd = this.pwd.join('');
       if(/\d{6}/g.test(pwd)) this.$emit('done', pwd);
     },
-    focusInput(index){ this.focusIndex = index; },
+    focusInput(index){ if(this.focusIndex != index) this.focusIndex = index; console.error('focus: ', this.focusIndex); },
     closeModal(){
       this.config.show = this.modalConfig.show = false; 
       this.focusIndex = 0;

@@ -15,6 +15,8 @@
 </template>
 <script>
 import wepy from "wepy";
+import { shttp } from "../../../utils/http";
+
 export default class Discounting extends wepy.page {
     config = {
         navigationBarTitleText: "立即提现",
@@ -23,6 +25,7 @@ export default class Discounting extends wepy.page {
     data = {
         price: '',
         detailsList:["收益明细","提现明细"],
+        memberInfo: null,
     };
 
     methods = {
@@ -44,8 +47,28 @@ export default class Discounting extends wepy.page {
         }
     }
 
-    onLoad(opt){
-       this.price = opt.price; 
+    onLoad(opt){}
+
+    onShow(){
+        this.getInfo();
+    }
+
+    async getInfo(){
+      wx.showLoading({ title: 'Loading...' }); 
+      let res = await shttp.get(`/api/v2/member/memberwithdraw/1`).query({}).end();
+
+      if(res && res.data){
+        // this.info = res.data;
+        this.price = res.data.available_predeposit;
+      }
+
+      this.$apply();
+      wx.hideLoading();
+
+      if(res.error){
+        wx.showModal({ content: res.error, showCancel: false });
+      }
+
     }
 }
 </script>

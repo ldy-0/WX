@@ -3,9 +3,11 @@
         <view class="my">
             <image class="bg-img" src="../../../images/bg_2@2x.png">
             <view class="head">
-                <open-data class="user-img" type="userAvatarUrl"></open-data>
+                <!-- <open-data class="user-img" type="userAvatarUrl"></open-data> -->
+                <image class='user-img' src='{{memberInfo.wx_avatar}}' />
                 <view>
-                    <open-data class="login" type="userNickName" lang="zh_CN"></open-data>
+                    <!-- <open-data class="login" type="userNickName" lang="zh_CN"></open-data> -->
+                    <view class='login'>{{memberInfo.wx_name}}</view>
                     <view class='parent s_bg_0' wx:if="{{parentStr}}">{{parentStr}}</view>
                 </view>
             </view>
@@ -51,6 +53,7 @@ export default class Distribution extends wepy.page {
             }
         ],
         info: null,
+        memberInfo: null,
     };
 
     computed = {

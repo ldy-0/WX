@@ -322,7 +322,7 @@ export default class ReturnGoods extends wepy.page {
   async refuns() {
     let param = {
         order_id: this.orderDetail.order_id,
-        refund_type: 1,
+        refund_type: this.isReturnGoods ? 2 : 1,
         reason_info: this.refundReason,
         buyer_message: this.refundMemo,
         express_name: this.logisticsCompny,
@@ -333,7 +333,7 @@ export default class ReturnGoods extends wepy.page {
 
     if (res.status == 0) {
       wx.showToast({ title: "操作成功", icon: "none", duration: 2000 });
-      setTimeout(() => { wx.navigateBack({ delta: 1 }) }, 2000);
+      return setTimeout(() => { wx.navigateBack({ delta: 2 }) }, 1000);
     } else if (res.status == 1) {
       wx.showToast({ title: res.error, icon: "none", duration: 2000 });
     } else {
