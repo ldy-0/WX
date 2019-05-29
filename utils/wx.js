@@ -54,33 +54,40 @@ async function saveImg(filePath){
   return new Promise((resolve, reject) => {
     let opt = {
       filePath,
-      success(e){ resolve(e); },
+    };
+
+    opt.success = e => { 
+      if(e.errMsg === 'saveImageToPhotosAlbum:ok') resolve({ state: 1, status: 1, }); 
     };
 
     opt.fail = e => {
       if(e.errMsg === 'saveImageToPhotosAlbum:fail auth deny' || e.errMsg === "saveImageToPhotosAlbum:fail:auth denied" || e.errMsg === "saveImageToPhotosAlbum:fail auth denied"){
         wx.openSetting({
-          success(e){
-            console.error(e);
-          }
+          success(e){ console.error(e); }
         });
         // res.authSetting["scope.writePhotosAlbum"]
         console.error('权限问题');
       }
 
-      resolve(e);
+      resolve(e.errMsg === 'saveImageToPhotosAlbum:fail cancel' ? '' : e.errMsg);
     }
 
     wx.saveImageToPhotosAlbum(opt);
   });
 }
 
+/**
+ * 
+ * @param {String} src Img URL
+ * @returns [Object|String]
+ * 
+ */
 async function getImg(src){
   return new Promise((resolve, reject) => {
     let opt = {
       src,
       success(e){ resolve({ width: e.width, height: e.height, path: e.path }); },
-      fail(e){ resolve(e); }
+      fail(e){ resolve(e.errMsg); }
     }
 
     wx.getImageInfo(opt);
@@ -187,12 +194,12 @@ function stopRecord(_this, property){
  * @param {Number} width 
  * @param {Number} height 
  */
-function getCanvasImg(canvasId, x, y, width, height){
-  let opt = { canvasId, x, y, width, height };
+function getCanvasImg(canvasId, x, y, width, height, destWidth, destHeight){
+  let opt = { canvasId, x, y, width, height, destWidth, destHeight, };
   
   return new Promise(function(resolve, reject){
-    opt.success = v => { console.error(v); resolve(v.tempFilePath)};
-    opt.fail = e => resolve(e);
+    opt.success = v => { resolve({ path: v.tempFilePath }); };
+    opt.fail = e => resolve(e.errMsg);
 
     wx.canvasToTempFilePath(opt);
   });
@@ -278,6 +285,41 @@ async function getLocation(){
   
 }
 
+/**
+ * 
+ * @param {String} title 
+ * 
+ */
+function setTitle(title = ''){
+  wx.setNavigationBarTitle({ title });
+}
+
+/**
+ * 
+ */
+function pay(obj){
+  let param = {
+      timeStamp: obj.timeStamp,
+      nonceStr: obj.nonceStr,
+      package: obj.package,
+      signType: "MD5",
+      paySign: obj.paySign,
+  };
+
+  return new Promise((resolve, reject) => {
+
+    param.success = function(res){
+      resolve(res);
+      console.log("支付成功返回的结果",res);
+    };
+  
+    param.fail = e => e.errMsg === 'requestPayment:fail cancel' ? resolve({ cancel: 1 }) : resolve(e.errMsg);
+
+    wx.requestPayment(param);
+
+  });
+}
+
 export default {
   showModal,
   preview,
@@ -293,4 +335,6 @@ export default {
   uploadFile,
   chooseVideo,
   getLocation,
+  setTitle,
+  pay,
 }
