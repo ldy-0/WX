@@ -296,6 +296,8 @@ function setTitle(title = ''){
 
 /**
  * 
+ * 微信支付
+ * 
  */
 function pay(obj){
   let param = {
@@ -309,8 +311,8 @@ function pay(obj){
   return new Promise((resolve, reject) => {
 
     param.success = function(res){
-      resolve(res);
-      console.log("支付成功返回的结果",res);
+      console.log("支付成功: ",res);
+      if(res.errMsg == 'requestPayment:ok') resolve({ success: true });
     };
   
     param.fail = e => e.errMsg === 'requestPayment:fail cancel' ? resolve({ cancel: 1 }) : resolve(e.errMsg);
